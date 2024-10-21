@@ -3,7 +3,33 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grondslagen", "Grondslagen\Grondslagen.csproj", "{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grondslagen", "Grondslagen\Grondslagen.csproj", "{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Belastingen", "Belastingen\Belastingen.csproj", "{D78F8EB9-29BD-470D-86F3-ED3360E9F338}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1990 Grondslagen", "1990 Grondslagen", "{00B014AD-4D11-4443-B36F-DAFDFE00A7D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1991 Belastingen", "1991 Belastingen", "{737DF754-D2CE-436D-8C2F-18333E488FDF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1992 Betonconstructies", "1992 Betonconstructies", "{8FA64B87-3C59-4CD6-896E-9D5CDC81FE5A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1993 Staalconstructies", "1993 Staalconstructies", "{E0F1F799-E487-4673-9ED8-59BA6C243175}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 Materialen", "3 Materialen", "{74B58FCC-995C-44B7-A213-D79A6012E6A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1994 Staal-beton constructies", "1994 Staal-beton constructies", "{35635B18-07D4-434D-A4E8-C5CE6AD92976}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1995 Houtconstructies", "1995 Houtconstructies", "{3CAE5E57-1518-40E0-85C5-7A56D29ADAA6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1996 Metselwerk", "1996 Metselwerk", "{9D258431-AA9D-46DD-A168-0549A478F33B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1997 Geotechniek", "1997 Geotechniek", "{EE033826-D63F-4438-9FB7-61B6E3EB7A44}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1998 Aardbevingen", "1998 Aardbevingen", "{DFFA8C65-6C86-4835-9E92-1B5C22162CB0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 Duurzaamheid", "4 Duurzaamheid", "{75A5C8B8-D1B9-4D2B-AD33-D1B0ABAA7D44}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetonConstructies", "BetonConstructies\BetonConstructies.csproj", "{0C6F0F02-8615-4634-A5F5-5904527F1CA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +41,24 @@ Global
 		{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D78F8EB9-29BD-470D-86F3-ED3360E9F338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D78F8EB9-29BD-470D-86F3-ED3360E9F338}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D78F8EB9-29BD-470D-86F3-ED3360E9F338}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D78F8EB9-29BD-470D-86F3-ED3360E9F338}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C6F0F02-8615-4634-A5F5-5904527F1CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C6F0F02-8615-4634-A5F5-5904527F1CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C6F0F02-8615-4634-A5F5-5904527F1CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C6F0F02-8615-4634-A5F5-5904527F1CA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711} = {00B014AD-4D11-4443-B36F-DAFDFE00A7D2}
+		{D78F8EB9-29BD-470D-86F3-ED3360E9F338} = {737DF754-D2CE-436D-8C2F-18333E488FDF}
+		{74B58FCC-995C-44B7-A213-D79A6012E6A2} = {E0F1F799-E487-4673-9ED8-59BA6C243175}
+		{75A5C8B8-D1B9-4D2B-AD33-D1B0ABAA7D44} = {E0F1F799-E487-4673-9ED8-59BA6C243175}
+		{0C6F0F02-8615-4634-A5F5-5904527F1CA1} = {8FA64B87-3C59-4CD6-896E-9D5CDC81FE5A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23B23B07-CC7C-464E-B98D-5EF418F994FB}
