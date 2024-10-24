@@ -1,0 +1,328 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  commentId: T:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  id: BetonStaalKwaliteitEnum
+  parent: Eurocode.BetonConstructies
+  children:
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400A
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400B
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400C
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500A
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500B
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500C
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600A
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600B
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600C
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.EigenFyk
+  langs:
+  - csharp
+  - vb
+  name: BetonStaalKwaliteitEnum
+  nameWithType: BetonStaalKwaliteitEnum
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetonStaalKwaliteitEnum
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 32
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public enum BetonStaalKwaliteitEnum
+    content.vb: Public Enum BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500A
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500A
+  id: B500A
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: B500A
+  nameWithType: BetonStaalKwaliteitEnum.B500A
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500A
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: B500A
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 34
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: B500A = 1
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500B
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500B
+  id: B500B
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: B500B
+  nameWithType: BetonStaalKwaliteitEnum.B500B
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500B
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: B500B
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 35
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: B500B = 2
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500C
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500C
+  id: B500C
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: B500C
+  nameWithType: BetonStaalKwaliteitEnum.B500C
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B500C
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: B500C
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 36
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: B500C = 3
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400A
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400A
+  id: B400A
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: B400A
+  nameWithType: BetonStaalKwaliteitEnum.B400A
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400A
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: B400A
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 37
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: B400A = 11
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400B
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400B
+  id: B400B
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: B400B
+  nameWithType: BetonStaalKwaliteitEnum.B400B
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400B
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: B400B
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 38
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: B400B = 12
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400C
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400C
+  id: B400C
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: B400C
+  nameWithType: BetonStaalKwaliteitEnum.B400C
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B400C
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: B400C
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 39
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: B400C = 13
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600A
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600A
+  id: B600A
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: B600A
+  nameWithType: BetonStaalKwaliteitEnum.B600A
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600A
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: B600A
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 40
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: B600A = 21
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600B
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600B
+  id: B600B
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: B600B
+  nameWithType: BetonStaalKwaliteitEnum.B600B
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600B
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: B600B
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 41
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: B600B = 22
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600C
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600C
+  id: B600C
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: B600C
+  nameWithType: BetonStaalKwaliteitEnum.B600C
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.B600C
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: B600C
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 42
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: B600C = 23
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.EigenFyk
+  commentId: F:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.EigenFyk
+  id: EigenFyk
+  parent: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  langs:
+  - csharp
+  - vb
+  name: EigenFyk
+  nameWithType: BetonStaalKwaliteitEnum.EigenFyk
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.EigenFyk
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: EigenFyk
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 43
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: EigenFyk = 31
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+references:
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  commentId: T:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.html
+  name: BetonStaalKwaliteitEnum
+  nameWithType: BetonStaalKwaliteitEnum
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum

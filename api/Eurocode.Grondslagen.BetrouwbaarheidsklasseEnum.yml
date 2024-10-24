@@ -1,0 +1,210 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  commentId: T:Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  id: BetrouwbaarheidsklasseEnum
+  parent: Eurocode.Grondslagen
+  children:
+  - Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC1
+  - Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC2
+  - Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC3
+  langs:
+  - csharp
+  - vb
+  name: BetrouwbaarheidsklasseEnum
+  nameWithType: BetrouwbaarheidsklasseEnum
+  fullName: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/BetrouwbaarheidsklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetrouwbaarheidsklasseEnum
+    path: Eurocode0.Grondslagen/BetrouwbaarheidsklasseEnum.cs
+    startLine: 9
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: >-
+    B3.2 (2) Drie betrouwbaarheidsklassen RC1, RC2 en RC3 mogen in één verband worden gezien met de drie 
+
+    gevolgklassen CC1, CC2 en CC3.
+  remarks: RC is een afkorting voor Reliability Classes (betrouwbaarheidsklassen).
+  example: []
+  syntax:
+    content: public enum BetrouwbaarheidsklasseEnum
+    content.vb: Public Enum BetrouwbaarheidsklasseEnum
+  extensionMethods:
+  - Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.Eurocode.Grondslagen.GrondslagenExtensions.GetKfi
+- uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC1
+  commentId: F:Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC1
+  id: RC1
+  parent: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: RC1
+  nameWithType: BetrouwbaarheidsklasseEnum.RC1
+  fullName: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC1
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/BetrouwbaarheidsklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: RC1
+    path: Eurocode0.Grondslagen/BetrouwbaarheidsklasseEnum.cs
+    startLine: 14
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: Reliability Class 1 (betrouwbaarheidsklasse)
+  example: []
+  syntax:
+    content: RC1 = 1
+    return:
+      type: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+- uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC2
+  commentId: F:Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC2
+  id: RC2
+  parent: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: RC2
+  nameWithType: BetrouwbaarheidsklasseEnum.RC2
+  fullName: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC2
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/BetrouwbaarheidsklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: RC2
+    path: Eurocode0.Grondslagen/BetrouwbaarheidsklasseEnum.cs
+    startLine: 19
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: Reliability Class 2 (betrouwbaarheidsklasse)
+  example: []
+  syntax:
+    content: RC2 = 2
+    return:
+      type: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+- uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC3
+  commentId: F:Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC3
+  id: RC3
+  parent: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: RC3
+  nameWithType: BetrouwbaarheidsklasseEnum.RC3
+  fullName: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.RC3
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/BetrouwbaarheidsklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: RC3
+    path: Eurocode0.Grondslagen/BetrouwbaarheidsklasseEnum.cs
+    startLine: 24
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: Reliability Class 3 (betrouwbaarheidsklasse)
+  example: []
+  syntax:
+    content: RC3 = 3
+    return:
+      type: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+references:
+- uid: Eurocode.Grondslagen
+  commentId: N:Eurocode.Grondslagen
+  href: Eurocode.html
+  name: Eurocode.Grondslagen
+  nameWithType: Eurocode.Grondslagen
+  fullName: Eurocode.Grondslagen
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+- uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.Eurocode.Grondslagen.GrondslagenExtensions.GetKfi
+  commentId: M:Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  parent: Eurocode.Grondslagen.GrondslagenExtensions
+  definition: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  href: Eurocode.Grondslagen.GrondslagenExtensions.html#Eurocode_Grondslagen_GrondslagenExtensions_GetKfi_Eurocode_Grondslagen_BetrouwbaarheidsklasseEnum_
+  name: GetKfi(BetrouwbaarheidsklasseEnum)
+  nameWithType: GrondslagenExtensions.GetKfi(BetrouwbaarheidsklasseEnum)
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  spec.csharp:
+  - uid: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+    name: GetKfi
+    href: Eurocode.Grondslagen.GrondslagenExtensions.html#Eurocode_Grondslagen_GrondslagenExtensions_GetKfi_Eurocode_Grondslagen_BetrouwbaarheidsklasseEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+    name: BetrouwbaarheidsklasseEnum
+    href: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+    name: GetKfi
+    href: Eurocode.Grondslagen.GrondslagenExtensions.html#Eurocode_Grondslagen_GrondslagenExtensions_GetKfi_Eurocode_Grondslagen_BetrouwbaarheidsklasseEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+    name: BetrouwbaarheidsklasseEnum
+    href: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.html
+  - name: )
+- uid: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  commentId: M:Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  href: Eurocode.Grondslagen.GrondslagenExtensions.html#Eurocode_Grondslagen_GrondslagenExtensions_GetKfi_Eurocode_Grondslagen_BetrouwbaarheidsklasseEnum_
+  name: GetKfi(BetrouwbaarheidsklasseEnum)
+  nameWithType: GrondslagenExtensions.GetKfi(BetrouwbaarheidsklasseEnum)
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  spec.csharp:
+  - uid: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+    name: GetKfi
+    href: Eurocode.Grondslagen.GrondslagenExtensions.html#Eurocode_Grondslagen_GrondslagenExtensions_GetKfi_Eurocode_Grondslagen_BetrouwbaarheidsklasseEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+    name: BetrouwbaarheidsklasseEnum
+    href: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+    name: GetKfi
+    href: Eurocode.Grondslagen.GrondslagenExtensions.html#Eurocode_Grondslagen_GrondslagenExtensions_GetKfi_Eurocode_Grondslagen_BetrouwbaarheidsklasseEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+    name: BetrouwbaarheidsklasseEnum
+    href: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.html
+  - name: )
+- uid: Eurocode.Grondslagen.GrondslagenExtensions
+  commentId: T:Eurocode.Grondslagen.GrondslagenExtensions
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.GrondslagenExtensions.html
+  name: GrondslagenExtensions
+  nameWithType: GrondslagenExtensions
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions
+- uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  commentId: T:Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.html
+  name: BetrouwbaarheidsklasseEnum
+  nameWithType: BetrouwbaarheidsklasseEnum
+  fullName: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum

@@ -1,0 +1,504 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.Grondslagen.GrondslagenExtensions
+  commentId: T:Eurocode.Grondslagen.GrondslagenExtensions
+  id: GrondslagenExtensions
+  parent: Eurocode.Grondslagen
+  children:
+  - Eurocode.Grondslagen.GrondslagenExtensions.GetBetrouwbaarheidsklasse(System.Nullable{Eurocode.Grondslagen.GevolgklasseEnum})
+  - Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  - Eurocode.Grondslagen.GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen(System.Nullable{Eurocode.Grondslagen.NationaleBijlageEnum})
+  langs:
+  - csharp
+  - vb
+  name: GrondslagenExtensions
+  nameWithType: GrondslagenExtensions
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions
+  type: Class
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GrondslagenContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GrondslagenExtensions
+    path: Eurocode0.Grondslagen/GrondslagenContext.cs
+    startLine: 49
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: public static class GrondslagenExtensions
+    content.vb: Public Module GrondslagenExtensions
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  commentId: M:Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  id: GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  isExtensionMethod: true
+  parent: Eurocode.Grondslagen.GrondslagenExtensions
+  langs:
+  - csharp
+  - vb
+  name: GetKfi(BetrouwbaarheidsklasseEnum)
+  nameWithType: GrondslagenExtensions.GetKfi(BetrouwbaarheidsklasseEnum)
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi(Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum)
+  type: Method
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GrondslagenContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GetKfi
+    path: Eurocode0.Grondslagen/GrondslagenContext.cs
+    startLine: 51
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: public static double GetKfi(this BetrouwbaarheidsklasseEnum betrouwbaarheidsklasse)
+    parameters:
+    - id: betrouwbaarheidsklasse
+      type: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+    return:
+      type: System.Double
+    content.vb: Public Shared Function GetKfi(betrouwbaarheidsklasse As BetrouwbaarheidsklasseEnum) As Double
+  overload: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi*
+- uid: Eurocode.Grondslagen.GrondslagenExtensions.GetBetrouwbaarheidsklasse(System.Nullable{Eurocode.Grondslagen.GevolgklasseEnum})
+  commentId: M:Eurocode.Grondslagen.GrondslagenExtensions.GetBetrouwbaarheidsklasse(System.Nullable{Eurocode.Grondslagen.GevolgklasseEnum})
+  id: GetBetrouwbaarheidsklasse(System.Nullable{Eurocode.Grondslagen.GevolgklasseEnum})
+  isExtensionMethod: true
+  parent: Eurocode.Grondslagen.GrondslagenExtensions
+  langs:
+  - csharp
+  - vb
+  name: GetBetrouwbaarheidsklasse(GevolgklasseEnum?)
+  nameWithType: GrondslagenExtensions.GetBetrouwbaarheidsklasse(GevolgklasseEnum?)
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions.GetBetrouwbaarheidsklasse(Eurocode.Grondslagen.GevolgklasseEnum?)
+  type: Method
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GrondslagenContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GetBetrouwbaarheidsklasse
+    path: Eurocode0.Grondslagen/GrondslagenContext.cs
+    startLine: 63
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: public static BetrouwbaarheidsklasseEnum GetBetrouwbaarheidsklasse(this GevolgklasseEnum? gevolgklasse)
+    parameters:
+    - id: gevolgklasse
+      type: System.Nullable{Eurocode.Grondslagen.GevolgklasseEnum}
+    return:
+      type: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+    content.vb: Public Shared Function GetBetrouwbaarheidsklasse(gevolgklasse As GevolgklasseEnum?) As BetrouwbaarheidsklasseEnum
+  overload: Eurocode.Grondslagen.GrondslagenExtensions.GetBetrouwbaarheidsklasse*
+- uid: Eurocode.Grondslagen.GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen(System.Nullable{Eurocode.Grondslagen.NationaleBijlageEnum})
+  commentId: M:Eurocode.Grondslagen.GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen(System.Nullable{Eurocode.Grondslagen.NationaleBijlageEnum})
+  id: GetReductieFactorVoorOngunstigeBlijvendeBelastingen(System.Nullable{Eurocode.Grondslagen.NationaleBijlageEnum})
+  isExtensionMethod: true
+  parent: Eurocode.Grondslagen.GrondslagenExtensions
+  langs:
+  - csharp
+  - vb
+  name: GetReductieFactorVoorOngunstigeBlijvendeBelastingen(NationaleBijlageEnum?)
+  nameWithType: GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen(NationaleBijlageEnum?)
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen(Eurocode.Grondslagen.NationaleBijlageEnum?)
+  type: Method
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GrondslagenContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GetReductieFactorVoorOngunstigeBlijvendeBelastingen
+    path: Eurocode0.Grondslagen/GrondslagenContext.cs
+    startLine: 80
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: >-
+    ξ (xi) is een reductiefactor voor ongunstige, blijvende belastingen G
+
+    Deze wordt gebruikt in de fundamentele combinatie (6.10b) en is afhankelijk van de nationale bijlage.
+  example: []
+  syntax:
+    content: public static double GetReductieFactorVoorOngunstigeBlijvendeBelastingen(this NationaleBijlageEnum? nb)
+    parameters:
+    - id: nb
+      type: System.Nullable{Eurocode.Grondslagen.NationaleBijlageEnum}
+      description: ''
+    return:
+      type: System.Double
+      description: ''
+    content.vb: Public Shared Function GetReductieFactorVoorOngunstigeBlijvendeBelastingen(nb As NationaleBijlageEnum?) As Double
+  overload: Eurocode.Grondslagen.GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen*
+references:
+- uid: Eurocode.Grondslagen
+  commentId: N:Eurocode.Grondslagen
+  href: Eurocode.html
+  name: Eurocode.Grondslagen
+  nameWithType: Eurocode.Grondslagen
+  fullName: Eurocode.Grondslagen
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi*
+  commentId: Overload:Eurocode.Grondslagen.GrondslagenExtensions.GetKfi
+  href: Eurocode.Grondslagen.GrondslagenExtensions.html#Eurocode_Grondslagen_GrondslagenExtensions_GetKfi_Eurocode_Grondslagen_BetrouwbaarheidsklasseEnum_
+  name: GetKfi
+  nameWithType: GrondslagenExtensions.GetKfi
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions.GetKfi
+- uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  commentId: T:Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.html
+  name: BetrouwbaarheidsklasseEnum
+  nameWithType: BetrouwbaarheidsklasseEnum
+  fullName: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+- uid: System.Double
+  commentId: T:System.Double
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.double
+  name: double
+  nameWithType: double
+  fullName: double
+  nameWithType.vb: Double
+  fullName.vb: Double
+  name.vb: Double
+- uid: Eurocode.Grondslagen.GrondslagenExtensions.GetBetrouwbaarheidsklasse*
+  commentId: Overload:Eurocode.Grondslagen.GrondslagenExtensions.GetBetrouwbaarheidsklasse
+  href: Eurocode.Grondslagen.GrondslagenExtensions.html#Eurocode_Grondslagen_GrondslagenExtensions_GetBetrouwbaarheidsklasse_System_Nullable_Eurocode_Grondslagen_GevolgklasseEnum__
+  name: GetBetrouwbaarheidsklasse
+  nameWithType: GrondslagenExtensions.GetBetrouwbaarheidsklasse
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions.GetBetrouwbaarheidsklasse
+- uid: System.Nullable{Eurocode.Grondslagen.GevolgklasseEnum}
+  commentId: T:System.Nullable{Eurocode.Grondslagen.GevolgklasseEnum}
+  parent: System
+  definition: System.Nullable`1
+  href: Eurocode.Grondslagen.GevolgklasseEnum.html
+  name: GevolgklasseEnum?
+  nameWithType: GevolgklasseEnum?
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum?
+  spec.csharp:
+  - uid: Eurocode.Grondslagen.GevolgklasseEnum
+    name: GevolgklasseEnum
+    href: Eurocode.Grondslagen.GevolgklasseEnum.html
+  - name: '?'
+  spec.vb:
+  - uid: Eurocode.Grondslagen.GevolgklasseEnum
+    name: GevolgklasseEnum
+    href: Eurocode.Grondslagen.GevolgklasseEnum.html
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Eurocode.Grondslagen.GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen*
+  commentId: Overload:Eurocode.Grondslagen.GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen
+  href: Eurocode.Grondslagen.GrondslagenExtensions.html#Eurocode_Grondslagen_GrondslagenExtensions_GetReductieFactorVoorOngunstigeBlijvendeBelastingen_System_Nullable_Eurocode_Grondslagen_NationaleBijlageEnum__
+  name: GetReductieFactorVoorOngunstigeBlijvendeBelastingen
+  nameWithType: GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions.GetReductieFactorVoorOngunstigeBlijvendeBelastingen
+- uid: System.Nullable{Eurocode.Grondslagen.NationaleBijlageEnum}
+  commentId: T:System.Nullable{Eurocode.Grondslagen.NationaleBijlageEnum}
+  parent: System
+  definition: System.Nullable`1
+  href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  name: NationaleBijlageEnum?
+  nameWithType: NationaleBijlageEnum?
+  fullName: Eurocode.Grondslagen.NationaleBijlageEnum?
+  spec.csharp:
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: '?'
+  spec.vb:
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: '?'

@@ -1,0 +1,615 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum
+  commentId: T:Eurocode.BetonConstructies.MilieuklasseEnum
+  id: MilieuklasseEnum
+  parent: Eurocode.BetonConstructies
+  children:
+  - Eurocode.BetonConstructies.MilieuklasseEnum.X0
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XA1
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XA2
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XA3
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XC1
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XC2
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XC3
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XC4
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XD1
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XD2
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XD3
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XF1
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XF2
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XF3
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XF4
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XS1
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XS2
+  - Eurocode.BetonConstructies.MilieuklasseEnum.XS3
+  langs:
+  - csharp
+  - vb
+  name: MilieuklasseEnum
+  nameWithType: MilieuklasseEnum
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: MilieuklasseEnum
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 10
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: Milieuklasse volgens tabel 4.1
+  example: []
+  syntax:
+    content: >-
+      [Flags]
+
+      public enum MilieuklasseEnum
+    content.vb: >-
+      <Flags>
+
+      Public Enum MilieuklasseEnum
+  extensionMethods:
+  - Eurocode.BetonConstructies.MilieuklasseEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex
+  attributes:
+  - type: System.FlagsAttribute
+    ctor: System.FlagsAttribute.#ctor
+    arguments: []
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.X0
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.X0
+  id: X0
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: X0
+  nameWithType: MilieuklasseEnum.X0
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.X0
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: X0
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 13
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: X0 = 1
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XC1
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XC1
+  id: XC1
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XC1
+  nameWithType: MilieuklasseEnum.XC1
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XC1
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XC1
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 16
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XC1 = 2
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XC2
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XC2
+  id: XC2
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XC2
+  nameWithType: MilieuklasseEnum.XC2
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XC2
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XC2
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 18
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XC2 = 4
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XC3
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XC3
+  id: XC3
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XC3
+  nameWithType: MilieuklasseEnum.XC3
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XC3
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XC3
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 20
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XC3 = 8
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XC4
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XC4
+  id: XC4
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XC4
+  nameWithType: MilieuklasseEnum.XC4
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XC4
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XC4
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 22
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XC4 = 16
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XD1
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XD1
+  id: XD1
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XD1
+  nameWithType: MilieuklasseEnum.XD1
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XD1
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XD1
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 25
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XD1 = 32
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XD2
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XD2
+  id: XD2
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XD2
+  nameWithType: MilieuklasseEnum.XD2
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XD2
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XD2
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 27
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XD2 = 64
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XD3
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XD3
+  id: XD3
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XD3
+  nameWithType: MilieuklasseEnum.XD3
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XD3
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XD3
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 29
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XD3 = 128
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XS1
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XS1
+  id: XS1
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XS1
+  nameWithType: MilieuklasseEnum.XS1
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XS1
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XS1
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 32
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XS1 = 512
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XS2
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XS2
+  id: XS2
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XS2
+  nameWithType: MilieuklasseEnum.XS2
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XS2
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XS2
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 34
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XS2 = 1024
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XS3
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XS3
+  id: XS3
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XS3
+  nameWithType: MilieuklasseEnum.XS3
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XS3
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XS3
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 36
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XS3 = 2048
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XF1
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XF1
+  id: XF1
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XF1
+  nameWithType: MilieuklasseEnum.XF1
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XF1
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XF1
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 39
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XF1 = 4096
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XF2
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XF2
+  id: XF2
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XF2
+  nameWithType: MilieuklasseEnum.XF2
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XF2
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XF2
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 41
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XF2 = 8192
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XF3
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XF3
+  id: XF3
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XF3
+  nameWithType: MilieuklasseEnum.XF3
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XF3
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XF3
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 43
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XF3 = 16384
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XF4
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XF4
+  id: XF4
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XF4
+  nameWithType: MilieuklasseEnum.XF4
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XF4
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XF4
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 45
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XF4 = 32768
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XA1
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XA1
+  id: XA1
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XA1
+  nameWithType: MilieuklasseEnum.XA1
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XA1
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XA1
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 48
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XA1 = 65536
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XA2
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XA2
+  id: XA2
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XA2
+  nameWithType: MilieuklasseEnum.XA2
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XA2
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XA2
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 50
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XA2 = 131072
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.XA3
+  commentId: F:Eurocode.BetonConstructies.MilieuklasseEnum.XA3
+  id: XA3
+  parent: Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: XA3
+  nameWithType: MilieuklasseEnum.XA3
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum.XA3
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XA3
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/MilieuklasseEnum.cs
+    startLine: 52
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: XA3 = 262144
+    return:
+      type: Eurocode.BetonConstructies.MilieuklasseEnum
+references:
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+  parent: Eurocode.BetonConstructies.BetonDekkingExtensions
+  definition: Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetCminDurColumnIndex_Eurocode_BetonConstructies_MilieuklasseEnum_
+  name: GetCminDurColumnIndex(MilieuklasseEnum)
+  nameWithType: BetonDekkingExtensions.GetCminDurColumnIndex(MilieuklasseEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+    name: GetCminDurColumnIndex
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetCminDurColumnIndex_Eurocode_BetonConstructies_MilieuklasseEnum_
+  - name: (
+  - uid: Eurocode.BetonConstructies.MilieuklasseEnum
+    name: MilieuklasseEnum
+    href: Eurocode.BetonConstructies.MilieuklasseEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+    name: GetCminDurColumnIndex
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetCminDurColumnIndex_Eurocode_BetonConstructies_MilieuklasseEnum_
+  - name: (
+  - uid: Eurocode.BetonConstructies.MilieuklasseEnum
+    name: MilieuklasseEnum
+    href: Eurocode.BetonConstructies.MilieuklasseEnum.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetCminDurColumnIndex_Eurocode_BetonConstructies_MilieuklasseEnum_
+  name: GetCminDurColumnIndex(MilieuklasseEnum)
+  nameWithType: BetonDekkingExtensions.GetCminDurColumnIndex(MilieuklasseEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+    name: GetCminDurColumnIndex
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetCminDurColumnIndex_Eurocode_BetonConstructies_MilieuklasseEnum_
+  - name: (
+  - uid: Eurocode.BetonConstructies.MilieuklasseEnum
+    name: MilieuklasseEnum
+    href: Eurocode.BetonConstructies.MilieuklasseEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetCminDurColumnIndex(Eurocode.BetonConstructies.MilieuklasseEnum)
+    name: GetCminDurColumnIndex
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetCminDurColumnIndex_Eurocode_BetonConstructies_MilieuklasseEnum_
+  - name: (
+  - uid: Eurocode.BetonConstructies.MilieuklasseEnum
+    name: MilieuklasseEnum
+    href: Eurocode.BetonConstructies.MilieuklasseEnum.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonDekkingExtensions
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingExtensions
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html
+  name: BetonDekkingExtensions
+  nameWithType: BetonDekkingExtensions
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum
+  commentId: T:Eurocode.BetonConstructies.MilieuklasseEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.MilieuklasseEnum.html
+  name: MilieuklasseEnum
+  nameWithType: MilieuklasseEnum
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum

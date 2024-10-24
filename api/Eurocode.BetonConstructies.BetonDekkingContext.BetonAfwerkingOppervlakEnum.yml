@@ -1,0 +1,130 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  id: BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  parent: Eurocode.BetonConstructies
+  children:
+  - Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.Glad
+  - Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.NabewerktOnEffen
+  langs:
+  - csharp
+  - vb
+  name: BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  nameWithType: BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetonAfwerkingOppervlakEnum
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+    startLine: 204
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: keuze voor afwerking van de oppervlakte
+  example: []
+  syntax:
+    content: public enum BetonDekkingContext.BetonAfwerkingOppervlakEnum
+    content.vb: Public Enum BetonDekkingContext.BetonAfwerkingOppervlakEnum
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.Glad
+  commentId: F:Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.Glad
+  id: Glad
+  parent: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  langs:
+  - csharp
+  - vb
+  name: Glad
+  nameWithType: BetonDekkingContext.BetonAfwerkingOppervlakEnum.Glad
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.Glad
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Glad
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+    startLine: 204
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: Glad = 1
+    return:
+      type: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.NabewerktOnEffen
+  commentId: F:Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.NabewerktOnEffen
+  id: NabewerktOnEffen
+  parent: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  langs:
+  - csharp
+  - vb
+  name: NabewerktOnEffen
+  nameWithType: BetonDekkingContext.BetonAfwerkingOppervlakEnum.NabewerktOnEffen
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.NabewerktOnEffen
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: NabewerktOnEffen
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+    startLine: 204
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: NabewerktOnEffen = 2
+    return:
+      type: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+references:
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  name: BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  nameWithType: BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: .
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+    name: BetonAfwerkingOppervlakEnum
+    href: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.html
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: .
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+    name: BetonAfwerkingOppervlakEnum
+    href: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.html

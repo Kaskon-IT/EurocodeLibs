@@ -1,0 +1,269 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.Grondslagen.GevolgklasseEnum
+  commentId: T:Eurocode.Grondslagen.GevolgklasseEnum
+  id: GevolgklasseEnum
+  parent: Eurocode.Grondslagen
+  children:
+  - Eurocode.Grondslagen.GevolgklasseEnum.CC1
+  - Eurocode.Grondslagen.GevolgklasseEnum.CC1a
+  - Eurocode.Grondslagen.GevolgklasseEnum.CC1b
+  - Eurocode.Grondslagen.GevolgklasseEnum.CC2
+  - Eurocode.Grondslagen.GevolgklasseEnum.CC2a
+  - Eurocode.Grondslagen.GevolgklasseEnum.CC2b
+  - Eurocode.Grondslagen.GevolgklasseEnum.CC3
+  langs:
+  - csharp
+  - vb
+  name: GevolgklasseEnum
+  nameWithType: GevolgklasseEnum
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GevolgklasseEnum
+    path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+    startLine: 9
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: >-
+    B3.1 Gevolgklassen
+
+    (1) Ten behoeve van de betrouwbaarheidsdifferentiatie, mogen gevolgklassen (CC), zoals gegeven in tabel B1, 
+
+    worden gedefinieerd door het beschouwen van de gevolgen van bezwijken of het slecht functioneren van de
+
+    constructie.
+  remarks: CC is een afkorting voor Consequences Classes (gevolgklassen)
+  example: []
+  syntax:
+    content: public enum GevolgklasseEnum
+    content.vb: Public Enum GevolgklasseEnum
+- uid: Eurocode.Grondslagen.GevolgklasseEnum.CC1
+  commentId: F:Eurocode.Grondslagen.GevolgklasseEnum.CC1
+  id: CC1
+  parent: Eurocode.Grondslagen.GevolgklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: CC1
+  nameWithType: GevolgklasseEnum.CC1
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum.CC1
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CC1
+    path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+    startLine: 18
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: >-
+    Geringe gevolgen ten aanzien van het verlies van mensenlevens, of kleine of verwaarloosbare economische gevolgen, sociale gevolgen of 
+
+    gevolgen voor de omgeving.
+  remarks: 'Voorbeeld: Gebouwen voor de landbouw waar mensen normaal niet verblijven (bijv. opslagschuren, tuinbouwkassen)'
+  example: []
+  syntax:
+    content: CC1 = 101
+    return:
+      type: Eurocode.Grondslagen.GevolgklasseEnum
+- uid: Eurocode.Grondslagen.GevolgklasseEnum.CC1a
+  commentId: F:Eurocode.Grondslagen.GevolgklasseEnum.CC1a
+  id: CC1a
+  parent: Eurocode.Grondslagen.GevolgklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: CC1a
+  nameWithType: GevolgklasseEnum.CC1a
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum.CC1a
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CC1a
+    path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+    startLine: 19
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: CC1a = 102
+    return:
+      type: Eurocode.Grondslagen.GevolgklasseEnum
+- uid: Eurocode.Grondslagen.GevolgklasseEnum.CC1b
+  commentId: F:Eurocode.Grondslagen.GevolgklasseEnum.CC1b
+  id: CC1b
+  parent: Eurocode.Grondslagen.GevolgklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: CC1b
+  nameWithType: GevolgklasseEnum.CC1b
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum.CC1b
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CC1b
+    path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+    startLine: 20
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: CC1b = 103
+    return:
+      type: Eurocode.Grondslagen.GevolgklasseEnum
+- uid: Eurocode.Grondslagen.GevolgklasseEnum.CC2
+  commentId: F:Eurocode.Grondslagen.GevolgklasseEnum.CC2
+  id: CC2
+  parent: Eurocode.Grondslagen.GevolgklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: CC2
+  nameWithType: GevolgklasseEnum.CC2
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum.CC2
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CC2
+    path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+    startLine: 28
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: Middelmatige gevolgen ten aanzien van het verlies van mensenlevens, aanzienlijke economische gevolgen, sociale gevolgen of gevolgen voor de omgeving.
+  remarks: 'Voorbeeld: Woon- en kantoorgebouwen.'
+  example: []
+  syntax:
+    content: CC2 = 201
+    return:
+      type: Eurocode.Grondslagen.GevolgklasseEnum
+- uid: Eurocode.Grondslagen.GevolgklasseEnum.CC2a
+  commentId: F:Eurocode.Grondslagen.GevolgklasseEnum.CC2a
+  id: CC2a
+  parent: Eurocode.Grondslagen.GevolgklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: CC2a
+  nameWithType: GevolgklasseEnum.CC2a
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum.CC2a
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CC2a
+    path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+    startLine: 29
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: CC2a = 202
+    return:
+      type: Eurocode.Grondslagen.GevolgklasseEnum
+- uid: Eurocode.Grondslagen.GevolgklasseEnum.CC2b
+  commentId: F:Eurocode.Grondslagen.GevolgklasseEnum.CC2b
+  id: CC2b
+  parent: Eurocode.Grondslagen.GevolgklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: CC2b
+  nameWithType: GevolgklasseEnum.CC2b
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum.CC2b
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CC2b
+    path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+    startLine: 30
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: CC2b = 203
+    return:
+      type: Eurocode.Grondslagen.GevolgklasseEnum
+- uid: Eurocode.Grondslagen.GevolgklasseEnum.CC3
+  commentId: F:Eurocode.Grondslagen.GevolgklasseEnum.CC3
+  id: CC3
+  parent: Eurocode.Grondslagen.GevolgklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: CC3
+  nameWithType: GevolgklasseEnum.CC3
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum.CC3
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CC3
+    path: Eurocode0.Grondslagen/GevolgklasseEnum.cs
+    startLine: 38
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: Grote gevolgen ten aanzien van het verlies van mensenlevens, of zeer grote economische gevolgen, sociale gevolgen of gevolgen voor de omgeving.
+  remarks: 'Voorbeeld: Tribunes, openbare gebouwen waarbij de gevolgen van het bezwijken groot zijn.'
+  example: []
+  syntax:
+    content: CC3 = 301
+    return:
+      type: Eurocode.Grondslagen.GevolgklasseEnum
+references:
+- uid: Eurocode.Grondslagen
+  commentId: N:Eurocode.Grondslagen
+  href: Eurocode.html
+  name: Eurocode.Grondslagen
+  nameWithType: Eurocode.Grondslagen
+  fullName: Eurocode.Grondslagen
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+- uid: Eurocode.Grondslagen.GevolgklasseEnum
+  commentId: T:Eurocode.Grondslagen.GevolgklasseEnum
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.GevolgklasseEnum.html
+  name: GevolgklasseEnum
+  nameWithType: GevolgklasseEnum
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum

@@ -1,0 +1,338 @@
+{
+  "source_base_path": "C:/Users/bvanderlinden/source/repos/Eurocode",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      }
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "README.md",
+      "output": {
+        ".html": {
+          "relative_path": "README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Belastingen.Class1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Belastingen.Class1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Belastingen.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Belastingen.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.BetonContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.BetonContext.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.BetonContextExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.BetonContextExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.BetonDekkingContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.BetonDekkingContext.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.BetonDekkingExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.BetonDekkingExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.BetonStaalContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.BetonStaalContext.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.BetonsterkteklasseEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.BetonsterkteklasseEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.CementklasseEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.CementklasseEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.Constructieklasse.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.Constructieklasse.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.ConstructieklasseExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.ConstructieklasseExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.MilieuklasseEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.MilieuklasseEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.BetonConstructies.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.BetonConstructies.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.Grondslagen.GevolgklasseEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.Grondslagen.GevolgklasseEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.Grondslagen.GrondslagenContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.Grondslagen.GrondslagenContext.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.Grondslagen.GrondslagenExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.Grondslagen.GrondslagenExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.Grondslagen.NationaleBijlageEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.Grondslagen.NationaleBijlageEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.Grondslagen.OntwerpLevensduurEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.Grondslagen.OntwerpLevensduurEnum.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Eurocode.Grondslagen.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Eurocode.Grondslagen.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/getting-started.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/getting-started.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/introductie.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/introductie.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/introduction.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/introduction.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "docs/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/toc.html"
+        },
+        ".json": {
+          "relative_path": "docs/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

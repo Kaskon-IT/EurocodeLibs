@@ -1,0 +1,157 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  id: BetonDekkingContext.BetonStortOndergrondEnum
+  parent: Eurocode.BetonConstructies
+  children:
+  - Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.GladdeBekistingOfNvt
+  - Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.OpOfTegenGrond
+  - Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.Werkvloer
+  langs:
+  - csharp
+  - vb
+  name: BetonDekkingContext.BetonStortOndergrondEnum
+  nameWithType: BetonDekkingContext.BetonStortOndergrondEnum
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetonStortOndergrondEnum
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+    startLine: 199
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: keuzes voor ondergrond van de betonstort.
+  example: []
+  syntax:
+    content: public enum BetonDekkingContext.BetonStortOndergrondEnum
+    content.vb: Public Enum BetonDekkingContext.BetonStortOndergrondEnum
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.GladdeBekistingOfNvt
+  commentId: F:Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.GladdeBekistingOfNvt
+  id: GladdeBekistingOfNvt
+  parent: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  langs:
+  - csharp
+  - vb
+  name: GladdeBekistingOfNvt
+  nameWithType: BetonDekkingContext.BetonStortOndergrondEnum.GladdeBekistingOfNvt
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.GladdeBekistingOfNvt
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GladdeBekistingOfNvt
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+    startLine: 199
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: GladdeBekistingOfNvt = 1
+    return:
+      type: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.Werkvloer
+  commentId: F:Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.Werkvloer
+  id: Werkvloer
+  parent: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  langs:
+  - csharp
+  - vb
+  name: Werkvloer
+  nameWithType: BetonDekkingContext.BetonStortOndergrondEnum.Werkvloer
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.Werkvloer
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Werkvloer
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+    startLine: 199
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: Werkvloer = 2
+    return:
+      type: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.OpOfTegenGrond
+  commentId: F:Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.OpOfTegenGrond
+  id: OpOfTegenGrond
+  parent: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  langs:
+  - csharp
+  - vb
+  name: OpOfTegenGrond
+  nameWithType: BetonDekkingContext.BetonStortOndergrondEnum.OpOfTegenGrond
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.OpOfTegenGrond
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: OpOfTegenGrond
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/BetonDekkingContext.cs
+    startLine: 199
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: OpOfTegenGrond = 3
+    return:
+      type: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+references:
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  name: BetonDekkingContext.BetonStortOndergrondEnum
+  nameWithType: BetonDekkingContext.BetonStortOndergrondEnum
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: .
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+    name: BetonStortOndergrondEnum
+    href: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.html
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: .
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+    name: BetonStortOndergrondEnum
+    href: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.html

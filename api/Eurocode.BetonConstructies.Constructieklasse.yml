@@ -1,0 +1,723 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.BetonConstructies.Constructieklasse
+  commentId: T:Eurocode.BetonConstructies.Constructieklasse
+  id: Constructieklasse
+  parent: Eurocode.BetonConstructies
+  children:
+  - Eurocode.BetonConstructies.Constructieklasse.#ctor(Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+  - Eurocode.BetonConstructies.Constructieklasse.ConstructieKlasseBasis
+  - Eurocode.BetonConstructies.Constructieklasse.CorrectieBeton
+  - Eurocode.BetonConstructies.Constructieklasse.CorrectieKwaliteitsBeheersting
+  - Eurocode.BetonConstructies.Constructieklasse.CorrectieLevensduur
+  - Eurocode.BetonConstructies.Constructieklasse.CorrectiePlaatGeometrie
+  - Eurocode.BetonConstructies.Constructieklasse.Klasse
+  - Eurocode.BetonConstructies.Constructieklasse.UserFriendlyName
+  langs:
+  - csharp
+  - vb
+  name: Constructieklasse
+  nameWithType: Constructieklasse
+  fullName: Eurocode.BetonConstructies.Constructieklasse
+  type: Class
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Constructieklasse
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+    startLine: 2
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public class Constructieklasse
+    content.vb: Public Class Constructieklasse
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+  extensionMethods:
+  - Eurocode.BetonConstructies.Constructieklasse.Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+- uid: Eurocode.BetonConstructies.Constructieklasse.#ctor(Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.Constructieklasse.#ctor(Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+  id: '#ctor(Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)'
+  parent: Eurocode.BetonConstructies.Constructieklasse
+  langs:
+  - csharp
+  - vb
+  name: Constructieklasse(BetonDekkingContext, BetonContext)
+  nameWithType: Constructieklasse.Constructieklasse(BetonDekkingContext, BetonContext)
+  fullName: Eurocode.BetonConstructies.Constructieklasse.Constructieklasse(Eurocode.BetonConstructies.BetonDekkingContext, Eurocode.BetonConstructies.BetonContext)
+  type: Constructor
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: .ctor
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+    startLine: 4
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public Constructieklasse(BetonDekkingContext dekking, BetonContext beton)
+    parameters:
+    - id: dekking
+      type: Eurocode.BetonConstructies.BetonDekkingContext
+    - id: beton
+      type: Eurocode.BetonConstructies.BetonContext
+    content.vb: Public Sub New(dekking As BetonDekkingContext, beton As BetonContext)
+  overload: Eurocode.BetonConstructies.Constructieklasse.#ctor*
+  nameWithType.vb: Constructieklasse.New(BetonDekkingContext, BetonContext)
+  fullName.vb: Eurocode.BetonConstructies.Constructieklasse.New(Eurocode.BetonConstructies.BetonDekkingContext, Eurocode.BetonConstructies.BetonContext)
+  name.vb: New(BetonDekkingContext, BetonContext)
+- uid: Eurocode.BetonConstructies.Constructieklasse.CorrectieLevensduur
+  commentId: P:Eurocode.BetonConstructies.Constructieklasse.CorrectieLevensduur
+  id: CorrectieLevensduur
+  parent: Eurocode.BetonConstructies.Constructieklasse
+  langs:
+  - csharp
+  - vb
+  name: CorrectieLevensduur
+  nameWithType: Constructieklasse.CorrectieLevensduur
+  fullName: Eurocode.BetonConstructies.Constructieklasse.CorrectieLevensduur
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CorrectieLevensduur
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+    startLine: 10
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public int CorrectieLevensduur { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CorrectieLevensduur As Integer
+  overload: Eurocode.BetonConstructies.Constructieklasse.CorrectieLevensduur*
+- uid: Eurocode.BetonConstructies.Constructieklasse.CorrectieBeton
+  commentId: P:Eurocode.BetonConstructies.Constructieklasse.CorrectieBeton
+  id: CorrectieBeton
+  parent: Eurocode.BetonConstructies.Constructieklasse
+  langs:
+  - csharp
+  - vb
+  name: CorrectieBeton
+  nameWithType: Constructieklasse.CorrectieBeton
+  fullName: Eurocode.BetonConstructies.Constructieklasse.CorrectieBeton
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CorrectieBeton
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+    startLine: 11
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public int CorrectieBeton { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CorrectieBeton As Integer
+  overload: Eurocode.BetonConstructies.Constructieklasse.CorrectieBeton*
+- uid: Eurocode.BetonConstructies.Constructieklasse.CorrectiePlaatGeometrie
+  commentId: P:Eurocode.BetonConstructies.Constructieklasse.CorrectiePlaatGeometrie
+  id: CorrectiePlaatGeometrie
+  parent: Eurocode.BetonConstructies.Constructieklasse
+  langs:
+  - csharp
+  - vb
+  name: CorrectiePlaatGeometrie
+  nameWithType: Constructieklasse.CorrectiePlaatGeometrie
+  fullName: Eurocode.BetonConstructies.Constructieklasse.CorrectiePlaatGeometrie
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CorrectiePlaatGeometrie
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+    startLine: 12
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public int CorrectiePlaatGeometrie { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CorrectiePlaatGeometrie As Integer
+  overload: Eurocode.BetonConstructies.Constructieklasse.CorrectiePlaatGeometrie*
+- uid: Eurocode.BetonConstructies.Constructieklasse.CorrectieKwaliteitsBeheersting
+  commentId: P:Eurocode.BetonConstructies.Constructieklasse.CorrectieKwaliteitsBeheersting
+  id: CorrectieKwaliteitsBeheersting
+  parent: Eurocode.BetonConstructies.Constructieklasse
+  langs:
+  - csharp
+  - vb
+  name: CorrectieKwaliteitsBeheersting
+  nameWithType: Constructieklasse.CorrectieKwaliteitsBeheersting
+  fullName: Eurocode.BetonConstructies.Constructieklasse.CorrectieKwaliteitsBeheersting
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CorrectieKwaliteitsBeheersting
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+    startLine: 13
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public int CorrectieKwaliteitsBeheersting { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CorrectieKwaliteitsBeheersting As Integer
+  overload: Eurocode.BetonConstructies.Constructieklasse.CorrectieKwaliteitsBeheersting*
+- uid: Eurocode.BetonConstructies.Constructieklasse.ConstructieKlasseBasis
+  commentId: F:Eurocode.BetonConstructies.Constructieklasse.ConstructieKlasseBasis
+  id: ConstructieKlasseBasis
+  parent: Eurocode.BetonConstructies.Constructieklasse
+  langs:
+  - csharp
+  - vb
+  name: ConstructieKlasseBasis
+  nameWithType: Constructieklasse.ConstructieKlasseBasis
+  fullName: Eurocode.BetonConstructies.Constructieklasse.ConstructieKlasseBasis
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: ConstructieKlasseBasis
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+    startLine: 19
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: De basis voor de constructieklasse = 4
+  example: []
+  syntax:
+    content: public const int ConstructieKlasseBasis = 4
+    return:
+      type: System.Int32
+    content.vb: Public Const ConstructieKlasseBasis As Integer = 4
+- uid: Eurocode.BetonConstructies.Constructieklasse.Klasse
+  commentId: P:Eurocode.BetonConstructies.Constructieklasse.Klasse
+  id: Klasse
+  parent: Eurocode.BetonConstructies.Constructieklasse
+  langs:
+  - csharp
+  - vb
+  name: Klasse
+  nameWithType: Constructieklasse.Klasse
+  fullName: Eurocode.BetonConstructies.Constructieklasse.Klasse
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Klasse
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+    startLine: 20
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public int Klasse { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property Klasse As Integer
+  overload: Eurocode.BetonConstructies.Constructieklasse.Klasse*
+- uid: Eurocode.BetonConstructies.Constructieklasse.UserFriendlyName
+  commentId: P:Eurocode.BetonConstructies.Constructieklasse.UserFriendlyName
+  id: UserFriendlyName
+  parent: Eurocode.BetonConstructies.Constructieklasse
+  langs:
+  - csharp
+  - vb
+  name: UserFriendlyName
+  nameWithType: Constructieklasse.UserFriendlyName
+  fullName: Eurocode.BetonConstructies.Constructieklasse.UserFriendlyName
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: UserFriendlyName
+    path: Eurocode2.BetonConstructies/4 Duurzaamheid/Constructieklasse.cs
+    startLine: 28
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public string UserFriendlyName { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property UserFriendlyName As String
+  overload: Eurocode.BetonConstructies.Constructieklasse.UserFriendlyName*
+references:
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: Eurocode.BetonConstructies.Constructieklasse.Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse,Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.ConstructieklasseExtensions
+  definition: Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse,Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.ConstructieklasseExtensions.html#Eurocode_BetonConstructies_ConstructieklasseExtensions_Initialiseer_Eurocode_BetonConstructies_Constructieklasse_Eurocode_BetonConstructies_BetonDekkingContext_Eurocode_BetonConstructies_BetonContext_
+  name: Initialiseer(Constructieklasse, BetonDekkingContext, BetonContext)
+  nameWithType: ConstructieklasseExtensions.Initialiseer(Constructieklasse, BetonDekkingContext, BetonContext)
+  fullName: Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse, Eurocode.BetonConstructies.BetonDekkingContext, Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse,Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+    name: Initialiseer
+    href: Eurocode.BetonConstructies.ConstructieklasseExtensions.html#Eurocode_BetonConstructies_ConstructieklasseExtensions_Initialiseer_Eurocode_BetonConstructies_Constructieklasse_Eurocode_BetonConstructies_BetonDekkingContext_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.Constructieklasse
+    name: Constructieklasse
+    href: Eurocode.BetonConstructies.Constructieklasse.html
+  - name: ','
+  - name: " "
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: ','
+  - name: " "
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse,Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+    name: Initialiseer
+    href: Eurocode.BetonConstructies.ConstructieklasseExtensions.html#Eurocode_BetonConstructies_ConstructieklasseExtensions_Initialiseer_Eurocode_BetonConstructies_Constructieklasse_Eurocode_BetonConstructies_BetonDekkingContext_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.Constructieklasse
+    name: Constructieklasse
+    href: Eurocode.BetonConstructies.Constructieklasse.html
+  - name: ','
+  - name: " "
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: ','
+  - name: " "
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse,Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse,Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.ConstructieklasseExtensions.html#Eurocode_BetonConstructies_ConstructieklasseExtensions_Initialiseer_Eurocode_BetonConstructies_Constructieklasse_Eurocode_BetonConstructies_BetonDekkingContext_Eurocode_BetonConstructies_BetonContext_
+  name: Initialiseer(Constructieklasse, BetonDekkingContext, BetonContext)
+  nameWithType: ConstructieklasseExtensions.Initialiseer(Constructieklasse, BetonDekkingContext, BetonContext)
+  fullName: Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse, Eurocode.BetonConstructies.BetonDekkingContext, Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse,Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+    name: Initialiseer
+    href: Eurocode.BetonConstructies.ConstructieklasseExtensions.html#Eurocode_BetonConstructies_ConstructieklasseExtensions_Initialiseer_Eurocode_BetonConstructies_Constructieklasse_Eurocode_BetonConstructies_BetonDekkingContext_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.Constructieklasse
+    name: Constructieklasse
+    href: Eurocode.BetonConstructies.Constructieklasse.html
+  - name: ','
+  - name: " "
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: ','
+  - name: " "
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.ConstructieklasseExtensions.Initialiseer(Eurocode.BetonConstructies.Constructieklasse,Eurocode.BetonConstructies.BetonDekkingContext,Eurocode.BetonConstructies.BetonContext)
+    name: Initialiseer
+    href: Eurocode.BetonConstructies.ConstructieklasseExtensions.html#Eurocode_BetonConstructies_ConstructieklasseExtensions_Initialiseer_Eurocode_BetonConstructies_Constructieklasse_Eurocode_BetonConstructies_BetonDekkingContext_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.Constructieklasse
+    name: Constructieklasse
+    href: Eurocode.BetonConstructies.Constructieklasse.html
+  - name: ','
+  - name: " "
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: ','
+  - name: " "
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.ConstructieklasseExtensions
+  commentId: T:Eurocode.BetonConstructies.ConstructieklasseExtensions
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.ConstructieklasseExtensions.html
+  name: ConstructieklasseExtensions
+  nameWithType: ConstructieklasseExtensions
+  fullName: Eurocode.BetonConstructies.ConstructieklasseExtensions
+- uid: Eurocode.BetonConstructies.Constructieklasse.#ctor*
+  commentId: Overload:Eurocode.BetonConstructies.Constructieklasse.#ctor
+  href: Eurocode.BetonConstructies.Constructieklasse.html#Eurocode_BetonConstructies_Constructieklasse__ctor_Eurocode_BetonConstructies_BetonDekkingContext_Eurocode_BetonConstructies_BetonContext_
+  name: Constructieklasse
+  nameWithType: Constructieklasse.Constructieklasse
+  fullName: Eurocode.BetonConstructies.Constructieklasse.Constructieklasse
+  nameWithType.vb: Constructieklasse.New
+  fullName.vb: Eurocode.BetonConstructies.Constructieklasse.New
+  name.vb: New
+- uid: Eurocode.BetonConstructies.BetonDekkingContext
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingContext
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  name: BetonDekkingContext
+  nameWithType: BetonDekkingContext
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext
+- uid: Eurocode.BetonConstructies.BetonContext
+  commentId: T:Eurocode.BetonConstructies.BetonContext
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonContext.html
+  name: BetonContext
+  nameWithType: BetonContext
+  fullName: Eurocode.BetonConstructies.BetonContext
+- uid: Eurocode.BetonConstructies.Constructieklasse.CorrectieLevensduur*
+  commentId: Overload:Eurocode.BetonConstructies.Constructieklasse.CorrectieLevensduur
+  href: Eurocode.BetonConstructies.Constructieklasse.html#Eurocode_BetonConstructies_Constructieklasse_CorrectieLevensduur
+  name: CorrectieLevensduur
+  nameWithType: Constructieklasse.CorrectieLevensduur
+  fullName: Eurocode.BetonConstructies.Constructieklasse.CorrectieLevensduur
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: Eurocode.BetonConstructies.Constructieklasse.CorrectieBeton*
+  commentId: Overload:Eurocode.BetonConstructies.Constructieklasse.CorrectieBeton
+  href: Eurocode.BetonConstructies.Constructieklasse.html#Eurocode_BetonConstructies_Constructieklasse_CorrectieBeton
+  name: CorrectieBeton
+  nameWithType: Constructieklasse.CorrectieBeton
+  fullName: Eurocode.BetonConstructies.Constructieklasse.CorrectieBeton
+- uid: Eurocode.BetonConstructies.Constructieklasse.CorrectiePlaatGeometrie*
+  commentId: Overload:Eurocode.BetonConstructies.Constructieklasse.CorrectiePlaatGeometrie
+  href: Eurocode.BetonConstructies.Constructieklasse.html#Eurocode_BetonConstructies_Constructieklasse_CorrectiePlaatGeometrie
+  name: CorrectiePlaatGeometrie
+  nameWithType: Constructieklasse.CorrectiePlaatGeometrie
+  fullName: Eurocode.BetonConstructies.Constructieklasse.CorrectiePlaatGeometrie
+- uid: Eurocode.BetonConstructies.Constructieklasse.CorrectieKwaliteitsBeheersting*
+  commentId: Overload:Eurocode.BetonConstructies.Constructieklasse.CorrectieKwaliteitsBeheersting
+  href: Eurocode.BetonConstructies.Constructieklasse.html#Eurocode_BetonConstructies_Constructieklasse_CorrectieKwaliteitsBeheersting
+  name: CorrectieKwaliteitsBeheersting
+  nameWithType: Constructieklasse.CorrectieKwaliteitsBeheersting
+  fullName: Eurocode.BetonConstructies.Constructieklasse.CorrectieKwaliteitsBeheersting
+- uid: Eurocode.BetonConstructies.Constructieklasse.Klasse*
+  commentId: Overload:Eurocode.BetonConstructies.Constructieklasse.Klasse
+  href: Eurocode.BetonConstructies.Constructieklasse.html#Eurocode_BetonConstructies_Constructieklasse_Klasse
+  name: Klasse
+  nameWithType: Constructieklasse.Klasse
+  fullName: Eurocode.BetonConstructies.Constructieklasse.Klasse
+- uid: Eurocode.BetonConstructies.Constructieklasse.UserFriendlyName*
+  commentId: Overload:Eurocode.BetonConstructies.Constructieklasse.UserFriendlyName
+  href: Eurocode.BetonConstructies.Constructieklasse.html#Eurocode_BetonConstructies_Constructieklasse_UserFriendlyName
+  name: UserFriendlyName
+  nameWithType: Constructieklasse.UserFriendlyName
+  fullName: Eurocode.BetonConstructies.Constructieklasse.UserFriendlyName
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String

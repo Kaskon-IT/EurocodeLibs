@@ -1,0 +1,85 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.Grondslagen
+  commentId: N:Eurocode.Grondslagen
+  id: Eurocode.Grondslagen
+  children:
+  - Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  - Eurocode.Grondslagen.GevolgklasseEnum
+  - Eurocode.Grondslagen.GrondslagenContext
+  - Eurocode.Grondslagen.GrondslagenExtensions
+  - Eurocode.Grondslagen.NationaleBijlageEnum
+  - Eurocode.Grondslagen.OntwerpLevensduurEnum
+  langs:
+  - csharp
+  - vb
+  name: Eurocode.Grondslagen
+  nameWithType: Eurocode.Grondslagen
+  fullName: Eurocode.Grondslagen
+  type: Namespace
+  assemblies:
+  - Eurocode0.Grondslagen
+references:
+- uid: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  commentId: T:Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum.html
+  name: BetrouwbaarheidsklasseEnum
+  nameWithType: BetrouwbaarheidsklasseEnum
+  fullName: Eurocode.Grondslagen.BetrouwbaarheidsklasseEnum
+- uid: Eurocode.Grondslagen.GevolgklasseEnum
+  commentId: T:Eurocode.Grondslagen.GevolgklasseEnum
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.GevolgklasseEnum.html
+  name: GevolgklasseEnum
+  nameWithType: GevolgklasseEnum
+  fullName: Eurocode.Grondslagen.GevolgklasseEnum
+- uid: Eurocode.Grondslagen.GrondslagenContext
+  commentId: T:Eurocode.Grondslagen.GrondslagenContext
+  href: Eurocode.Grondslagen.GrondslagenContext.html
+  name: GrondslagenContext
+  nameWithType: GrondslagenContext
+  fullName: Eurocode.Grondslagen.GrondslagenContext
+- uid: Eurocode.Grondslagen.GrondslagenExtensions
+  commentId: T:Eurocode.Grondslagen.GrondslagenExtensions
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.GrondslagenExtensions.html
+  name: GrondslagenExtensions
+  nameWithType: GrondslagenExtensions
+  fullName: Eurocode.Grondslagen.GrondslagenExtensions
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum
+  commentId: T:Eurocode.Grondslagen.NationaleBijlageEnum
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  name: NationaleBijlageEnum
+  nameWithType: NationaleBijlageEnum
+  fullName: Eurocode.Grondslagen.NationaleBijlageEnum
+- uid: Eurocode.Grondslagen.OntwerpLevensduurEnum
+  commentId: T:Eurocode.Grondslagen.OntwerpLevensduurEnum
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.OntwerpLevensduurEnum.html
+  name: OntwerpLevensduurEnum
+  nameWithType: OntwerpLevensduurEnum
+  fullName: Eurocode.Grondslagen.OntwerpLevensduurEnum
+- uid: Eurocode.Grondslagen
+  commentId: N:Eurocode.Grondslagen
+  href: Eurocode.html
+  name: Eurocode.Grondslagen
+  nameWithType: Eurocode.Grondslagen
+  fullName: Eurocode.Grondslagen
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html

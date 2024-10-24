@@ -1,0 +1,198 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.Grondslagen.OntwerpLevensduurEnum
+  commentId: T:Eurocode.Grondslagen.OntwerpLevensduurEnum
+  id: OntwerpLevensduurEnum
+  parent: Eurocode.Grondslagen
+  children:
+  - Eurocode.Grondslagen.OntwerpLevensduurEnum.Honderd
+  - Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijf
+  - Eurocode.Grondslagen.OntwerpLevensduurEnum.VijfEnZeventig
+  - Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijftien
+  - Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijftig
+  langs:
+  - csharp
+  - vb
+  name: OntwerpLevensduurEnum
+  nameWithType: OntwerpLevensduurEnum
+  fullName: Eurocode.Grondslagen.OntwerpLevensduurEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: OntwerpLevensduurEnum
+    path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+    startLine: 9
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: >-
+    2.3 (1) De ontwerplevensduur behoort te zijn vastgelegd.
+
+    Keuze voor het ontwerplevensduur in jaren volgens tabel 2.1
+  example: []
+  syntax:
+    content: public enum OntwerpLevensduurEnum
+    content.vb: Public Enum OntwerpLevensduurEnum
+- uid: Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijf
+  commentId: F:Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijf
+  id: Vijf
+  parent: Eurocode.Grondslagen.OntwerpLevensduurEnum
+  langs:
+  - csharp
+  - vb
+  name: Vijf
+  nameWithType: OntwerpLevensduurEnum.Vijf
+  fullName: Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijf
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Vijf
+    path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+    startLine: 11
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: Vijf = 5
+    return:
+      type: Eurocode.Grondslagen.OntwerpLevensduurEnum
+- uid: Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijftien
+  commentId: F:Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijftien
+  id: Vijftien
+  parent: Eurocode.Grondslagen.OntwerpLevensduurEnum
+  langs:
+  - csharp
+  - vb
+  name: Vijftien
+  nameWithType: OntwerpLevensduurEnum.Vijftien
+  fullName: Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijftien
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Vijftien
+    path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+    startLine: 13
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: Vijftien = 15
+    return:
+      type: Eurocode.Grondslagen.OntwerpLevensduurEnum
+- uid: Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijftig
+  commentId: F:Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijftig
+  id: Vijftig
+  parent: Eurocode.Grondslagen.OntwerpLevensduurEnum
+  langs:
+  - csharp
+  - vb
+  name: Vijftig
+  nameWithType: OntwerpLevensduurEnum.Vijftig
+  fullName: Eurocode.Grondslagen.OntwerpLevensduurEnum.Vijftig
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Vijftig
+    path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+    startLine: 15
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: Vijftig = 50
+    return:
+      type: Eurocode.Grondslagen.OntwerpLevensduurEnum
+- uid: Eurocode.Grondslagen.OntwerpLevensduurEnum.VijfEnZeventig
+  commentId: F:Eurocode.Grondslagen.OntwerpLevensduurEnum.VijfEnZeventig
+  id: VijfEnZeventig
+  parent: Eurocode.Grondslagen.OntwerpLevensduurEnum
+  langs:
+  - csharp
+  - vb
+  name: VijfEnZeventig
+  nameWithType: OntwerpLevensduurEnum.VijfEnZeventig
+  fullName: Eurocode.Grondslagen.OntwerpLevensduurEnum.VijfEnZeventig
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: VijfEnZeventig
+    path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+    startLine: 17
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: VijfEnZeventig = 75
+    return:
+      type: Eurocode.Grondslagen.OntwerpLevensduurEnum
+- uid: Eurocode.Grondslagen.OntwerpLevensduurEnum.Honderd
+  commentId: F:Eurocode.Grondslagen.OntwerpLevensduurEnum.Honderd
+  id: Honderd
+  parent: Eurocode.Grondslagen.OntwerpLevensduurEnum
+  langs:
+  - csharp
+  - vb
+  name: Honderd
+  nameWithType: OntwerpLevensduurEnum.Honderd
+  fullName: Eurocode.Grondslagen.OntwerpLevensduurEnum.Honderd
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Honderd
+    path: Eurocode0.Grondslagen/OntwerpLevensduurEnum.cs
+    startLine: 19
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: Honderd = 100
+    return:
+      type: Eurocode.Grondslagen.OntwerpLevensduurEnum
+references:
+- uid: Eurocode.Grondslagen
+  commentId: N:Eurocode.Grondslagen
+  href: Eurocode.html
+  name: Eurocode.Grondslagen
+  nameWithType: Eurocode.Grondslagen
+  fullName: Eurocode.Grondslagen
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+- uid: Eurocode.Grondslagen.OntwerpLevensduurEnum
+  commentId: T:Eurocode.Grondslagen.OntwerpLevensduurEnum
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.OntwerpLevensduurEnum.html
+  name: OntwerpLevensduurEnum
+  nameWithType: OntwerpLevensduurEnum
+  fullName: Eurocode.Grondslagen.OntwerpLevensduurEnum

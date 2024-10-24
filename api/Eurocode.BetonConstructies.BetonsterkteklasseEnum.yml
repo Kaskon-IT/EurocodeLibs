@@ -1,0 +1,522 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  commentId: T:Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  id: BetonsterkteklasseEnum
+  parent: Eurocode.BetonConstructies
+  children:
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C12_15
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C16_20
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C20_25
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C25_30
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C30_37
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C35_45
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C40_50
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C45_55
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C50_60
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C55_67
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C60_75
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C70_85
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C80_95
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.C90_105
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.Eigen_Opgave
+  langs:
+  - csharp
+  - vb
+  name: BetonsterkteklasseEnum
+  nameWithType: BetonsterkteklasseEnum
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetonsterkteklasseEnum
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 4
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public enum BetonsterkteklasseEnum
+    content.vb: Public Enum BetonsterkteklasseEnum
+  extensionMethods:
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum.Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C12_15
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C12_15
+  id: C12_15
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C12_15
+  nameWithType: BetonsterkteklasseEnum.C12_15
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C12_15
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C12_15
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 6
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C12_15 = 1
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C16_20
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C16_20
+  id: C16_20
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C16_20
+  nameWithType: BetonsterkteklasseEnum.C16_20
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C16_20
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C16_20
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 7
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C16_20 = 2
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C20_25
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C20_25
+  id: C20_25
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C20_25
+  nameWithType: BetonsterkteklasseEnum.C20_25
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C20_25
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C20_25
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 8
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C20_25 = 3
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C25_30
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C25_30
+  id: C25_30
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C25_30
+  nameWithType: BetonsterkteklasseEnum.C25_30
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C25_30
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C25_30
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 9
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C25_30 = 4
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C30_37
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C30_37
+  id: C30_37
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C30_37
+  nameWithType: BetonsterkteklasseEnum.C30_37
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C30_37
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C30_37
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 10
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C30_37 = 5
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C35_45
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C35_45
+  id: C35_45
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C35_45
+  nameWithType: BetonsterkteklasseEnum.C35_45
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C35_45
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C35_45
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 11
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C35_45 = 6
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C40_50
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C40_50
+  id: C40_50
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C40_50
+  nameWithType: BetonsterkteklasseEnum.C40_50
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C40_50
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C40_50
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 12
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C40_50 = 7
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C45_55
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C45_55
+  id: C45_55
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C45_55
+  nameWithType: BetonsterkteklasseEnum.C45_55
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C45_55
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C45_55
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 13
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C45_55 = 8
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C50_60
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C50_60
+  id: C50_60
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C50_60
+  nameWithType: BetonsterkteklasseEnum.C50_60
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C50_60
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C50_60
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 14
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C50_60 = 9
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C55_67
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C55_67
+  id: C55_67
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C55_67
+  nameWithType: BetonsterkteklasseEnum.C55_67
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C55_67
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C55_67
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 15
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C55_67 = 10
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C60_75
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C60_75
+  id: C60_75
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C60_75
+  nameWithType: BetonsterkteklasseEnum.C60_75
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C60_75
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C60_75
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 16
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C60_75 = 11
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C70_85
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C70_85
+  id: C70_85
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C70_85
+  nameWithType: BetonsterkteklasseEnum.C70_85
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C70_85
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C70_85
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 17
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C70_85 = 12
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C80_95
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C80_95
+  id: C80_95
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C80_95
+  nameWithType: BetonsterkteklasseEnum.C80_95
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C80_95
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C80_95
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 18
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C80_95 = 13
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C90_105
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.C90_105
+  id: C90_105
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: C90_105
+  nameWithType: BetonsterkteklasseEnum.C90_105
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.C90_105
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: C90_105
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 19
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: C90_105 = 14
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.Eigen_Opgave
+  commentId: F:Eurocode.BetonConstructies.BetonsterkteklasseEnum.Eigen_Opgave
+  id: Eigen_Opgave
+  parent: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: Eigen_Opgave
+  nameWithType: BetonsterkteklasseEnum.Eigen_Opgave
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum.Eigen_Opgave
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Eigen_Opgave
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 20
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: Eigen_Opgave = 99
+    return:
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+references:
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum.Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetXudMax_Eurocode_BetonConstructies_BetonsterkteklasseEnum_
+  name: GetXudMax(BetonsterkteklasseEnum)
+  nameWithType: BetonContextExtensions.GetXudMax(BetonsterkteklasseEnum)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+    name: GetXudMax
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetXudMax_Eurocode_BetonConstructies_BetonsterkteklasseEnum_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+    name: BetonsterkteklasseEnum
+    href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+    name: GetXudMax
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetXudMax_Eurocode_BetonConstructies_BetonsterkteklasseEnum_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+    name: BetonsterkteklasseEnum
+    href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetXudMax_Eurocode_BetonConstructies_BetonsterkteklasseEnum_
+  name: GetXudMax(BetonsterkteklasseEnum)
+  nameWithType: BetonContextExtensions.GetXudMax(BetonsterkteklasseEnum)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+    name: GetXudMax
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetXudMax_Eurocode_BetonConstructies_BetonsterkteklasseEnum_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+    name: BetonsterkteklasseEnum
+    href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetXudMax(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+    name: GetXudMax
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetXudMax_Eurocode_BetonConstructies_BetonsterkteklasseEnum_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+    name: BetonsterkteklasseEnum
+    href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions
+  commentId: T:Eurocode.BetonConstructies.BetonContextExtensions
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html
+  name: BetonContextExtensions
+  nameWithType: BetonContextExtensions
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  commentId: T:Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  name: BetonsterkteklasseEnum
+  nameWithType: BetonsterkteklasseEnum
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum

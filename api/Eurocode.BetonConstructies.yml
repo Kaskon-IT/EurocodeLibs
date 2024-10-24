@@ -1,0 +1,174 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  id: Eurocode.BetonConstructies
+  children:
+  - Eurocode.BetonConstructies.BetonContext
+  - Eurocode.BetonConstructies.BetonContextExtensions
+  - Eurocode.BetonConstructies.BetonDekkingContext
+  - Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  - Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  - Eurocode.BetonConstructies.BetonDekkingExtensions
+  - Eurocode.BetonConstructies.BetonStaalContext
+  - Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  - Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  - Eurocode.BetonConstructies.CementklasseEnum
+  - Eurocode.BetonConstructies.Constructieklasse
+  - Eurocode.BetonConstructies.ConstructieklasseExtensions
+  - Eurocode.BetonConstructies.MilieuklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  type: Namespace
+  assemblies:
+  - Eurocode2.BetonConstructies
+references:
+- uid: Eurocode.BetonConstructies.BetonContext
+  commentId: T:Eurocode.BetonConstructies.BetonContext
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonContext.html
+  name: BetonContext
+  nameWithType: BetonContext
+  fullName: Eurocode.BetonConstructies.BetonContext
+- uid: Eurocode.BetonConstructies.BetonContextExtensions
+  commentId: T:Eurocode.BetonConstructies.BetonContextExtensions
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html
+  name: BetonContextExtensions
+  nameWithType: BetonContextExtensions
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  commentId: T:Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  name: BetonsterkteklasseEnum
+  nameWithType: BetonsterkteklasseEnum
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.CementklasseEnum
+  commentId: T:Eurocode.BetonConstructies.CementklasseEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.CementklasseEnum.html
+  name: CementklasseEnum
+  nameWithType: CementklasseEnum
+  fullName: Eurocode.BetonConstructies.CementklasseEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  commentId: T:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.html
+  name: BetonStaalKwaliteitEnum
+  nameWithType: BetonStaalKwaliteitEnum
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+- uid: Eurocode.BetonConstructies.BetonStaalContext
+  commentId: T:Eurocode.BetonConstructies.BetonStaalContext
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonStaalContext.html
+  name: BetonStaalContext
+  nameWithType: BetonStaalContext
+  fullName: Eurocode.BetonConstructies.BetonStaalContext
+- uid: Eurocode.BetonConstructies.BetonDekkingContext
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingContext
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  name: BetonDekkingContext
+  nameWithType: BetonDekkingContext
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  name: BetonDekkingContext.BetonStortOndergrondEnum
+  nameWithType: BetonDekkingContext.BetonStortOndergrondEnum
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: .
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+    name: BetonStortOndergrondEnum
+    href: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.html
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: .
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum
+    name: BetonStortOndergrondEnum
+    href: Eurocode.BetonConstructies.BetonDekkingContext.BetonStortOndergrondEnum.html
+- uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  name: BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  nameWithType: BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  fullName: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: .
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+    name: BetonAfwerkingOppervlakEnum
+    href: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.html
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext
+    name: BetonDekkingContext
+    href: Eurocode.BetonConstructies.BetonDekkingContext.html
+  - name: .
+  - uid: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum
+    name: BetonAfwerkingOppervlakEnum
+    href: Eurocode.BetonConstructies.BetonDekkingContext.BetonAfwerkingOppervlakEnum.html
+- uid: Eurocode.BetonConstructies.BetonDekkingExtensions
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingExtensions
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html
+  name: BetonDekkingExtensions
+  nameWithType: BetonDekkingExtensions
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions
+- uid: Eurocode.BetonConstructies.Constructieklasse
+  commentId: T:Eurocode.BetonConstructies.Constructieklasse
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.Constructieklasse.html
+  name: Constructieklasse
+  nameWithType: Constructieklasse
+  fullName: Eurocode.BetonConstructies.Constructieklasse
+- uid: Eurocode.BetonConstructies.ConstructieklasseExtensions
+  commentId: T:Eurocode.BetonConstructies.ConstructieklasseExtensions
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.ConstructieklasseExtensions.html
+  name: ConstructieklasseExtensions
+  nameWithType: ConstructieklasseExtensions
+  fullName: Eurocode.BetonConstructies.ConstructieklasseExtensions
+- uid: Eurocode.BetonConstructies.MilieuklasseEnum
+  commentId: T:Eurocode.BetonConstructies.MilieuklasseEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.MilieuklasseEnum.html
+  name: MilieuklasseEnum
+  nameWithType: MilieuklasseEnum
+  fullName: Eurocode.BetonConstructies.MilieuklasseEnum
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html

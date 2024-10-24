@@ -1,0 +1,3791 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.BetonConstructies.BetonContext
+  commentId: T:Eurocode.BetonConstructies.BetonContext
+  id: BetonContext
+  parent: Eurocode.BetonConstructies
+  children:
+  - Eurocode.BetonConstructies.BetonContext.#ctor
+  - Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonContext)
+  - Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  - Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum,System.Boolean,Eurocode.BetonConstructies.BetonStaalContext)
+  - Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum,System.Boolean,Eurocode.BetonConstructies.BetonStaalKwaliteitEnum,System.Boolean)
+  - Eurocode.BetonConstructies.BetonContext.#ctor(System.String)
+  - Eurocode.BetonConstructies.BetonContext.Alpha
+  - Eurocode.BetonConstructies.BetonContext.AlphaCC
+  - Eurocode.BetonConstructies.BetonContext.AlphaCT
+  - Eurocode.BetonConstructies.BetonContext.Beta
+  - Eurocode.BetonConstructies.BetonContext.BetonDiagramGebruiksvriendelijkeNaam
+  - Eurocode.BetonConstructies.BetonContext.BetonStaal
+  - Eurocode.BetonConstructies.BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam
+  - Eurocode.BetonConstructies.BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam
+  - Eurocode.BetonConstructies.BetonContext.Betonsterkteklasse
+  - Eurocode.BetonConstructies.BetonContext.CementKlasse
+  - Eurocode.BetonConstructies.BetonContext.CoefficientCementKlasse
+  - Eurocode.BetonConstructies.BetonContext.Ecm
+  - Eurocode.BetonConstructies.BetonContext.EpsilonC
+  - Eurocode.BetonConstructies.BetonContext.EpsilonC1
+  - Eurocode.BetonConstructies.BetonContext.EpsilonC2
+  - Eurocode.BetonConstructies.BetonContext.EpsilonC3
+  - Eurocode.BetonConstructies.BetonContext.EpsilonCu1
+  - Eurocode.BetonConstructies.BetonContext.EpsilonCu2
+  - Eurocode.BetonConstructies.BetonContext.EpsilonCu3
+  - Eurocode.BetonConstructies.BetonContext.EpsilonCuAangepast
+  - Eurocode.BetonConstructies.BetonContext.FactorN
+  - Eurocode.BetonConstructies.BetonContext.Fcd
+  - Eurocode.BetonConstructies.BetonContext.Fck
+  - Eurocode.BetonConstructies.BetonContext.FckCube
+  - Eurocode.BetonConstructies.BetonContext.FckCubeEigenOpgave
+  - Eurocode.BetonConstructies.BetonContext.FckCubeMax
+  - Eurocode.BetonConstructies.BetonContext.FckEigenOpgave
+  - Eurocode.BetonConstructies.BetonContext.FckMax
+  - Eurocode.BetonConstructies.BetonContext.FcktVijfEnNegentigProcent
+  - Eurocode.BetonConstructies.BetonContext.Fcm
+  - Eurocode.BetonConstructies.BetonContext.Fctd
+  - Eurocode.BetonConstructies.BetonContext.FctkVijfProcent
+  - Eurocode.BetonConstructies.BetonContext.Fctm
+  - Eurocode.BetonConstructies.BetonContext.GammaC
+  - Eurocode.BetonConstructies.BetonContext.GetAlpha
+  - Eurocode.BetonConstructies.BetonContext.GetBeta
+  - Eurocode.BetonConstructies.BetonContext.GetEpsilonBreuk
+  - Eurocode.BetonConstructies.BetonContext.GetEpsilonStuik
+  - Eurocode.BetonConstructies.BetonContext.IsOntwerpSituatieBuitenGewoon
+  - Eurocode.BetonConstructies.BetonContext.IsParabolischSpanningsRekDiagram
+  - Eurocode.BetonConstructies.BetonContext.Rho1Max
+  - Eurocode.BetonConstructies.BetonContext.SetAlpha(System.Double)
+  - Eurocode.BetonConstructies.BetonContext.SetBeta(System.Double)
+  - Eurocode.BetonConstructies.BetonContext.SigmaCd
+  - Eurocode.BetonConstructies.BetonContext.SigmaCk
+  - Eurocode.BetonConstructies.BetonContext.XudMax
+  langs:
+  - csharp
+  - vb
+  name: BetonContext
+  nameWithType: BetonContext
+  fullName: Eurocode.BetonConstructies.BetonContext
+  type: Class
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetonContext
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 2
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public class BetonContext
+    content.vb: Public Class BetonContext
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+  extensionMethods:
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEcm
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(System.Double,System.Double,System.Boolean)
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(System.Double,System.Double)
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(System.Double,System.Double)
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(System.Double,System.Boolean)
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max
+  - Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(System.Double)
+- uid: Eurocode.BetonConstructies.BetonContext.#ctor
+  commentId: M:Eurocode.BetonConstructies.BetonContext.#ctor
+  id: '#ctor'
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonContext()
+  nameWithType: BetonContext.BetonContext()
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonContext()
+  type: Constructor
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: .ctor
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 4
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public BetonContext()
+    content.vb: Public Sub New()
+  overload: Eurocode.BetonConstructies.BetonContext.#ctor*
+  nameWithType.vb: BetonContext.New()
+  fullName.vb: Eurocode.BetonConstructies.BetonContext.New()
+  name.vb: New()
+- uid: Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonContext)
+  id: '#ctor(Eurocode.BetonConstructies.BetonContext)'
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonContext(BetonContext)
+  nameWithType: BetonContext.BetonContext(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonContext(Eurocode.BetonConstructies.BetonContext)
+  type: Constructor
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: .ctor
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 9
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public BetonContext(BetonContext vorige)
+    parameters:
+    - id: vorige
+      type: Eurocode.BetonConstructies.BetonContext
+    content.vb: Public Sub New(vorige As BetonContext)
+  overload: Eurocode.BetonConstructies.BetonContext.#ctor*
+  nameWithType.vb: BetonContext.New(BetonContext)
+  fullName.vb: Eurocode.BetonConstructies.BetonContext.New(Eurocode.BetonConstructies.BetonContext)
+  name.vb: New(BetonContext)
+- uid: Eurocode.BetonConstructies.BetonContext.BetonStaal
+  commentId: F:Eurocode.BetonConstructies.BetonContext.BetonStaal
+  id: BetonStaal
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonStaal
+  nameWithType: BetonContext.BetonStaal
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonStaal
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetonStaal
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 26
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public BetonStaalContext BetonStaal
+    return:
+      type: Eurocode.BetonConstructies.BetonStaalContext
+    content.vb: Public BetonStaal As BetonStaalContext
+- uid: Eurocode.BetonConstructies.BetonContext.IsParabolischSpanningsRekDiagram
+  commentId: P:Eurocode.BetonConstructies.BetonContext.IsParabolischSpanningsRekDiagram
+  id: IsParabolischSpanningsRekDiagram
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: IsParabolischSpanningsRekDiagram
+  nameWithType: BetonContext.IsParabolischSpanningsRekDiagram
+  fullName: Eurocode.BetonConstructies.BetonContext.IsParabolischSpanningsRekDiagram
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: IsParabolischSpanningsRekDiagram
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 29
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public bool IsParabolischSpanningsRekDiagram { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsParabolischSpanningsRekDiagram As Boolean
+  overload: Eurocode.BetonConstructies.BetonContext.IsParabolischSpanningsRekDiagram*
+- uid: Eurocode.BetonConstructies.BetonContext.CementKlasse
+  commentId: P:Eurocode.BetonConstructies.BetonContext.CementKlasse
+  id: CementKlasse
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: CementKlasse
+  nameWithType: BetonContext.CementKlasse
+  fullName: Eurocode.BetonConstructies.BetonContext.CementKlasse
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CementKlasse
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 37
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public CementklasseEnum? CementKlasse { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{Eurocode.BetonConstructies.CementklasseEnum}
+    content.vb: Public Property CementKlasse As CementklasseEnum?
+  overload: Eurocode.BetonConstructies.BetonContext.CementKlasse*
+- uid: Eurocode.BetonConstructies.BetonContext.CoefficientCementKlasse
+  commentId: P:Eurocode.BetonConstructies.BetonContext.CoefficientCementKlasse
+  id: CoefficientCementKlasse
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: CoefficientCementKlasse
+  nameWithType: BetonContext.CoefficientCementKlasse
+  fullName: Eurocode.BetonConstructies.BetonContext.CoefficientCementKlasse
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CoefficientCementKlasse
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 39
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double CoefficientCementKlasse { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property CoefficientCementKlasse As Double
+  overload: Eurocode.BetonConstructies.BetonContext.CoefficientCementKlasse*
+- uid: Eurocode.BetonConstructies.BetonContext.FckEigenOpgave
+  commentId: P:Eurocode.BetonConstructies.BetonContext.FckEigenOpgave
+  id: FckEigenOpgave
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: FckEigenOpgave
+  nameWithType: BetonContext.FckEigenOpgave
+  fullName: Eurocode.BetonConstructies.BetonContext.FckEigenOpgave
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: FckEigenOpgave
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 57
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: Eigen opgave cilinder druksterkte
+  example: []
+  syntax:
+    content: public double FckEigenOpgave { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property FckEigenOpgave As Double
+  overload: Eurocode.BetonConstructies.BetonContext.FckEigenOpgave*
+- uid: Eurocode.BetonConstructies.BetonContext.FckCubeEigenOpgave
+  commentId: P:Eurocode.BetonConstructies.BetonContext.FckCubeEigenOpgave
+  id: FckCubeEigenOpgave
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: FckCubeEigenOpgave
+  nameWithType: BetonContext.FckCubeEigenOpgave
+  fullName: Eurocode.BetonConstructies.BetonContext.FckCubeEigenOpgave
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: FckCubeEigenOpgave
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 62
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: Eigen opgave kubus druksterkte
+  example: []
+  syntax:
+    content: public double FckCubeEigenOpgave { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property FckCubeEigenOpgave As Double
+  overload: Eurocode.BetonConstructies.BetonContext.FckCubeEigenOpgave*
+- uid: Eurocode.BetonConstructies.BetonContext.Betonsterkteklasse
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Betonsterkteklasse
+  id: Betonsterkteklasse
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Betonsterkteklasse
+  nameWithType: BetonContext.Betonsterkteklasse
+  fullName: Eurocode.BetonConstructies.BetonContext.Betonsterkteklasse
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Betonsterkteklasse
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 66
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public BetonsterkteklasseEnum? Betonsterkteklasse { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{Eurocode.BetonConstructies.BetonsterkteklasseEnum}
+    content.vb: Public Property Betonsterkteklasse As BetonsterkteklasseEnum?
+  overload: Eurocode.BetonConstructies.BetonContext.Betonsterkteklasse*
+- uid: Eurocode.BetonConstructies.BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam
+  commentId: P:Eurocode.BetonConstructies.BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam
+  id: BetonSterkteKlasseGebruiksvriendelijkeNaam
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonSterkteKlasseGebruiksvriendelijkeNaam
+  nameWithType: BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetonSterkteKlasseGebruiksvriendelijkeNaam
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 68
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public string BetonSterkteKlasseGebruiksvriendelijkeNaam { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property BetonSterkteKlasseGebruiksvriendelijkeNaam As String
+  overload: Eurocode.BetonConstructies.BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam*
+- uid: Eurocode.BetonConstructies.BetonContext.BetonDiagramGebruiksvriendelijkeNaam
+  commentId: P:Eurocode.BetonConstructies.BetonContext.BetonDiagramGebruiksvriendelijkeNaam
+  id: BetonDiagramGebruiksvriendelijkeNaam
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonDiagramGebruiksvriendelijkeNaam
+  nameWithType: BetonContext.BetonDiagramGebruiksvriendelijkeNaam
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonDiagramGebruiksvriendelijkeNaam
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetonDiagramGebruiksvriendelijkeNaam
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 75
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public string BetonDiagramGebruiksvriendelijkeNaam { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property BetonDiagramGebruiksvriendelijkeNaam As String
+  overload: Eurocode.BetonConstructies.BetonContext.BetonDiagramGebruiksvriendelijkeNaam*
+- uid: Eurocode.BetonConstructies.BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam
+  commentId: P:Eurocode.BetonConstructies.BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam
+  id: BetonStaalDiagramGebruiksvriendelijkeNaam
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonStaalDiagramGebruiksvriendelijkeNaam
+  nameWithType: BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BetonStaalDiagramGebruiksvriendelijkeNaam
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 85
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public string BetonStaalDiagramGebruiksvriendelijkeNaam { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property BetonStaalDiagramGebruiksvriendelijkeNaam As String
+  overload: Eurocode.BetonConstructies.BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam*
+- uid: Eurocode.BetonConstructies.BetonContext.Fck
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Fck
+  id: Fck
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Fck
+  nameWithType: BetonContext.Fck
+  fullName: Eurocode.BetonConstructies.BetonContext.Fck
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Fck
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 100
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: De representieve cilinder druksterkte in N/mm²
+  example: []
+  syntax:
+    content: public double Fck { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property Fck As Double
+  overload: Eurocode.BetonConstructies.BetonContext.Fck*
+- uid: Eurocode.BetonConstructies.BetonContext.FckCube
+  commentId: P:Eurocode.BetonConstructies.BetonContext.FckCube
+  id: FckCube
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: FckCube
+  nameWithType: BetonContext.FckCube
+  fullName: Eurocode.BetonConstructies.BetonContext.FckCube
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: FckCube
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 128
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double FckCube { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property FckCube As Double
+  overload: Eurocode.BetonConstructies.BetonContext.FckCube*
+- uid: Eurocode.BetonConstructies.BetonContext.Fcm
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Fcm
+  id: Fcm
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Fcm
+  nameWithType: BetonContext.Fcm
+  fullName: Eurocode.BetonConstructies.BetonContext.Fcm
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Fcm
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 157
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: gemiddelde waarde van de cilinderdruksterkte van beton
+  example: []
+  syntax:
+    content: public double Fcm { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property Fcm As Double
+  overload: Eurocode.BetonConstructies.BetonContext.Fcm*
+- uid: Eurocode.BetonConstructies.BetonContext.Fctm
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Fctm
+  id: Fctm
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Fctm
+  nameWithType: BetonContext.Fctm
+  fullName: Eurocode.BetonConstructies.BetonContext.Fctm
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Fctm
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 162
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: gemiddelde waarde van de axiale treksterkte van beton
+  example: []
+  syntax:
+    content: public double Fctm { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property Fctm As Double
+  overload: Eurocode.BetonConstructies.BetonContext.Fctm*
+- uid: Eurocode.BetonConstructies.BetonContext.FctkVijfProcent
+  commentId: P:Eurocode.BetonConstructies.BetonContext.FctkVijfProcent
+  id: FctkVijfProcent
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: FctkVijfProcent
+  nameWithType: BetonContext.FctkVijfProcent
+  fullName: Eurocode.BetonConstructies.BetonContext.FctkVijfProcent
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: FctkVijfProcent
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 180
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double FctkVijfProcent { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property FctkVijfProcent As Double
+  overload: Eurocode.BetonConstructies.BetonContext.FctkVijfProcent*
+- uid: Eurocode.BetonConstructies.BetonContext.FcktVijfEnNegentigProcent
+  commentId: P:Eurocode.BetonConstructies.BetonContext.FcktVijfEnNegentigProcent
+  id: FcktVijfEnNegentigProcent
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: FcktVijfEnNegentigProcent
+  nameWithType: BetonContext.FcktVijfEnNegentigProcent
+  fullName: Eurocode.BetonConstructies.BetonContext.FcktVijfEnNegentigProcent
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: FcktVijfEnNegentigProcent
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 182
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double FcktVijfEnNegentigProcent { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property FcktVijfEnNegentigProcent As Double
+  overload: Eurocode.BetonConstructies.BetonContext.FcktVijfEnNegentigProcent*
+- uid: Eurocode.BetonConstructies.BetonContext.IsOntwerpSituatieBuitenGewoon
+  commentId: F:Eurocode.BetonConstructies.BetonContext.IsOntwerpSituatieBuitenGewoon
+  id: IsOntwerpSituatieBuitenGewoon
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: IsOntwerpSituatieBuitenGewoon
+  nameWithType: BetonContext.IsOntwerpSituatieBuitenGewoon
+  fullName: Eurocode.BetonConstructies.BetonContext.IsOntwerpSituatieBuitenGewoon
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: IsOntwerpSituatieBuitenGewoon
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 184
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public bool IsOntwerpSituatieBuitenGewoon
+    return:
+      type: System.Boolean
+    content.vb: Public IsOntwerpSituatieBuitenGewoon As Boolean
+- uid: Eurocode.BetonConstructies.BetonContext.GammaC
+  commentId: P:Eurocode.BetonConstructies.BetonContext.GammaC
+  id: GammaC
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: GammaC
+  nameWithType: BetonContext.GammaC
+  fullName: Eurocode.BetonConstructies.BetonContext.GammaC
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GammaC
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 187
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double GammaC { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property GammaC As Double
+  overload: Eurocode.BetonConstructies.BetonContext.GammaC*
+- uid: Eurocode.BetonConstructies.BetonContext.Fcd
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Fcd
+  id: Fcd
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Fcd
+  nameWithType: BetonContext.Fcd
+  fullName: Eurocode.BetonConstructies.BetonContext.Fcd
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Fcd
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 197
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double Fcd { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property Fcd As Double
+  overload: Eurocode.BetonConstructies.BetonContext.Fcd*
+- uid: Eurocode.BetonConstructies.BetonContext.Fctd
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Fctd
+  id: Fctd
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Fctd
+  nameWithType: BetonContext.Fctd
+  fullName: Eurocode.BetonConstructies.BetonContext.Fctd
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Fctd
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 199
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double Fctd { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property Fctd As Double
+  overload: Eurocode.BetonConstructies.BetonContext.Fctd*
+- uid: Eurocode.BetonConstructies.BetonContext.AlphaCT
+  commentId: F:Eurocode.BetonConstructies.BetonContext.AlphaCT
+  id: AlphaCT
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: AlphaCT
+  nameWithType: BetonContext.AlphaCT
+  fullName: Eurocode.BetonConstructies.BetonContext.AlphaCT
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: AlphaCT
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 201
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public const double AlphaCT = 1
+    return:
+      type: System.Double
+    content.vb: Public Const AlphaCT As Double = 1
+- uid: Eurocode.BetonConstructies.BetonContext.AlphaCC
+  commentId: F:Eurocode.BetonConstructies.BetonContext.AlphaCC
+  id: AlphaCC
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: AlphaCC
+  nameWithType: BetonContext.AlphaCC
+  fullName: Eurocode.BetonConstructies.BetonContext.AlphaCC
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: AlphaCC
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 202
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public const double AlphaCC = 1
+    return:
+      type: System.Double
+    content.vb: Public Const AlphaCC As Double = 1
+- uid: Eurocode.BetonConstructies.BetonContext.FckMax
+  commentId: F:Eurocode.BetonConstructies.BetonContext.FckMax
+  id: FckMax
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: FckMax
+  nameWithType: BetonContext.FckMax
+  fullName: Eurocode.BetonConstructies.BetonContext.FckMax
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: FckMax
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 207
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: De maxiale waarde van de druksterkte Cmax moet gelijk aan C90/105 zijn genomen.
+  example: []
+  syntax:
+    content: public const double FckMax = 90
+    return:
+      type: System.Double
+    content.vb: Public Const FckMax As Double = 90
+- uid: Eurocode.BetonConstructies.BetonContext.FckCubeMax
+  commentId: F:Eurocode.BetonConstructies.BetonContext.FckCubeMax
+  id: FckCubeMax
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: FckCubeMax
+  nameWithType: BetonContext.FckCubeMax
+  fullName: Eurocode.BetonConstructies.BetonContext.FckCubeMax
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: FckCubeMax
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 211
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  summary: De maxiale waarde van de druksterkte Cmax moet gelijk aan C90/105 zijn genomen.
+  example: []
+  syntax:
+    content: public const double FckCubeMax = 105
+    return:
+      type: System.Double
+    content.vb: Public Const FckCubeMax As Double = 105
+- uid: Eurocode.BetonConstructies.BetonContext.Beta
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Beta
+  id: Beta
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Beta
+  nameWithType: BetonContext.Beta
+  fullName: Eurocode.BetonConstructies.BetonContext.Beta
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Beta
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 216
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double Beta { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property Beta As Double
+  overload: Eurocode.BetonConstructies.BetonContext.Beta*
+- uid: Eurocode.BetonConstructies.BetonContext.GetBeta
+  commentId: M:Eurocode.BetonConstructies.BetonContext.GetBeta
+  id: GetBeta
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: GetBeta()
+  nameWithType: BetonContext.GetBeta()
+  fullName: Eurocode.BetonConstructies.BetonContext.GetBeta()
+  type: Method
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GetBeta
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 218
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double GetBeta()
+    return:
+      type: System.Double
+    content.vb: Public Function GetBeta() As Double
+  overload: Eurocode.BetonConstructies.BetonContext.GetBeta*
+- uid: Eurocode.BetonConstructies.BetonContext.GetAlpha
+  commentId: M:Eurocode.BetonConstructies.BetonContext.GetAlpha
+  id: GetAlpha
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: GetAlpha()
+  nameWithType: BetonContext.GetAlpha()
+  fullName: Eurocode.BetonConstructies.BetonContext.GetAlpha()
+  type: Method
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GetAlpha
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 226
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double GetAlpha()
+    return:
+      type: System.Double
+    content.vb: Public Function GetAlpha() As Double
+  overload: Eurocode.BetonConstructies.BetonContext.GetAlpha*
+- uid: Eurocode.BetonConstructies.BetonContext.GetEpsilonBreuk
+  commentId: M:Eurocode.BetonConstructies.BetonContext.GetEpsilonBreuk
+  id: GetEpsilonBreuk
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: GetEpsilonBreuk()
+  nameWithType: BetonContext.GetEpsilonBreuk()
+  fullName: Eurocode.BetonConstructies.BetonContext.GetEpsilonBreuk()
+  type: Method
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GetEpsilonBreuk
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 235
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double GetEpsilonBreuk()
+    return:
+      type: System.Double
+    content.vb: Public Function GetEpsilonBreuk() As Double
+  overload: Eurocode.BetonConstructies.BetonContext.GetEpsilonBreuk*
+- uid: Eurocode.BetonConstructies.BetonContext.GetEpsilonStuik
+  commentId: M:Eurocode.BetonConstructies.BetonContext.GetEpsilonStuik
+  id: GetEpsilonStuik
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: GetEpsilonStuik()
+  nameWithType: BetonContext.GetEpsilonStuik()
+  fullName: Eurocode.BetonConstructies.BetonContext.GetEpsilonStuik()
+  type: Method
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: GetEpsilonStuik
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 237
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double GetEpsilonStuik()
+    return:
+      type: System.Double
+    content.vb: Public Function GetEpsilonStuik() As Double
+  overload: Eurocode.BetonConstructies.BetonContext.GetEpsilonStuik*
+- uid: Eurocode.BetonConstructies.BetonContext.SetBeta(System.Double)
+  commentId: M:Eurocode.BetonConstructies.BetonContext.SetBeta(System.Double)
+  id: SetBeta(System.Double)
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: SetBeta(double)
+  nameWithType: BetonContext.SetBeta(double)
+  fullName: Eurocode.BetonConstructies.BetonContext.SetBeta(double)
+  type: Method
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: SetBeta
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 239
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public void SetBeta(double beta)
+    parameters:
+    - id: beta
+      type: System.Double
+    content.vb: Public Sub SetBeta(beta As Double)
+  overload: Eurocode.BetonConstructies.BetonContext.SetBeta*
+  nameWithType.vb: BetonContext.SetBeta(Double)
+  fullName.vb: Eurocode.BetonConstructies.BetonContext.SetBeta(Double)
+  name.vb: SetBeta(Double)
+- uid: Eurocode.BetonConstructies.BetonContext.SetAlpha(System.Double)
+  commentId: M:Eurocode.BetonConstructies.BetonContext.SetAlpha(System.Double)
+  id: SetAlpha(System.Double)
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: SetAlpha(double)
+  nameWithType: BetonContext.SetAlpha(double)
+  fullName: Eurocode.BetonConstructies.BetonContext.SetAlpha(double)
+  type: Method
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: SetAlpha
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 243
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public void SetAlpha(double alpha)
+    parameters:
+    - id: alpha
+      type: System.Double
+    content.vb: Public Sub SetAlpha(alpha As Double)
+  overload: Eurocode.BetonConstructies.BetonContext.SetAlpha*
+  nameWithType.vb: BetonContext.SetAlpha(Double)
+  fullName.vb: Eurocode.BetonConstructies.BetonContext.SetAlpha(Double)
+  name.vb: SetAlpha(Double)
+- uid: Eurocode.BetonConstructies.BetonContext.Alpha
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Alpha
+  id: Alpha
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Alpha
+  nameWithType: BetonContext.Alpha
+  fullName: Eurocode.BetonConstructies.BetonContext.Alpha
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Alpha
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 249
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double Alpha { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property Alpha As Double
+  overload: Eurocode.BetonConstructies.BetonContext.Alpha*
+- uid: Eurocode.BetonConstructies.BetonContext.XudMax
+  commentId: P:Eurocode.BetonConstructies.BetonContext.XudMax
+  id: XudMax
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: XudMax
+  nameWithType: BetonContext.XudMax
+  fullName: Eurocode.BetonConstructies.BetonContext.XudMax
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: XudMax
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 252
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double XudMax { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property XudMax As Double
+  overload: Eurocode.BetonConstructies.BetonContext.XudMax*
+- uid: Eurocode.BetonConstructies.BetonContext.Rho1Max
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Rho1Max
+  id: Rho1Max
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Rho1Max
+  nameWithType: BetonContext.Rho1Max
+  fullName: Eurocode.BetonConstructies.BetonContext.Rho1Max
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Rho1Max
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 254
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double Rho1Max { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property Rho1Max As Double
+  overload: Eurocode.BetonConstructies.BetonContext.Rho1Max*
+- uid: Eurocode.BetonConstructies.BetonContext.Ecm
+  commentId: P:Eurocode.BetonConstructies.BetonContext.Ecm
+  id: Ecm
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: Ecm
+  nameWithType: BetonContext.Ecm
+  fullName: Eurocode.BetonConstructies.BetonContext.Ecm
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Ecm
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 256
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double Ecm { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property Ecm As Double
+  overload: Eurocode.BetonConstructies.BetonContext.Ecm*
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonC
+  commentId: P:Eurocode.BetonConstructies.BetonContext.EpsilonC
+  id: EpsilonC
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: EpsilonC
+  nameWithType: BetonContext.EpsilonC
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonC
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: EpsilonC
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 259
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double EpsilonC { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property EpsilonC As Double
+  overload: Eurocode.BetonConstructies.BetonContext.EpsilonC*
+- uid: Eurocode.BetonConstructies.BetonContext.SigmaCd
+  commentId: P:Eurocode.BetonConstructies.BetonContext.SigmaCd
+  id: SigmaCd
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: SigmaCd
+  nameWithType: BetonContext.SigmaCd
+  fullName: Eurocode.BetonConstructies.BetonContext.SigmaCd
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: SigmaCd
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 260
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double SigmaCd { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property SigmaCd As Double
+  overload: Eurocode.BetonConstructies.BetonContext.SigmaCd*
+- uid: Eurocode.BetonConstructies.BetonContext.SigmaCk
+  commentId: P:Eurocode.BetonConstructies.BetonContext.SigmaCk
+  id: SigmaCk
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: SigmaCk
+  nameWithType: BetonContext.SigmaCk
+  fullName: Eurocode.BetonConstructies.BetonContext.SigmaCk
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: SigmaCk
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 261
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double SigmaCk { get; set; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public Property SigmaCk As Double
+  overload: Eurocode.BetonConstructies.BetonContext.SigmaCk*
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonC1
+  commentId: P:Eurocode.BetonConstructies.BetonContext.EpsilonC1
+  id: EpsilonC1
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: EpsilonC1
+  nameWithType: BetonContext.EpsilonC1
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonC1
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: EpsilonC1
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 263
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double EpsilonC1 { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property EpsilonC1 As Double
+  overload: Eurocode.BetonConstructies.BetonContext.EpsilonC1*
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonCu1
+  commentId: P:Eurocode.BetonConstructies.BetonContext.EpsilonCu1
+  id: EpsilonCu1
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: EpsilonCu1
+  nameWithType: BetonContext.EpsilonCu1
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonCu1
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: EpsilonCu1
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 265
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double EpsilonCu1 { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property EpsilonCu1 As Double
+  overload: Eurocode.BetonConstructies.BetonContext.EpsilonCu1*
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonC2
+  commentId: P:Eurocode.BetonConstructies.BetonContext.EpsilonC2
+  id: EpsilonC2
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: EpsilonC2
+  nameWithType: BetonContext.EpsilonC2
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonC2
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: EpsilonC2
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 267
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double EpsilonC2 { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property EpsilonC2 As Double
+  overload: Eurocode.BetonConstructies.BetonContext.EpsilonC2*
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonCu2
+  commentId: P:Eurocode.BetonConstructies.BetonContext.EpsilonCu2
+  id: EpsilonCu2
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: EpsilonCu2
+  nameWithType: BetonContext.EpsilonCu2
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonCu2
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: EpsilonCu2
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 268
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double EpsilonCu2 { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property EpsilonCu2 As Double
+  overload: Eurocode.BetonConstructies.BetonContext.EpsilonCu2*
+- uid: Eurocode.BetonConstructies.BetonContext.FactorN
+  commentId: P:Eurocode.BetonConstructies.BetonContext.FactorN
+  id: FactorN
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: FactorN
+  nameWithType: BetonContext.FactorN
+  fullName: Eurocode.BetonConstructies.BetonContext.FactorN
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: FactorN
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 270
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double FactorN { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property FactorN As Double
+  overload: Eurocode.BetonConstructies.BetonContext.FactorN*
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonC3
+  commentId: P:Eurocode.BetonConstructies.BetonContext.EpsilonC3
+  id: EpsilonC3
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: EpsilonC3
+  nameWithType: BetonContext.EpsilonC3
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonC3
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: EpsilonC3
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 272
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double EpsilonC3 { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property EpsilonC3 As Double
+  overload: Eurocode.BetonConstructies.BetonContext.EpsilonC3*
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonCu3
+  commentId: P:Eurocode.BetonConstructies.BetonContext.EpsilonCu3
+  id: EpsilonCu3
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: EpsilonCu3
+  nameWithType: BetonContext.EpsilonCu3
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonCu3
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: EpsilonCu3
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 273
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double EpsilonCu3 { get; }
+    parameters: []
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly Property EpsilonCu3 As Double
+  overload: Eurocode.BetonConstructies.BetonContext.EpsilonCu3*
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonCuAangepast
+  commentId: P:Eurocode.BetonConstructies.BetonContext.EpsilonCuAangepast
+  id: EpsilonCuAangepast
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: EpsilonCuAangepast
+  nameWithType: BetonContext.EpsilonCuAangepast
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonCuAangepast
+  type: Property
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: EpsilonCuAangepast
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 275
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public double? EpsilonCuAangepast { get; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Double}
+    content.vb: Public ReadOnly Property EpsilonCuAangepast As Double?
+  overload: Eurocode.BetonConstructies.BetonContext.EpsilonCuAangepast*
+- uid: Eurocode.BetonConstructies.BetonContext.#ctor(System.String)
+  commentId: M:Eurocode.BetonConstructies.BetonContext.#ctor(System.String)
+  id: '#ctor(System.String)'
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonContext(string)
+  nameWithType: BetonContext.BetonContext(string)
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonContext(string)
+  type: Constructor
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: .ctor
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 288
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public BetonContext(string sterkteklasse)
+    parameters:
+    - id: sterkteklasse
+      type: System.String
+    content.vb: Public Sub New(sterkteklasse As String)
+  overload: Eurocode.BetonConstructies.BetonContext.#ctor*
+  nameWithType.vb: BetonContext.New(String)
+  fullName.vb: Eurocode.BetonConstructies.BetonContext.New(String)
+  name.vb: New(String)
+- uid: Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  commentId: M:Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  id: '#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum)'
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonContext(BetonsterkteklasseEnum)
+  nameWithType: BetonContext.BetonContext(BetonsterkteklasseEnum)
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonContext(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  type: Constructor
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: .ctor
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 296
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public BetonContext(BetonsterkteklasseEnum klasse)
+    parameters:
+    - id: klasse
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+    content.vb: Public Sub New(klasse As BetonsterkteklasseEnum)
+  overload: Eurocode.BetonConstructies.BetonContext.#ctor*
+  nameWithType.vb: BetonContext.New(BetonsterkteklasseEnum)
+  fullName.vb: Eurocode.BetonConstructies.BetonContext.New(Eurocode.BetonConstructies.BetonsterkteklasseEnum)
+  name.vb: New(BetonsterkteklasseEnum)
+- uid: Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum,System.Boolean,Eurocode.BetonConstructies.BetonStaalKwaliteitEnum,System.Boolean)
+  commentId: M:Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum,System.Boolean,Eurocode.BetonConstructies.BetonStaalKwaliteitEnum,System.Boolean)
+  id: '#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum,System.Boolean,Eurocode.BetonConstructies.BetonStaalKwaliteitEnum,System.Boolean)'
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonContext(BetonsterkteklasseEnum, bool, BetonStaalKwaliteitEnum, bool)
+  nameWithType: BetonContext.BetonContext(BetonsterkteklasseEnum, bool, BetonStaalKwaliteitEnum, bool)
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonContext(Eurocode.BetonConstructies.BetonsterkteklasseEnum, bool, Eurocode.BetonConstructies.BetonStaalKwaliteitEnum, bool)
+  type: Constructor
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: .ctor
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 301
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public BetonContext(BetonsterkteklasseEnum betonSterkteKlasse, bool isParabolischSpanningsRekDiagram, BetonStaalKwaliteitEnum betonStaalKwaliteit, bool isHellendeTakDiagram)
+    parameters:
+    - id: betonSterkteKlasse
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+    - id: isParabolischSpanningsRekDiagram
+      type: System.Boolean
+    - id: betonStaalKwaliteit
+      type: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+    - id: isHellendeTakDiagram
+      type: System.Boolean
+    content.vb: Public Sub New(betonSterkteKlasse As BetonsterkteklasseEnum, isParabolischSpanningsRekDiagram As Boolean, betonStaalKwaliteit As BetonStaalKwaliteitEnum, isHellendeTakDiagram As Boolean)
+  overload: Eurocode.BetonConstructies.BetonContext.#ctor*
+  nameWithType.vb: BetonContext.New(BetonsterkteklasseEnum, Boolean, BetonStaalKwaliteitEnum, Boolean)
+  fullName.vb: Eurocode.BetonConstructies.BetonContext.New(Eurocode.BetonConstructies.BetonsterkteklasseEnum, Boolean, Eurocode.BetonConstructies.BetonStaalKwaliteitEnum, Boolean)
+  name.vb: New(BetonsterkteklasseEnum, Boolean, BetonStaalKwaliteitEnum, Boolean)
+- uid: Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum,System.Boolean,Eurocode.BetonConstructies.BetonStaalContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContext.#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum,System.Boolean,Eurocode.BetonConstructies.BetonStaalContext)
+  id: '#ctor(Eurocode.BetonConstructies.BetonsterkteklasseEnum,System.Boolean,Eurocode.BetonConstructies.BetonStaalContext)'
+  parent: Eurocode.BetonConstructies.BetonContext
+  langs:
+  - csharp
+  - vb
+  name: BetonContext(BetonsterkteklasseEnum, bool, BetonStaalContext)
+  nameWithType: BetonContext.BetonContext(BetonsterkteklasseEnum, bool, BetonStaalContext)
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonContext(Eurocode.BetonConstructies.BetonsterkteklasseEnum, bool, Eurocode.BetonConstructies.BetonStaalContext)
+  type: Constructor
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: .ctor
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonContext.cs
+    startLine: 316
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public BetonContext(BetonsterkteklasseEnum betonSterkteKlasse, bool isParabolischSpanningsRekDiagram, BetonStaalContext betonStaal)
+    parameters:
+    - id: betonSterkteKlasse
+      type: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+    - id: isParabolischSpanningsRekDiagram
+      type: System.Boolean
+    - id: betonStaal
+      type: Eurocode.BetonConstructies.BetonStaalContext
+    content.vb: Public Sub New(betonSterkteKlasse As BetonsterkteklasseEnum, isParabolischSpanningsRekDiagram As Boolean, betonStaal As BetonStaalContext)
+  overload: Eurocode.BetonConstructies.BetonContext.#ctor*
+  nameWithType.vb: BetonContext.New(BetonsterkteklasseEnum, Boolean, BetonStaalContext)
+  fullName.vb: Eurocode.BetonConstructies.BetonContext.New(Eurocode.BetonConstructies.BetonsterkteklasseEnum, Boolean, Eurocode.BetonConstructies.BetonStaalContext)
+  name.vb: New(BetonsterkteklasseEnum, Boolean, BetonStaalContext)
+references:
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaBiLineair_Eurocode_BetonConstructies_BetonContext_
+  name: GetAlphaBiLineair(BetonContext)
+  nameWithType: BetonContextExtensions.GetAlphaBiLineair(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaBiLineair
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaBiLineair_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaBiLineair
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaBiLineair_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaGedeelteVoorDeStuikGrens_Eurocode_BetonConstructies_BetonContext_
+  name: GetAlphaGedeelteVoorDeStuikGrens(BetonContext)
+  nameWithType: BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaGedeelteVoorDeStuikGrens
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaGedeelteVoorDeStuikGrens_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaGedeelteVoorDeStuikGrens
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaGedeelteVoorDeStuikGrens_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolRechthoek_Eurocode_BetonConstructies_BetonContext_
+  name: GetAlphaParaboolRechthoek(BetonContext)
+  nameWithType: BetonContextExtensions.GetAlphaParaboolRechthoek(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaParaboolRechthoek
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolRechthoek_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaParaboolRechthoek
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolRechthoek_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolTotStuik_Eurocode_BetonConstructies_BetonContext_
+  name: GetAlphaParaboolTotStuik(BetonContext)
+  nameWithType: BetonContextExtensions.GetAlphaParaboolTotStuik(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaParaboolTotStuik
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolTotStuik_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaParaboolTotStuik
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolTotStuik_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetaParabool_Eurocode_BetonConstructies_BetonContext_
+  name: GetBetaParabool(BetonContext)
+  nameWithType: BetonContextExtensions.GetBetaParabool(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+    name: GetBetaParabool
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetaParabool_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+    name: GetBetaParabool
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetaParabool_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetonRekAangepast_Eurocode_BetonConstructies_BetonContext_
+  name: GetBetonRekAangepast(BetonContext)
+  nameWithType: BetonContextExtensions.GetBetonRekAangepast(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+    name: GetBetonRekAangepast
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetonRekAangepast_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+    name: GetBetonRekAangepast
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetonRekAangepast_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEcm
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEcm_Eurocode_BetonConstructies_BetonContext_
+  name: GetEcm(BetonContext)
+  nameWithType: BetonContextExtensions.GetEcm(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+    name: GetEcm
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEcm_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+    name: GetEcm
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEcm_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonBreuk_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonBetonBreuk(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonBetonBreuk(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonBetonBreuk
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonBreuk_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonBetonBreuk
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonBreuk_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonStuik_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonBetonStuik(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonBetonStuik(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonBetonStuik
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonStuik_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonBetonStuik
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonStuik_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC1_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonC1(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonC1(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC1
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC1_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC1
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC1_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC2_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonC2(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonC2(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC2_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC2_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC3_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonC3(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonC3(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC3
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC3_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC3
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC3_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu1_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonCu1(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonCu1(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu1
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu1_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu1
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu1_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu2_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonCu2(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonCu2(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu2_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu2_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu3_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonCu3(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonCu3(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu3
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu3_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu3
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu3_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(System.Double,System.Double,System.Boolean)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double,System.Boolean)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double,System.Boolean)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorA2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_System_Boolean_
+  name: GetFactorA2(BetonContext, double, double, bool)
+  nameWithType: BetonContextExtensions.GetFactorA2(BetonContext, double, double, bool)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext, double, double, bool)
+  nameWithType.vb: BetonContextExtensions.GetFactorA2(BetonContext, Double, Double, Boolean)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext, Double, Double, Boolean)
+  name.vb: GetFactorA2(BetonContext, Double, Double, Boolean)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double,System.Boolean)
+    name: GetFactorA2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorA2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_System_Boolean_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double,System.Boolean)
+    name: GetFactorA2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorA2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_System_Boolean_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_
+  name: GetFactorAlpha(BetonContext)
+  nameWithType: BetonContextExtensions.GetFactorAlpha(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorAlpha
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorAlpha
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(System.Double,System.Double)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  name: GetFactorAlpha(BetonContext, double, double)
+  nameWithType: BetonContextExtensions.GetFactorAlpha(BetonContext, double, double)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext, double, double)
+  nameWithType.vb: BetonContextExtensions.GetFactorAlpha(BetonContext, Double, Double)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext, Double, Double)
+  name.vb: GetFactorAlpha(BetonContext, Double, Double)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+    name: GetFactorAlpha
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+    name: GetFactorAlpha
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_
+  name: GetFactorBeta(BetonContext)
+  nameWithType: BetonContextExtensions.GetFactorBeta(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorBeta
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorBeta
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(System.Double,System.Double)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  name: GetFactorBeta(BetonContext, double, double)
+  nameWithType: BetonContextExtensions.GetFactorBeta(BetonContext, double, double)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext, double, double)
+  nameWithType.vb: BetonContextExtensions.GetFactorBeta(BetonContext, Double, Double)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext, Double, Double)
+  name.vb: GetFactorBeta(BetonContext, Double, Double)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+    name: GetFactorBeta
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+    name: GetFactorBeta
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorN_Eurocode_BetonConstructies_BetonContext_
+  name: GetFactorN(BetonContext)
+  nameWithType: BetonContextExtensions.GetFactorN(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorN
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorN_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorN
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorN_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(System.Double,System.Boolean)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Boolean)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Boolean)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorY2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Boolean_
+  name: GetFactorY2(BetonContext, double, bool)
+  nameWithType: BetonContextExtensions.GetFactorY2(BetonContext, double, bool)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext, double, bool)
+  nameWithType.vb: BetonContextExtensions.GetFactorY2(BetonContext, Double, Boolean)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext, Double, Boolean)
+  name.vb: GetFactorY2(BetonContext, Double, Boolean)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Boolean)
+    name: GetFactorY2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorY2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Boolean_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Boolean)
+    name: GetFactorY2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorY2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Boolean_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetRho1Max_Eurocode_BetonConstructies_BetonContext_
+  name: GetRho1Max(BetonContext)
+  nameWithType: BetonContextExtensions.GetRho1Max(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+    name: GetRho1Max
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetRho1Max_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+    name: GetRho1Max
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetRho1Max_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(System.Double)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext,System.Double)
+  parent: Eurocode.BetonConstructies.BetonContextExtensions
+  definition: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext,System.Double)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetSigmaCd_Eurocode_BetonConstructies_BetonContext_System_Double_
+  name: GetSigmaCd(BetonContext, double)
+  nameWithType: BetonContextExtensions.GetSigmaCd(BetonContext, double)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext, double)
+  nameWithType.vb: BetonContextExtensions.GetSigmaCd(BetonContext, Double)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext, Double)
+  name.vb: GetSigmaCd(BetonContext, Double)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext,System.Double)
+    name: GetSigmaCd
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetSigmaCd_Eurocode_BetonConstructies_BetonContext_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext,System.Double)
+    name: GetSigmaCd
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetSigmaCd_Eurocode_BetonConstructies_BetonContext_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaBiLineair_Eurocode_BetonConstructies_BetonContext_
+  name: GetAlphaBiLineair(BetonContext)
+  nameWithType: BetonContextExtensions.GetAlphaBiLineair(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaBiLineair
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaBiLineair_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaBiLineair(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaBiLineair
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaBiLineair_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions
+  commentId: T:Eurocode.BetonConstructies.BetonContextExtensions
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html
+  name: BetonContextExtensions
+  nameWithType: BetonContextExtensions
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaGedeelteVoorDeStuikGrens_Eurocode_BetonConstructies_BetonContext_
+  name: GetAlphaGedeelteVoorDeStuikGrens(BetonContext)
+  nameWithType: BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaGedeelteVoorDeStuikGrens
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaGedeelteVoorDeStuikGrens_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaGedeelteVoorDeStuikGrens(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaGedeelteVoorDeStuikGrens
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaGedeelteVoorDeStuikGrens_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolRechthoek_Eurocode_BetonConstructies_BetonContext_
+  name: GetAlphaParaboolRechthoek(BetonContext)
+  nameWithType: BetonContextExtensions.GetAlphaParaboolRechthoek(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaParaboolRechthoek
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolRechthoek_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolRechthoek(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaParaboolRechthoek
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolRechthoek_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolTotStuik_Eurocode_BetonConstructies_BetonContext_
+  name: GetAlphaParaboolTotStuik(BetonContext)
+  nameWithType: BetonContextExtensions.GetAlphaParaboolTotStuik(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaParaboolTotStuik
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolTotStuik_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetAlphaParaboolTotStuik(Eurocode.BetonConstructies.BetonContext)
+    name: GetAlphaParaboolTotStuik
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetAlphaParaboolTotStuik_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetaParabool_Eurocode_BetonConstructies_BetonContext_
+  name: GetBetaParabool(BetonContext)
+  nameWithType: BetonContextExtensions.GetBetaParabool(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+    name: GetBetaParabool
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetaParabool_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetaParabool(Eurocode.BetonConstructies.BetonContext)
+    name: GetBetaParabool
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetaParabool_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetonRekAangepast_Eurocode_BetonConstructies_BetonContext_
+  name: GetBetonRekAangepast(BetonContext)
+  nameWithType: BetonContextExtensions.GetBetonRekAangepast(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+    name: GetBetonRekAangepast
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetonRekAangepast_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetBetonRekAangepast(Eurocode.BetonConstructies.BetonContext)
+    name: GetBetonRekAangepast
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetBetonRekAangepast_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEcm_Eurocode_BetonConstructies_BetonContext_
+  name: GetEcm(BetonContext)
+  nameWithType: BetonContextExtensions.GetEcm(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+    name: GetEcm
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEcm_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEcm(Eurocode.BetonConstructies.BetonContext)
+    name: GetEcm
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEcm_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonBreuk_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonBetonBreuk(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonBetonBreuk(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonBetonBreuk
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonBreuk_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonBreuk(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonBetonBreuk
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonBreuk_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonStuik_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonBetonStuik(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonBetonStuik(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonBetonStuik
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonStuik_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonBetonStuik(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonBetonStuik
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonBetonStuik_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC1_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonC1(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonC1(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC1
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC1_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC1(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC1
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC1_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC2_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonC2(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonC2(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC2_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC2(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC2_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC3_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonC3(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonC3(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC3
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC3_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonC3(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonC3
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonC3_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu1_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonCu1(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonCu1(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu1
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu1_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu1(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu1
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu1_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu2_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonCu2(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonCu2(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu2_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu2(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu2_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu3_Eurocode_BetonConstructies_BetonContext_
+  name: GetEpsilonCu3(BetonContext)
+  nameWithType: BetonContextExtensions.GetEpsilonCu3(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu3
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu3_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetEpsilonCu3(Eurocode.BetonConstructies.BetonContext)
+    name: GetEpsilonCu3
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetEpsilonCu3_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double,System.Boolean)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double,System.Boolean)
+  isExternal: true
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorA2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_System_Boolean_
+  name: GetFactorA2(BetonContext, double, double, bool)
+  nameWithType: BetonContextExtensions.GetFactorA2(BetonContext, double, double, bool)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext, double, double, bool)
+  nameWithType.vb: BetonContextExtensions.GetFactorA2(BetonContext, Double, Double, Boolean)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext, Double, Double, Boolean)
+  name.vb: GetFactorA2(BetonContext, Double, Double, Boolean)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double,System.Boolean)
+    name: GetFactorA2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorA2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_System_Boolean_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorA2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double,System.Boolean)
+    name: GetFactorA2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorA2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_System_Boolean_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_
+  name: GetFactorAlpha(BetonContext)
+  nameWithType: BetonContextExtensions.GetFactorAlpha(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorAlpha
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorAlpha
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+  isExternal: true
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  name: GetFactorAlpha(BetonContext, double, double)
+  nameWithType: BetonContextExtensions.GetFactorAlpha(BetonContext, double, double)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext, double, double)
+  nameWithType.vb: BetonContextExtensions.GetFactorAlpha(BetonContext, Double, Double)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext, Double, Double)
+  name.vb: GetFactorAlpha(BetonContext, Double, Double)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+    name: GetFactorAlpha
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorAlpha(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+    name: GetFactorAlpha
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorAlpha_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_
+  name: GetFactorBeta(BetonContext)
+  nameWithType: BetonContextExtensions.GetFactorBeta(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorBeta
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorBeta
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+  isExternal: true
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  name: GetFactorBeta(BetonContext, double, double)
+  nameWithType: BetonContextExtensions.GetFactorBeta(BetonContext, double, double)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext, double, double)
+  nameWithType.vb: BetonContextExtensions.GetFactorBeta(BetonContext, Double, Double)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext, Double, Double)
+  name.vb: GetFactorBeta(BetonContext, Double, Double)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+    name: GetFactorBeta
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorBeta(Eurocode.BetonConstructies.BetonContext,System.Double,System.Double)
+    name: GetFactorBeta
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorBeta_Eurocode_BetonConstructies_BetonContext_System_Double_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorN_Eurocode_BetonConstructies_BetonContext_
+  name: GetFactorN(BetonContext)
+  nameWithType: BetonContextExtensions.GetFactorN(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorN
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorN_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorN(Eurocode.BetonConstructies.BetonContext)
+    name: GetFactorN
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorN_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Boolean)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Boolean)
+  isExternal: true
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorY2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Boolean_
+  name: GetFactorY2(BetonContext, double, bool)
+  nameWithType: BetonContextExtensions.GetFactorY2(BetonContext, double, bool)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext, double, bool)
+  nameWithType.vb: BetonContextExtensions.GetFactorY2(BetonContext, Double, Boolean)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext, Double, Boolean)
+  name.vb: GetFactorY2(BetonContext, Double, Boolean)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Boolean)
+    name: GetFactorY2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorY2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Boolean_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetFactorY2(Eurocode.BetonConstructies.BetonContext,System.Double,System.Boolean)
+    name: GetFactorY2
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetFactorY2_Eurocode_BetonConstructies_BetonContext_System_Double_System_Boolean_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: ','
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetRho1Max_Eurocode_BetonConstructies_BetonContext_
+  name: GetRho1Max(BetonContext)
+  nameWithType: BetonContextExtensions.GetRho1Max(BetonContext)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+    name: GetRho1Max
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetRho1Max_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetRho1Max(Eurocode.BetonConstructies.BetonContext)
+    name: GetRho1Max
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetRho1Max_Eurocode_BetonConstructies_BetonContext_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext,System.Double)
+  commentId: M:Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext,System.Double)
+  isExternal: true
+  href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetSigmaCd_Eurocode_BetonConstructies_BetonContext_System_Double_
+  name: GetSigmaCd(BetonContext, double)
+  nameWithType: BetonContextExtensions.GetSigmaCd(BetonContext, double)
+  fullName: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext, double)
+  nameWithType.vb: BetonContextExtensions.GetSigmaCd(BetonContext, Double)
+  fullName.vb: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext, Double)
+  name.vb: GetSigmaCd(BetonContext, Double)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext,System.Double)
+    name: GetSigmaCd
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetSigmaCd_Eurocode_BetonConstructies_BetonContext_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonContextExtensions.GetSigmaCd(Eurocode.BetonConstructies.BetonContext,System.Double)
+    name: GetSigmaCd
+    href: Eurocode.BetonConstructies.BetonContextExtensions.html#Eurocode_BetonConstructies_BetonContextExtensions_GetSigmaCd_Eurocode_BetonConstructies_BetonContext_System_Double_
+  - name: (
+  - uid: Eurocode.BetonConstructies.BetonContext
+    name: BetonContext
+    href: Eurocode.BetonConstructies.BetonContext.html
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.#ctor*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.#ctor
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext__ctor
+  name: BetonContext
+  nameWithType: BetonContext.BetonContext
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonContext
+  nameWithType.vb: BetonContext.New
+  fullName.vb: Eurocode.BetonConstructies.BetonContext.New
+  name.vb: New
+- uid: Eurocode.BetonConstructies.BetonContext
+  commentId: T:Eurocode.BetonConstructies.BetonContext
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonContext.html
+  name: BetonContext
+  nameWithType: BetonContext
+  fullName: Eurocode.BetonConstructies.BetonContext
+- uid: Eurocode.BetonConstructies.BetonStaalContext
+  commentId: T:Eurocode.BetonConstructies.BetonStaalContext
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonStaalContext.html
+  name: BetonStaalContext
+  nameWithType: BetonStaalContext
+  fullName: Eurocode.BetonConstructies.BetonStaalContext
+- uid: Eurocode.BetonConstructies.BetonContext.IsParabolischSpanningsRekDiagram*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.IsParabolischSpanningsRekDiagram
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_IsParabolischSpanningsRekDiagram
+  name: IsParabolischSpanningsRekDiagram
+  nameWithType: BetonContext.IsParabolischSpanningsRekDiagram
+  fullName: Eurocode.BetonConstructies.BetonContext.IsParabolischSpanningsRekDiagram
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: Eurocode.BetonConstructies.BetonContext.CementKlasse*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.CementKlasse
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_CementKlasse
+  name: CementKlasse
+  nameWithType: BetonContext.CementKlasse
+  fullName: Eurocode.BetonConstructies.BetonContext.CementKlasse
+- uid: System.Nullable{Eurocode.BetonConstructies.CementklasseEnum}
+  commentId: T:System.Nullable{Eurocode.BetonConstructies.CementklasseEnum}
+  parent: System
+  definition: System.Nullable`1
+  href: Eurocode.BetonConstructies.CementklasseEnum.html
+  name: CementklasseEnum?
+  nameWithType: CementklasseEnum?
+  fullName: Eurocode.BetonConstructies.CementklasseEnum?
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.CementklasseEnum
+    name: CementklasseEnum
+    href: Eurocode.BetonConstructies.CementklasseEnum.html
+  - name: '?'
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.CementklasseEnum
+    name: CementklasseEnum
+    href: Eurocode.BetonConstructies.CementklasseEnum.html
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonContext.CoefficientCementKlasse*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.CoefficientCementKlasse
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_CoefficientCementKlasse
+  name: CoefficientCementKlasse
+  nameWithType: BetonContext.CoefficientCementKlasse
+  fullName: Eurocode.BetonConstructies.BetonContext.CoefficientCementKlasse
+- uid: System.Double
+  commentId: T:System.Double
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.double
+  name: double
+  nameWithType: double
+  fullName: double
+  nameWithType.vb: Double
+  fullName.vb: Double
+  name.vb: Double
+- uid: Eurocode.BetonConstructies.BetonContext.FckEigenOpgave*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.FckEigenOpgave
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_FckEigenOpgave
+  name: FckEigenOpgave
+  nameWithType: BetonContext.FckEigenOpgave
+  fullName: Eurocode.BetonConstructies.BetonContext.FckEigenOpgave
+- uid: Eurocode.BetonConstructies.BetonContext.FckCubeEigenOpgave*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.FckCubeEigenOpgave
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_FckCubeEigenOpgave
+  name: FckCubeEigenOpgave
+  nameWithType: BetonContext.FckCubeEigenOpgave
+  fullName: Eurocode.BetonConstructies.BetonContext.FckCubeEigenOpgave
+- uid: Eurocode.BetonConstructies.BetonContext.Betonsterkteklasse*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Betonsterkteklasse
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Betonsterkteklasse
+  name: Betonsterkteklasse
+  nameWithType: BetonContext.Betonsterkteklasse
+  fullName: Eurocode.BetonConstructies.BetonContext.Betonsterkteklasse
+- uid: System.Nullable{Eurocode.BetonConstructies.BetonsterkteklasseEnum}
+  commentId: T:System.Nullable{Eurocode.BetonConstructies.BetonsterkteklasseEnum}
+  parent: System
+  definition: System.Nullable`1
+  href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  name: BetonsterkteklasseEnum?
+  nameWithType: BetonsterkteklasseEnum?
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum?
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+    name: BetonsterkteklasseEnum
+    href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  - name: '?'
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+    name: BetonsterkteklasseEnum
+    href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  - name: '?'
+- uid: Eurocode.BetonConstructies.BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_BetonSterkteKlasseGebruiksvriendelijkeNaam
+  name: BetonSterkteKlasseGebruiksvriendelijkeNaam
+  nameWithType: BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonSterkteKlasseGebruiksvriendelijkeNaam
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Eurocode.BetonConstructies.BetonContext.BetonDiagramGebruiksvriendelijkeNaam*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.BetonDiagramGebruiksvriendelijkeNaam
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_BetonDiagramGebruiksvriendelijkeNaam
+  name: BetonDiagramGebruiksvriendelijkeNaam
+  nameWithType: BetonContext.BetonDiagramGebruiksvriendelijkeNaam
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonDiagramGebruiksvriendelijkeNaam
+- uid: Eurocode.BetonConstructies.BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_BetonStaalDiagramGebruiksvriendelijkeNaam
+  name: BetonStaalDiagramGebruiksvriendelijkeNaam
+  nameWithType: BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam
+  fullName: Eurocode.BetonConstructies.BetonContext.BetonStaalDiagramGebruiksvriendelijkeNaam
+- uid: Eurocode.BetonConstructies.BetonContext.Fck*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Fck
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Fck
+  name: Fck
+  nameWithType: BetonContext.Fck
+  fullName: Eurocode.BetonConstructies.BetonContext.Fck
+- uid: Eurocode.BetonConstructies.BetonContext.FckCube*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.FckCube
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_FckCube
+  name: FckCube
+  nameWithType: BetonContext.FckCube
+  fullName: Eurocode.BetonConstructies.BetonContext.FckCube
+- uid: Eurocode.BetonConstructies.BetonContext.Fcm*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Fcm
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Fcm
+  name: Fcm
+  nameWithType: BetonContext.Fcm
+  fullName: Eurocode.BetonConstructies.BetonContext.Fcm
+- uid: Eurocode.BetonConstructies.BetonContext.Fctm*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Fctm
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Fctm
+  name: Fctm
+  nameWithType: BetonContext.Fctm
+  fullName: Eurocode.BetonConstructies.BetonContext.Fctm
+- uid: Eurocode.BetonConstructies.BetonContext.FctkVijfProcent*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.FctkVijfProcent
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_FctkVijfProcent
+  name: FctkVijfProcent
+  nameWithType: BetonContext.FctkVijfProcent
+  fullName: Eurocode.BetonConstructies.BetonContext.FctkVijfProcent
+- uid: Eurocode.BetonConstructies.BetonContext.FcktVijfEnNegentigProcent*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.FcktVijfEnNegentigProcent
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_FcktVijfEnNegentigProcent
+  name: FcktVijfEnNegentigProcent
+  nameWithType: BetonContext.FcktVijfEnNegentigProcent
+  fullName: Eurocode.BetonConstructies.BetonContext.FcktVijfEnNegentigProcent
+- uid: Eurocode.BetonConstructies.BetonContext.GammaC*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.GammaC
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_GammaC
+  name: GammaC
+  nameWithType: BetonContext.GammaC
+  fullName: Eurocode.BetonConstructies.BetonContext.GammaC
+- uid: Eurocode.BetonConstructies.BetonContext.Fcd*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Fcd
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Fcd
+  name: Fcd
+  nameWithType: BetonContext.Fcd
+  fullName: Eurocode.BetonConstructies.BetonContext.Fcd
+- uid: Eurocode.BetonConstructies.BetonContext.Fctd*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Fctd
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Fctd
+  name: Fctd
+  nameWithType: BetonContext.Fctd
+  fullName: Eurocode.BetonConstructies.BetonContext.Fctd
+- uid: Eurocode.BetonConstructies.BetonContext.Beta*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Beta
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Beta
+  name: Beta
+  nameWithType: BetonContext.Beta
+  fullName: Eurocode.BetonConstructies.BetonContext.Beta
+- uid: Eurocode.BetonConstructies.BetonContext.GetBeta*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.GetBeta
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_GetBeta
+  name: GetBeta
+  nameWithType: BetonContext.GetBeta
+  fullName: Eurocode.BetonConstructies.BetonContext.GetBeta
+- uid: Eurocode.BetonConstructies.BetonContext.GetAlpha*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.GetAlpha
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_GetAlpha
+  name: GetAlpha
+  nameWithType: BetonContext.GetAlpha
+  fullName: Eurocode.BetonConstructies.BetonContext.GetAlpha
+- uid: Eurocode.BetonConstructies.BetonContext.GetEpsilonBreuk*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.GetEpsilonBreuk
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_GetEpsilonBreuk
+  name: GetEpsilonBreuk
+  nameWithType: BetonContext.GetEpsilonBreuk
+  fullName: Eurocode.BetonConstructies.BetonContext.GetEpsilonBreuk
+- uid: Eurocode.BetonConstructies.BetonContext.GetEpsilonStuik*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.GetEpsilonStuik
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_GetEpsilonStuik
+  name: GetEpsilonStuik
+  nameWithType: BetonContext.GetEpsilonStuik
+  fullName: Eurocode.BetonConstructies.BetonContext.GetEpsilonStuik
+- uid: Eurocode.BetonConstructies.BetonContext.SetBeta*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.SetBeta
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_SetBeta_System_Double_
+  name: SetBeta
+  nameWithType: BetonContext.SetBeta
+  fullName: Eurocode.BetonConstructies.BetonContext.SetBeta
+- uid: Eurocode.BetonConstructies.BetonContext.SetAlpha*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.SetAlpha
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_SetAlpha_System_Double_
+  name: SetAlpha
+  nameWithType: BetonContext.SetAlpha
+  fullName: Eurocode.BetonConstructies.BetonContext.SetAlpha
+- uid: Eurocode.BetonConstructies.BetonContext.Alpha*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Alpha
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Alpha
+  name: Alpha
+  nameWithType: BetonContext.Alpha
+  fullName: Eurocode.BetonConstructies.BetonContext.Alpha
+- uid: Eurocode.BetonConstructies.BetonContext.XudMax*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.XudMax
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_XudMax
+  name: XudMax
+  nameWithType: BetonContext.XudMax
+  fullName: Eurocode.BetonConstructies.BetonContext.XudMax
+- uid: Eurocode.BetonConstructies.BetonContext.Rho1Max*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Rho1Max
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Rho1Max
+  name: Rho1Max
+  nameWithType: BetonContext.Rho1Max
+  fullName: Eurocode.BetonConstructies.BetonContext.Rho1Max
+- uid: Eurocode.BetonConstructies.BetonContext.Ecm*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.Ecm
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_Ecm
+  name: Ecm
+  nameWithType: BetonContext.Ecm
+  fullName: Eurocode.BetonConstructies.BetonContext.Ecm
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonC*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.EpsilonC
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_EpsilonC
+  name: EpsilonC
+  nameWithType: BetonContext.EpsilonC
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonC
+- uid: Eurocode.BetonConstructies.BetonContext.SigmaCd*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.SigmaCd
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_SigmaCd
+  name: SigmaCd
+  nameWithType: BetonContext.SigmaCd
+  fullName: Eurocode.BetonConstructies.BetonContext.SigmaCd
+- uid: Eurocode.BetonConstructies.BetonContext.SigmaCk*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.SigmaCk
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_SigmaCk
+  name: SigmaCk
+  nameWithType: BetonContext.SigmaCk
+  fullName: Eurocode.BetonConstructies.BetonContext.SigmaCk
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonC1*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.EpsilonC1
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_EpsilonC1
+  name: EpsilonC1
+  nameWithType: BetonContext.EpsilonC1
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonC1
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonCu1*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.EpsilonCu1
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_EpsilonCu1
+  name: EpsilonCu1
+  nameWithType: BetonContext.EpsilonCu1
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonCu1
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonC2*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.EpsilonC2
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_EpsilonC2
+  name: EpsilonC2
+  nameWithType: BetonContext.EpsilonC2
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonC2
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonCu2*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.EpsilonCu2
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_EpsilonCu2
+  name: EpsilonCu2
+  nameWithType: BetonContext.EpsilonCu2
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonCu2
+- uid: Eurocode.BetonConstructies.BetonContext.FactorN*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.FactorN
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_FactorN
+  name: FactorN
+  nameWithType: BetonContext.FactorN
+  fullName: Eurocode.BetonConstructies.BetonContext.FactorN
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonC3*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.EpsilonC3
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_EpsilonC3
+  name: EpsilonC3
+  nameWithType: BetonContext.EpsilonC3
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonC3
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonCu3*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.EpsilonCu3
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_EpsilonCu3
+  name: EpsilonCu3
+  nameWithType: BetonContext.EpsilonCu3
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonCu3
+- uid: Eurocode.BetonConstructies.BetonContext.EpsilonCuAangepast*
+  commentId: Overload:Eurocode.BetonConstructies.BetonContext.EpsilonCuAangepast
+  href: Eurocode.BetonConstructies.BetonContext.html#Eurocode_BetonConstructies_BetonContext_EpsilonCuAangepast
+  name: EpsilonCuAangepast
+  nameWithType: BetonContext.EpsilonCuAangepast
+  fullName: Eurocode.BetonConstructies.BetonContext.EpsilonCuAangepast
+- uid: System.Nullable{System.Double}
+  commentId: T:System.Nullable{System.Double}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.double
+  name: double?
+  nameWithType: double?
+  fullName: double?
+  nameWithType.vb: Double?
+  fullName.vb: Double?
+  name.vb: Double?
+  spec.csharp:
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: '?'
+  spec.vb:
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: '?'
+- uid: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  commentId: T:Eurocode.BetonConstructies.BetonsterkteklasseEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonsterkteklasseEnum.html
+  name: BetonsterkteklasseEnum
+  nameWithType: BetonsterkteklasseEnum
+  fullName: Eurocode.BetonConstructies.BetonsterkteklasseEnum
+- uid: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  commentId: T:Eurocode.BetonConstructies.BetonStaalKwaliteitEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum.html
+  name: BetonStaalKwaliteitEnum
+  nameWithType: BetonStaalKwaliteitEnum
+  fullName: Eurocode.BetonConstructies.BetonStaalKwaliteitEnum

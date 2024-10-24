@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Eurocode.Belastingen</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="6 Gebruiksbelastingen\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
+  </ItemGroup>
+
+</Project>

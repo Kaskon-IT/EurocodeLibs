@@ -1,0 +1,405 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum
+  commentId: T:Eurocode.Grondslagen.NationaleBijlageEnum
+  id: NationaleBijlageEnum
+  parent: Eurocode.Grondslagen
+  children:
+  - Eurocode.Grondslagen.NationaleBijlageEnum.BE
+  - Eurocode.Grondslagen.NationaleBijlageEnum.DE
+  - Eurocode.Grondslagen.NationaleBijlageEnum.Geen
+  - Eurocode.Grondslagen.NationaleBijlageEnum.NL
+  langs:
+  - csharp
+  - vb
+  name: NationaleBijlageEnum
+  nameWithType: NationaleBijlageEnum
+  fullName: Eurocode.Grondslagen.NationaleBijlageEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: NationaleBijlageEnum
+    path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+    startLine: 8
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  summary: >-
+    Enum voor het gebruik van nationale bijlage.
+
+    Indien geen nationale bijlage gebruikt wordt van wordt de standaard Europese norm toepast.
+  example: []
+  syntax:
+    content: public enum NationaleBijlageEnum
+    content.vb: Public Enum NationaleBijlageEnum
+  extensionMethods:
+  - Eurocode.Grondslagen.NationaleBijlageEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1
+  - Eurocode.Grondslagen.NationaleBijlageEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2
+  - Eurocode.Grondslagen.NationaleBijlageEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3
+  - Eurocode.Grondslagen.NationaleBijlageEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum.Geen
+  commentId: F:Eurocode.Grondslagen.NationaleBijlageEnum.Geen
+  id: Geen
+  parent: Eurocode.Grondslagen.NationaleBijlageEnum
+  langs:
+  - csharp
+  - vb
+  name: Geen
+  nameWithType: NationaleBijlageEnum.Geen
+  fullName: Eurocode.Grondslagen.NationaleBijlageEnum.Geen
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: Geen
+    path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+    startLine: 12
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: Geen = 0
+    return:
+      type: Eurocode.Grondslagen.NationaleBijlageEnum
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum.NL
+  commentId: F:Eurocode.Grondslagen.NationaleBijlageEnum.NL
+  id: NL
+  parent: Eurocode.Grondslagen.NationaleBijlageEnum
+  langs:
+  - csharp
+  - vb
+  name: NL
+  nameWithType: NationaleBijlageEnum.NL
+  fullName: Eurocode.Grondslagen.NationaleBijlageEnum.NL
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: NL
+    path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+    startLine: 13
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: NL = 1
+    return:
+      type: Eurocode.Grondslagen.NationaleBijlageEnum
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum.BE
+  commentId: F:Eurocode.Grondslagen.NationaleBijlageEnum.BE
+  id: BE
+  parent: Eurocode.Grondslagen.NationaleBijlageEnum
+  langs:
+  - csharp
+  - vb
+  name: BE
+  nameWithType: NationaleBijlageEnum.BE
+  fullName: Eurocode.Grondslagen.NationaleBijlageEnum.BE
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: BE
+    path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+    startLine: 15
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: BE = 2
+    return:
+      type: Eurocode.Grondslagen.NationaleBijlageEnum
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum.DE
+  commentId: F:Eurocode.Grondslagen.NationaleBijlageEnum.DE
+  id: DE
+  parent: Eurocode.Grondslagen.NationaleBijlageEnum
+  langs:
+  - csharp
+  - vb
+  name: DE
+  nameWithType: NationaleBijlageEnum.DE
+  fullName: Eurocode.Grondslagen.NationaleBijlageEnum.DE
+  type: Field
+  source:
+    remote:
+      path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: DE
+    path: Eurocode0.Grondslagen/NationaleBijlageEnum.cs
+    startLine: 17
+  assemblies:
+  - Eurocode0.Grondslagen
+  namespace: Eurocode.Grondslagen
+  syntax:
+    content: DE = 3
+    return:
+      type: Eurocode.Grondslagen.NationaleBijlageEnum
+references:
+- uid: Eurocode.Grondslagen
+  commentId: N:Eurocode.Grondslagen
+  href: Eurocode.html
+  name: Eurocode.Grondslagen
+  nameWithType: Eurocode.Grondslagen
+  fullName: Eurocode.Grondslagen
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.Grondslagen
+    name: Grondslagen
+    href: Eurocode.Grondslagen.html
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+  parent: Eurocode.BetonConstructies.BetonDekkingExtensions
+  definition: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK1_Eurocode_Grondslagen_NationaleBijlageEnum_
+  name: GetK1(NationaleBijlageEnum)
+  nameWithType: BetonDekkingExtensions.GetK1(NationaleBijlageEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK1
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK1_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK1
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK1_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+  parent: Eurocode.BetonConstructies.BetonDekkingExtensions
+  definition: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK2_Eurocode_Grondslagen_NationaleBijlageEnum_
+  name: GetK2(NationaleBijlageEnum)
+  nameWithType: BetonDekkingExtensions.GetK2(NationaleBijlageEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK2
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK2_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK2
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK2_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+  parent: Eurocode.BetonConstructies.BetonDekkingExtensions
+  definition: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK3_Eurocode_Grondslagen_NationaleBijlageEnum_
+  name: GetK3(NationaleBijlageEnum)
+  nameWithType: BetonDekkingExtensions.GetK3(NationaleBijlageEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK3
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK3_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK3
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK3_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum.Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+  parent: Eurocode.BetonConstructies.BetonDekkingExtensions
+  definition: Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetUitvoeringstoleraties_Eurocode_Grondslagen_NationaleBijlageEnum_
+  name: GetUitvoeringstoleraties(NationaleBijlageEnum)
+  nameWithType: BetonDekkingExtensions.GetUitvoeringstoleraties(NationaleBijlageEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetUitvoeringstoleraties
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetUitvoeringstoleraties_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetUitvoeringstoleraties
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetUitvoeringstoleraties_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK1_Eurocode_Grondslagen_NationaleBijlageEnum_
+  name: GetK1(NationaleBijlageEnum)
+  nameWithType: BetonDekkingExtensions.GetK1(NationaleBijlageEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK1
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK1_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK1(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK1
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK1_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonDekkingExtensions
+  commentId: T:Eurocode.BetonConstructies.BetonDekkingExtensions
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html
+  name: BetonDekkingExtensions
+  nameWithType: BetonDekkingExtensions
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions
+- uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK2_Eurocode_Grondslagen_NationaleBijlageEnum_
+  name: GetK2(NationaleBijlageEnum)
+  nameWithType: BetonDekkingExtensions.GetK2(NationaleBijlageEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK2
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK2_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK2(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK2
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK2_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK3_Eurocode_Grondslagen_NationaleBijlageEnum_
+  name: GetK3(NationaleBijlageEnum)
+  nameWithType: BetonDekkingExtensions.GetK3(NationaleBijlageEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK3
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK3_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetK3(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetK3
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetK3_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+- uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+  commentId: M:Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+  href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetUitvoeringstoleraties_Eurocode_Grondslagen_NationaleBijlageEnum_
+  name: GetUitvoeringstoleraties(NationaleBijlageEnum)
+  nameWithType: BetonDekkingExtensions.GetUitvoeringstoleraties(NationaleBijlageEnum)
+  fullName: Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+  spec.csharp:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetUitvoeringstoleraties
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetUitvoeringstoleraties_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+  spec.vb:
+  - uid: Eurocode.BetonConstructies.BetonDekkingExtensions.GetUitvoeringstoleraties(Eurocode.Grondslagen.NationaleBijlageEnum)
+    name: GetUitvoeringstoleraties
+    href: Eurocode.BetonConstructies.BetonDekkingExtensions.html#Eurocode_BetonConstructies_BetonDekkingExtensions_GetUitvoeringstoleraties_Eurocode_Grondslagen_NationaleBijlageEnum_
+  - name: (
+  - uid: Eurocode.Grondslagen.NationaleBijlageEnum
+    name: NationaleBijlageEnum
+    href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  - name: )
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+- uid: Eurocode.Grondslagen.NationaleBijlageEnum
+  commentId: T:Eurocode.Grondslagen.NationaleBijlageEnum
+  parent: Eurocode.Grondslagen
+  href: Eurocode.Grondslagen.NationaleBijlageEnum.html
+  name: NationaleBijlageEnum
+  nameWithType: NationaleBijlageEnum
+  fullName: Eurocode.Grondslagen.NationaleBijlageEnum

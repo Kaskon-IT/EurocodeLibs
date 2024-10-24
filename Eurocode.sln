@@ -3,14 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grondslagen", "Grondslagen\Grondslagen.csproj", "{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Belastingen", "Belastingen\Belastingen.csproj", "{D78F8EB9-29BD-470D-86F3-ED3360E9F338}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1990 Grondslagen", "1990 Grondslagen", "{00B014AD-4D11-4443-B36F-DAFDFE00A7D2}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1991 Belastingen", "1991 Belastingen", "{737DF754-D2CE-436D-8C2F-18333E488FDF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1992 Betonconstructies", "1992 Betonconstructies", "{8FA64B87-3C59-4CD6-896E-9D5CDC81FE5A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1993 Staalconstructies", "1993 Staalconstructies", "{E0F1F799-E487-4673-9ED8-59BA6C243175}"
@@ -29,7 +21,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1998 Aardbevingen", "1998 A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 Duurzaamheid", "4 Duurzaamheid", "{75A5C8B8-D1B9-4D2B-AD33-D1B0ABAA7D44}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetonConstructies", "BetonConstructies\BetonConstructies.csproj", "{0C6F0F02-8615-4634-A5F5-5904527F1CA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eurocode0.Grondslagen", "Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj", "{1D84B9A4-8EAF-4D90-B136-8FA85CA9AA10}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eurocode1.Belastingen", "Eurocode1.Belastingen\Eurocode1.Belastingen.csproj", "{BA0154BD-1F4B-418E-A40C-BCAD2735207E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eurocode2.BetonConstructies", "Eurocode2.BetonConstructies\Eurocode2.BetonConstructies.csproj", "{1B64DAC5-B58A-4CBC-B195-1E2DB753ED26}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5C106623-87A3-46A7-A9D9-5C00EE980B33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,28 +35,28 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D78F8EB9-29BD-470D-86F3-ED3360E9F338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D78F8EB9-29BD-470D-86F3-ED3360E9F338}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D78F8EB9-29BD-470D-86F3-ED3360E9F338}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D78F8EB9-29BD-470D-86F3-ED3360E9F338}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C6F0F02-8615-4634-A5F5-5904527F1CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C6F0F02-8615-4634-A5F5-5904527F1CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C6F0F02-8615-4634-A5F5-5904527F1CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C6F0F02-8615-4634-A5F5-5904527F1CA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D84B9A4-8EAF-4D90-B136-8FA85CA9AA10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D84B9A4-8EAF-4D90-B136-8FA85CA9AA10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D84B9A4-8EAF-4D90-B136-8FA85CA9AA10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D84B9A4-8EAF-4D90-B136-8FA85CA9AA10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA0154BD-1F4B-418E-A40C-BCAD2735207E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA0154BD-1F4B-418E-A40C-BCAD2735207E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA0154BD-1F4B-418E-A40C-BCAD2735207E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA0154BD-1F4B-418E-A40C-BCAD2735207E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B64DAC5-B58A-4CBC-B195-1E2DB753ED26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B64DAC5-B58A-4CBC-B195-1E2DB753ED26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B64DAC5-B58A-4CBC-B195-1E2DB753ED26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B64DAC5-B58A-4CBC-B195-1E2DB753ED26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7F93CAB2-041C-465E-A4F6-E5BCF9B1E711} = {00B014AD-4D11-4443-B36F-DAFDFE00A7D2}
-		{D78F8EB9-29BD-470D-86F3-ED3360E9F338} = {737DF754-D2CE-436D-8C2F-18333E488FDF}
 		{74B58FCC-995C-44B7-A213-D79A6012E6A2} = {E0F1F799-E487-4673-9ED8-59BA6C243175}
 		{75A5C8B8-D1B9-4D2B-AD33-D1B0ABAA7D44} = {E0F1F799-E487-4673-9ED8-59BA6C243175}
-		{0C6F0F02-8615-4634-A5F5-5904527F1CA1} = {8FA64B87-3C59-4CD6-896E-9D5CDC81FE5A}
+		{1D84B9A4-8EAF-4D90-B136-8FA85CA9AA10} = {5C106623-87A3-46A7-A9D9-5C00EE980B33}
+		{BA0154BD-1F4B-418E-A40C-BCAD2735207E} = {5C106623-87A3-46A7-A9D9-5C00EE980B33}
+		{1B64DAC5-B58A-4CBC-B195-1E2DB753ED26} = {5C106623-87A3-46A7-A9D9-5C00EE980B33}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23B23B07-CC7C-464E-B98D-5EF418F994FB}

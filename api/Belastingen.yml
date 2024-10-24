@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: Belastingen
+  commentId: N:Belastingen
+  id: Belastingen
+  children:
+  - Belastingen.Class1
+  langs:
+  - csharp
+  - vb
+  name: Belastingen
+  nameWithType: Belastingen
+  fullName: Belastingen
+  type: Namespace
+  assemblies:
+  - Eurocode1.Belastingen
+references:
+- uid: Belastingen.Class1
+  commentId: T:Belastingen.Class1
+  href: Belastingen.Class1.html
+  name: Class1
+  nameWithType: Class1
+  fullName: Belastingen.Class1

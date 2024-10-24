@@ -1,0 +1,139 @@
+### YamlMime:ManagedReference
+items:
+- uid: Eurocode.BetonConstructies.CementklasseEnum
+  commentId: T:Eurocode.BetonConstructies.CementklasseEnum
+  id: CementklasseEnum
+  parent: Eurocode.BetonConstructies
+  children:
+  - Eurocode.BetonConstructies.CementklasseEnum.N
+  - Eurocode.BetonConstructies.CementklasseEnum.R
+  - Eurocode.BetonConstructies.CementklasseEnum.S
+  langs:
+  - csharp
+  - vb
+  name: CementklasseEnum
+  nameWithType: CementklasseEnum
+  fullName: Eurocode.BetonConstructies.CementklasseEnum
+  type: Enum
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: CementklasseEnum
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 23
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: public enum CementklasseEnum
+    content.vb: Public Enum CementklasseEnum
+- uid: Eurocode.BetonConstructies.CementklasseEnum.R
+  commentId: F:Eurocode.BetonConstructies.CementklasseEnum.R
+  id: R
+  parent: Eurocode.BetonConstructies.CementklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: R
+  nameWithType: CementklasseEnum.R
+  fullName: Eurocode.BetonConstructies.CementklasseEnum.R
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: R
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 25
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: R = 1
+    return:
+      type: Eurocode.BetonConstructies.CementklasseEnum
+- uid: Eurocode.BetonConstructies.CementklasseEnum.N
+  commentId: F:Eurocode.BetonConstructies.CementklasseEnum.N
+  id: N
+  parent: Eurocode.BetonConstructies.CementklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: N
+  nameWithType: CementklasseEnum.N
+  fullName: Eurocode.BetonConstructies.CementklasseEnum.N
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: N
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 26
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: N = 2
+    return:
+      type: Eurocode.BetonConstructies.CementklasseEnum
+- uid: Eurocode.BetonConstructies.CementklasseEnum.S
+  commentId: F:Eurocode.BetonConstructies.CementklasseEnum.S
+  id: S
+  parent: Eurocode.BetonConstructies.CementklasseEnum
+  langs:
+  - csharp
+  - vb
+  name: S
+  nameWithType: CementklasseEnum.S
+  fullName: Eurocode.BetonConstructies.CementklasseEnum.S
+  type: Field
+  source:
+    remote:
+      path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+      branch: master
+      repo: https://github.com/bartvanderlinden/Eurocode.git
+    id: S
+    path: Eurocode2.BetonConstructies/3 Materialen/BetonEnums.cs
+    startLine: 27
+  assemblies:
+  - Eurocode2.BetonConstructies
+  namespace: Eurocode.BetonConstructies
+  syntax:
+    content: S = 3
+    return:
+      type: Eurocode.BetonConstructies.CementklasseEnum
+references:
+- uid: Eurocode.BetonConstructies
+  commentId: N:Eurocode.BetonConstructies
+  href: Eurocode.html
+  name: Eurocode.BetonConstructies
+  nameWithType: Eurocode.BetonConstructies
+  fullName: Eurocode.BetonConstructies
+  spec.csharp:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+  spec.vb:
+  - uid: Eurocode
+    name: Eurocode
+    href: Eurocode.html
+  - name: .
+  - uid: Eurocode.BetonConstructies
+    name: BetonConstructies
+    href: Eurocode.BetonConstructies.html
+- uid: Eurocode.BetonConstructies.CementklasseEnum
+  commentId: T:Eurocode.BetonConstructies.CementklasseEnum
+  parent: Eurocode.BetonConstructies
+  href: Eurocode.BetonConstructies.CementklasseEnum.html
+  name: CementklasseEnum
+  nameWithType: CementklasseEnum
+  fullName: Eurocode.BetonConstructies.CementklasseEnum
