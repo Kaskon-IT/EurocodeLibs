@@ -1,0 +1,68 @@
+﻿
+
+<h3>Grondslagen voor de berekening (EC 0)</h3>
+
+
+    
+
+    <FluentSelectEnum Label="Nationale bijlage" Placeholder="Selecteer..." TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
+                      ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
+    <p>
+     @*    Selectie: @Model.NationaleBijlage.ToString()&nbsp; *@
+
+        @if (Model != null && Model.NationaleBijlage != null)
+        {
+
+            <img class="flag" src="Flags/@(Model.NationaleBijlage.ToString().ToLower()).svg" alt="Land vlag" />
+        }
+    </p>
+
+
+    <FluentSelectEnum Label="Gevolgklasse (Consequence Class)" 
+                      Placeholder="Selecteer..." 
+                      TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
+                      ShowDescription="false"
+                      @bind-EnumSelectedValue="@Model.Gevolgklasse" />
+    
+    <FluentSelectEnum Label="Ontwerplevensduur" 
+                      TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum" 
+                      @bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
+
+
+
+
+    <FluentTextField    Label="Betrouwbaarheidsklasse" 
+                        Value="@Model.Betrouwbaarheidsklasse.ToString()" 
+                        ReadOnly="true" 
+                        Appearance="FluentInputAppearance.Filled" />
+
+    <FluentTextField    Label="K,FI" 
+                        Value="@Model.Kfi.ToString("0.0")" 
+                        ReadOnly="true" 
+                        Appearance="FluentInputAppearance.Filled" />
+
+    <FluentTextField    Label="ξ (Xi)" 
+                        Value="@Model.Xi.ToString("0.00")" 
+                        ReadOnly="true" 
+                        Appearance="FluentInputAppearance.Filled" />
+
+
+
+
+
+
+@code {
+    [Parameter]
+    public Eurocode.Grondslagen.GrondslagenContext Model { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<Eurocode.Grondslagen.GrondslagenContext> ModelChanged { get; set; }
+
+    async Task UpdateModel()
+    {
+        await ModelChanged.InvokeAsync(Model);
+    }
+
+       
+
+}

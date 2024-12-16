@@ -68,7 +68,7 @@ namespace Eurocode.BetonConstructies
         {
             return nb switch
             {
-                NationaleBijlageEnum.Geen => 5.0,
+                NationaleBijlageEnum.EU => 5.0,
                 NationaleBijlageEnum.NL => 0.0,
                 _ => 5.0
             };
@@ -83,7 +83,7 @@ namespace Eurocode.BetonConstructies
         {
             return nb switch
             {
-                NationaleBijlageEnum.Geen => 10.0,
+                NationaleBijlageEnum.EU => 10.0,
                 NationaleBijlageEnum.NL => 0.0,
                 _ => 10.0
             };
@@ -98,7 +98,7 @@ namespace Eurocode.BetonConstructies
         {
             return nb switch
             {
-                NationaleBijlageEnum.Geen => 15.0,
+                NationaleBijlageEnum.EU => 15.0,
                 NationaleBijlageEnum.NL => 0.0,
                 _ => 15.0
             };
@@ -117,7 +117,7 @@ namespace Eurocode.BetonConstructies
         {
             return dekking.Grondslagen.NationaleBijlage switch
             {
-                NationaleBijlageEnum.Geen => 40.00,
+                NationaleBijlageEnum.EU => 40.00,
                 NationaleBijlageEnum.NL => dekking.GetCminDur() + 10,
                 _ => 40.00
             };
@@ -132,7 +132,7 @@ namespace Eurocode.BetonConstructies
         {
             return dekking.Grondslagen.NationaleBijlage switch
             {
-                NationaleBijlageEnum.Geen => 75.00,
+                NationaleBijlageEnum.EU => 75.00,
                 NationaleBijlageEnum.NL => dekking.GetCminDur() + 50,
                 _ => 75.00
             };

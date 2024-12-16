@@ -45,6 +45,8 @@
 
 
 
+
+
     }
 
     public static class GrondslagenExtensions
@@ -82,7 +84,7 @@
         {
             return nb switch
             {
-                NationaleBijlageEnum.Geen => 1.15 / 1.35,
+                NationaleBijlageEnum.EU => 1.15 / 1.35,
                 NationaleBijlageEnum.NL => 1.2 / 1.35,
                 _ => 1.15 / 1.35
             };
@@ -98,7 +100,7 @@
         {
             return nb switch
             {
-                NationaleBijlageEnum.Geen => 10.0,
+                NationaleBijlageEnum.EU => 10.0,
                 NationaleBijlageEnum.NL => 5.0,
                 _ => 10.0,
             };

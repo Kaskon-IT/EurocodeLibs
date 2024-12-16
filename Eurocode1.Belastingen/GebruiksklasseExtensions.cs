@@ -1,0 +1,63 @@
+﻿namespace Eurocode.Belastingen
+{
+    public static class GebruiksklasseExtensions
+    {
+        /// <summary>
+        /// Haal de opgelegde belasting op aan de hand van de gebruiksklasse
+        /// </summary>
+        /// <param name="gebruiksklasse">de gebruiksklasse</param>
+        /// <returns>Opgelagde belastingen</returns>
+        public static OpgelegdeBelastingen GetOpgelegdeBelastingen(this GebruiksklasseEnum gebruiksklasse)
+        {
+            return gebruiksklasse switch
+            {
+                GebruiksklasseEnum.A_gemeenschappelijke_trappen or
+                GebruiksklasseEnum.B_kantoorgebouwen => new OpgelegdeBelastingen(3.0, 3.0),
+                GebruiksklasseEnum.C1_bijeenkomstgebouwen_tafels or
+                GebruiksklasseEnum.C2_bijeenkomstgebouwen_vaste_stoelen => new OpgelegdeBelastingen(4.0, 7.0),
+                GebruiksklasseEnum.C3_bijeenkomstgebouwen_zonder_obstakels or
+                GebruiksklasseEnum.C4_bijeenkomstgebouwen_fysieke_activiteiten or
+                GebruiksklasseEnum.C5_bijeenkomst_grote_menigtes => new OpgelegdeBelastingen(5.0, 7.0),
+                GebruiksklasseEnum.D1_winkelruimte_kleinhandel or
+                GebruiksklasseEnum.D2_winkelruimte_warenhuizen => new OpgelegdeBelastingen(4.0, 7.0),
+                GebruiksklasseEnum.E1_opslag_winkels => new OpgelegdeBelastingen(5.0, 7.0),
+                GebruiksklasseEnum.E1_opslag_bibliotheken => new OpgelegdeBelastingen(2.5, 3.0),
+                GebruiksklasseEnum.E1_opslag_overige => new OpgelegdeBelastingen(5.0, 10.0),
+                GebruiksklasseEnum.E2_industrieel_gebruik => new OpgelegdeBelastingen(3.0, 7.0),
+                _ => new OpgelegdeBelastingen(3.0, 3.0),
+            };
+        }
+
+        /// <summary>
+        /// Haal de momentaan-factoren op.
+        /// </summary>
+        /// <param name="gebruiksklasse">de gebruiksklasse</param>
+        /// <returns>Momentaan-factoren (Ψ₀, Ψ₁ en Ψ₂) </returns>
+        public static MomentaanFactoren GetMomentaanFactoren(this GebruiksklasseEnum gebruiksklasse)
+        {
+            return gebruiksklasse switch
+            {
+                GebruiksklasseEnum.A_gemeenschappelijke_trappen => new MomentaanFactoren(mom0: 0.4, mom1: 0.5, mom2: 0.3),
+                GebruiksklasseEnum.B_kantoorgebouwen => new MomentaanFactoren(mom0: 0.5, mom1: 0.5, mom2: 0.3),
+                GebruiksklasseEnum.C1_bijeenkomstgebouwen_tafels or
+                GebruiksklasseEnum.C2_bijeenkomstgebouwen_vaste_stoelen or
+                GebruiksklasseEnum.C3_bijeenkomstgebouwen_zonder_obstakels or
+                GebruiksklasseEnum.C4_bijeenkomstgebouwen_fysieke_activiteiten or
+                GebruiksklasseEnum.C5_bijeenkomst_grote_menigtes => new MomentaanFactoren(mom0: 0.6, mom1: 0.7, mom2: 0.6),
+                GebruiksklasseEnum.D1_winkelruimte_kleinhandel or
+                GebruiksklasseEnum.D2_winkelruimte_warenhuizen => new MomentaanFactoren(mom0: 0.4, mom1: 0.7, mom2: 0.6),
+                GebruiksklasseEnum.E1_opslag_winkels or
+                GebruiksklasseEnum.E1_opslag_bibliotheken or
+                GebruiksklasseEnum.E1_opslag_overige or
+                GebruiksklasseEnum.E2_industrieel_gebruik => new MomentaanFactoren(mom0: 1.0, mom1: 0.9, mom2: 0.8),
+                _ => new MomentaanFactoren(mom0: 0.4, mom1: 0.5, mom2: 0.3),
+
+            };
+        }
+
+
+    }
+
+
+
+}

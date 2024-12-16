@@ -1,0 +1,79 @@
+﻿@using Eurocode.BetonConstructies
+
+
+<FluentSelectEnum Label="Betonsterkteklasse"
+TEnum="BetonsterkteklasseEnum"
+ExcludeEnumItems="[BetonsterkteklasseEnum.Eigen_Opgave]"
+@bind-EnumSelectedValue="@Model.Betonsterkteklasse" />
+
+@if(ToonBetonSpanningRekDiagram)
+{
+    <FluentSelectEnum Label="Spanning-rek diagram"
+    TEnum="BetonContext.SpanningRekDiagramType"
+    @bind-EnumSelectedValue="@Model.SpanningRekDiagram" />
+}
+
+@if (ToonBetonstaal)
+{
+    <FluentSelectEnum Label="Betonstaal"
+    TEnum="BetonStaalKwaliteitEnum"
+    ExcludeEnumItems="[BetonStaalKwaliteitEnum.EigenFyk]"
+    @bind-EnumSelectedValue="@Model.BetonStaal.BetonStaalKwaliteit" />
+}
+
+@if (ToonBetonStaalSpanningRekDiagram)
+{
+    <FluentSelectEnum Label="Spanning-rek diagram"
+    TEnum="BetonStaalContext.SpanningRekDiagramType"
+    @bind-EnumSelectedValue="@Model.BetonStaal.SpanningRekDiagram" />
+}
+
+
+
+
+
+
+
+
+
+@code {
+
+    /// <summary>
+    /// De betoncontext.
+    /// </summary>
+    [Parameter]
+    public required BetonContext Model { get; set; } = new();
+
+    /// <summary>
+    /// Callback is nodig voor @bind-Model
+    /// </summary>
+    [Parameter]
+    public EventCallback<BetonContext> ModelChanged { get; set; }
+
+
+    /// <summary>
+    /// Optie om keuze betonstaal wel/niet te tonen.
+    /// Standaard true.
+    /// </summary>
+    [Parameter]
+    public bool ToonBetonstaal { get; set; } = true;
+
+    /// <summary>
+    /// Optie om de keuze voor spanning-rek-diagram van beton wel/niet te tonen.
+    /// Standaard true.
+    /// </summary>
+    [Parameter]
+    public bool ToonBetonSpanningRekDiagram { get; set; } = true;
+
+    /// <summary>
+    /// Optie om de keuze voor spanning-rek-diagram van het betonstaal wel/niet te tonen.
+    /// Standaard true.
+    /// </summary>
+    [Parameter]
+    public bool ToonBetonStaalSpanningRekDiagram { get; set; } = true;
+
+
+
+
+
+}

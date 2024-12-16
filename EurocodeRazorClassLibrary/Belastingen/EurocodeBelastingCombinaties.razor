@@ -1,0 +1,36 @@
+﻿@using Eurocode.Belastingen
+@using Eurocode.Grondslagen
+
+<h3>Combinaties</h3>
+
+
+
+<FluentDataGrid Items="@Model.BelastingCombinaties.AsQueryable()"
+                TGridItem="BelastingCombinatie">
+
+    <PropertyColumn Property="@(c => c.Naam)" Title="" Width="70px" />
+    <PropertyColumn Property="@(c => c.Type)" Title="Type" Width="140px" />
+
+
+    <PropertyColumn Property="@(c => c.UserFriendlyText)" title="Factor(en)" />
+
+
+</FluentDataGrid>
+
+
+
+
+
+@code {
+    [Parameter]
+    public required Eurocode.Belastingen.BelastingenContext Model { get; set; }
+
+
+    [Parameter]
+    public EventCallback<Eurocode.Belastingen.BelastingenContext> ModelChanged { get; set; }
+
+    async Task UpdateModel()
+    {
+        await ModelChanged.InvokeAsync(Model);
+    }
+}

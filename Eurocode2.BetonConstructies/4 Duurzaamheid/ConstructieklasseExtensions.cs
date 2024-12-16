@@ -21,8 +21,50 @@
                     break;
             }
 
-            if (beton.Fck >= 30)
-                constructieklasse.CorrectieBeton = -1;
+
+
+            List<int> correctiesBeton = new List<int>();
+            foreach (var mk in dekking.Milieuklassen)
+            {
+                switch (mk)
+                {
+                    case MilieuklasseEnum.X0:
+                    case MilieuklasseEnum.XC1:
+                        if (beton.Fck >= 30)
+                            correctiesBeton.Add(-1);
+                        else
+                            correctiesBeton.Add(0);
+                        break;
+                    case MilieuklasseEnum.XC2:
+                    case MilieuklasseEnum.XC3:
+                        if (beton.Fck >= 35)
+                            correctiesBeton.Add(-1);
+                        else
+                            correctiesBeton.Add(0);
+                        break;
+                    case MilieuklasseEnum.XC4:
+                    case MilieuklasseEnum.XD1:
+                    case MilieuklasseEnum.XD2:
+                    case MilieuklasseEnum.XS1:
+                        if (beton.Fck >= 40)
+                            correctiesBeton.Add(-1);
+                        else
+                            correctiesBeton.Add(0);
+                        break;
+                    case MilieuklasseEnum.XD3:
+                    case MilieuklasseEnum.XS2:
+                    case MilieuklasseEnum.XS3:
+                        if (beton.Fck >= 45)
+                            correctiesBeton.Add(-1);
+                        else
+                            correctiesBeton.Add(0);
+                        break;
+
+                }
+            }
+
+            // correcties beton.. negatief getal dus grootste is maatgevend
+            constructieklasse.CorrectieBeton += correctiesBeton.Max();
 
             if (dekking.IsPlaatGeometrie)
                 constructieklasse.CorrectiePlaatGeometrie = -1;

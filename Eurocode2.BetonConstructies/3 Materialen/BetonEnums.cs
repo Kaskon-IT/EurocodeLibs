@@ -61,4 +61,21 @@ namespace Eurocode.BetonConstructies
         EigenFyk = 31,
     }
 
+    public enum BetonStaalSpanningRekDiagramEnum
+    {
+        [Description("Met horizontale tak")]
+        MetHorizontaleTak = 1,
+        [Description("Met een klimmende tak")]
+        MetKlimmendeTak = 2,
+    }
+
+    public enum BetonSpanningRekDiagramEnum
+    {
+        [Description("Bi-Lineair verloop")]
+        BiLineair = 1,
+        [Description("Parabolisch verloop")]
+        Parabolisch = 2,
+    }
+
+
 }

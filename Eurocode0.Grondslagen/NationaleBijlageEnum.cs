@@ -9,8 +9,8 @@ namespace Eurocode.Grondslagen
     public enum NationaleBijlageEnum
     {
 
-
-        Geen = 0,
+        [Description("(eu) CEN")]
+        EU = 0,
         [Description("(nl) Nederland")]
         NL = 1,
         [Description("(be) Belgie")]

@@ -43,7 +43,7 @@
         /// </summary>
         //public bool IsHellendeTakDiagram { get; set; }
 
-        public SpanningRekDiagramType SpanningRekDiagram { get; set; } = SpanningRekDiagramType.HorizontaleTak;
+        public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.HorizontaleTak;
         public enum SpanningRekDiagramType { HellendeTak, HorizontaleTak }
 
 

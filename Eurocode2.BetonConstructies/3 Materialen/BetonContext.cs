@@ -42,7 +42,7 @@
         //public bool IsParabolischSpanningsRekDiagram { get; set; } = !true;
 
 
-        public SpanningRekDiagramType SpanningRekDiagram { get; set; } = SpanningRekDiagramType.BiLineair;
+        public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.BiLineair;
         public enum SpanningRekDiagramType { Parabolisch, BiLineair }
 
 

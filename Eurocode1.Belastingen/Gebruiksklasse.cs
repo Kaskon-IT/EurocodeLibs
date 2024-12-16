@@ -5,4 +5,13 @@
     {
 
     }
+
+    public static class BelastingCombinatieExtensions
+    {
+        // fabriek voor belastingcombinaties
+
+    }
+
+
+
 }
