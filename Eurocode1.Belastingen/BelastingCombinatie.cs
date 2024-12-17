@@ -27,13 +27,6 @@
 
 
 
-        /// <summary>
-        /// Verwijzing naar de Eurocode 0.
-        /// Noodzakelijk voor factoren Xi en KFI.
-        /// </summary>
-        //public Eurocode.Grondslagen.GrondslagenContext Grondslagen;
-
-
 
     }
 

@@ -12,7 +12,17 @@
 
     <PropertyColumn Property="@(c => c.Naam)" Title="Geval" Width ="70px"/>
     <PropertyColumn Property="@(c => c.Type)" Title="Type" Width ="140px"/>
-    <PropertyColumn Property="@(c => c.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? c.Gebruiksklasse.ToString(): "")" Title="Gebruiksklasse" />
+    @* <PropertyColumn Property="@(c => c.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? c.Gebruiksklasse.ToString(): "")" Title="Gebruiksklasse" /> *@
+
+
+     <TemplateColumn 
+        Style="overflow:visible" 
+        Title="Gebruiksklasse">
+        @if(context.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk){
+            <FluentSelectEnum TEnum="GebruiksklasseEnum" @bind-EnumSelectedValue="@context.Gebruiksklasse" />
+        }
+    </TemplateColumn>
+
 
     <PropertyColumn Property="@(item => item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? item.MomentaanFactoren.Mom0.ToString("0.0#") : "")" Title="Ψ₀" Width="50px" />
     <PropertyColumn Property="@(item => item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? item.MomentaanFactoren.Mom1.ToString("0.0#") : "")" Title="Ψ₁" Width="50px" />

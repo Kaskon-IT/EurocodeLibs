@@ -37,20 +37,16 @@ namespace Eurocode.Belastingen
             ];
 
 
-        public List<BelastingCombinatie> BelastingCombinaties { get; set; } =
-            [
-                new BelastingCombinatie(1, BelastingCombinatieTypeEnum.Fundamenteel_A),
-                new BelastingCombinatie(2, BelastingCombinatieTypeEnum.Fundamenteel_B),
-                new BelastingCombinatie(3, BelastingCombinatieTypeEnum.Frequent),
-                new BelastingCombinatie(4, BelastingCombinatieTypeEnum.QuasiBlijvend),
-                new BelastingCombinatie(5, BelastingCombinatieTypeEnum.Karakteristiek),
-            ];
+        public List<BelastingCombinatie> BelastingCombinaties { get; set; } = [];
 
 
 
         public void GenereerBelastingCombinaties(BelastingenContext context, List<BelastingGeval> gevallen, List<BelastingCombinatieTypeEnum> combinatieTypes)
         {
-            // alleen voor situatie met 1 permanent, en 1 verankedelijk... todo meer opties met meerdere gevallen.
+            // alleen voor situatie met 1 permanent, en 1 verankedelijk...
+            // todo meer opties met meerdere gevallen.
+            // todo ook keuze zonder combinaties (gunstig permanent)
+            // todo ook keuze zonder combinaties met alleen permanent
 
             var g = gevallen.FirstOrDefault(geval => geval.Type == BelastingGeval.BelastingGevalTypeEnum.Permanent);
             var q = gevallen.FirstOrDefault(geval => geval.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk);
@@ -165,34 +161,6 @@ namespace Eurocode.Belastingen
 
 
 
-    }
-
-
-
-
-    public class VergeetMijNietje
-    {
-        public double L { get; set; }
-        public double M { get; set; }
-        public double F { get; set; }
-        public double A { get; set; }
-        public double B { get; set; }
-        public double X { get; set; }
-
-        public enum BelastingTypeEnum
-        {
-            Puntlast,
-            Lijnlast,
-            Trapezium
-        }
-
-        public enum VergeetMijNietjeEnum
-        {
-            ScharnierRol,
-            InklemmingInklemming,
-            InklemmingRol,
-
-        }
     }
 
 
