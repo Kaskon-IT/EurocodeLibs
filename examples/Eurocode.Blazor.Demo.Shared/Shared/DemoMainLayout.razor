@@ -1,0 +1,87 @@
+﻿@using Eurocode.Blazor.Demo.Shared
+@* @using Eurocode.Blazor.Demo.Shared.Pages.MessageBar.Examples *@
+@using Microsoft.FluentUI.AspNetCore.Components
+@using Microsoft.AspNetCore.Components
+@using System.Runtime.InteropServices
+
+@namespace Eurocode.Blazor.Demo.Shared
+
+<PageTitle>@App.PageTitle("Demo")</PageTitle>
+
+<div>
+    <FluentLayout>
+        <FluentHeader Class="siteheader">
+            <a href="/" aria-label="Back to the homepage">
+                <div class="logo" role="presentation" aria-hidden="true" itemprop="logo" itemscope="itemscope">
+                    
+                </div>
+            </a>
+            <FluentSpacer />
+
+            <div class="search">
+                <DemoSearch />
+            </div>
+
+            <div class="links">
+                <FluentAnchor Appearance="Appearance.Hypertext"
+                              Href="http://github.com/microsoft/fluentui-blazor" Target="_blank" Rel="noreferrer noopener"
+                              title="Fluent UI Blazor library source on GitHub" aria-label="Fluent UI Blazor library source on GitHub">
+                    @* <FluentIcon Value="@(new Icon.Regular.Size20.GitHub())" Color="Color.FillInverse" /> *@
+                </FluentAnchor>
+            </div>
+            <div class="notifications">
+                @* <NotificationCenter /> *@
+            </div>
+            <div class="settings">
+                <SiteSettings />
+            </div>
+
+
+        </FluentHeader>
+
+        <FluentStack Class="body-stack" Orientation="Orientation.Horizontal" Width="100%" HorizontalGap="0">
+            @* <DemoNavMenu /> *@
+            <FluentBodyContent id="body-content" Style="height: calc(100dvh - 90px);">
+                <div class="content">
+                    <article id="article">
+
+                        <FluentMessageBarProvider Section="@App.MESSAGES_TOP" ClearAfterNavigation="true" />
+
+
+                                <CascadingValue Value=@OnRefreshTableOfContents>
+                                    @Body
+                                </CascadingValue>
+
+                    </article>
+
+                    @if (NavigationManager.Uri != NavigationManager.BaseUri)
+                    {
+                        <aside>
+                            <TableOfContents @ref=_toc />
+                            @* <ConsoleLog /> *@
+                        </aside>
+                    }
+
+                    <FluentToastProvider MaxToastCount="10" />
+                    <FluentDialogProvider />
+                    <FluentTooltipProvider />
+                    <FluentKeyCodeProvider />
+                    <FluentMenuProvider />
+
+                </div>
+            </FluentBodyContent>
+        </FluentStack>
+
+        <FluentFooter Style="@("height: 40px; color: white;  font-size: var(--type-ramp-minus-1-font-size); line-height: var(--type-ramp-base-line-height);")">
+            <div class="version">
+                Version: @_version
+                &nbsp;-&nbsp;
+                <a href="https://dotnet.microsoft.com/en-us/learn/aspnet/what-is-aspnet-core">Powered by @RuntimeInformation.FrameworkDescription</a>
+            </div>
+            <FluentSpacer />
+            <div class="copy">
+                Microsoft © 2024. All rights reserved.
+            </div>
+        </FluentFooter>
+    </FluentLayout>
+</div>

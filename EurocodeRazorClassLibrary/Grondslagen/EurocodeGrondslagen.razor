@@ -53,7 +53,7 @@
 
 @code {
     [Parameter]
-    public Eurocode.Grondslagen.GrondslagenContext Model { get; set; } = new();
+    public required Eurocode.Grondslagen.GrondslagenContext Model { get; set; }
 
     [Parameter]
     public EventCallback<Eurocode.Grondslagen.GrondslagenContext> ModelChanged { get; set; }

@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="App.razor.BAK" />
+    <Content Include="Routes.razor.BAK" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.*-* " />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\" />
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\sources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
+    <ProjectReference Include="..\..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />
+    <ProjectReference Include="..\..\Eurocode2.BetonConstructies\Eurocode2.BetonConstructies.csproj" />
+    <ProjectReference Include="..\..\Eurocode3.StaalConstructies\Eurocode3.StaalConstructies.csproj" />
+    <ProjectReference Include="..\..\Eurocode4.StaalBetonConstructies\Eurocode4.StaalBetonConstructies.csproj" />
+    <ProjectReference Include="..\..\Eurocode5.HoutConstructies\Eurocode5.HoutConstructies.csproj" />
+    <ProjectReference Include="..\..\Eurocode6.Metselwerk\Eurocode6.Metselwerk.csproj" />
+    <ProjectReference Include="..\..\Eurocode7.Geotechniek\Eurocode7.Geotechniek.csproj" />
+    <ProjectReference Include="..\..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />
+    <ProjectReference Include="..\..\EurocodeRazorClassLibrary\EurocodeRazorClassLibrary.csproj" />
+  </ItemGroup>
+</Project>

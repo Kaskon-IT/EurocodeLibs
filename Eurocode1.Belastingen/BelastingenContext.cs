@@ -66,28 +66,15 @@ namespace Eurocode.Belastingen
                             // 4 combinaties (gunstig, ongunstig) * (alleen G, G+Q)
                             for (int i = 0; i < 4; i++)
                             {
-                                bool gunstig = (i > 1);
+                                bool isGunstig = (i > 1);
                                 BelastingCombinatie bc = new(BelastingCombinaties.Count + 1, type: type);
-                                BelastingCombinatieItem bcItem1 = new()
-                                {
-                                    Context = context,
-                                    Combinatie = bc,
-                                    Geval = g,
-                                    PermanentIsGunstig = gunstig,
-                                };
-
+                                BelastingCombinatieItem bcItem1 = new(context, bc, g, isGunstig);
                                 bc.Items.Add(bcItem1);
 
                                 // 
                                 if (i == 1 || i == 3)
                                 {
-                                    BelastingCombinatieItem bcItem2 = new()
-                                    {
-                                        Context = context,
-                                        Combinatie = bc,
-                                        Geval = q,
-                                        PermanentIsGunstig = gunstig,
-                                    };
+                                    BelastingCombinatieItem bcItem2 = new(context, bc, q, isGunstig);
                                     bc.Items.Add(bcItem2);
                                 }
                                 BelastingCombinaties.Add(bc);
@@ -98,23 +85,11 @@ namespace Eurocode.Belastingen
                             for (int i = 0; i < 2; i++)
                             {
                                 // 2 combinaties (ongustig, gunstig) * (G+Q*M0)
-                                bool gunstig = (i > 0);
+                                bool isGunstig = (i > 0);
                                 BelastingCombinatie bc = new(BelastingCombinaties.Count + 1, type: type);
-                                BelastingCombinatieItem bcItem1 = new()
-                                {
-                                    Context = context,
-                                    Combinatie = bc,
-                                    Geval = g,
-                                    PermanentIsGunstig = gunstig,
-                                };
+                                BelastingCombinatieItem bcItem1 = new(context, bc, g, isGunstig);
                                 bc.Items.Add(bcItem1);
-                                BelastingCombinatieItem bcItem2 = new()
-                                {
-                                    Context = context,
-                                    Combinatie = bc,
-                                    Geval = q,
-                                    PermanentIsGunstig = gunstig,
-                                };
+                                BelastingCombinatieItem bcItem2 = new(context, bc, q, isGunstig);
                                 bc.Items.Add(bcItem2);
                                 BelastingCombinaties.Add(bc);
                             }
@@ -128,27 +103,27 @@ namespace Eurocode.Belastingen
                         case BelastingCombinatieTypeEnum.Brand:
                             // met veranderlijk
                             BelastingCombinatie combi1 = new(BelastingCombinaties.Count + 1, type);
-                            combi1.Items.Add(new BelastingCombinatieItem() { Context = context, Combinatie = combi1, Geval = g });
-                            combi1.Items.Add(new BelastingCombinatieItem() { Context = context, Combinatie = combi1, Geval = q });
+                            combi1.Items.Add(new BelastingCombinatieItem(context, combi1, g));
+                            combi1.Items.Add(new BelastingCombinatieItem(context, combi1, q));
                             BelastingCombinaties.Add(combi1);
                             // zonder veranderlijk
                             BelastingCombinatie combi2 = new(BelastingCombinaties.Count + 1, type);
-                            combi2.Items.Add(new BelastingCombinatieItem() { Context = context, Combinatie = combi2, Geval = g });
+                            combi2.Items.Add(new BelastingCombinatieItem(context, combi2, g));
                             BelastingCombinaties.Add(combi2);
                             break;
 
                         case BelastingCombinatieTypeEnum.Karakteristiek:
                             // 1 combinatie karakteristiek
                             BelastingCombinatie karakteristiek = new(BelastingCombinaties.Count + 1, type);
-                            karakteristiek.Items.Add(new BelastingCombinatieItem() { Context = context, Combinatie = karakteristiek, Geval = g });
-                            karakteristiek.Items.Add(new BelastingCombinatieItem() { Context = context, Combinatie = karakteristiek, Geval = q });
+                            karakteristiek.Items.Add(new BelastingCombinatieItem(context, karakteristiek, g));
+                            karakteristiek.Items.Add(new BelastingCombinatieItem(context, karakteristiek, q));
                             BelastingCombinaties.Add(karakteristiek);
                             break;
 
                         case BelastingCombinatieTypeEnum.Blijvend:
                             // 1 combinatie blijvend is alleen permanent
                             BelastingCombinatie blijvend = new(BelastingCombinaties.Count + 1, type);
-                            blijvend.Items.Add(new BelastingCombinatieItem() { Context = context, Combinatie = blijvend, Geval = g });
+                            blijvend.Items.Add(new BelastingCombinatieItem(context, blijvend, g));
                             BelastingCombinaties.Add(blijvend);
                             break;
                     }

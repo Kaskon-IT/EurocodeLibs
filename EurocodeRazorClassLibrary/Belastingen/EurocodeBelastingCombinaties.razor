@@ -6,13 +6,19 @@
 
 
 <FluentDataGrid Items="@Model.BelastingCombinaties.AsQueryable()"
-                TGridItem="BelastingCombinatie">
+TGridItem="BelastingCombinatie">
 
     <PropertyColumn Property="@(c => c.Naam)" Title="Combi" Width="70px" />
     <PropertyColumn Property="@(c => c.Type)" Title="Type" Width="140px" />
 
-
-    <PropertyColumn Property="@(c => c.UserFriendlyText)" title="Factor(en)" />
+    @if (ShowMomentaanFactoren)
+    {
+        <PropertyColumn Property="@(c => c.UserFriendlyTextInclusiefMomentaanFactoren)" title="Factor(en)" />
+    }
+    else{
+        <PropertyColumn Property="@(c => c.UserFriendlyText)" title="Factor(en)" />
+    }
+    
 
 
 </FluentDataGrid>
@@ -33,4 +39,8 @@
     {
         await ModelChanged.InvokeAsync(Model);
     }
+
+    [Parameter]
+    public bool ShowMomentaanFactoren{ get; set; }
+
 }

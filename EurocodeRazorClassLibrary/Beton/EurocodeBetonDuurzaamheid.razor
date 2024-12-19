@@ -1,0 +1,46 @@
+﻿@using Eurocode.BetonConstructies
+@using Eurocode.Grondslagen
+
+<h3>EurocodeBetonDuurzaamheid</h3>
+
+<p>Ontwerplevensduur: @Model.Grondslagen.OntwerpLevensduur</p>
+<p>Beton: @Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
+<p>Constructieklasse: @Model.Constructieklasse.UserFriendlyName</p>
+<p>Kwaliteitsbeheersing: {@Model.IsKwaliteitsBeheersing? "Ja":"Nee"}</p>
+<p>Dekking nominaal: @Model.BetondekkingNominaal</p>
+
+<p>Dekking toegepast: @Model.Betondekking</p>
+<p>Naam: @Model.Naam</p>
+
+
+
+
+
+
+@code {
+    [Parameter]
+    public required BetonDekkingContext Model{ get; set; } 
+
+    [Parameter]
+    public EventCallback<Eurocode.BetonConstructies.BetonDekkingContext> ModelChanged { get; set; }
+
+    async Task UpdateModel()
+    {
+        await ModelChanged.InvokeAsync(Model);
+    }
+
+
+    // Wat moeten we laten zien:
+    // Milieuklasse 
+    // Positie (ONDER/BOVEN)
+    // Constructieklasse
+    // Referentie-periode
+    // Betonsterkte
+    
+    // Overige zaken van invloed:
+    // - kwaliteitsbeheersing
+    // - etcetera
+
+
+
+}

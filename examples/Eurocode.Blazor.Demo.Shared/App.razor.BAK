@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="Eurocode.Blazor.Demo.styles.css" />
+    <HeadOutlet />
+</head>
+
+<body>
+    <Routes />
+    <script src="_framework/blazor.web.js"></script>
+</body>
+
+</html>
+
+@code{
+    public static string PageTitle(string page)
+    {
+        return $"{page} - FluentUI Blazor Components";
+    }
+
+    public const string MESSAGES_NOTIFICATION_CENTER = "NOTIFICATION_CENTER";
+    public const string MESSAGES_TOP = "TOP";
+    public const string MESSAGES_DIALOG = "DIALOG";
+    public const string MESSAGES_CARD = "CARD";
+}

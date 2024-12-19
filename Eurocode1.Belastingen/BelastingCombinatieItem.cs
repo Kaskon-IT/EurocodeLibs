@@ -1,4 +1,6 @@
-﻿namespace Eurocode.Belastingen
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Eurocode.Belastingen
 {
     public class BelastingCombinatieItem
     {
@@ -16,17 +18,54 @@
         /// </summary>
         public required BelastingGeval Geval { get; set; }
 
-        private double _basisFactorPermanentFundamenteel = 1.35;
-        private double _basisFactorVeranderlijkFundamenteel = 1.50;
+        private readonly double _basisFactorPermanentFundamenteel = 1.35;
+        private readonly double _basisFactorVeranderlijkFundamenteel = 1.50;
 
-        public BelastingCombinatieItem() { }
 
-        public BelastingCombinatieItem(BelastingCombinatie combinatie, BelastingGeval geval, bool permanentIsGunstig = false)
+
+        /// <summary>
+        /// Nullable waarde voor als er een momentaan-factor is toegepast
+        /// </summary>
+        public double? MomentFactor { get; private set; }
+
+        /// <summary>
+        /// De uiteindelijke factor van het belastinggeval
+        /// </summary>
+        public double FactorNetto
         {
+            get { return GetFactoren(); }
+        }
+
+
+        /// <summary>
+        /// De basisfactor voor permanente gevallen, inclusief de factoren KFI en/of Xi.
+        /// </summary>
+        public double FactorG { get; private set; }
+
+        /// <summary>
+        /// De basisfactor voor veranderlijke belastingen inclusief KFI maar exclusief MomentaanFactor
+        /// </summary>
+        public double FactorQ { get; private set; }
+
+
+
+
+
+
+        //public BelastingCombinatieItem() { }
+
+        [SetsRequiredMembers]
+        public BelastingCombinatieItem(BelastingenContext context, BelastingCombinatie combinatie, BelastingGeval geval, bool permanentIsGunstig = false)
+        {
+            Context = context;
             Combinatie = combinatie;
             Geval = geval;
             PermanentIsGunstig = permanentIsGunstig;
+            GetFactoren();
         }
+
+
+
 
 
         /// <summary>
@@ -34,63 +73,79 @@
         /// - factor Xi (zie Eurocode 0)
         /// - factor K_FI (zie Eurocode 0)
         /// - gunstig permanent belasting?
+        /// - momentaanfactoren
         /// </summary>
-        public double FactorNetto
+        private double GetFactoren()
         {
-            get
-            {
-                double value = 1.0;
-                switch (Geval.Type)
-                {
-                    case BelastingGeval.BelastingGevalTypeEnum.Permanent:
-                        if (PermanentIsGunstig)
-                        {
-                            value = 0.9;
-                        }
-                        else
-                        {
-                            value = Combinatie.Type switch
-                            {
-                                // fundamenteel
-                                BelastingCombinatieTypeEnum.Fundamenteel_A => _basisFactorPermanentFundamenteel * Context.Grondslagen.Kfi,
-                                BelastingCombinatieTypeEnum.Fundamenteel_B => _basisFactorPermanentFundamenteel * Context.Grondslagen.Kfi * Context.Grondslagen.Xi,
-                                // de rest 
-                                _ => 1.0,
-                            };
-                        }
-                        break;
+            double factorNetto = 1.0;
 
-                    case BelastingGeval.BelastingGevalTypeEnum.Veranderlijk:
+            switch (Geval.Type)
+            {
+                case BelastingGeval.BelastingGevalTypeEnum.Permanent:
+                    if (PermanentIsGunstig)
+                    {
+                        factorNetto = 0.9;
+                    }
+                    else
+                    {
                         switch (Combinatie.Type)
                         {
-                            // Fundamentele combinaties
                             case BelastingCombinatieTypeEnum.Fundamenteel_A:
-                                value = _basisFactorVeranderlijkFundamenteel * Context.Grondslagen.Kfi * Geval.MomentaanFactoren.Mom0;
+                                this.FactorG = _basisFactorPermanentFundamenteel * Context.Grondslagen.Kfi;
+                                factorNetto = this.FactorG;
                                 break;
                             case BelastingCombinatieTypeEnum.Fundamenteel_B:
-                                value = _basisFactorVeranderlijkFundamenteel * Context.Grondslagen.Kfi;
+                                this.FactorG = _basisFactorPermanentFundamenteel * Context.Grondslagen.Kfi * Context.Grondslagen.Xi;
+                                factorNetto = this.FactorG;
                                 break;
-
-                            // Combinaties met mom1
-                            case BelastingCombinatieTypeEnum.Frequent:
-                                value *= Geval.MomentaanFactoren.Mom1;
-                                break;
-
-                            // Combinaties met mom2
-                            case BelastingCombinatieTypeEnum.Brand:
-                            case BelastingCombinatieTypeEnum.Aardbeving:
-                            case BelastingCombinatieTypeEnum.QuasiBlijvend:
-                                value *= Geval.MomentaanFactoren.Mom2;
-                                break;
-
                             default:
-                                value = 1.00;
+                                factorNetto = 1.0;
                                 break;
                         }
-                        break;
-                }
-                return value;
+                    }
+                    break;
+
+                case BelastingGeval.BelastingGevalTypeEnum.Veranderlijk:
+                    switch (Combinatie.Type)
+                    {
+                        // Fundamentele combinaties
+                        case BelastingCombinatieTypeEnum.Fundamenteel_A:
+
+                            this.MomentFactor = Geval.MomentaanFactoren.Mom0;
+                            this.FactorQ = _basisFactorVeranderlijkFundamenteel * Context.Grondslagen.Kfi;
+                            factorNetto = this.FactorQ * this.MomentFactor.Value;
+                            break;
+                        case BelastingCombinatieTypeEnum.Fundamenteel_B:
+                            this.FactorQ = factorNetto = _basisFactorVeranderlijkFundamenteel * Context.Grondslagen.Kfi;
+                            break;
+
+                        // Combinaties met mom1
+                        case BelastingCombinatieTypeEnum.Frequent:
+                            this.MomentFactor = Geval.MomentaanFactoren.Mom1;
+                            this.FactorQ = 1.00;
+                            factorNetto *= Geval.MomentaanFactoren.Mom1;
+                            break;
+
+                        // Combinaties met mom2
+                        case BelastingCombinatieTypeEnum.Brand:
+                        case BelastingCombinatieTypeEnum.Aardbeving:
+                        case BelastingCombinatieTypeEnum.QuasiBlijvend:
+                            this.MomentFactor = Geval.MomentaanFactoren.Mom2;
+                            this.FactorQ = 1.00;
+                            factorNetto *= Geval.MomentaanFactoren.Mom2;
+                            break;
+
+                        default:
+                            factorNetto = 1.00;
+                            break;
+                    }
+                    break;
             }
+
+            //this.FactorNetto = factorNetto;
+            return factorNetto;
+
+
         }
 
 
