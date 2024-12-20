@@ -37,6 +37,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eurocode.Blazor.Demo.Server
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eurocode.Blazor.Demo.Client", "examples\Eurocode.Blazor.Demo.Client\Eurocode.Blazor.Demo.Client.csproj", "{550B8A8F-BD34-450F-BDF1-44BA4F9FC7C8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generators", "Generators", "{5A79CD73-47A1-4330-AA73-60D0F065FD55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generators", "examples\Eurocode.Blazor.Demo.Generators\Generators\Generators.csproj", "{72C75B30-83BC-4D3B-98CA-8418A549CBCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +99,10 @@ Global
 		{550B8A8F-BD34-450F-BDF1-44BA4F9FC7C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{550B8A8F-BD34-450F-BDF1-44BA4F9FC7C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{550B8A8F-BD34-450F-BDF1-44BA4F9FC7C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72C75B30-83BC-4D3B-98CA-8418A549CBCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72C75B30-83BC-4D3B-98CA-8418A549CBCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72C75B30-83BC-4D3B-98CA-8418A549CBCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72C75B30-83BC-4D3B-98CA-8418A549CBCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -114,6 +122,8 @@ Global
 		{547D8124-4235-4C36-8069-22CF0C6933B6} = {5C106623-87A3-46A7-A9D9-5C00EE980B33}
 		{63AB72F1-4F24-4BA9-9009-1956005EF13C} = {111E7444-8886-40F2-ABD6-EED44DAAD225}
 		{550B8A8F-BD34-450F-BDF1-44BA4F9FC7C8} = {111E7444-8886-40F2-ABD6-EED44DAAD225}
+		{5A79CD73-47A1-4330-AA73-60D0F065FD55} = {111E7444-8886-40F2-ABD6-EED44DAAD225}
+		{72C75B30-83BC-4D3B-98CA-8418A549CBCC} = {5A79CD73-47A1-4330-AA73-60D0F065FD55}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23B23B07-CC7C-464E-B98D-5EF418F994FB}

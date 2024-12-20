@@ -18,9 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\" />
+    <Folder Include="Pages\Belastingen\Gevallen\" />
+    <Folder Include="Pages\Beton\Materialen\" />
+    <Folder Include="Pages\Beton\Duurzaamheid\" />
     <Folder Include="wwwroot\images\" />
-    <Folder Include="wwwroot\sources\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,5 +35,6 @@
     <ProjectReference Include="..\..\Eurocode7.Geotechniek\Eurocode7.Geotechniek.csproj" />
     <ProjectReference Include="..\..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />
     <ProjectReference Include="..\..\EurocodeRazorClassLibrary\EurocodeRazorClassLibrary.csproj" />
+    <ProjectReference Include="..\Eurocode.Blazor.Demo.Generators\Generators\Generators.csproj" />
   </ItemGroup>
 </Project>
