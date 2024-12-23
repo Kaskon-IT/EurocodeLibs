@@ -1,7 +1,10 @@
-﻿<EurocodeRazorClassLibrary.Grondslagen.EurocodeGrondslagen
-    @bind-Model ="@Model"
+﻿@if(SampleProject != null)
+{
+    <EurocodeGrondslagen @bind-Model="@SampleProject.Grondslagen" />
+}
 
-></EurocodeRazorClassLibrary.Grondslagen.EurocodeGrondslagen>
+
+
 
 
 
@@ -9,12 +12,6 @@
 
 
 @code {
-    Eurocode.Grondslagen.GrondslagenContext Model = new();
-    bool loading = false;
-
-    async Task StartLoadingAsync()
-    {
-        loading = true;
-        await DataSource.WaitAsync(2000, () => loading = false);
-    }
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
 }

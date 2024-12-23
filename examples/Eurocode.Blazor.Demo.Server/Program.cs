@@ -1,5 +1,6 @@
 using Eurocode.Blazor.Demo.Shared.Extensions;
 using Eurocode.Blazor.Demo.Shared.SampleData;
+using Eurocode.Grondslagen;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.FluentUI.AspNetCore.Components;
 
@@ -19,6 +20,13 @@ builder.Services.AddFluentUIDemoServerServices();
 
 builder.Services.AddScoped<DataSource>();
 
+builder.Services.AddCascadingValue(sp =>
+    new SampleProject(new GrondslagenContext()));
+
+
+
+//builder.WebHost.UseStaticWebAssets(); // < -- nodig voor wwwroot?
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,7 +39,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
+//app.UseStaticFiles(); // <-- nodig voor files in wwwroot?
 app.MapStaticAssets();
 app.UseRouting();
 app.MapBlazorHub();

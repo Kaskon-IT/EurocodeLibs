@@ -13,7 +13,7 @@
         /// </summary>
         public GevolgklasseEnum? Gevolgklasse { get; set; } = GevolgklasseEnum.CC2;
 
-        public OntwerpLevensduurEnum? OntwerpLevensduur;
+        public OntwerpLevensduurEnum? OntwerpLevensduur { get; set; } = OntwerpLevensduurEnum.Vijftig;
 
 
 
@@ -104,6 +104,19 @@
                 NationaleBijlageEnum.NL => 5.0,
                 _ => 10.0,
             };
+
+
+        }
+
+
+        public static string GetOntwerplevensduurTekst(this OntwerpLevensduurEnum? OntwerpLevensduur)
+        {
+            if (OntwerpLevensduur == null) return "onbekend";
+            else
+            {
+                var jaren = (int)OntwerpLevensduur;
+                return $"{jaren} jaar";
+            }
         }
 
     }

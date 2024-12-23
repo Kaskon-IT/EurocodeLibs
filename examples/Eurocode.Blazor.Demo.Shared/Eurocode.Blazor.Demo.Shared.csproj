@@ -18,9 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Belastingen\Gevallen\" />
-    <Folder Include="Pages\Beton\Materialen\" />
-    <Folder Include="Pages\Beton\Duurzaamheid\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 

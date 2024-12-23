@@ -1,0 +1,25 @@
+﻿@page "/beton/materialen"
+@using Eurocode.Blazor.Demo.Shared.Pages.Beton.Materialen.Examples
+
+<PageTitle>@App.PageTitle("BetonMaterialen")</PageTitle>
+
+<h2>Voorbeelden</h2>
+<DemoSection 
+    Title="Materialen (default)" 
+    ComponentParameters="_componentParameters1"
+    Component="@typeof(BetonMaterialenDefault)"></DemoSection>
+<DemoSection 
+    Title="Zonder diagrammen" 
+    Component="@typeof(BetonMaterialenZonderDiagrammen)"></DemoSection>
+<DemoSection 
+    Title="Met opgave enums" 
+    Component="@typeof(BetonMaterialenMetOpgaveEnums)"></DemoSection>
+
+<ApiDocumentation Component="typeof(EurocodeBetonMaterialen)" />
+
+@code{
+    private Dictionary<string, object> _componentParameters1 = new(){
+        {"Disabled", !true }
+    };
+}
+

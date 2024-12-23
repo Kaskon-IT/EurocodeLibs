@@ -3,13 +3,47 @@
 
 <h3>EurocodeBetonDuurzaamheid</h3>
 
-<p>Ontwerplevensduur: @Model.Grondslagen.OntwerpLevensduur</p>
-<p>Beton: @Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
-<p>Constructieklasse: @Model.Constructieklasse.UserFriendlyName</p>
-<p>Kwaliteitsbeheersing: {@Model.IsKwaliteitsBeheersing? "Ja":"Nee"}</p>
-<p>Dekking nominaal: @Model.BetondekkingNominaal</p>
 
-<p>Dekking toegepast: @Model.Betondekking</p>
+<p>Ontwerplevensduur: @Model.Grondslagen.OntwerpLevensduur.GetOntwerplevensduurTekst()</p>
+<p>Betonsterkteklasse: @Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
+<p>Constructieklasse: @Model.Constructieklasse.UserFriendlyName</p>
+
+<FluentCheckbox @bind-Value="Model.IsKwaliteitsBeheersing">Kwaliteitsbeheersing</FluentCheckbox>
+<FluentCheckbox @bind-Value="Model.IsPlaatGeometrie">Plaatgeometrie</FluentCheckbox>
+
+<FluentAutocomplete 
+    
+    TOption="Eurocode.BetonConstructies.MilieuklasseEnum"
+    AutoComplete="off"
+    Width="300px"
+    MaxAutoHeight="200px"
+    Label="Milieuklasse(n)"
+    Placeholder="zoek"
+    OnOptionsSearch="@OnSearchEnum"
+
+    MaximumSelectedOptions="5"
+    OptionText="@(item => item.ToString())"
+    @bind-SelectedOptions="@Model.Milieuklassen">
+    </FluentAutocomplete>
+
+
+
+<p>Dekking nominaal: @Model.BetondekkingNominaal mm</p>
+
+<FluentNumberField 
+Label = "Dekking toegepast"
+Min = "10"
+Max = "70"
+Step = "5"
+@bind-Value="Model.Betondekking">
+</FluentNumberField>
+
+@if (Model.Betondekking < Model.BetondekkingNominaal){
+    <FluentLabel Typo="Typography.Body" Color="@Color.Warning">Let op! <strong>te weining dekking</strong> toegepast.</FluentLabel>
+    <p class="alert">Let op te weinig dekking.</p>
+}
+
+
 <p>Naam: @Model.Naam</p>
 
 
@@ -29,6 +63,27 @@
         await ModelChanged.InvokeAsync(Model);
     }
 
+    private MilieuklasseEnum[] _milieuklasseEnumItems = Enum
+    .GetValues(typeof(MilieuklasseEnum))
+    .Cast<MilieuklasseEnum>()
+    .ToArray();
+
+
+    FluentAutocomplete<Eurocode.BetonConstructies.MilieuklasseEnum> MkList = default!;
+
+    IEnumerable<MilieuklasseEnum> SelectedItems = Array.Empty<MilieuklasseEnum>();
+
+
+    private void OnSearchEnum(OptionsSearchEventArgs<Eurocode.BetonConstructies.MilieuklasseEnum> e)
+    {
+        // de keuzelijst bijwerken
+        e.Items = _milieuklasseEnumItems.Where(i => i.ToString().Contains(e.Text, StringComparison.OrdinalIgnoreCase)).OrderBy(i => i);
+                
+
+
+
+
+    }
 
     // Wat moeten we laten zien:
     // Milieuklasse 

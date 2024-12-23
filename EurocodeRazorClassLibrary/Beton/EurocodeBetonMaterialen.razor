@@ -1,33 +1,40 @@
 ﻿@using Eurocode.BetonConstructies
 
 
-<FluentSelectEnum Label="Betonsterkteklasse"
-TEnum="BetonsterkteklasseEnum"
-ExcludeEnumItems="[BetonsterkteklasseEnum.Eigen_Opgave]"
-@bind-EnumSelectedValue="@Model.Betonsterkteklasse" />
+<FluentSelectEnum 
+    Label="Betonsterkteklasse"
+    TEnum="BetonsterkteklasseEnum"
+    ExcludeEnumItems="@_betonSterkteklasseExcludedItems"
+    @bind-EnumSelectedValue="@Model.Betonsterkteklasse"
+    Disabled="@Disabled" />
 
 @if(ToonBetonSpanningRekDiagram)
 {
-    <FluentSelectEnum Label="Spanning-rek diagram"
+    <FluentSelectEnum 
+    Label="Spanning-rek diagram" 
     TEnum="BetonContext.SpanningRekDiagramType"
-    @bind-EnumSelectedValue="@Model.SpanningRekDiagram" />
+    @bind-EnumSelectedValue="@Model.SpanningRekDiagram"
+    Disabled="@Disabled" />
 }
 
 @if (ToonBetonstaal)
 {
-    <FluentSelectEnum Label="Betonstaal"
+    <FluentSelectEnum
+    Label="Betonstaal"
     TEnum="BetonStaalKwaliteitEnum"
-    ExcludeEnumItems="[BetonStaalKwaliteitEnum.EigenFyk]"
-    @bind-EnumSelectedValue="@Model.BetonStaal.BetonStaalKwaliteit" />
+    ExcludeEnumItems="@_betonStaalKwaliteitExcludedItems"
+    @bind-EnumSelectedValue="@Model.BetonStaal.BetonStaalKwaliteit" 
+    Disabled ="@Disabled"/>
 }
 
 @if (ToonBetonStaalSpanningRekDiagram)
 {
-    <FluentSelectEnum Label="Spanning-rek diagram"
+    <FluentSelectEnum 
+    Label="Spanning-rek diagram"
     TEnum="BetonStaalContext.SpanningRekDiagramType"
-    @bind-EnumSelectedValue="@Model.BetonStaal.SpanningRekDiagram" />
+    @bind-EnumSelectedValue="@Model.BetonStaal.SpanningRekDiagram"
+    Disabled ="@Disabled"/>
 }
-
 
 
 
@@ -41,7 +48,7 @@ ExcludeEnumItems="[BetonsterkteklasseEnum.Eigen_Opgave]"
     /// <summary>
     /// De betoncontext.
     /// </summary>
-    [Parameter]
+    [Parameter, EditorRequired]
     public required BetonContext Model { get; set; } = new();
 
     /// <summary>
@@ -71,6 +78,80 @@ ExcludeEnumItems="[BetonsterkteklasseEnum.Eigen_Opgave]"
     /// </summary>
     [Parameter]
     public bool ToonBetonStaalSpanningRekDiagram { get; set; } = true;
+
+    /// <summary>
+    /// Optie voor keuze mogelijkheid te blokkeren
+    /// Standaard false.  
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; } = false;
+
+    /// <summary>
+    /// Optie voor keuzelijst betonsterkteklasse (specifieke opgave)
+    /// Standaard is de lijst leeg.
+    /// NB. als de lijst leeg is worden alle opties getoond.
+    /// </summary>
+    [Parameter]
+    public BetonsterkteklasseEnum[] BetonSterkteklasseEnumItems { get; set; } = [];
+
+    private BetonsterkteklasseEnum[] _betonSterkteklasseExcludedItems
+    {
+        get
+        {
+            if (BetonSterkteklasseEnumItems.Length == 0)
+            {
+                return [BetonsterkteklasseEnum.Eigen_Opgave];
+            }
+            else
+            {
+                List<BetonsterkteklasseEnum> excludeEnums = [BetonsterkteklasseEnum.Eigen_Opgave];
+
+                excludeEnums.AddRange(Enum
+                .GetValues(typeof(BetonsterkteklasseEnum))
+                .Cast<BetonsterkteklasseEnum>()
+                .Where(e => !BetonSterkteklasseEnumItems.Contains(e))
+                .ToList());
+
+
+                return excludeEnums.ToArray();
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Optie voor keuzelijst betonstaal. (specifieke opgave)
+    /// Standaard B500A, B500B en B500C.
+    /// NB. als de lijst leeg is worden alle opties getoond.
+    /// 
+    /// </summary>
+    [Parameter]
+    public BetonStaalKwaliteitEnum[] BetonStaalKwaliteitEnumItems { get; set; } = [BetonStaalKwaliteitEnum.B500A, BetonStaalKwaliteitEnum.B500B, BetonStaalKwaliteitEnum.B500C];
+    
+    private BetonStaalKwaliteitEnum[] _betonStaalKwaliteitExcludedItems
+    {
+        get
+        {
+            if (BetonStaalKwaliteitEnumItems.Length == 0)
+            {
+                return [BetonStaalKwaliteitEnum.EigenFyk];
+            }
+            else
+            {
+                List<BetonStaalKwaliteitEnum> excludeEnums = [BetonStaalKwaliteitEnum.EigenFyk];
+                
+                excludeEnums.AddRange(Enum
+                .GetValues(typeof(BetonStaalKwaliteitEnum))
+                .Cast<BetonStaalKwaliteitEnum>()  
+                .Where(e => !BetonStaalKwaliteitEnumItems.Contains(e))
+                .ToList());
+
+
+                return excludeEnums.ToArray();
+            }
+    }}
+
+
 
 
 

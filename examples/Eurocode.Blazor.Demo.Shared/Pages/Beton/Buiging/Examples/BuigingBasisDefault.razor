@@ -1,0 +1,15 @@
+﻿<h3>BuigingBasisDefault</h3>
+
+@if (SampleProject !=null)
+{
+    <BuigingBasic @bind-Beton="SampleProject.Beton"></BuigingBasic>
+}
+
+
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+
+}

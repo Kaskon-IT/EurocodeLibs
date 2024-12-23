@@ -11,7 +11,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public GrondslagenContext Grondslagen;
 
-        public BetonDekkingContext(ref GrondslagenContext grondslagen, ref BetonContext beton)
+        public BetonDekkingContext(GrondslagenContext grondslagen, BetonContext beton)
         {
             Grondslagen = grondslagen;
             Beton = beton;
@@ -84,12 +84,23 @@ namespace Eurocode.BetonConstructies
         /// De milieuklasse(n) hebben invloed op de minimale dekking duurzaamheid (c,min,dur)
         /// Bij meerdere milieuklassen wordt de maatgevende dekking bepaald.
         /// </summary>
-        public IEnumerable<MilieuklasseEnum> Milieuklassen { get; set; } = [MilieuklasseEnum.XC3];
+        //public IEnumerable<MilieuklasseEnum> Milieuklassen { get; set; } = [MilieuklasseEnum.XC3];
+
+        public IEnumerable<MilieuklasseEnum> Milieuklassen = [MilieuklasseEnum.XC1];
 
         public IEnumerable<Eurocode.BetonConstructies.MilieuklasseEnum> SelectedMilieuklassen = [];
 
 
-        public string MilieuklassenUserFriendlyName { get { return string.Join(", ", this.Milieuklassen); } }
+        public string MilieuklassenUserFriendlyName
+        {
+            get
+            {
+                if (this.Milieuklassen.Any())
+                    return string.Join(", ", this.Milieuklassen);
+                else return "X0";
+
+            }
+        }
 
         public string UserFriendlyName { get { return this.ToUserFriendlyString(); } }
 

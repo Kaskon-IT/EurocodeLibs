@@ -1,0 +1,38 @@
+﻿@using Eurocode.BetonConstructies
+
+<FluentNumberField @bind-Value="_buiging.M">Moment [kNm]</FluentNumberField>
+<FluentNumberField @bind-Value="_buiging.B">B [mm]</FluentNumberField>
+<FluentNumberField @bind-Value="_buiging.H">H [mm]</FluentNumberField>
+<FluentNumberField @bind-Value="_buiging.D">d [mm]</FluentNumberField>
+
+
+
+<FluentTextField Value="@_buiging.AsRequired.ToString("0 mm²")">As;required</FluentTextField>
+
+<FluentTextField Value="@_buiging.Xu.ToString("0.0 mm")">Xu</FluentTextField>
+<FluentTextField Value="@_buiging.AsMin1.ToString("0 mm²")">As;min1</FluentTextField>
+<FluentTextField Value="@_buiging.AsMin2.ToString("0 mm²")">As;min2</FluentTextField>
+
+@if (_buiging.MinimaleWapeningToegepast)
+{
+    <p>Minimale wapening toegepast</p>
+}
+
+
+@code {
+    [Parameter, EditorRequired]
+    public required BetonContext Beton{ get; set; }
+
+    [Parameter]
+    public EventCallback<Eurocode.BetonConstructies.BetonContext> BetonChanged { get; set; }
+
+
+    private BendingResults _buiging { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        _buiging.Beton = Beton;
+    }
+
+
+}

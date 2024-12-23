@@ -97,6 +97,22 @@ blockquote p:last-child {
         }
 
 
+.flag-sm{
+    height: 1em;
+
+}
+
+.flag {
+    height: 8em;
+}
+
+.flag-xl{
+    height: 12em;
+}
+
+
+
+
 nav.sitenav {
     padding: 1.5rem 1rem;
     height: calc(100dvh - 90px);

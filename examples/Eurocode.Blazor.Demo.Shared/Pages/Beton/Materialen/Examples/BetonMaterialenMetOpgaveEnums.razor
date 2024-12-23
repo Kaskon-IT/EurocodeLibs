@@ -1,0 +1,26 @@
+﻿@using Eurocode.BetonConstructies
+
+@if (SampleProject != null)
+{
+
+    <FluentSwitch @bind-Value="_disabled">Disabled</FluentSwitch>
+
+    <EurocodeBetonMaterialen 
+    @bind-Model="@SampleProject.Beton" 
+    BetonStaalKwaliteitEnumItems="@_betonstaalEnumItems"
+    BetonSterkteklasseEnumItems="@_betonsterkteklasseEnumItems"
+    Disabled ="@_disabled"
+    ToonBetonSpanningRekDiagram="false" 
+    ToonBetonStaalSpanningRekDiagram="false"></EurocodeBetonMaterialen>
+}
+
+@code {
+    [Parameter]
+    public SampleProject? SampleProject { get; set; } = new();
+
+
+    private bool _disabled { get; set; } = false;
+    private BetonStaalKwaliteitEnum[] _betonstaalEnumItems = [BetonStaalKwaliteitEnum.B400A, BetonStaalKwaliteitEnum.B400B];
+    private BetonsterkteklasseEnum[] _betonsterkteklasseEnumItems = [BetonsterkteklasseEnum.C40_50, BetonsterkteklasseEnum.C50_60];
+
+}

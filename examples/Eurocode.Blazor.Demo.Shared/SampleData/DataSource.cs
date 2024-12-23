@@ -10,6 +10,9 @@ public class DataSource
     public BetonContext BetonContext { get; set; } = new();
 
 
+    public BetonDekkingContext BetonDekking { get; set; }
+
+
 
     public static async Task WaitAsync(int milliseconds, Action action)
     {
