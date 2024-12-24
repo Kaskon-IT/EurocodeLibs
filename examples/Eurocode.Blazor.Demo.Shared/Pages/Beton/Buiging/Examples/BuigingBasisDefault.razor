@@ -1,9 +1,19 @@
-﻿<h3>BuigingBasisDefault</h3>
+﻿@using Plotly.Blazor.LayoutLib
+@using Plotly.Blazor.LayoutLib.ShapeLib
+@using Plotly.Blazor.Traces.ScatterLib
+<h3>BuigingBasisDefault</h3>
 
 @if (SampleProject !=null)
 {
-    <BuigingBasic @bind-Beton="SampleProject.Beton"></BuigingBasic>
+    <BuigingBasic @bind-Model="SampleProject.BendingResults"></BuigingBasic>
+
+
+    <FluentButton OnClick="UpdateChart">Update</FluentButton>
+    <PlotlyChart @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart"/>
+
+
 }
+
 
 
 
@@ -11,5 +21,237 @@
     [CascadingParameter]
     public SampleProject? SampleProject { get; set; }
 
+    PlotlyChart chart;
+    Config config = new Config();
+    Layout layout = new Layout();
+
+    protected override void OnInitialized()
+    {
+        if (SampleProject == null) return;
+
+        var startDate = DateTime.Now;
+
+        config = new Config
+        {
+            //AutoSizable = true,
+            Responsive = true,
+            Editable = !true,
+
+        };
+
+        layout = new Layout
+        {
+            //AutoSize = true,
+            Title = new Title
+            {
+                Text = "Buiging (RECHTHOEK zonder normaalkracht)"
+            },
+            XAxis = new List<XAxis>(){
+                new()
+                {
+                    //AutoRange = Plotly.Blazor.LayoutLib.XAxisLib.AutoRangeEnum.True,
+                    Title = new(){Text = "Breedte [mm]"},
+                    ShowGrid = false,
+                    ShowLine = false,
+                    ZeroLine = false,
+                    Tick0 = 0,
+
+                }
+            },
+            YAxis = new List<YAxis>(){
+                new()
+                {
+                    //AutoRange = Plotly.Blazor.LayoutLib.YAxisLib.AutoRangeEnum.True,
+                    Title = new(){Text = "Hoogte [mm]"},
+                    ScaleAnchor = "x",
+                    ScaleRatio = 1,
+                    ShowGrid = false,
+                    ZeroLine = false,
+                    ShowLine = false,
+                    Tick0 = 0,
+
+                }
+            },
+
+            //PaperBgColor = Theme.PaletteDark.Surface.ToString(),
+            //PlotBgColor = Theme.PaletteDark.Surface.ToString(),
+            Font = new Font
+            {
+                //Color = Theme.PaletteDark.TextPrimary.ToString()
+            },
+            Shapes = new List<Shape>()
+            {
+                new()
+                {
+                    Name = "Profiel",
+                    Type = TypeEnum.Rect,
+                    X0 = 0,
+                    X1 = SampleProject.BendingResults.B,
+                    Y0 = 0,
+                    Y1 = SampleProject.BendingResults.H,
+                    XRef = "x",
+                    YRef = "y",
+                    Line = new()
+                    {
+                        Width = 1
+                    },
+                    FillColor = "rgba(84,166,143,1)",
+                    Opacity = 0.3m
+                },
+                new()
+                {
+                    Name = "Wapening",
+                    Type = TypeEnum.Rect,
+                    X0 = SampleProject.BendingResults.ZRef,
+                    X1 = SampleProject.BendingResults.B - SampleProject.BendingResults.ZRef,
+                    Y0 = SampleProject.BendingResults.ZRef - 8,
+                    Y1 = SampleProject.BendingResults.ZRef + 8,
+                    XRef = "x",
+                    YRef = "y",
+                    Line = new()
+                    {
+                        Width = 1
+                    },
+                    FillColor = "rgba(84,166,143,1)",
+                    Opacity = 0.3m
+                },
+            }
+        };
+
+        data = new List<ITrace>
+        {
+            new Scatter
+            {
+                Name = "ScatterTrace",
+                Mode = ModeFlag.Markers,
+                X = new List<object>{0, SampleProject.BendingResults.B },
+                Y = new List<object>{0, SampleProject.BendingResults.H }
+            },
+        };
+
+        base.OnInitialized();
+    }
+
+
+
+
+    // Using of the interface IList is important for the event callback!
+    IList<ITrace> data = new List<ITrace>
+    {
+        new Scatter
+        {
+            Name = "ScatterTrace",
+            Mode = ModeFlag.Lines | ModeFlag.Markers,
+            X = new List<object>{0, 400 ,400, 0},
+            Y = new List<object>{0,0,500,500}
+        }
+    };
+
+    private async Task UpdateChart()
+    {
+        if (SampleProject == null) return;
+
+        data = new List<ITrace>
+        {
+            new Scatter
+            {
+                Name = "ScatterTrace",
+                Mode = ModeFlag.Lines,
+                X = new List<object>{0, SampleProject.BendingResults.B, SampleProject.BendingResults.B, 0, 0 },
+                Y = new List<object>{0, 0, SampleProject.BendingResults.H, SampleProject.BendingResults.H, 0 }
+            },
+        };
+
+        layout.AutoSize = true;
+        layout.Height = 500;
+
+        layout.XAxis = new List<XAxis>()
+        {
+            new(){
+                ZeroLine = false,
+                ShowLine = false,
+                ShowGrid = false,
+                //AutoRange = Plotly.Blazor.LayoutLib.XAxisLib.AutoRangeEnum.Max,
+                //Range = new List<object>{0, SampleProject.BendingResults.B},
+                RangeMode = Plotly.Blazor.LayoutLib.XAxisLib.RangeModeEnum.Normal,
+                Tick0 = 0,
+                Ticks = Plotly.Blazor.LayoutLib.XAxisLib.TicksEnum.Outside,
+                TickAngle = -90,
+                DTick = SampleProject.BendingResults.B,
+
+            }
+        };
+
+        layout.YAxis = new List<YAxis>(){
+            new(){
+                  Title = new(){Text = "Hoogte [mm]"},
+                    ScaleAnchor = "x",
+                    ScaleRatio = 1,
+                ZeroLine = false,
+                ShowLine = false,
+                ShowGrid = false,
+                RangeMode = Plotly.Blazor.LayoutLib.YAxisLib.RangeModeEnum.Normal,
+                Ticks = Plotly.Blazor.LayoutLib.YAxisLib.TicksEnum.Outside,
+                DTick = SampleProject.BendingResults.H,
+                Tick0 = 0,
+            }
+        };
+
+
+        layout.Shapes = new List<Shape>()
+        {
+            new()
+            {
+                Name = "Profiel",
+                Type = TypeEnum.Rect,
+                X0 = 0,
+                X1 = SampleProject.BendingResults.B,
+                Y0 = 0,
+                Y1 = SampleProject.BendingResults.H,
+                XRef = "x",
+                YRef = "y",
+                Line = new()
+                {
+                    Width = 2,
+                    Color = "rgba(0,0,0,1)",
+                },
+                //FillColor = "rgba(84,166,143,1)",
+                Opacity = 0.5m
+            },
+            new()
+            {
+                Name = "Wapening",
+                Type = TypeEnum.Rect,
+                X0 = SampleProject.BendingResults.ZRef,
+                X1 = SampleProject.BendingResults.B - SampleProject.BendingResults.ZRef,
+                Y0 = SampleProject.BendingResults.ZRef - 8,
+                Y1 = SampleProject.BendingResults.ZRef + 8,
+                XRef = "x",
+                YRef = "y",
+                Line = new()
+                {
+                    Width = 0
+                },
+                FillColor = "rgba(84,166,143,1)",
+                Opacity = 0.3m,
+                Label = new(){
+                    Text = $"{SampleProject.BendingResults.AsRequired.ToString("0 mm²")}",
+                    TextPosition = Plotly.Blazor.LayoutLib.ShapeLib.LabelLib.TextPositionEnum.MiddleCenter,
+                }
+            },
+        };
+
+       
+
+
+
+
+        await chart.Update(data, layout); // werkt niet... todo uitzoeken
+
+        await chart.NewPlot();
+
+        //StateHasChanged();
+
+    }
 
 }

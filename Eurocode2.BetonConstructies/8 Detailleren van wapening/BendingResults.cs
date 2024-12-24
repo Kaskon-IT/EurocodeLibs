@@ -7,19 +7,20 @@
             Beton = new();
         }
 
-        public BendingResults(BetonContext beton, double b, double h, double d, double m)
+        public BendingResults(BetonContext beton, double b, double h, double zRef, double m)
         {
             Beton = beton;
             B = b;
             H = h;
-            D = d;
+            ZRef = zRef;
             M = m;
         }
 
         public BetonContext Beton { get; set; }
         public double B { get; set; } = 300;
         public double H { get; set; } = 400;
-        public double D { get; set; } = 350;
+        public double ZRef { get; set; } = 50;
+        public double D { get { return H - ZRef; } }
         public double M { get; set; } = 50;
 
         public double Xu
