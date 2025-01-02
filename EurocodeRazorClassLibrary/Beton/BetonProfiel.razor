@@ -1,0 +1,33 @@
+﻿@using BetonProfielen;
+<h3>BetonProfiel</h3>
+
+
+<FluentNumberField Label="Breedte [mm]" @bind-Value="@Model.Profiel.Breedte"></FluentNumberField>
+<FluentNumberField Label="Hoogte [mm]" @bind-Value="@Model.Profiel.Hoogte"></FluentNumberField>
+
+<FluentSelectEnum 
+    @bind-EnumSelectedValue="Model.Profiel.Vorm"
+    TEnum="ParametrischeProfielen.ParametrischeProfielVormEnum">
+
+</FluentSelectEnum>
+
+@if(
+    Model.Profiel.Vorm != ParametrischeProfielen.ParametrischeProfielVormEnum.Rechthoek &&
+    Model.Profiel.Vorm != ParametrischeProfielen.ParametrischeProfielVormEnum.Rond
+){
+    <FluentNumberField Label="B1 [mm]" @bind-Value="@Model.Profiel.B1"></FluentNumberField>
+    <FluentNumberField Label="H1 [mm]" @bind-Value="@Model.Profiel.H1"></FluentNumberField>
+
+   
+}
+
+
+
+
+@code {
+    [Parameter, EditorRequired]
+    public BetonProfielen.BetonProfiel Model { get; set; } = new();
+    
+    [Parameter]
+    public EventCallback<BetonProfielen.BetonProfiel> ModelChanged { get; set; }
+}

@@ -1,0 +1,15 @@
+﻿@if (SampleProject != null)
+{
+    <BetonProfiel @bind-Model="@SampleProject.BetonProfiel"></BetonProfiel>
+   
+    <BetonProfielChart Model="SampleProject.BetonProfiel.Profiel"></BetonProfielChart>
+}
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+
+   
+
+}

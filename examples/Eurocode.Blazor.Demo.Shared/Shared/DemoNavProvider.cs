@@ -107,11 +107,19 @@ public class DemoNavProvider
                                 icon: new Icons.Regular.Size20.WeatherBlowingSnow(),
                                 title: "Duurzaamheid"
                             ),
+                            new NavLink(
+                                href: "/beton/profiel",
+                                icon: new Icons.Regular.Size20.NotebookSection(),
+                                title: "Profiel"
+                                ),
+
+
                              new NavLink(
                                 href: "/beton/buiging",
                                 icon: new Icons.Regular.Size20.ArrowTurnLeftDown(),
                                 title: "Buiging"
                             ),
+
                         ]
                     ),
                     new NavGroup(

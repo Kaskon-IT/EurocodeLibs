@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.4" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.4" />
+    <PackageReference Include="Plotly.Blazor" Version="5.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +28,18 @@
     <ProjectReference Include="..\Eurocode6.Metselwerk\Eurocode6.Metselwerk.csproj" />
     <ProjectReference Include="..\Eurocode7.Geotechniek\Eurocode7.Geotechniek.csproj" />
     <ProjectReference Include="..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BetonProfielen">
+      <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\BetonProfielen.dll</HintPath>
+    </Reference>
+    <Reference Include="Kaskon_it.Algemeen">
+      <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\Kaskon_it.Algemeen.dll</HintPath>
+    </Reference>
+    <Reference Include="ParametrischeProfielen">
+      <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\ParametrischeProfielen.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

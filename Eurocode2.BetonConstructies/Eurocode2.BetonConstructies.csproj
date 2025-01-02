@@ -11,4 +11,8 @@
     <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Algemeen\" />
+  </ItemGroup>
+
 </Project>

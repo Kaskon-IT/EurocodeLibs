@@ -3,6 +3,7 @@ using Eurocode.BetonConstructies;
 using Eurocode.Grondslagen;
 
 
+
 namespace Eurocode.Blazor.Demo.Shared.SampleData
 {
     public class SampleProject
@@ -16,6 +17,9 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
         public BetonDekkingContext Dekking { get; set; }
 
         public BendingResults BendingResults { get; set; }
+
+        public BetonProfielen.BetonProfiel BetonProfiel { get; set; } = new();
+
 
         public SampleProject(GrondslagenContext grondslagen)
         {
