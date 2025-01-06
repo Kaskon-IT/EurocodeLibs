@@ -1,15 +1,29 @@
 ﻿@if (SampleProject != null)
 {
-    <BetonProfiel @bind-Model="@SampleProject.BetonProfiel"></BetonProfiel>
-   
-    <BetonProfielChart Model="SampleProject.BetonProfiel.Profiel"></BetonProfielChart>
+
+    <FluentStack Orientation="Orientation.Horizontal">
+        <div>
+
+
+            <BetonProfiel @bind-Model="@SampleProject.BetonProfiel"></BetonProfiel>
+        </div>
+
+        <FluentSwitch @bind-Value="tekenVanuitZwaartepunt">Zwaartpunt</FluentSwitch>
+
+        <div style="width:100%;">
+            <BetonProfielChart 
+                TekenVanuitZwaartepunt="tekenVanuitZwaartepunt"
+                Model="SampleProject.BetonProfiel.Profiel"/>
+        </div>
+    </FluentStack>
+
 }
 
 @code {
     [CascadingParameter]
     public SampleProject? SampleProject { get; set; }
 
+    private bool tekenVanuitZwaartepunt = true;
 
-   
 
 }
