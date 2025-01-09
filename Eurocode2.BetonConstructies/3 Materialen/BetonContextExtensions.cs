@@ -62,6 +62,17 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        public static (double Alpha, double Beta) GetFactorOppervlakEnZwaartepunt(this BetonContext beton, double ec, double ecu)
+        {
+            double a1 = GetFactorA1(ec, ecu);
+            double a2 = GetFactorA2(beton, ec, ecu);
+            double y1 = GetFactorY1(a1);
+            double y2 = GetFactorY2(beton, a1);
+
+
+            return (1, GetZwaartepuntsFactor(a1, a2, y1, y2));
+        }
+
 
         public static double GetFactorBeta(this BetonContext beton, double ec, double ecu)
         {
@@ -126,6 +137,10 @@ namespace Eurocode.BetonConstructies
             //double oppTotaal = oppRechthoek + oppParabool;
             return (oppParabool + oppRechthoek) / (sigma * beton.EpsilonC);
         }
+
+
+
+
 
         public static double GetAlphaParaboolTotStuik(this BetonContext beton)
         {
@@ -253,6 +268,118 @@ namespace Eurocode.BetonConstructies
             if (fck >= 50) { returnVal = (2.8 + 27 * Math.Pow(((98 - fcm) / 100), 4)) / 1000; }
             else returnVal = 3.5 / 1000;
             return returnVal;
+        }
+
+
+        public static (double alpha, double beta) GetAlphaBeta(this BetonContext beton, double optredendeBetonrek)
+        {
+            double betonspanning = beton.GetBetonspanning(optredendeBetonrek);
+
+            double oppervlakte = beton.GetOppervlakteBetonDiagram(optredendeBetonrek) - beton.GetOppervlakteBetonDiagram(0.0);
+            double statischMoment = beton.GetStatischMomentBetonDiagram(optredendeBetonrek) - beton.GetStatischMomentBetonDiagram(0.0);
+
+            double alpha = oppervlakte / (betonspanning * optredendeBetonrek);
+            double zwaartePunt = optredendeBetonrek - statischMoment / oppervlakte;
+            double beta = zwaartePunt / optredendeBetonrek;
+
+            return (alpha, beta);
+        }
+
+        public static double GetOppervlakteBetonDiagram(this BetonContext beton, double optredendeBetonrek)
+        {
+            double output;
+            double betonrek;
+            double oppervlakteEen = 0.0;
+            double oppervlakteTwee = 0.0;
+
+            if (optredendeBetonrek <= beton.GetEpsilonBetonStuik())
+            {
+                betonrek = optredendeBetonrek;
+            }
+            else
+            {
+                betonrek = beton.GetEpsilonBetonStuik();
+                oppervlakteTwee = beton.Fcd * (optredendeBetonrek - beton.GetEpsilonBetonStuik());
+            }
+
+
+            switch (beton.SpanningRekDiagram)
+            {
+                case SpanningRekDiagramType.Parabolisch:
+                    oppervlakteEen = beton.Fcd * (betonrek + Math.Pow(1.0 - betonrek / beton.GetEpsilonBetonStuik(), beton.FactorN + 1.0) * beton.GetEpsilonBetonStuik() / (beton.FactorN + 1.0));
+
+                    break;
+                case SpanningRekDiagramType.BiLineair:
+                    oppervlakteEen = beton.Fcd * Math.Pow(betonrek, 2) / (2 * beton.GetEpsilonBetonStuik());
+
+                    break;
+            }
+
+
+
+            output = oppervlakteEen + oppervlakteTwee;
+            return output;
+        }
+
+
+        public static double GetStatischMomentBetonDiagram(this BetonContext beton, double optredendeBetonrek)
+        {
+            double betonrek;
+            double statischMomentEen = 0.0;
+            double statischMomentTwee = 0.0;
+
+            if (optredendeBetonrek <= beton.GetEpsilonBetonStuik())
+            {
+                betonrek = optredendeBetonrek;
+                statischMomentTwee = 0;
+            }
+            else
+            {
+                betonrek = beton.GetEpsilonBetonStuik();
+                statischMomentTwee = (optredendeBetonrek - beton.GetEpsilonBetonStuik()) * beton.Fcd * (beton.GetEpsilonBetonStuik() + 0.5 * (optredendeBetonrek - beton.GetEpsilonBetonStuik()));
+            }
+
+            switch (beton.SpanningRekDiagram)
+            {
+                case SpanningRekDiagramType.Parabolisch:
+                    double component1 = -2.0 * (betonrek - beton.GetEpsilonBetonStuik());
+                    double component2 = betonrek * beton.FactorN + beton.GetEpsilonBetonStuik() + betonrek;
+                    double component3 = Math.Pow((beton.GetEpsilonBetonStuik() - betonrek) / beton.GetEpsilonBetonStuik(), beton.FactorN);
+                    double component4 = Math.Pow(betonrek, 2.0) * (beton.FactorN + 2.0) * (beton.FactorN + 1.0);
+                    double component5 = 2.0 * (beton.FactorN + 2.0) * (beton.FactorN + 1.0);
+
+                    statischMomentEen = beton.Fcd * (component1 * component2 * component3 + component4) / component5;
+                    break;
+                case SpanningRekDiagramType.BiLineair:
+                    statischMomentEen = beton.Fcd * Math.Pow(betonrek, 3) / (3 * beton.GetEpsilonBetonStuik());
+                    break;
+
+            }
+
+
+            double output = statischMomentEen + statischMomentTwee;
+            return output;
+        }
+
+
+        public static double GetBetonspanning(this BetonContext beton, double optredendeBetonrek)
+        {
+            double output;
+
+            if (optredendeBetonrek <= beton.GetEpsilonBetonStuik())
+            {
+                output = beton.SpanningRekDiagram switch
+                {
+                    SpanningRekDiagramType.Parabolisch => beton.Fcd * (1 - Math.Pow(1 - optredendeBetonrek / beton.GetEpsilonBetonStuik(), beton.FactorN)),
+                    _ => beton.Fcd * optredendeBetonrek / beton.GetEpsilonBetonStuik(),
+                };
+            }
+            else
+            {
+                output = beton.Fcd;
+            }
+
+            return output;
         }
 
 

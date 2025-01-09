@@ -31,6 +31,44 @@
             }
         }
 
+        public double XuD
+        {
+            get { return Xu / D; }
+        }
+
+        public double Z
+        {
+            get
+            {
+                return D - Beton.GetBeta() * Xu;
+            }
+        }
+
+        public double AsApplied
+        {
+            get
+            {
+                return AsRequired;
+            }
+        }
+
+
+        public double SigmaS
+        {
+            get
+            {
+                return Ns * 1000 / AsApplied;
+            }
+        }
+
+        public double Ns
+        {
+            get
+            {
+                return M / (Z / 1000);
+            }
+        }
+
 
 
         public double AsMin1

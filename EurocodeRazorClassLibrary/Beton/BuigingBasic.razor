@@ -12,9 +12,33 @@
 
 <FluentTextField Value="@Model.Xu.ToString("0.0 mm")">Xu</FluentTextField>
 
+
+
+<FluentTextField Value="@Model.XuD.ToString("0.000")">Xu/d</FluentTextField>
+<FluentTextField Value="@Model.Z.ToString("0.0 mm")">z</FluentTextField>
+
+<FluentTextField Value="@Model.SigmaS.ToString("0.0 N/mm²")">Staalspanning</FluentTextField>
+
+
+
+
+
 <FluentTextField Value="@Model.AsMin1.ToString("0 mm²")">As;min</FluentTextField>
 <FluentTextField Value="@Model.AsMin1.ToString("0 mm²")">As;min1</FluentTextField>
 <FluentTextField Value="@Model.AsMin2.ToString("0 mm²")">As;min2</FluentTextField>
+
+
+<FluentTextField Value="@Model.Beton.FactorN.ToString("0.00")">N</FluentTextField>
+<FluentTextField Value="@Model.Beton.GetAlpha().ToString("0.000")">Alpha</FluentTextField>
+<FluentTextField Value="@Model.Beton.GetBeta().ToString("0.000")">Beta</FluentTextField>
+
+
+
+<EurocodeBetonTabel Model="@Model.Beton" />
+
+
+
+
 
 @if (Model.MinimaleWapeningToegepast)
 {

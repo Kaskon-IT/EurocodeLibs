@@ -213,14 +213,19 @@
         //public double Beta { get { return GetFactorBeta(BetonSterkteKlasse, Fck, IsParabolischSpanningsRekDiagram); } } 
         public double Beta { get; set; }
 
+
+
+
         public double GetBeta()
         {
-            return this.GetFactorBeta();
+            SetAlphaBeta(this.EpsilonC);
+            return this.Beta;
         }
 
         public double GetAlpha()
         {
-            return this.GetFactorAlpha();
+            SetAlphaBeta(this.EpsilonC);
+            return this.Alpha;
 
             //if (IsParabolischSpanningsRekDiagram)
             //    return this.GetFactorAlpha(EpsilonC2, EpsilonCu2);
@@ -240,6 +245,13 @@
         public void SetAlpha(double alpha)
         {
             this.Alpha = alpha;
+        }
+
+        public void SetAlphaBeta(double betonrek)
+        {
+            var (alpha, beta) = this.GetAlphaBeta(betonrek);
+            this.Alpha = alpha;
+            this.Beta = beta;
         }
 
 
