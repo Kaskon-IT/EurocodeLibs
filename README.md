@@ -5,3 +5,5 @@ Bibliotheek voor onderdelen uit de Eurocode
 - NEN-EN-1992 Betonconstructies
 - NEN-EN-1992 Staalconstructies
 - NEN-EN-1993 Staal-beton constructies
+
+$$e^{-\frac{t}{RC}}$$

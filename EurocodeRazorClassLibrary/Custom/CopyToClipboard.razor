@@ -1,0 +1,31 @@
+﻿@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+<script>
+        window.clipboardCopy = {
+        copyText: function(text) {
+            navigator.clipboard.writeText(text).then(function () {
+                alert("Copied to clipboard!");
+            })
+            .catch(function (error) {
+                alert(error);
+            });
+        }
+    };
+</script>
+
+
+<div class="form-inline">
+    <input class="form-control" readonly type="text" value="@Text" />
+    <button type="button" class="btn btn-primary" @onclick="CopyTextToClipboard">Copy</button>
+</div>
+
+@code {
+    [Parameter]
+    public string Text { get; set; } = "";
+
+    private async Task CopyTextToClipboard()
+    {
+        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", Text);
+    }
+}

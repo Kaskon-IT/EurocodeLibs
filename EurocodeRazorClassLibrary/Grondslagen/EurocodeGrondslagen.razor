@@ -3,49 +3,53 @@
 <h3>Grondslagen voor de berekening (EC 0)</h3>
 
 
-    
-
-    <FluentSelectEnum Label="Nationale bijlage" Placeholder="Selecteer..." TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
-                      ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
-    <p>
-     @*    Selectie: @Model.NationaleBijlage.ToString()&nbsp; *@
-
-        @if (Model != null && Model.NationaleBijlage != null)
-        {
-
-            <img class="flag" src="Flags/@(Model.NationaleBijlage.ToString().ToLower()).svg" alt="Land vlag" />
-        }
-    </p>
 
 
-    <FluentSelectEnum Label="Gevolgklasse (Consequence Class)" 
-                      Placeholder="Selecteer..." 
-                      TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
-                      ShowDescription="false"
-                      @bind-EnumSelectedValue="@Model.Gevolgklasse" />
-    
-    <FluentSelectEnum Label="Ontwerplevensduur" 
-                      TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum" 
-                      @bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
+<FluentSelectEnum Label="Nationale bijlage" Placeholder="Selecteer..." TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
+ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
+<p>
+    @*    Selectie: @Model.NationaleBijlage.ToString()&nbsp; *@
+
+    @if (Model != null && Model.NationaleBijlage != null)
+    {
+
+        <img class="flag" src="Flags/@(Model.NationaleBijlage.ToString().ToLower()).svg" alt="Land vlag" />
+    }
+</p>
+
+
+<FluentSelectEnum Label="Gevolgklasse (Consequence Class)" 
+Placeholder="Selecteer..." 
+TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
+ShowDescription="false"
+@bind-EnumSelectedValue="@Model.Gevolgklasse" />
+
+<FluentSelectEnum Label="Ontwerplevensduur" 
+TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum" 
+@bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
 
 
 
 
-    <FluentTextField    Label="Betrouwbaarheidsklasse" 
-                        Value="@Model.Betrouwbaarheidsklasse.ToString()" 
-                        ReadOnly="true" 
-                        Appearance="FluentInputAppearance.Filled" />
+<FluentTextField    Label="Betrouwbaarheidsklasse" 
+Value="@Model.Betrouwbaarheidsklasse.ToString()" 
+ReadOnly="true" 
+Appearance="FluentInputAppearance.Filled" />
 
-    <FluentTextField    Label="K,FI" 
-                        Value="@Model.Kfi.ToString("0.0")" 
-                        ReadOnly="true" 
-                        Appearance="FluentInputAppearance.Filled" />
+<FluentTextField    Label="K,FI" 
+Value="@Model.Kfi.ToString("0.0")" 
+ReadOnly="true" 
+Appearance="FluentInputAppearance.Filled" />
 
-    <FluentTextField    Label="ξ (Xi)" 
-                        Value="@Model.Xi.ToString("0.00")" 
-                        ReadOnly="true" 
-                        Appearance="FluentInputAppearance.Filled" />
+<FluentTextField    Label="ξ (Xi)" 
+Value="@Model.Xi.ToString("0.00")" 
+ReadOnly="true" 
+Appearance="FluentInputAppearance.Filled" />
 
+
+<FluentButton OnClick="ExportCsv">Export CSV</FluentButton>
+
+<CopyToClipboard Text="@svg" />
 
 
 
@@ -63,6 +67,46 @@
         await ModelChanged.InvokeAsync(Model);
     }
 
+    private string svg { get; set; } = "";
+
+    async Task ExportCsv()
+    {
+        // use csv file creator
+        var csvFileCreator = new CsvFactory.CsvFileCreator();
+
+        // set columns
+        List<string> columnNames = ["Land", "Gevolgklasse", "Onwerplevensduur", "Betrouwbaarheidsklasse", "K_FI~", "ξ"];
+        csvFileCreator.AddColumns(columnNames);
+
+        // add rows
+        var row = new Dictionary<string, string>();
+        for (int i = 0; i < columnNames.Count; i++)
+        {
+            string tekst = "";
+            switch (i)
+            {
+                case 0: tekst = Model.NationaleBijlage?.ToString() ?? ""; break;
+                case 1: tekst = Model.Gevolgklasse?.ToString() ?? ""; break;
+                case 2: tekst = Model.OntwerpLevensduur?.ToString() ?? ""; break;
+                case 3: tekst = Model.Betrouwbaarheidsklasse.ToString(); break;
+                case 4: tekst = Model.Kfi.ToString("0.0"); break;
+                case 5: tekst = Model.Xi.ToString("0.00"); break;
+            }
+            row.Add(key: columnNames[i], value: tekst);
+        }
+        csvFileCreator.AddRow(row);
+
+        var sb = csvFileCreator.GetCsvStringBuilder();
+        svg = sb.ToString();
+
+
+        // save to file
+        csvFileCreator.SaveToFile("output.csv");
+
+
+
+
+    }
        
 
 }
