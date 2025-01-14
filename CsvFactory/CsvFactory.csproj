@@ -7,8 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MigraDocCore.DocumentObjectModel" Version="1.3.65" />
-    <PackageReference Include="MigraDocCore.Rendering" Version="1.3.65" />
+    <PackageReference Include="MigraDoc.DocumentObjectModel.Core" Version="1.0.0" />
+    <PackageReference Include="MigraDoc.Rendering.Core" Version="1.0.0" />
+    <PackageReference Include="MigraDoc.RtfRendering.Core" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

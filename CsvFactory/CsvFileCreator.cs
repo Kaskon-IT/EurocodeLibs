@@ -39,6 +39,17 @@
             _rows.Add(rowData);
         }
 
+        /// <summary>
+        /// Adds a list of rowdata's to the CSV file.
+        /// </summary>
+        /// <param name="rowDatas">A list of dictionary representing the row data foreach row</param>
+        public void AddRows(List<Dictionary<string, string>> rowDatas)
+        {
+            foreach (var rowData in rowDatas)
+            {
+                _rows.Add(rowData);
+            }
+        }
 
         public StringBuilder GetCsvStringBuilder()
         {
@@ -76,29 +87,6 @@
         {
             var sb = GetCsvStringBuilder();
 
-            //StringBuilder csvContent = new();
-
-            //// Write header row
-            //csvContent.AppendLine(string.Join(_delimiter, _columns));
-
-            //// Write data rows
-            //foreach (var row in _rows)
-            //{
-            //    List<string> rowValues = [];
-            //    foreach (var column in _columns)
-            //    {
-            //        if (row.TryGetValue(column, out string? value))
-            //        {
-            //            rowValues.Add(EscapeForCsv(value));
-            //        }
-            //        else
-            //        {
-            //            rowValues.Add(string.Empty);
-            //        }
-            //    }
-            //    csvContent.AppendLine(string.Join(_delimiter, rowValues));
-            //}
-
             // Save to file
             File.WriteAllText(filePath, sb.ToString());
         }
@@ -115,6 +103,14 @@
                 value = '"' + value.Replace("\"", "\"\"") + '"';
             }
             return value;
+            // todo aanvullen zodat er ook linebreaks toegepast kunnen worden.
+            // controleer met MAC en Windows
+            // bijvoorbeeld
+            // ----------------------------
+            // |   M    |  col2  |  col3  |
+            // | [kNm]  |        |        |
+            // ----------------------------
+
         }
     }
 

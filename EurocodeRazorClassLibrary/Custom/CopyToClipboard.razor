@@ -1,18 +1,29 @@
-﻿@using Microsoft.JSInterop
+﻿@using Microsoft.FluentUI.AspNetCore.Components
+@using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
 
 <script>
-        window.clipboardCopy = {
-        copyText: function(text) {
-            navigator.clipboard.writeText(text).then(function () {
-                alert("Copied to clipboard!");
-            })
-            .catch(function (error) {
-                alert(error);
-            });
-        }
+    window.clipboardCopy = {
+    copyText: function(text) {
+    navigator.clipboard.writeText(text).then(function () {
+    alert("Copied to clipboard!");
+    })
+    .catch(function (error) {
+    alert(error);
+    });
+    }
     };
 </script>
+
+@* <FluentTextArea Label="CSV" Value="@Text" Style="width: 100%;"></FluentTextArea> *@
+
+<div>
+    <FluentButton 
+    Title="@Title"
+    OnClick="CopyTextToClipboard">
+        <FluentIcon Value="@(new Icons.Regular.Size32.Clipboard())" Color="Color.Accent" Slot="start" />
+    </FluentButton>
+</div>
 
 
 <div class="form-inline">
@@ -23,6 +34,9 @@
 @code {
     [Parameter]
     public string Text { get; set; } = "";
+
+    [Parameter]
+    public string Title { get; set; } = "Copy to clipboard";
 
     private async Task CopyTextToClipboard()
     {

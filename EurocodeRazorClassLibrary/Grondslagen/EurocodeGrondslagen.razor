@@ -49,8 +49,13 @@ Appearance="FluentInputAppearance.Filled" />
 
 <FluentButton OnClick="ExportCsv">Export CSV</FluentButton>
 
-<CopyToClipboard Text="@svg" />
+<CopyToClipboard Title="Copy CSV" Text="@csvContent" />
 
+<CopyRtfToClipboard rtfContent="@rtfContent"></CopyRtfToClipboard>
+
+<CopyToClipboard Title="Copy RTF" Text="@rtfContent" />
+
+<FluentButton onclick="ExportPdf">Export PDF</FluentButton>
 
 
 
@@ -67,46 +72,72 @@ Appearance="FluentInputAppearance.Filled" />
         await ModelChanged.InvokeAsync(Model);
     }
 
-    private string svg { get; set; } = "";
+
+    private List<string> _columnNames = ["Eurocode (Land)", "Gevolgklasse CC", "Ontwerplevensduur [jaren]", "Betrouwbaarheidsklasse RC", "K_FI~", "ξ"];
+    private Dictionary<string, string> _rows = new();
+
+    private string csvContent { get; set; } = "";
+    private string? rtfContent { get; set; } = "";
+
+
+    private void UpdateDictionary(){
+        _rows = new Dictionary<string, string>();
+
+        for (int i = 0; i < _columnNames.Count; i++)
+        {
+            string strValue = "";
+            switch (i)
+            {
+                case 0: strValue = Model.NationaleBijlage?.ToString() ?? ""; break;
+                case 1: strValue = Model.Gevolgklasse?.ToString() ?? ""; break;
+                case 2: strValue = Model.OntwerpLevensduur?.ToString() ?? ""; break;
+                case 3: strValue = Model.Betrouwbaarheidsklasse.ToString(); break;
+                case 4: strValue = Model.Kfi.ToString("0.0"); break;
+                case 5: strValue = Model.Xi.ToString("0.00"); break;
+            }
+            _rows.Add(key: _columnNames[i], value: strValue);
+        }
+    }
+
+    async Task ExportPdf(){
+
+        // altijd bijwerken
+        await ExportCsv();
+        var pdfCreator = new CsvFactory.CsvToRtfService();
+        rtfContent = pdfCreator.CreateRtfFromCsvUsingMigradoc(csvContent: csvContent, "output.pdf");
+
+    }
+
+
+    public CsvFactory.CsvFileCreator GetCsvFileCreator(List<string> columnNames, List<Dictionary<string,string>> rowDatas)
+    {
+        // use csvCreator
+        var csvFileCreator = new CsvFactory.CsvFileCreator();
+        // add headers
+        csvFileCreator.AddColumns(columnNames);
+        // add rows
+        csvFileCreator.AddRows(rowDatas);
+
+        return csvFileCreator;
+
+    }
 
     async Task ExportCsv()
     {
-        // use csv file creator
-        var csvFileCreator = new CsvFactory.CsvFileCreator();
+        // update
+        UpdateDictionary();
 
-        // set columns
-        List<string> columnNames = ["Land", "Gevolgklasse", "Onwerplevensduur", "Betrouwbaarheidsklasse", "K_FI~", "ξ"];
-        csvFileCreator.AddColumns(columnNames);
+        // get creator
+        var csvCreator = GetCsvFileCreator(_columnNames, new() { _rows });
 
-        // add rows
-        var row = new Dictionary<string, string>();
-        for (int i = 0; i < columnNames.Count; i++)
-        {
-            string tekst = "";
-            switch (i)
-            {
-                case 0: tekst = Model.NationaleBijlage?.ToString() ?? ""; break;
-                case 1: tekst = Model.Gevolgklasse?.ToString() ?? ""; break;
-                case 2: tekst = Model.OntwerpLevensduur?.ToString() ?? ""; break;
-                case 3: tekst = Model.Betrouwbaarheidsklasse.ToString(); break;
-                case 4: tekst = Model.Kfi.ToString("0.0"); break;
-                case 5: tekst = Model.Xi.ToString("0.00"); break;
-            }
-            row.Add(key: columnNames[i], value: tekst);
-        }
-        csvFileCreator.AddRow(row);
-
-        var sb = csvFileCreator.GetCsvStringBuilder();
-        svg = sb.ToString();
-
+        var sb = csvCreator.GetCsvStringBuilder();
+        csvContent = sb.ToString();
 
         // save to file
-        csvFileCreator.SaveToFile("output.csv");
-
-
-
-
+        csvCreator.SaveToFile("output.csv");
     }
+
+
        
 
 }

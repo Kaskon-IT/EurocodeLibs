@@ -12,14 +12,10 @@
         public double M { get; set; }
 
 
-
-
         // berekende waarde
         public double X { get; private set; }
         public double Z { get; private set; }
         public double As { get; private set; }
-
-
 
 
     }
