@@ -29,6 +29,7 @@
     <ProjectReference Include="..\Eurocode6.Metselwerk\Eurocode6.Metselwerk.csproj" />
     <ProjectReference Include="..\Eurocode7.Geotechniek\Eurocode7.Geotechniek.csproj" />
     <ProjectReference Include="..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />
+    <ProjectReference Include="..\ExportFactory\ExportFactory.csproj" />
   </ItemGroup>
 
   <ItemGroup>

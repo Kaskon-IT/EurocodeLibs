@@ -7,8 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\Export\" />
-    <Folder Include="Services\" />
+    <PackageReference Include="MigraDoc.DocumentObjectModel.Core" Version="1.0.0" />
+    <PackageReference Include="MigraDoc.Rendering.Core" Version="1.0.0" />
+    <PackageReference Include="MigraDoc.RtfRendering.Core" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

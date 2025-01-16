@@ -1,12 +1,71 @@
 ﻿
-using CsvFactory;
-using CsvFactory.Interfaces;
+//using CsvFactory;
+//using CsvFactory.Interfaces;
+
+///using CsvFactory;
+using ExportFactory.Interfaces.Export;
+using ExportFactory.Services;
 using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Tables;
 
 namespace Eurocode.Grondslagen
 {
     public class GrondslagenContext : IExportableCsv, IExportableRtf, IExportableMigraDoc
     {
+        /// <summary>
+        /// Synchronous CSV Export 
+        /// </summary>
+        /// <param name="excludeHeaders">Optional without headers</param>
+        /// <returns>A string</returns>
+        string IExportableCsv.Export(bool excludeHeaders)
+        {
+            // call shared logic (async=false)
+            return ExportCsvLogic(excludeHeaders, async: false).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Asynchronous CSV Export
+        /// </summary>
+        /// <param name="excludeHeaders">Optional without headers</param>
+        /// <returns>A string</returns>
+        public async Task<string> ExportAsync(bool excludeHeaders)
+        {
+            return await ExportCsvLogic(excludeHeaders, async: true);
+        }
+
+        // Shared logic for both synchronous and async method
+        private async Task<string> ExportCsvLogic(bool excludeHeaders, bool async)
+        {
+            var creator = new ExportFactory.Services.CsvFileCreator();
+            creator.SetColumnHeaders(Headers);
+
+            // headers?
+            if (!excludeHeaders)
+                creator.AddRow(Headers);
+
+            // there is only on row 
+            creator.AddRow(RowData);
+
+
+            //var stringBuilder = creator.GetCsvStringBuilder();
+            string result = creator.GetCsvStringWriter().ToString();
+
+            if (async)
+            {
+                await ExportHelper.WriteToStreamAsync(result);
+            }
+            else
+            {
+                ExportHelper.WriteToStream(result);
+            }
+
+            // Return the generated CSV content as a string
+            return result;
+
+        }
+
+
+
 
         public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
 
@@ -80,26 +139,42 @@ namespace Eurocode.Grondslagen
         //}
 
 
+        //MigraDoc IExportableMigraDoc.Table
+
 
         string IExportableRtf.Export()
         {
 
+
             throw new NotImplementedException();
-
         }
 
-
-
-
-        string IExportableCsv.Export()
+        public Task<string> ExportAsync()
         {
-            var creator = new CsvFileCreator();
-            creator.SetColumnHeaders(Headers);
-            creator.AddRow(RowData);
-            var stringBuilder = creator.GetCsvStringBuilder();
-            return stringBuilder.ToString();
+            throw new NotImplementedException();
         }
 
+        public Table ExportTable()
+        {
+            Table table = new Table();
 
+            table.AddColumn(Unit.FromMillimeter(30));
+            table.AddColumn(Unit.FromMillimeter(100));
+
+            var row = table.AddRow();
+            for (int i = 0; i < table.Columns.Count; i++)
+            {
+                row.Cells[i].AddParagraph($"cells[{i}]");
+            }
+
+
+            return table;
+            throw new NotImplementedException();
+        }
+
+        public Task<Table> ExportTableAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

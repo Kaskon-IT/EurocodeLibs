@@ -1,38 +1,16 @@
-﻿namespace CsvFactory
+﻿namespace ExportFactory.Services
 {
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
 
+
     public class CsvFileCreator(char delimiter = '\t')
     {
-        private readonly List<string> _columns = [];
-        private Dictionary<string, string> ColumnHeaders = new Dictionary<string, string>();
+        private Dictionary<string, string> ColumnHeaders { get; set; } = [];
         private readonly List<Dictionary<string, string>> _rows = [];
         private readonly char _delimiter = delimiter;
 
-
-
-
-        /// <summary>
-        /// Adds a column to the CSV file.
-        /// </summary>
-        /// <param name="columnName">The name of the column.</param>
-        public void AddColumn(string columnName)
-        {
-            if (!_columns.Contains(columnName))
-            {
-                _columns.Add(columnName);
-            }
-        }
-
-        public void AddColumns(List<string> columnNames)
-        {
-            foreach (string columnName in columnNames)
-            {
-                AddColumn(columnName);
-            }
-        }
 
         public void SetColumnHeaders(Dictionary<string, string> headers)
         {
@@ -60,18 +38,9 @@
             }
         }
 
-
-
-
-        public StringBuilder GetCsvStringBuilder()
+        public StringWriter GetCsvStringWriter()
         {
-            StringBuilder csvContent = new();
-
-            // Write header row
-            csvContent.AppendLine(string.Join(_delimiter, _columns));
-
-
-
+            StringWriter sw = new StringWriter();
             foreach (var row in _rows)
             {
                 List<string> rowValues = [];
@@ -86,10 +55,33 @@
                         rowValues.Add(string.Empty);
                     }
                 }
-                csvContent.Append(string.Join(_delimiter, rowValues));
+                sw.WriteLine(string.Join(_delimiter, rowValues));
             }
 
-            return csvContent;
+
+            return sw;
+        }
+
+        public StringBuilder GetCsvStringBuilder()
+        {
+            StringBuilder sb = new();
+            foreach (var row in _rows)
+            {
+                List<string> rowValues = [];
+                foreach (var header in ColumnHeaders)
+                {
+                    if (row.TryGetValue(header.Key, out string? value))
+                    {
+                        rowValues.Add(EscapeForCsv(value));
+                    }
+                    else
+                    {
+                        rowValues.Add(string.Empty);
+                    }
+                }
+                sb.AppendLine(string.Join(_delimiter, rowValues));
+            }
+            return sb;
         }
 
 

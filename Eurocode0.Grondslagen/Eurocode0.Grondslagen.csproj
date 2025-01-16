@@ -7,5 +7,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\CsvFactory\CsvFactory.csproj" />
+    <ProjectReference Include="..\ExportFactory\ExportFactory.csproj" />
   </ItemGroup>
 </Project>

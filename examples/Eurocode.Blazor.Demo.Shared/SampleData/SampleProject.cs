@@ -6,9 +6,18 @@ using Eurocode.Grondslagen;
 
 namespace Eurocode.Blazor.Demo.Shared.SampleData
 {
+
+
     public class SampleProject
     {
         public int Id { get; set; } = 1;
+
+        public string Name { get; set; } = "Project X";
+        public string Description { get; set; } = "Test voor Eurocode";
+        public string Number { get; set; } = "3-TXZ-46";
+
+
+        public DocumentInfo DocumentInfo { get; set; } = new();
 
 
         public GrondslagenContext Grondslagen { get; set; } = new();

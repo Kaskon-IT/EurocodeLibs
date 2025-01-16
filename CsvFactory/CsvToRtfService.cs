@@ -32,61 +32,6 @@ namespace CsvFactory
 
 
 
-
-        /// <summary>
-        /// Creates an RTF table from CSV content and saves it to a file.
-        /// </summary>
-        /// <param name="csvContent">The CSV content as a string.</param>
-        /// <param name="outputPath">The file path to save the RTF.</param>
-        /// <param name="delimiter">The character used to separate values in the CSV.</param>
-        public void CreateRtfFromCsv(string csvContent, string outputPath, char delimiter = ',')
-        {
-            //var lines = csvContent.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            //if (lines.Length < 1) throw new ArgumentException("CSV content must have at least one line.");
-
-            //using (var writer = new StreamWriter(outputPath))
-            //{
-            //    writer.WriteLine(@"{\rtf1\ansi\deff0{"); // RTF Header
-
-            //    writer.WriteLine("\trowd\trgaph108"); // Start table
-
-            //    var headers = lines[0].Split(delimiter);
-
-            //    foreach (var header in headers)
-            //    {
-            //        writer.WriteLine($"{EscapeForRtf(header)}\cell"); // Add header cells
-            //    }
-            //    writer.WriteLine("\row"); // End header row
-
-            //    for (int i = 1; i < lines.Length; i++)
-            //    {
-            //        var row = lines[i].Split(delimiter);
-            //        foreach (var cell in row)
-            //        {
-            //            writer.WriteLine($"{EscapeForRtf(cell)}\cell");
-            //        }
-            //        writer.WriteLine("\row");
-            //    }
-            //    writer.WriteLine("}}\par"); // Close table structure
-            //}
-        }
-
-        /// <summary>
-        /// Escapes text for inclusion in an RTF file.
-        /// </summary>
-        /// <param name="value">The text to escape.</param>
-        /// <returns>Escaped RTF string.</returns>
-        private static string EscapeForRtf(string value)
-        {
-            return value
-                .Replace("\\", "\\\\")
-                .Replace("{", "\\{")
-                .Replace("}", "\\}")
-                .Replace("\n", "\\par ");
-        }
-
-
-
         /// <summary>
         /// Get minimum width for a column, based on it's content
         /// </summary>
@@ -155,6 +100,9 @@ namespace CsvFactory
                 }
             }
         }
+
+
+
 
 
 
