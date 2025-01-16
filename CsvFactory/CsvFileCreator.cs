@@ -7,8 +7,12 @@
     public class CsvFileCreator(char delimiter = '\t')
     {
         private readonly List<string> _columns = [];
+        private Dictionary<string, string> ColumnHeaders = new Dictionary<string, string>();
         private readonly List<Dictionary<string, string>> _rows = [];
         private readonly char _delimiter = delimiter;
+
+
+
 
         /// <summary>
         /// Adds a column to the CSV file.
@@ -28,6 +32,11 @@
             {
                 AddColumn(columnName);
             }
+        }
+
+        public void SetColumnHeaders(Dictionary<string, string> headers)
+        {
+            ColumnHeaders = headers;
         }
 
         /// <summary>
@@ -75,6 +84,24 @@
                 }
                 csvContent.AppendLine(string.Join(_delimiter, rowValues));
             }
+
+            foreach (var row in _rows)
+            {
+                List<string> rowValues = [];
+                foreach (var header in ColumnHeaders)
+                {
+                    if (row.TryGetValue(header.Key, out string? value))
+                    {
+                        rowValues.Add(EscapeForCsv(value));
+                    }
+                    else
+                    {
+                        rowValues.Add(string.Empty);
+                    }
+                }
+                csvContent.Append(string.Join(_delimiter, rowValues));
+            }
+
             return csvContent;
         }
 

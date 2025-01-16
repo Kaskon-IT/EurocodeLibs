@@ -53,7 +53,7 @@ Appearance="FluentInputAppearance.Filled" />
 
 <CopyRtfToClipboard rtfContent="@rtfContent"></CopyRtfToClipboard>
 
-<CopyToClipboard Title="Copy RTF" Text="@rtfContent" />
+@* <CopyToClipboard Title="Copy RTF" Text="@rtfContent" /> *@
 
 <FluentButton onclick="ExportPdf">Export PDF</FluentButton>
 
@@ -74,14 +74,14 @@ Appearance="FluentInputAppearance.Filled" />
 
 
     private List<string> _columnNames = ["Eurocode (Land)", "Gevolgklasse CC", "Ontwerplevensduur [jaren]", "Betrouwbaarheidsklasse RC", "K_FI~", "ξ"];
-    private Dictionary<string, string> _rows = new();
+    private Dictionary<string, string> _row = new();
 
     private string csvContent { get; set; } = "";
     private string? rtfContent { get; set; } = "";
 
 
     private void UpdateDictionary(){
-        _rows = new Dictionary<string, string>();
+        _row = new Dictionary<string, string>();
 
         for (int i = 0; i < _columnNames.Count; i++)
         {
@@ -95,16 +95,25 @@ Appearance="FluentInputAppearance.Filled" />
                 case 4: strValue = Model.Kfi.ToString("0.0"); break;
                 case 5: strValue = Model.Xi.ToString("0.00"); break;
             }
-            _rows.Add(key: _columnNames[i], value: strValue);
+            _row.Add(key: _columnNames[i], value: strValue);
         }
     }
 
     async Task ExportPdf(){
 
         // altijd bijwerken
-        await ExportCsv();
+        //await ExportCsv();
         var pdfCreator = new CsvFactory.CsvToRtfService();
         rtfContent = pdfCreator.CreateRtfFromCsvUsingMigradoc(csvContent: csvContent, "output.pdf");
+
+        // demo
+        await ExportCsvWithInterface();
+
+
+
+        await ExportRtfWithInterface();
+
+
 
     }
 
@@ -128,7 +137,7 @@ Appearance="FluentInputAppearance.Filled" />
         UpdateDictionary();
 
         // get creator
-        var csvCreator = GetCsvFileCreator(_columnNames, new() { _rows });
+        var csvCreator = GetCsvFileCreator(_columnNames, new() { _row });
 
         var sb = csvCreator.GetCsvStringBuilder();
         csvContent = sb.ToString();
@@ -137,6 +146,32 @@ Appearance="FluentInputAppearance.Filled" />
         csvCreator.SaveToFile("output.csv");
     }
 
+
+    async Task ExportCsvWithInterface()
+    {
+        if (Model is CsvFactory.Interfaces.IExportableCsv csvExporter){
+            csvContent = csvExporter.Export();
+        }
+
+        //csvContent = Model.CreateCsv();
+
+    }
+
+    async Task ExportRtfWithInterface()
+    {
+        if (Model is CsvFactory.Interfaces.IExportableRtf rtfExporter){
+            rtfContent = rtfExporter.Export();
+        }
+
+        //rtfContent = Model.Export();
+    }
+    async Task ExportPdfWithInterface()
+    {
+        // test functie voor bijvoegen in een document
+        // omdat we geen document hebben, maken we een nieuwe
+        MigraDoc.DocumentObjectModel.Section demoSection = new();
+        Model.AddToSection(demoSection);
+    }
 
        
 

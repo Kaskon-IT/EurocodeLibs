@@ -1,6 +1,11 @@
-﻿namespace Eurocode.Grondslagen
+﻿
+using CsvFactory;
+using CsvFactory.Interfaces;
+using MigraDoc.DocumentObjectModel;
+
+namespace Eurocode.Grondslagen
 {
-    public class GrondslagenContext
+    public class GrondslagenContext : IExportableCsv, IExportableRtf, IExportableMigraDoc
     {
 
         public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
@@ -43,81 +48,58 @@
         }
 
 
+        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>()
+        {
+            { "NationaleBijlage", "Eurocode [NB]"},
+            { "Gevolgklasse", "Gevolgklasse [CC]" },
+            { "OntwerpLevensduur", "Levensduur [jaren]"},
+            { "Betrouwbaarheidsklasse", "Reliability Class RC" },
+            { "Kfi", "K_FI~" },
+            { "Xi", "ξ" },
+        };
+
+        public Dictionary<string, string> RowData { get { return this.GetRowData(); } }
 
 
-
-
-    }
-
-    public static class GrondslagenExtensions
-    {
-        public static double GetKfi(this BetrouwbaarheidsklasseEnum betrouwbaarheidsklasse)
+        public void AddToSection(Section section)
         {
 
-            return betrouwbaarheidsklasse switch
-            {
-                BetrouwbaarheidsklasseEnum.RC1 => 0.9,
-                BetrouwbaarheidsklasseEnum.RC2 => 1.0,
-                BetrouwbaarheidsklasseEnum.RC3 => 1.1,
-                _ => 1.1,
-            };
+
+            throw new NotImplementedException();
         }
 
-        public static BetrouwbaarheidsklasseEnum GetBetrouwbaarheidsklasse(this GevolgklasseEnum? gevolgklasse)
-        {
-            return gevolgklasse switch
-            {
-                GevolgklasseEnum.CC1 or GevolgklasseEnum.CC1a or GevolgklasseEnum.CC1b => BetrouwbaarheidsklasseEnum.RC1,
-                GevolgklasseEnum.CC2 or GevolgklasseEnum.CC2a or GevolgklasseEnum.CC2b => BetrouwbaarheidsklasseEnum.RC2,
-                GevolgklasseEnum.CC3 => BetrouwbaarheidsklasseEnum.RC3,
-                _ => BetrouwbaarheidsklasseEnum.RC2
-            };
-        }
+        //public string CreateCsv()
+        //{
+        //    var creator = new CsvFileCreator();
+        //    creator.SetColumnHeaders(Headers);
+        //    creator.AddRow(RowData);
+        //    var stringBuilder = creator.GetCsvStringBuilder();
+        //    return stringBuilder.ToString();
 
-        /// <summary>
-        /// ξ (xi) is een reductiefactor voor ongunstige, blijvende belastingen G
-        /// Deze wordt gebruikt in de fundamentele combinatie (6.10b) en is afhankelijk van de nationale bijlage.
-        /// </summary>
-        /// <param name="nb"></param>
-        /// <returns></returns>
-        public static double GetReductieFactorVoorOngunstigeBlijvendeBelastingen(this NationaleBijlageEnum? nb)
-        {
-            return nb switch
-            {
-                NationaleBijlageEnum.EU => 1.15 / 1.35,
-                NationaleBijlageEnum.NL => 1.2 / 1.35,
-                _ => 1.15 / 1.35
-            };
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        /// <summary>
-        /// Verhoging van de dekking die rekening houd met uitvoeringstoleranties (Δc,dev), zie 4.4.1.3 (1)
-        /// Ter info: De nominale dekking (c,nom) is gelijk aan c,min + Δc,dev volgens vergelijking (4.1)
-        /// </summary>
-        /// <param name="nb">De nationale bijlage</param>
-        /// <returns></returns>
-        public static double GetUitvoeringstoleraties(this NationaleBijlageEnum? nb)
-        {
-            return nb switch
-            {
-                NationaleBijlageEnum.EU => 10.0,
-                NationaleBijlageEnum.NL => 5.0,
-                _ => 10.0,
-            };
 
+
+        string IExportableRtf.Export()
+        {
+
+            throw new NotImplementedException();
 
         }
 
 
-        public static string GetOntwerplevensduurTekst(this OntwerpLevensduurEnum? OntwerpLevensduur)
+
+
+        string IExportableCsv.Export()
         {
-            if (OntwerpLevensduur == null) return "onbekend";
-            else
-            {
-                var jaren = (int)OntwerpLevensduur;
-                return $"{jaren} jaar";
-            }
+            var creator = new CsvFileCreator();
+            creator.SetColumnHeaders(Headers);
+            creator.AddRow(RowData);
+            var stringBuilder = creator.GetCsvStringBuilder();
+            return stringBuilder.ToString();
         }
+
 
     }
 }

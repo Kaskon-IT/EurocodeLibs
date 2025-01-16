@@ -1,11 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>Eurocode.Grondslagen</RootNamespace>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\CsvFactory\CsvFactory.csproj" />
+    <Folder Include="Interfaces\Export\" />
+    <Folder Include="Services\" />
   </ItemGroup>
+
 </Project>
