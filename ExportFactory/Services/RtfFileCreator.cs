@@ -1,6 +1,4 @@
-﻿using MigraDoc.DocumentObjectModel.Tables;
-
-namespace ExportFactory.Services
+﻿namespace ExportFactory.Services
 {
     public class RtfFileCreator
     {
@@ -8,12 +6,5 @@ namespace ExportFactory.Services
     }
 
 
-    public class MigraDocCreator
-    {
-        public MigraDoc.DocumentObjectModel.Tables.Table CreateTable()
-        {
-            Table table = new();
-            return table;
-        }
-    }
+
 }

@@ -1,9 +1,12 @@
-﻿namespace Eurocode.Blazor.Demo.Shared.SampleData
+﻿using ExportFactory.Interfaces.Export;
+using ExportFactory.Services;
+
+namespace Eurocode.Blazor.Demo.Shared.SampleData
 {
     /// <summary>
     /// Represents metadata information for a document.
     /// </summary>
-    public class DocumentInfo
+    public class DocumentInfo : IExportableCsv
     {
         /// <summary>
         /// Gets or sets the title of the document.
@@ -80,6 +83,47 @@
                    $"Created: {CreationDate}\n" +
                    $"Modified: {ModificationDate}\n" +
                    $"Version: {Version}";
+        }
+
+        string IExportableCsv.Export(bool excludeHeaders)
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>() {
+                {"Title", "Title"},
+                {"Author", "Author" },
+                {"Subject", "Subject" }
+            };
+
+            Dictionary<string, string> record = new Dictionary<string, string>();
+            foreach (var kvp in headers)
+            {
+                switch (kvp.Key)
+                {
+                    case "Title": record.Add(kvp.Key, this.Title); break;
+                    case "Author": record.Add(kvp.Key, this.Author); break;
+                    case "Subject": record.Add(kvp.Key, this.Subject); break;
+
+                }
+            }
+
+
+
+            CsvFileCreator csvFileCreator = new CsvFileCreator();
+            csvFileCreator.SetColumnHeaders(headers); // todo naar constructor
+
+            csvFileCreator.AddRow(headers);
+            csvFileCreator.AddRow(record);
+
+            var sw = csvFileCreator.GetCsvStringWriter();
+
+
+            return sw.ToString();
+
+            throw new NotImplementedException();
+        }
+
+        Task<string> IExportableCsv.ExportAsync(bool excludeHeaders)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,10 +1,104 @@
-﻿@using Microsoft.FluentUI.AspNetCore.Components
+﻿@using ExportFactory.Interfaces.Export
+@using ExportFactory.MigraDocContentModels
+@using ExportFactory.Services
+@using Microsoft.FluentUI.AspNetCore.Components
+@using MigraDoc.Rendering
 
 <FluentCard Width="350px" Height="250px">
     <h2>Hello World!</h2>
     <FluentButton Appearance="@Appearance.Accent">Click Me</FluentButton>
 
     @* Zet hier een voorbeeld voor MigraDoc VOORBLAD *@
+    <button @onclick="() => Test()">Test</button>
 
+    <FluentButton OnClick="TestDoc">Maak PDF test</FluentButton>
 
 </FluentCard>
+
+@code{
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+    public void Test(){
+        if (SampleProject != null){
+            if (SampleProject.DocumentInfo is IExportableCsv csvExporter){
+                var watDan = csvExporter.Export(false);
+            }
+        }
+
+    }
+
+    public void TestDoc(){
+        var content = new DocumentContent
+        {
+            CoverPage = new CoverPageContent(){
+                CompanyName = "Kaskon",
+                ProjectNumber = "123",
+                Title = "My First Generic Project",
+                Subtitle = "Coding's fun",
+                
+            },
+
+            Sections = new List<SectionContent>
+            {
+                new SectionContent
+                {
+                    Elements = new List<SectionElement>
+                    {
+                        new HeadingContent{
+                            Style = "Heading1",
+                            Text = "No markdown for headers!",
+                            AddToTOC = true,
+                            Order = 0,
+                        },
+
+                        new ParagraphContent{
+                            Markdown = "*M*~Ed~",
+                            Style = "Heading1",
+                            Order = 0,
+                        },
+
+
+                        new TableContent
+                        {
+                            Order = 1,
+                            ColumnWidths = new List<double> { 5, 5 },
+                            Headers = new List<string>{"a", "b"},
+                            Rows = new List<List<TableCellContent>>()
+                            {
+                                new List<TableCellContent>
+                                {
+                                    new TableCellContent { Markdown = "**Bold text**" },
+                                    new TableCellContent { Markdown = "*Italic text*" }
+                                },
+                                new List<TableCellContent>
+                                {
+                                    new TableCellContent { Markdown = "H~2~O" },
+                                    new TableCellContent { Markdown = "A~ben~" }
+                                },
+                                new List<TableCellContent>
+                                {
+                                    new TableCellContent { Markdown = "E = MC^2^"},
+                                    new TableCellContent { Markdown = "*f*~cd~"}
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Generate and save the document
+        var document = MigraDocCreator.GenerateDocument(content);
+
+        // Render the document
+        var renderer = new PdfDocumentRenderer(true) { Document = document };
+        renderer.RenderDocument();
+        renderer.PdfDocument.Save("SampleDocument.pdf");
+
+
+    }
+
+
+}
