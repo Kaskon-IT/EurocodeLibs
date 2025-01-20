@@ -17,21 +17,6 @@ namespace CsvFactory
 
 
 
-        private string ApplyFormatting(string text, FormattingType formatting)
-        {
-            if (string.IsNullOrEmpty(text)) return string.Empty;
-
-            return formatting switch
-            {
-                FormattingType.Subscript => $"{{\\sub {text}}}",
-                FormattingType.Superscript => $"{{\\super {text}}}",
-                _ => text
-            };
-        }
-
-
-
-
         /// <summary>
         /// Get minimum width for a column, based on it's content
         /// </summary>

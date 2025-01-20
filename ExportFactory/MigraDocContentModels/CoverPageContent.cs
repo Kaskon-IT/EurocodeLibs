@@ -1,4 +1,6 @@
-﻿namespace ExportFactory.MigraDocContentModels
+﻿using MigraDoc.DocumentObjectModel;
+
+namespace ExportFactory.MigraDocContentModels
 {
     public class CoverPageContent
     {
@@ -9,6 +11,16 @@
         public string CompanyLogoPath { get; set; } = "";
     }
 
+    public class PageHeaderContent
+    {
+        public string Text { get; set; } = "Header text";
+        public string SvgLogo { get; set; } = "";
+    }
+
+    public class PageFooterContent
+    {
+        public Color Color { get; set; } = Colors.LightGoldenrodYellow;
+    }
 
 
 

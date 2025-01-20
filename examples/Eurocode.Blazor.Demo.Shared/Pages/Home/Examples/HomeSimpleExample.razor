@@ -11,6 +11,8 @@
     @* Zet hier een voorbeeld voor MigraDoc VOORBLAD *@
     <button @onclick="() => Test()">Test</button>
 
+    <FluentTextField Label="Font-family" @bind-Value="@fontFamily"></FluentTextField>
+
     <FluentButton OnClick="TestDoc">Maak PDF test</FluentButton>
 
 </FluentCard>
@@ -18,6 +20,9 @@
 @code{
     [CascadingParameter]
     public SampleProject? SampleProject { get; set; }
+
+    public string fontFamily { get; set; } = "Verdana";
+    public int fontSize { get; set; } = 9;
 
     public void Test(){
         if (SampleProject != null){
@@ -29,71 +34,20 @@
     }
 
     public void TestDoc(){
-        var content = new DocumentContent
-        {
-            CoverPage = new CoverPageContent(){
-                CompanyName = "Kaskon",
-                ProjectNumber = "123",
-                Title = "My First Generic Project",
-                Subtitle = "Coding's fun",
-                
-            },
 
-            Sections = new List<SectionContent>
-            {
-                new SectionContent
-                {
-                    Elements = new List<SectionElement>
-                    {
-                        new HeadingContent{
-                            Style = "Heading1",
-                            Text = "No markdown for headers!",
-                            AddToTOC = true,
-                            Order = 0,
-                        },
-
-                        new ParagraphContent{
-                            Markdown = "*M*~Ed~",
-                            Style = "Heading1",
-                            Order = 0,
-                        },
+        var content = ExampleDocumentContent.GetExampleDocumentContent(fontFamily, fontSize);
 
 
-                        new TableContent
-                        {
-                            Order = 1,
-                            ColumnWidths = new List<double> { 5, 5 },
-                            Headers = new List<string>{"a", "b"},
-                            Rows = new List<List<TableCellContent>>()
-                            {
-                                new List<TableCellContent>
-                                {
-                                    new TableCellContent { Markdown = "**Bold text**" },
-                                    new TableCellContent { Markdown = "*Italic text*" }
-                                },
-                                new List<TableCellContent>
-                                {
-                                    new TableCellContent { Markdown = "H~2~O" },
-                                    new TableCellContent { Markdown = "A~ben~" }
-                                },
-                                new List<TableCellContent>
-                                {
-                                    new TableCellContent { Markdown = "E = MC^2^"},
-                                    new TableCellContent { Markdown = "*f*~cd~"}
-                                }
 
-                            }
-                        }
-                    }
-                }
-            }
-        };
 
         // Generate and save the document
         var document = MigraDocCreator.GenerateDocument(content);
 
         // Render the document
-        var renderer = new PdfDocumentRenderer(true) { Document = document };
+        var renderer = new PdfDocumentRenderer(true) 
+        { 
+            Document = document 
+        };
         renderer.RenderDocument();
         renderer.PdfDocument.Save("SampleDocument.pdf");
 

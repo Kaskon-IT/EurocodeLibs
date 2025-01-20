@@ -1,84 +1,105 @@
 ﻿using ExportFactory.MigraDocContentModels;
 using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Shapes;
+using MigraDoc.DocumentObjectModel.Tables;
+
+//using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 
 namespace ExportFactory.Services
 {
     public class MigraDocCreator
     {
-
-        private static string CreateSvgImage(string svgContent)
+        /// <summary>
+        /// Create a document.
+        /// </summary>
+        /// <param name="content">DocumentContent for creating the document</param>
+        /// <returns>A Migradoc Document</returns>
+        public static Document GenerateDocument(DocumentContent content)
         {
-            // Save SVG content to a temporary file and return the path
-            var tempPath = System.IO.Path.GetTempFileName();
-            System.IO.File.WriteAllText(tempPath, svgContent);
-            return tempPath;
+            var document = new Document();
+            SetProjectInfo(document, content);
+            DefineStyles(document, content);
+
+            // Add cover page
+            if (content.CoverPage != null)
+            {
+                AddCoverPage(document, content.CoverPage);
+            }
+
+            // Add header and footer
+            DefineHeaderAndFooter(document.AddSection(), content);
+
+            // empty Tabel of Contents (TOC)
+            AddTableOfContents(document, out Section tocSection);
+
+            // save bookmarks to be used later in the TOC
+            var bookmarks = new List<BookmarkContent>();
+
+            // Add sections (iterate through all contents)
+            foreach (var sectionContent in content.Sections)
+            {
+                AddSection(document, sectionContent, bookmarks);
+            }
+
+            // Bookmarks bijwerken (with saved bookmarks)
+            UpdateTableOfContent(tocSection, bookmarks);
+
+            return document;
         }
 
-        private static void AddTable(Section section, TableContent tableContent)
-        {
-            var table = section.AddTable();
-            table.Borders.Width = 0.75;
+        private static readonly Dictionary<string, string> GreekLetters = new()
+{
+    { "alpha", "α" },
+    { "beta", "β" },
+    { "gamma", "γ" },
+    { "delta", "δ" },
+    { "epsilon", "ε" },
+    { "zeta", "ζ" },
+    { "eta", "η" },
+    { "theta", "θ" },
+    { "iota", "ι" },
+    { "kappa", "κ" },
+    { "lambda", "λ" },
+    { "mu", "μ" },
+    { "nu", "ν" },
+    { "xi", "ξ" },
+    { "omicron", "ο" },
+    { "pi", "π" },
+    { "rho", "ρ" },
+    { "sigma", "σ" },
+    { "tau", "τ" },
+    { "upsilon", "υ" },
+    { "phi", "φ" },
+    { "chi", "χ" },
+    { "psi", "ψ" },
+    { "omega", "ω" },
+    { "Alpha", "Α" },
+    { "Beta", "Β" },
+    { "Gamma", "Γ" },
+    { "Delta", "Δ" },
+    { "Epsilon", "Ε" },
+    { "Zeta", "Ζ" },
+    { "Eta", "Η" },
+    { "Theta", "Θ" },
+    { "Iota", "Ι" },
+    { "Kappa", "Κ" },
+    { "Lambda", "Λ" },
+    { "Mu", "Μ" },
+    { "Nu", "Ν" },
+    { "Xi", "Ξ" },
+    { "Omicron", "Ο" },
+    { "Pi", "Π" },
+    { "Rho", "Ρ" },
+    { "Sigma", "Σ" },
+    { "Tau", "Τ" },
+    { "Upsilon", "Υ" },
+    { "Phi", "Φ" },
+    { "Chi", "Χ" },
+    { "Psi", "Ψ" },
+    { "Omega", "Ω" }
+};
 
-            // Define columns
-            foreach (var header in tableContent.Headers)
-            {
-                table.AddColumn(Unit.FromCentimeter(4)); // Adjust column width as needed
-            }
-
-            // Align table
-            table.Format.Alignment = tableContent.Alignment == TableAlignment.Center
-                ? ParagraphAlignment.Center
-                : ParagraphAlignment.Left;
-
-            // Add header row
-            var headerRow = table.AddRow();
-            headerRow.Shading.Color = Colors.LightGray;
-            for (int i = 0; i < tableContent.Headers.Count; i++)
-            {
-                var cell = headerRow.Cells[i];
-                cell.AddParagraph(tableContent.Headers[i]);
-                cell.Style = "TableHeader";
-            }
-
-            // Add rows
-            foreach (var row in tableContent.Rows)
-            {
-                var tableRow = table.AddRow();
-                for (int i = 0; i < row.Count; i++)
-                {
-                    var cell = tableRow.Cells[i];
-                    if (!string.IsNullOrEmpty(row[i].SvgImage))
-                    {
-                        var image = cell.AddImage(CreateSvgImage(row[i].SvgImage));
-                        image.Width = "2cm"; // Adjust size as needed
-                        image.LockAspectRatio = true;
-                    }
-
-                    if (!string.IsNullOrEmpty(row[i].Markdown))
-                    {
-                        var par = cell.AddParagraph();
-                        AddMarkdownToParagraph(par, row[i].Markdown);
-                    }
-                }
-            }
-        }
-
-        private static void AddHeading(Section section, HeadingContent heading, List<BookmarkContent> bookmarks)
-        {
-            var paragraph = section.AddParagraph(heading.Text, heading.Style);
-
-            if (heading.AddToTOC)
-            {
-                var bookmarkName = Guid.NewGuid().ToString();
-                paragraph.AddBookmark(bookmarkName);
-
-                // Determine level from the heading style
-                int level = heading.Style == "Heading1" ? 1 : 2;
-
-                bookmarks.Add(new() { Title = heading.Text, BookmarkName = bookmarkName, Level = level });
-            }
-        }
 
 
         private static void AddSection(Document document, SectionContent sectionContent, List<BookmarkContent> bookmarks)
@@ -97,86 +118,407 @@ namespace ExportFactory.Services
                         break;
 
                     case ParagraphContent paragraphContent:
-                        var par = section.AddParagraph();
+                        var par = section.AddParagraph("", paragraphContent.Style);
+
                         AddMarkdownToParagraph(par, paragraphContent.Markdown);
                         break;
 
                     case TableContent tableContent:
-                        AddTable(section, tableContent);
+                        //section = document.AddSection(); // new section? needed for center
+                        var frame = section.AddTextFrame();
+
+                        //frame.Left = "4cm"; // todo uitlijnen
+                        AddTable(frame, tableContent);
                         break;
                 }
             }
         }
 
 
-        public static Document GenerateDocument(DocumentContent content)
+
+
+
+
+
+
+        public static Table AddTableToContainer<T>(T target) where T : DocumentObject
         {
-            var document = new Document();
-            DefineStyles(document);
-
-            // Add cover page
-            if (content.CoverPage != null)
+            if (target is Section section)
             {
-                AddCoverPage(document, content.CoverPage);
+                // Add table to Section
+                return section.AddTable();
             }
-
-            // Add Table of Contents (TOC)
-            if (content.TableOfContents != null)
+            else if (target is TextFrame textFrame)
             {
-                AddTableOfContents(document, content.TableOfContents);
+                // Add table to TextFrame
+                return textFrame.Elements.AddTable();
             }
-
-            // Add sections
-            foreach (var sectionContent in content.Sections)
+            else
             {
-                var bookmarks = new List<BookmarkContent>();
-                AddSection(document, sectionContent, bookmarks);
+                throw new InvalidOperationException("Target must be a Section or TextFrame.");
             }
-
-            return document;
         }
 
-        private static void DefineStyles(Document document, List<DefineStylesContent> customStyles = null)
+        public static Paragraph AddParagraphToContainer<T>(T target) where T : DocumentObject
+        {
+            if (target is Section section)
+            {
+                return section.AddParagraph();
+            }
+            else if (target is TextFrame textFrame)
+            {
+                return textFrame.Elements.AddParagraph();
+            }
+            else
+            {
+                throw new InvalidOperationException("Target must be a Section of TextFrame.");
+            }
+        }
+
+
+        private static void AddTable(DocumentObject target, TableContent tableContent)
+        {
+            // title?
+            if (!string.IsNullOrWhiteSpace(tableContent.Title))
+            {
+                var title = AddParagraphToContainer(target);
+                title.AddText(tableContent.Title);
+                title.Style = "TableHeading";
+            }
+
+            // table
+            var table = AddTableToContainer(target);
+
+            // apply styling
+
+            table.Borders.Width = 0.25; // todo apply formating with content
+            //table.Borders.Left = new Border() { Visible = false };
+
+
+            // Define columns
+            foreach (var header in tableContent.Headers)
+            {
+                //if (tableContent.)
+                table.AddColumn(header.Width);
+            }
+
+            // Align table
+            table.Format.Alignment = tableContent.Alignment == TableAlignment.Center
+                ? ParagraphAlignment.Center
+                : ParagraphAlignment.Left;
+
+            // Add header row
+            var headerRow = table.AddRow();
+            headerRow.Shading.Color = Colors.LightGray;
+            for (int i = 0; i < tableContent.Headers.Count; i++)
+            {
+                var cell = headerRow.Cells[i];
+                var headerPar = cell.AddParagraph();
+                AddMarkdownToParagraph(headerPar, tableContent.Headers[i].CellContent.Markdown);
+                //cell.Style = "TableHeader";
+            }
+
+            // Add rows
+            foreach (var row in tableContent.Rows)
+            {
+                var tableRow = table.AddRow();
+                for (int i = 0; i < row.Count; i++)
+                {
+                    var cell = tableRow.Cells[i];
+                    if (!string.IsNullOrEmpty(row[i].SvgImage))
+                    {
+                        try
+                        {
+                            var svgContent = row[i].SvgImage;
+                            var imgStream = SvgService.ConvertSvgToPngStream(svgContent, out double width, out double height);
+
+                            if (imgStream != null)
+                            {
+                                Console.WriteLine($"SVG converted successfully. Width: {width}, Height: {height}");
+                                AddImageFromStream(cell, imgStream);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Failed to convert SVG.");
+                            }
+
+
+
+
+
+
+                        }
+                        catch (Exception ex)
+                        {
+                            cell.AddParagraph($"Error rendering SVG: {ex.Message}");
+                        }
+
+
+
+                        //var image = cell.AddImage(CreateSvgImage(row[i].SvgImage));
+                        //image.Width = "2cm"; // Adjust size as needed
+                        //image.LockAspectRatio = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(row[i].Markdown))
+                    {
+                        var par = cell.AddParagraph();
+                        AddMarkdownToParagraph(par, row[i].Markdown);
+                    }
+                }
+            }
+        }
+
+
+
+        public static void AddImageFromStream<T>(T target, Stream imageStream) where T : DocumentObject
+        {
+            // Convert the image stream to a Base64 string
+            string base64Image = ConvertStreamToBase64(imageStream);
+
+            if (target is Paragraph paragraph)
+            {
+                // Add image to Paragraph
+                var image = paragraph.AddImage($"base64:{base64Image}");
+                image.LockAspectRatio = true; // Maintain the aspect ratio
+                image.Width = "9cm";          // Adjust size as needed
+            }
+            else if (target is Cell tableCell)
+            {
+                // Add image to TableCell
+                var image = tableCell.AddImage($"base64:{base64Image}");
+                image.LockAspectRatio = true; // Maintain the aspect ratio
+                image.Width = "9cm";          // Adjust size as needed
+            }
+            else if (target is Section section)
+            {
+                // Add image to Section
+                var image = section.AddImage($"base64:{base64Image}");
+                image.LockAspectRatio = true;
+                image.Width = "9cm";
+            }
+            else
+            {
+                throw new InvalidOperationException("Target must be a Section, Paragraph or TableCell.");
+            }
+        }
+
+        public static string ConvertStreamToBase64(Stream stream)
+        {
+            stream.Position = 0; // Reset the stream to the start
+            using var memoryStream = new MemoryStream();
+            stream.CopyTo(memoryStream);
+            return Convert.ToBase64String(memoryStream.ToArray());
+        }
+
+
+
+        private static void AddHeading(Section section, HeadingContent heading, List<BookmarkContent> bookmarks)
+        {
+            var paragraph = section.AddParagraph(heading.Text, heading.Style);
+
+            if (heading.AddToTOC)
+            {
+                var bookmarkName = Guid.NewGuid().ToString();
+                paragraph.AddBookmark(bookmarkName);
+
+                // Determine level from the heading style
+                //int level = heading.Style == "Heading1" ? 1 : 2;
+
+                bookmarks.Add(new() { Title = heading.Text, BookmarkName = bookmarkName, Level = heading.Level });
+            }
+        }
+
+
+
+
+
+        public static void SetProjectInfo(Document document, DocumentContent content)
+        {
+            document.Info.Author = content.CoverPage.CompanyName;
+            document.Info.Title = content.CoverPage.Title;
+            document.Info.Subject = content.CoverPage.Subtitle;
+        }
+
+
+
+        private static void UpdateTableOfContent(Section section, List<BookmarkContent> bookmarks)
+        {
+            foreach (var bookmark in bookmarks)
+            {
+                var paragraph = section.AddParagraph();
+                paragraph.Style = "TOC";
+
+                // Add the clickable link to the bookmark
+                var hyperlink = paragraph.AddHyperlink(bookmark.BookmarkName, HyperlinkType.Bookmark);
+                hyperlink.AddFormattedText(bookmark.Title);
+                paragraph.AddTab();
+                paragraph.AddPageRefField(bookmark.BookmarkName);
+
+                // indent heading2 and up.
+                paragraph.Format.LeftIndent = Unit.FromMillimeter((bookmark.Level - 1) * 4);
+            }
+        }
+
+
+        private static void DefineStyles(Document document, DocumentContent content)
         {
             var baseStyle = document.Styles["Normal"];
-            baseStyle.Font.Name = "Arial Narrow";
-            baseStyle.Font.Size = 10;
+            baseStyle.Font = content.Font;
 
+            // Table of content style
+            var tocStyle = document.Styles.AddStyle("TOC", "Normal");
+            //tocStyle.Font.Size = 12;
+            tocStyle.ParagraphFormat.TabStops.AddTabStop(Unit.FromCentimeter(17), TabAlignment.Right, TabLeader.MiddleDot);
+
+            // h1
             var heading1 = document.Styles.AddStyle("Heading1", "Normal");
-            heading1.Font.Size = 18;
+            heading1.Font.Size = 1.5 * content.Font.Size;
             heading1.Font.Bold = true;
-            heading1.ParagraphFormat.SpaceAfter = "0.5cm";
             heading1.ParagraphFormat.PageBreakBefore = true;
+            heading1.ParagraphFormat.SpaceAfter = "3mm";
 
+            // h2
             var heading2 = document.Styles.AddStyle("Heading2", "Normal");
-            heading2.Font.Size = 14;
+            heading2.Font.Size = 1.25 * content.Font.Size;
             heading2.Font.Bold = true;
+            heading2.ParagraphFormat.SpaceBefore = "2mm";
+            heading2.ParagraphFormat.SpaceAfter = "2mm";
 
+            // h3
             var heading3 = document.Styles.AddStyle("Heading3", "Normal");
-            heading3.Font.Size = 12;
+            heading3.Font.Size = 1.00 * content.Font.Size;
             heading3.Font.Bold = true;
+            heading3.ParagraphFormat.SpaceBefore = "1mm";
+            heading3.ParagraphFormat.SpaceAfter = "1mm";
 
+            // table heading
+            var tableHeading = document.Styles.AddStyle("TableHeading", "Normal");
+            //tableHeading.Font.Size = 12;
+            tableHeading.Font.Italic = true;
+
+
+            // vervallen weggooien
             var tableHeader = document.Styles.AddStyle("TableHeader", "Normal");
             tableHeader.Font.Bold = true;
             tableHeader.ParagraphFormat.Alignment = ParagraphAlignment.Center;
             tableHeader.ParagraphFormat.Shading.Color = Colors.LightGray;
 
-            // Apply custom styles if provided
-            if (customStyles != null)
+            // Title style for the cover page
+            var titleStyle = document.Styles.AddStyle("Title", "Normal");
+            titleStyle.Font.Size = 24;
+            titleStyle.Font.Bold = true;
+            titleStyle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+
+            // Header style
+            var headerStyle = document.Styles.AddStyle("Header", "Normal");
+            headerStyle.Font.Size = 12;
+            headerStyle.Font.Bold = true;
+            headerStyle.ParagraphFormat.Alignment = ParagraphAlignment.Left;
+
+            // Footer style
+            var footerStyle = document.Styles.AddStyle("Footer", "Normal");
+            footerStyle.Font.Size = 10;
+            footerStyle.Font.Color = Colors.White;
+            footerStyle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+
+        }
+
+
+        private static void DefineHeaderAndFooter(Section section, DocumentContent content)
+        {
+            ArgumentNullException.ThrowIfNull(section);
+            section.PageSetup.HeaderDistance = 0;
+            var header = section.Headers.Primary;
+
+            // Add a table for the header
+            var headerTable = header.AddTable();
+            headerTable.Borders.Visible = false;
+            headerTable.AddColumn(Unit.FromCentimeter(18)); // Full page width column
+            var headerRow = headerTable.AddRow();
+
+
+            // Add document title in header
+            var titleParagraph = headerRow.Cells[0].AddParagraph(content.PageHeader.Text);
+            titleParagraph.Style = "Header";
+
+            // Add company logo as SVG in header
+            if (!string.IsNullOrEmpty(content.PageHeader.SvgLogo))
             {
-                foreach (var style in customStyles)
+                var stream = SvgService.ConvertSvgToPngStream(content.PageHeader.SvgLogo, out _, out _);
+                if (stream != null)
                 {
-                    var newStyle = document.Styles.AddStyle(style.Name, "Normal");
-                    newStyle.Font.Name = style.FontName;
-                    newStyle.Font.Size = style.FontSize;
-                    newStyle.Font.Bold = style.IsBold;
-                    newStyle.Font.Italic = style.IsItalic;
-                    newStyle.Font.Color = Colors.Black; // todo parser for color
-                    newStyle.ParagraphFormat.SpaceBefore = Unit.FromPoint(style.SpaceBefore);
-                    newStyle.ParagraphFormat.SpaceAfter = Unit.FromPoint(style.SpaceAfter);
+
+                    var cell = headerRow.Cells[1];
+                    try
+                    {
+                        AddImageFromStream(cell, stream);
+                    }
+                    catch (Exception ex)
+                    {
+                        cell.AddParagraph(ex.Message);
+                    }
+
+
+                    //logo.LockAspectRatio = true;
+                    //logo. = Unit.FromCentimeter(2);
+                    // todo wellicht hoogte breedte op kunnen geven in AddImageFromStream of in ConvertSvgToPngStream... uitzoeken
                 }
             }
+            //headerRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
+
+
+
+
+            // Configure the footer to extend across the full page
+            section.PageSetup.FooterDistance = 0; // Align footer at the bottom of the page
+            var footer = section.Footers.Primary;
+
+            // Add a table for the footer
+            var footerTable = footer.AddTable();
+            footerTable.Borders.Visible = false;
+            footerTable.TopPadding = Unit.FromMillimeter(4);
+            footerTable.BottomPadding = Unit.FromMillimeter(4);
+            footerTable.AddColumn(Unit.FromCentimeter(8));
+            footerTable.AddColumn(Unit.FromCentimeter(2));
+            footerTable.AddColumn(Unit.FromCentimeter(8));
+            var footerRow = footerTable.AddRow();
+
+            // Add a background color for the footer
+            var footerCell = footerRow.Cells[1];
+            footerCell.Style = "Footer";
+            footerCell.Shading.Color = content.AccentColor;
+            //footerRow.Format.Shading.Color = content.AccentColor;
+
+
+            // Add page number centered in the footer
+            var pageNumberParagraph = footerRow.Cells[1].AddParagraph("");
+            pageNumberParagraph.Style = "Footer";
+            pageNumberParagraph.AddPageField();
+            pageNumberParagraph.Format.Alignment = ParagraphAlignment.Center;
+
+            // Set padding for full-width header/footer alignment
+            section.PageSetup.LeftMargin = Unit.FromMillimeter(15);
+            section.PageSetup.RightMargin = Unit.FromMillimeter(15);
+            section.PageSetup.TopMargin = Unit.FromMillimeter(15);
+            section.PageSetup.BottomMargin = Unit.FromMillimeter(15);
         }
+
+
+
+
+
+
+        // Helper function to replace Greek letters in Markdown
+        private static string ReplaceGreekLetters(string markdown)
+        {
+            foreach (var (key, value) in GreekLetters)
+            {
+                markdown = markdown.Replace($"\\{key}\\", value);
+            }
+            return markdown;
+        }
+
 
 
         private static void AddCoverPage(Document document, CoverPageContent coverPage)
@@ -202,7 +544,64 @@ namespace ExportFactory.Services
             section.AddParagraph(coverPage.CompanyName, "Normal").Format.Alignment = ParagraphAlignment.Center;
         }
 
+
         private static void AddMarkdownToParagraph(Paragraph paragraph, string markdown)
+        {
+            if (string.IsNullOrWhiteSpace(markdown))
+                return;
+
+            // Trim whitespace
+            markdown = markdown.Trim();
+
+            // Determine if the markdown is a heading
+            if (markdown.StartsWith("# "))
+            {
+                // Heading1
+                paragraph.AddFormattedText(markdown.Substring(2).Trim(), "Heading1");
+
+            }
+            else if (markdown.StartsWith("## "))
+            {
+                // Heading2
+                paragraph.AddFormattedText(markdown.Substring(3).Trim(), "Heading2");
+            }
+            else if (markdown.StartsWith("### "))
+            {
+                // Heading3
+                paragraph.AddFormattedText(markdown.Substring(4).Trim(), "Heading3");
+            }
+            else
+            {
+                // Regular text (non-heading)
+                AddStyledTextToParagraph(paragraph, markdown);
+            }
+        }
+
+
+
+
+        private static void AddStyledTextToParagraph(Paragraph paragraph, string markdown)
+        {
+            // Parse for backticks first to handle raw text
+            var rawSegments = markdown.Split('`');
+            for (int i = 0; i < rawSegments.Length; i++)
+            {
+                if (i % 2 == 1) // Odd indices are raw text (inside backticks)
+                {
+                    paragraph.AddText(rawSegments[i]); // Add raw text without further parsing
+                }
+                else
+                {
+                    // Replace Greek letter placeholders
+                    string processedText = ReplaceGreekLetters(rawSegments[i]);
+                    // Parse and apply Markdown styles (bold, italic, underline, etc.) to non-raw segments
+                    ApplyMarkdownStylesToParagraph(paragraph, processedText);
+                }
+            }
+        }
+
+
+        private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown)
         {
             if (string.IsNullOrEmpty(markdown))
             {
@@ -260,44 +659,19 @@ namespace ExportFactory.Services
 
 
 
-        private static void AddTableOfContents(Document document, TableOfContentsContent tocContent)
+
+        private static void AddTableOfContents(Document document, out Section tocSection)
         {
-            var section = document.AddSection();
-            section.AddParagraph(tocContent.Title, "Heading1");
-            section.AddParagraph("[Place TOC here - auto-generate if needed]");
+            // Create a TOC section
+            tocSection = document.LastSection;
+
+            // Add a title for the TOC
+            var titleParagraph = tocSection.AddParagraph("Inhoudsopgave", "Heading1");
+            titleParagraph.Format.PageBreakBefore = false; // no page break for toc heading
+
         }
 
-        private static void AddTableToSection(Section section, TableContent tableContent)
-        {
-            var table = section.AddTable();
-            table.Borders.Width = 0.5;
 
-            // Add columns
-            foreach (var columnWidth in tableContent.ColumnWidths)
-            {
-                var column = table.AddColumn(Unit.FromCentimeter(columnWidth));
-                column.Format.Alignment = ParagraphAlignment.Center;
-            }
-
-            // Add rows and cells
-            foreach (var rowContent in tableContent.Rows)
-            {
-                var row = table.AddRow();
-                for (int i = 0; i < rowContent.Count; i++)
-                {
-                    var cell = row.Cells[i];
-                    var cellContent = rowContent[i];
-
-                    // Apply Markdown formatting to the cell content
-                    var paragraph = cell.AddParagraph();
-                    AddMarkdownToParagraph(paragraph, cellContent.Markdown);
-
-                    // Apply col/row spans
-                    cell.MergeRight = cellContent.ColSpan - 1;
-                    cell.MergeDown = cellContent.RowSpan - 1;
-                }
-            }
-        }
 
 
 

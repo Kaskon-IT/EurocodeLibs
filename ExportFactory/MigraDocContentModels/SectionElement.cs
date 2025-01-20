@@ -9,7 +9,11 @@
     {
         public string Text { get; set; } = "Untitled Heading";
         public string Style { get; set; } = "Normal";
-        public bool AddToTOC { get; set; } = false;
+        public bool AddToTOC { get; set; } = true; // optional set to false to skip from TOC
+        public int Level { get; set; } = 1; // default h1
+
+
+
     }
 
     public class ParagraphContent : SectionElement
@@ -21,8 +25,9 @@
 
     public class TableContent : SectionElement
     {
+        public string Title { get; set; } = "";
         public TableAlignment Alignment { get; set; } = TableAlignment.Left;
-        public List<string> Headers { get; set; } = new List<string>();
+        public List<TableCellHeaderContent> Headers { get; set; } = new List<TableCellHeaderContent>();
         public List<double> ColumnWidths { get; set; } = new List<double>();
         public List<List<TableCellContent>> Rows { get; set; } = new List<List<TableCellContent>>();
     }
