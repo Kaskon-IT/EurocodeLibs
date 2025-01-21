@@ -6,6 +6,14 @@ namespace ExportFactory.MigraDocContentModels
     {
 
         public Color AccentColor { get; set; } = Colors.Teal;
+
+        public Color HeaderBackgroundColor { get; set; } = Colors.LightBlue;
+        public Color HeaderColor { get; set; } = Colors.Black;
+
+        public Color FooterBackgroundColor { get; set; } = Colors.DarkBlue;
+        public Color FooterColor { get; set; } = Colors.White;
+
+
         public Font Font { get; set; } = new Font("Verdana", 9);
 
         public CoverPageContent CoverPage { get; set; } = new CoverPageContent();

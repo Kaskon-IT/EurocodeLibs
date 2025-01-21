@@ -33,15 +33,16 @@
 
     }
 
+
+
     public void TestDoc(){
 
         var content = ExampleDocumentContent.GetExampleDocumentContent(fontFamily, fontSize);
 
-
-
-
         // Generate and save the document
         var document = MigraDocCreator.GenerateDocument(content);
+
+
 
         // Render the document
         var renderer = new PdfDocumentRenderer(true) 
@@ -50,6 +51,21 @@
         };
         renderer.RenderDocument();
         renderer.PdfDocument.Save("SampleDocument.pdf");
+
+
+
+        //Save the document as RTF
+        var migraDocRtf = new MigraDoc.RtfRendering.RtfDocumentRenderer();
+        migraDocRtf.Render(document, "SampleDocument.rtf", null);
+        var rtfString = migraDocRtf.RenderToString(document, null);
+        //var rtfClean = rtfString.Replace(@"\\", @"\");
+        var h1 = rtfString.Replace("Heading1", "Kop 1");
+        var h2 = h1.Replace("Heading2", "Kop 2");
+
+        
+        var test = h2;
+
+
 
 
     }

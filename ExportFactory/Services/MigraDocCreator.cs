@@ -49,59 +49,64 @@ namespace ExportFactory.Services
         }
 
         private static readonly Dictionary<string, string> GreekLetters = new()
-{
-    { "alpha", "α" },
-    { "beta", "β" },
-    { "gamma", "γ" },
-    { "delta", "δ" },
-    { "epsilon", "ε" },
-    { "zeta", "ζ" },
-    { "eta", "η" },
-    { "theta", "θ" },
-    { "iota", "ι" },
-    { "kappa", "κ" },
-    { "lambda", "λ" },
-    { "mu", "μ" },
-    { "nu", "ν" },
-    { "xi", "ξ" },
-    { "omicron", "ο" },
-    { "pi", "π" },
-    { "rho", "ρ" },
-    { "sigma", "σ" },
-    { "tau", "τ" },
-    { "upsilon", "υ" },
-    { "phi", "φ" },
-    { "chi", "χ" },
-    { "psi", "ψ" },
-    { "omega", "ω" },
-    { "Alpha", "Α" },
-    { "Beta", "Β" },
-    { "Gamma", "Γ" },
-    { "Delta", "Δ" },
-    { "Epsilon", "Ε" },
-    { "Zeta", "Ζ" },
-    { "Eta", "Η" },
-    { "Theta", "Θ" },
-    { "Iota", "Ι" },
-    { "Kappa", "Κ" },
-    { "Lambda", "Λ" },
-    { "Mu", "Μ" },
-    { "Nu", "Ν" },
-    { "Xi", "Ξ" },
-    { "Omicron", "Ο" },
-    { "Pi", "Π" },
-    { "Rho", "Ρ" },
-    { "Sigma", "Σ" },
-    { "Tau", "Τ" },
-    { "Upsilon", "Υ" },
-    { "Phi", "Φ" },
-    { "Chi", "Χ" },
-    { "Psi", "Ψ" },
-    { "Omega", "Ω" }
-};
+        {
+            { "alpha", "α" },
+            { "beta", "β" },
+            { "gamma", "γ" },
+            { "delta", "δ" },
+            { "epsilon", "ε" },
+            { "zeta", "ζ" },
+            { "eta", "η" },
+            { "theta", "θ" },
+            { "iota", "ι" },
+            { "kappa", "κ" },
+            { "lambda", "λ" },
+            { "mu", "μ" },
+            { "nu", "ν" },
+            { "xi", "ξ" },
+            { "omicron", "ο" },
+            { "pi", "π" },
+            { "rho", "ρ" },
+            { "sigma", "σ" },
+            { "tau", "τ" },
+            { "upsilon", "υ" },
+            { "phi", "φ" },
+            { "chi", "χ" },
+            { "psi", "ψ" },
+            { "omega", "ω" },
+            { "Alpha", "Α" },
+            { "Beta", "Β" },
+            { "Gamma", "Γ" },
+            { "Delta", "Δ" },
+            { "Epsilon", "Ε" },
+            { "Zeta", "Ζ" },
+            { "Eta", "Η" },
+            { "Theta", "Θ" },
+            { "Iota", "Ι" },
+            { "Kappa", "Κ" },
+            { "Lambda", "Λ" },
+            { "Mu", "Μ" },
+            { "Nu", "Ν" },
+            { "Xi", "Ξ" },
+            { "Omicron", "Ο" },
+            { "Pi", "Π" },
+            { "Rho", "Ρ" },
+            { "Sigma", "Σ" },
+            { "Tau", "Τ" },
+            { "Upsilon", "Υ" },
+            { "Phi", "Φ" },
+            { "Chi", "Χ" },
+            { "Psi", "Ψ" },
+            { "Omega", "Ω" }
+        };
 
 
-
+        /// <summary>
+        /// Adds a Section to a Document. Bookmarks are tracked/updated.
+        /// </summary>
+        /// <param name="document">a MigraDoc Document</param>
+        /// <param name="sectionContent">Data content for this Section</param>
+        /// <param name="bookmarks">List of bookmarks</param>
         private static void AddSection(Document document, SectionContent sectionContent, List<BookmarkContent> bookmarks)
         {
             var section = document.AddSection();
@@ -119,16 +124,19 @@ namespace ExportFactory.Services
 
                     case ParagraphContent paragraphContent:
                         var par = section.AddParagraph("", paragraphContent.Style);
-
                         AddMarkdownToParagraph(par, paragraphContent.Markdown);
                         break;
 
                     case TableContent tableContent:
                         //section = document.AddSection(); // new section? needed for center
-                        var frame = section.AddTextFrame();
+                        //var target = section.AddTextFrame();
+                        var target = document.AddSection();
+
+
+
 
                         //frame.Left = "4cm"; // todo uitlijnen
-                        AddTable(frame, tableContent);
+                        AddTable(target, tableContent);
                         break;
                 }
             }
@@ -188,6 +196,12 @@ namespace ExportFactory.Services
 
             // table
             var table = AddTableToContainer(target);
+            //var parent = target.Document.Styles;
+            var defaultFont = target.Document.Styles["Normal"].Font;
+
+            defaultFont ??= new Font("Arial", 9);
+
+            //var _font = table.Format._font;
 
             // apply styling
 
@@ -199,7 +213,22 @@ namespace ExportFactory.Services
             foreach (var header in tableContent.Headers)
             {
                 //if (tableContent.)
-                table.AddColumn(header.Width);
+                var width = header.Width; // default
+                switch (header.CellContent.Style.AutoSize)
+                {
+                    case AutoColumnSizeOption.None:
+                    case AutoColumnSizeOption.NotSet:
+                        // no action
+                        break;
+                    case AutoColumnSizeOption.ColumnHeader:
+                        TextMeasurement tm = new(defaultFont);
+                        var size = tm.MeasureString(header.CellContent.Markdown);
+                        width = size.Width;
+                        break;
+
+                }
+
+                table.AddColumn(width);
             }
 
             // Align table
@@ -332,7 +361,11 @@ namespace ExportFactory.Services
 
 
 
-
+        /// <summary>
+        /// Writes Info as Metadata to the document
+        /// </summary>
+        /// <param name="document">a MigraDoc document</param>
+        /// <param name="content">the Data content</param>
         public static void SetProjectInfo(Document document, DocumentContent content)
         {
             document.Info.Author = content.CoverPage.CompanyName;
@@ -341,7 +374,11 @@ namespace ExportFactory.Services
         }
 
 
-
+        /// <summary>
+        /// Update the section with the Table of Content with bookmarks
+        /// </summary>
+        /// <param name="section">Section with TOC</param>
+        /// <param name="bookmarks">List of bookmarks</param>
         private static void UpdateTableOfContent(Section section, List<BookmarkContent> bookmarks)
         {
             foreach (var bookmark in bookmarks)
@@ -360,11 +397,16 @@ namespace ExportFactory.Services
             }
         }
 
-
+        /// <summary>
+        /// Set styling for the document
+        /// </summary>
+        /// <param name="document">a MigraDoc document</param>
+        /// <param name="content">the data content</param>
         private static void DefineStyles(Document document, DocumentContent content)
         {
             var baseStyle = document.Styles["Normal"];
             baseStyle.Font = content.Font;
+            baseStyle.Font.Bold = false; // explicitly set to false (for rtf export!)
 
             // Table of content style
             var tocStyle = document.Styles.AddStyle("TOC", "Normal");
@@ -374,23 +416,39 @@ namespace ExportFactory.Services
             // h1
             var heading1 = document.Styles.AddStyle("Heading1", "Normal");
             heading1.Font.Size = 1.5 * content.Font.Size;
-            heading1.Font.Bold = true;
+            heading1.Font.Bold = !true;
             heading1.ParagraphFormat.PageBreakBefore = true;
             heading1.ParagraphFormat.SpaceAfter = "3mm";
+            var kop1 = document.Styles.AddStyle("Kop 1", "Normal");
+            kop1.Font.Size = 1.5 * content.Font.Size;
+            kop1.Font.Bold = !true;
+            kop1.ParagraphFormat.PageBreakBefore = true;
+            kop1.ParagraphFormat.SpaceAfter = "3mm";
 
             // h2
             var heading2 = document.Styles.AddStyle("Heading2", "Normal");
             heading2.Font.Size = 1.25 * content.Font.Size;
-            heading2.Font.Bold = true;
+            heading2.Font.Bold = !true;
             heading2.ParagraphFormat.SpaceBefore = "2mm";
             heading2.ParagraphFormat.SpaceAfter = "2mm";
+            var kop2 = document.Styles.AddStyle("Kop 2", "Normal");
+            kop2.Font.Size = 1.25 * content.Font.Size;
+            kop2.Font.Bold = !true;
+            kop2.ParagraphFormat.SpaceBefore = "2mm";
+            kop2.ParagraphFormat.SpaceAfter = "2mm";
+
 
             // h3
             var heading3 = document.Styles.AddStyle("Heading3", "Normal");
             heading3.Font.Size = 1.00 * content.Font.Size;
-            heading3.Font.Bold = true;
+            heading3.Font.Bold = !true;
             heading3.ParagraphFormat.SpaceBefore = "1mm";
             heading3.ParagraphFormat.SpaceAfter = "1mm";
+            var kop3 = document.Styles.AddStyle("Kop 3", "Normal");
+            kop3.Font.Size = 1.00 * content.Font.Size;
+            kop3.Font.Bold = !true;
+            kop3.ParagraphFormat.SpaceBefore = "1mm";
+            kop3.ParagraphFormat.SpaceAfter = "1mm";
 
             // table heading
             var tableHeading = document.Styles.AddStyle("TableHeading", "Normal");
@@ -398,49 +456,73 @@ namespace ExportFactory.Services
             tableHeading.Font.Italic = true;
 
 
-            // vervallen weggooien
-            var tableHeader = document.Styles.AddStyle("TableHeader", "Normal");
-            tableHeader.Font.Bold = true;
-            tableHeader.ParagraphFormat.Alignment = ParagraphAlignment.Center;
-            tableHeader.ParagraphFormat.Shading.Color = Colors.LightGray;
+
 
             // Title style for the cover page
-            var titleStyle = document.Styles.AddStyle("Title", "Normal");
-            titleStyle.Font.Size = 24;
-            titleStyle.Font.Bold = true;
-            titleStyle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+            var title = document.Styles.AddStyle("Title", "Normal");
+            title.Font.Size = 38;
+            title.Font.Bold = !true;
+            title.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+
+            // Title style for the cover page
+            var subTitle = document.Styles.AddStyle("Subtitle", "Normal");
+            subTitle.Font.Size = 24;
+            subTitle.Font.Italic = true;
+            subTitle.Font.Bold = !true;
+            subTitle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+
 
             // Header style
             var headerStyle = document.Styles.AddStyle("Header", "Normal");
-            headerStyle.Font.Size = 12;
-            headerStyle.Font.Bold = true;
-            headerStyle.ParagraphFormat.Alignment = ParagraphAlignment.Left;
+            //headerStyle.Font.Size = 12;
+            //headerStyle.Font.Bold = true;
+            headerStyle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+            headerStyle.Font.Color = content.HeaderColor;
 
             // Footer style
             var footerStyle = document.Styles.AddStyle("Footer", "Normal");
-            footerStyle.Font.Size = 10;
-            footerStyle.Font.Color = Colors.White;
+            footerStyle.Font.Size = 1.5 * content.Font.Size;
+            footerStyle.Font.Color = content.FooterColor;
+            footerStyle.Font.Bold = !true;
             footerStyle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+
 
         }
 
-
+        /// <summary>
+        /// Defines and Adds a Header and Footer to a Document
+        /// </summary>
+        /// <param name="section">Section to apply on.</param>
+        /// <param name="content">Data content</param>
         private static void DefineHeaderAndFooter(Section section, DocumentContent content)
         {
             ArgumentNullException.ThrowIfNull(section);
             section.PageSetup.HeaderDistance = 0;
+            section.PageSetup.OddAndEvenPagesHeaderFooter = true;
             var header = section.Headers.Primary;
+
+            //header.Format.LeftIndent = -Unit.FromMillimeter(15);
+
+            // gebruik een textArea
+            //var headerFrame = header.AddTextFrame();
+            //headerFrame.Left = Unit.FromMillimeter(-15);
 
             // Add a table for the header
             var headerTable = header.AddTable();
             headerTable.Borders.Visible = false;
+            headerTable.Borders.Bottom.Visible = true;
             headerTable.AddColumn(Unit.FromCentimeter(18)); // Full page width column
+            headerTable.TopPadding = Unit.FromMillimeter(2);
+            headerTable.BottomPadding = Unit.FromMillimeter(2);
             var headerRow = headerTable.AddRow();
 
 
             // Add document title in header
             var titleParagraph = headerRow.Cells[0].AddParagraph(content.PageHeader.Text);
             titleParagraph.Style = "Header";
+
+            headerRow.Cells[0].Shading.Color = content.HeaderBackgroundColor;
+
 
             // Add company logo as SVG in header
             if (!string.IsNullOrEmpty(content.PageHeader.SvgLogo))
@@ -467,17 +549,19 @@ namespace ExportFactory.Services
             }
             //headerRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
 
+            section.Headers.EvenPage = header.Clone();
+
 
 
 
             // Configure the footer to extend across the full page
             section.PageSetup.FooterDistance = 0; // Align footer at the bottom of the page
-            var footer = section.Footers.Primary;
+            var footer1 = section.Footers.Primary;
 
             // Add a table for the footer
-            var footerTable = footer.AddTable();
+            var footerTable = footer1.AddTable();
             footerTable.Borders.Visible = false;
-            footerTable.TopPadding = Unit.FromMillimeter(4);
+            footerTable.TopPadding = Unit.FromMillimeter(2);
             footerTable.BottomPadding = Unit.FromMillimeter(4);
             footerTable.AddColumn(Unit.FromCentimeter(8));
             footerTable.AddColumn(Unit.FromCentimeter(2));
@@ -487,7 +571,7 @@ namespace ExportFactory.Services
             // Add a background color for the footer
             var footerCell = footerRow.Cells[1];
             footerCell.Style = "Footer";
-            footerCell.Shading.Color = content.AccentColor;
+            footerCell.Shading.Color = content.FooterBackgroundColor;
             //footerRow.Format.Shading.Color = content.AccentColor;
 
 
@@ -496,6 +580,27 @@ namespace ExportFactory.Services
             pageNumberParagraph.Style = "Footer";
             pageNumberParagraph.AddPageField();
             pageNumberParagraph.Format.Alignment = ParagraphAlignment.Center;
+
+
+            var footer2 = section.Footers.EvenPage;
+            var f2t = footer2.AddTable();
+            f2t.Borders.Visible = false;
+            f2t.TopPadding = Unit.FromMillimeter(2);
+            f2t.BottomPadding = Unit.FromMillimeter(4);
+            f2t.AddColumn(Unit.FromCentimeter(8));
+            f2t.AddColumn(Unit.FromCentimeter(2));
+            f2t.AddColumn(Unit.FromCentimeter(8));
+            var f2r = f2t.AddRow();
+
+            // Add a background color for the footer
+            f2r.Cells[2].AddParagraph().AddPageField();
+            f2r.Cells[2].Style = "Footer";
+            f2r.Cells[2].Shading.Color = content.FooterBackgroundColor;
+
+
+
+
+
 
             // Set padding for full-width header/footer alignment
             section.PageSetup.LeftMargin = Unit.FromMillimeter(15);
@@ -514,13 +619,18 @@ namespace ExportFactory.Services
         {
             foreach (var (key, value) in GreekLetters)
             {
-                markdown = markdown.Replace($"\\{key}\\", value);
+                markdown = markdown.Replace($"|{key}|", value);
+                //markdown = markdown.Replace($"\\{key}\\", value);
             }
             return markdown;
         }
 
 
-
+        /// <summary>
+        /// Adds a cover page to a document
+        /// </summary>
+        /// <param name="document">a MigraDoc Document</param>
+        /// <param name="coverPage">Data content</param>
         private static void AddCoverPage(Document document, CoverPageContent coverPage)
         {
             var section = document.AddSection();
@@ -538,8 +648,8 @@ namespace ExportFactory.Services
                 logo.LockAspectRatio = true;
             }
 
-            section.AddParagraph(coverPage.Title, "Heading1").Format.Alignment = ParagraphAlignment.Center;
-            section.AddParagraph(coverPage.Subtitle, "Heading2").Format.Alignment = ParagraphAlignment.Center;
+            section.AddParagraph(coverPage.Title, "Title");
+            section.AddParagraph(coverPage.Subtitle, "Subtitle");
             section.AddParagraph($"Project Number: {coverPage.ProjectNumber}", "Normal").Format.Alignment = ParagraphAlignment.Center;
             section.AddParagraph(coverPage.CompanyName, "Normal").Format.Alignment = ParagraphAlignment.Center;
         }
@@ -557,18 +667,18 @@ namespace ExportFactory.Services
             if (markdown.StartsWith("# "))
             {
                 // Heading1
-                paragraph.AddFormattedText(markdown.Substring(2).Trim(), "Heading1");
+                paragraph.AddFormattedText(markdown.Substring(2).Trim(), "Kop 1");
 
             }
             else if (markdown.StartsWith("## "))
             {
                 // Heading2
-                paragraph.AddFormattedText(markdown.Substring(3).Trim(), "Heading2");
+                paragraph.AddFormattedText(markdown.Substring(3).Trim(), "Kop 2");
             }
             else if (markdown.StartsWith("### "))
             {
                 // Heading3
-                paragraph.AddFormattedText(markdown.Substring(4).Trim(), "Heading3");
+                paragraph.AddFormattedText(markdown.Substring(4).Trim(), "Kop 3");
             }
             else
             {
@@ -659,7 +769,11 @@ namespace ExportFactory.Services
 
 
 
-
+        /// <summary>
+        /// Adds a emtpy Section for the Table Of Content to the document. This section is inserted into the document so it can be filled with a TOC after all the Headings with Bookmarks are inserted.
+        /// </summary>
+        /// <param name="document">a MigraDoc Document</param>
+        /// <param name="tocSection">Section with TOC</param>
         private static void AddTableOfContents(Document document, out Section tocSection)
         {
             // Create a TOC section

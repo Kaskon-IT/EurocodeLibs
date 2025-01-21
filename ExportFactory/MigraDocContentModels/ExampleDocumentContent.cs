@@ -14,8 +14,8 @@ namespace ExportFactory.MigraDocContentModels
             "- E~subscript~ \r\n" +
             "- E^superscript^\r\n" +
             "- *italic*\r\n" +
-            "- griekse letters zoals \\alpha\\, \\beta\\, \\gamma\\, \\delta\\, etcetera. \r\n" +
-            "- combinaties van hierboven, bijvoorbeeld *\\xi\\*~Nederland~ \r\n";
+            "- griekse letters zoals |alpha|, |beta|, |gamma|, |delta|, etcetera. \r\n" +
+            "- combinaties van hierboven, bijvoorbeeld *|xi|*~Nederland~ \r\n";
 
         const string _par2 = "Hoofdstukken met **Kop2** komen ook in de inhoudsopgave. Er wordt automatisch lege ruimte boven en onder de koptekst gelaten.";
         const string _par3 = "Tabellen krijgen mogelijk een *Titel*. Kolommen kunnen worden worden uitgelijnd: \r\n" +
@@ -76,7 +76,7 @@ namespace ExportFactory.MigraDocContentModels
                         Elements = new List<SectionElement>
                         {
                             new HeadingContent {
-                                Style = "Heading1",
+                                Style = "Kop 1",
                                 Text = "Kop1",
                                 AddToTOC = true,
                                 Level = 1,
@@ -89,7 +89,7 @@ namespace ExportFactory.MigraDocContentModels
                             },
 
                              new HeadingContent {
-                                Style = "Heading2",
+                                Style = "Kop 2",
                                 Text = "Kop2",
                                 AddToTOC = true,
                                 Level = 2,
@@ -101,7 +101,7 @@ namespace ExportFactory.MigraDocContentModels
                                 Style = "",
                             },
                              new HeadingContent {
-                                Style = "Heading3",
+                                Style = "Kop 3",
                                 Text = "Kolommen",
                                 AddToTOC = !true,
                                 Level = 3,
@@ -125,7 +125,15 @@ namespace ExportFactory.MigraDocContentModels
                                     new TableCellHeaderContent()
                                     {
                                         Width = Unit.FromCentimeter(4),
-                                        CellContent = new TableCellContent() { Markdown = "Markdown pattern", Alignment = ParagraphAlignment.Justify },
+                                        CellContent = new TableCellContent()
+                                        {
+                                            Markdown = "Markdown pattern",
+                                            Style = new ColumnStyleSettings()
+                                            {
+                                                AutoSize = AutoColumnSizeOption.ColumnHeader,
+                                                Alignment = ParagraphAlignment.Right,
+                                            },
+                                        }
                                     },
                                     new TableCellHeaderContent()
                                     {
@@ -144,13 +152,13 @@ namespace ExportFactory.MigraDocContentModels
                                         new TableCellContent { Markdown = "*Italic*" }
                                     ],
                                      [
-                                        new TableCellContent { Markdown = "```\\xi\\~nl~```" },
-                                        new TableCellContent { Markdown = "\\xi\\~nl~" }
+                                        new TableCellContent { Markdown = "```|xi|~nl~```" },
+                                        new TableCellContent { Markdown = "|xi|~nl~" }
                                     ],
 
                                      [
-                                        new TableCellContent { Markdown = "```*\\xi\\*~nl~```" },
-                                        new TableCellContent { Markdown = "*\\xi\\*~nl~" }
+                                        new TableCellContent { Markdown = "```*|xi|*~nl~```" },
+                                        new TableCellContent { Markdown = "*|xi|*~nl~" }
                                     ],
 
                                     [
@@ -167,11 +175,11 @@ namespace ExportFactory.MigraDocContentModels
                                     [   new TableCellContent("```M~subscript~```"),
                                         new TableCellContent("M~subscript~"),
                                     ],
-                                    [   new TableCellContent("```\\alpha\\```"),
-                                        new TableCellContent("\\alpha\\"),
+                                    [   new TableCellContent("``|alpha|```"),
+                                        new TableCellContent("|alpha|"),
                                     ],
-                                     [   new TableCellContent("```*\\beta\\*~sub~```"),
-                                        new TableCellContent("*\\beta\\*~sub~"),
+                                     [   new TableCellContent("```*|beta|*~sub~```"),
+                                        new TableCellContent("*|beta|*~sub~"),
                                     ],
 
                                      [   new TableCellContent("```# Heading1```"),

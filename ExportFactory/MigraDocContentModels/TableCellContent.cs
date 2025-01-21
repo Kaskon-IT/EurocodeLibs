@@ -1,6 +1,4 @@
-﻿
-using MigraDoc.DocumentObjectModel;
-namespace ExportFactory.MigraDocContentModels
+﻿namespace ExportFactory.MigraDocContentModels
 {
     public class TableCellContent
     {
@@ -12,7 +10,10 @@ namespace ExportFactory.MigraDocContentModels
         public int RowSpan { get; set; } = 1; // Default row span
         public string SvgImage { get; set; } = ""; // Default to no image
 
-        public ParagraphAlignment Alignment { get; set; } = ParagraphAlignment.Center; // Default alignment
+        // settings
+        public ColumnStyleSettings Style { get; set; } = new ColumnStyleSettings();
+
+
 
 
     }
