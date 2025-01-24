@@ -18,7 +18,7 @@ namespace ExportFactory.Services
         public static Document GenerateDocument(DocumentContent content)
         {
             var document = new Document();
-            SetProjectInfo(document, content);
+            SetDocumentInfo(document, content);
             DefineStyles(document, content);
 
             // Add cover page
@@ -27,14 +27,26 @@ namespace ExportFactory.Services
                 AddCoverPage(document, content.CoverPage);
             }
 
-            // Add header and footer
-            DefineHeaderAndFooter(document.AddSection(), content);
+
+
 
             // empty Tabel of Contents (TOC)
+            // gebruik een aparte section zodat later deze section kan worden gevuld.
             AddTableOfContents(document, out Section tocSection);
+
+
+            // Add header and footer
+            DefineHeaderAndFooter(document.LastSection, content);
+
+
+
 
             // save bookmarks to be used later in the TOC
             var bookmarks = new List<BookmarkContent>();
+
+
+            // Add new section 
+            document.AddSection();
 
             // Add sections (iterate through all contents)
             foreach (var sectionContent in content.Sections)
@@ -101,6 +113,82 @@ namespace ExportFactory.Services
         };
 
 
+        private static readonly PageSetup CoverPageSetup = new PageSetup()
+        {
+            DifferentFirstPageHeaderFooter = false,
+            HorizontalPageBreak = true,
+
+            HeaderDistance = 0,
+            FooterDistance = 0,
+            OddAndEvenPagesHeaderFooter = true,
+            PageFormat = PageFormat.A4,
+            Orientation = Orientation.Portrait,
+
+            MirrorMargins = true,
+            LeftMargin = Unit.FromMillimeter(30), // inner
+            TopMargin = Unit.FromMillimeter(30),
+            BottomMargin = Unit.FromMillimeter(30),
+            RightMargin = Unit.FromMillimeter(30), // outer
+        };
+
+        private static PageSetup GetPageSetupForDocument(DocumentContent content)
+        {
+            PageSetup pageSetup = new PageSetup()
+            {
+
+
+                DifferentFirstPageHeaderFooter = false,
+                HorizontalPageBreak = true,   /// <summary>
+                                              /// Gets or sets a value which defines whether a page should break horizontally.
+                                              /// Currently only tables are supported.
+                                              /// </summary>
+                SectionStart = BreakType.BreakNextPage, /// start mogelijk op oneven pagina met nieuwe sectie! 
+                                                        /// automatisch leeg blad wordt gemaakt.
+                                                        /// NB. (dit wordt niet ondersteund in de RTF!!!, dus niet gebruiken)
+                HeaderDistance = Unit.FromMillimeter(5),
+                FooterDistance = Unit.FromMillimeter(5),
+                OddAndEvenPagesHeaderFooter = true,
+                PageFormat = PageFormat.A4,
+                Orientation = Orientation.Portrait,
+                MirrorMargins = true,
+                LeftMargin = Unit.FromMillimeter(5), // inner
+                TopMargin = Unit.FromMillimeter(15),
+                BottomMargin = Unit.FromMillimeter(10),
+                RightMargin = Unit.FromMillimeter(25), // outer
+            };
+
+            if (content.PageMarginSetting != null)
+            {
+                switch (content.PageMarginSetting)
+                {
+                    case DocumentContent.PageMarginAndPageNumberSettingsEnum.Gecentreerd:
+                        pageSetup.LeftMargin = pageSetup.RightMargin = Unit.FromMillimeter(15);
+                        pageSetup.OddAndEvenPagesHeaderFooter = false;
+                        pageSetup.MirrorMargins = false;
+                        break;
+                    case DocumentContent.PageMarginAndPageNumberSettingsEnum.MargeLinks_PaginaNummerRechts:
+                        pageSetup.LeftMargin = Unit.FromMillimeter(20);
+                        pageSetup.RightMargin = Unit.FromMillimeter(10);
+                        pageSetup.OddAndEvenPagesHeaderFooter = false;
+                        pageSetup.MirrorMargins = false;
+                        break;
+                    case DocumentContent.PageMarginAndPageNumberSettingsEnum.EvenOnevenGespiegeld:
+                        pageSetup.LeftMargin = Unit.FromMillimeter(10);
+                        pageSetup.RightMargin = Unit.FromMillimeter(20);
+                        pageSetup.OddAndEvenPagesHeaderFooter = true;
+                        pageSetup.MirrorMargins = true;
+                        break;
+
+                }
+            }
+
+
+
+            return pageSetup;
+
+        }
+
+
         /// <summary>
         /// Adds a Section to a Document. Bookmarks are tracked/updated.
         /// </summary>
@@ -109,7 +197,7 @@ namespace ExportFactory.Services
         /// <param name="bookmarks">List of bookmarks</param>
         private static void AddSection(Document document, SectionContent sectionContent, List<BookmarkContent> bookmarks)
         {
-            var section = document.AddSection();
+            var section = document.LastSection;
 
             // Sort elements by order
             var sortedElements = sectionContent.Elements.OrderBy(e => e.Order);
@@ -130,7 +218,7 @@ namespace ExportFactory.Services
                     case TableContent tableContent:
                         //section = document.AddSection(); // new section? needed for center
                         //var target = section.AddTextFrame();
-                        var target = document.AddSection();
+                        var target = document.LastSection;
 
 
 
@@ -362,15 +450,13 @@ namespace ExportFactory.Services
 
 
         /// <summary>
-        /// Writes Info as Metadata to the document
+        /// Writes Metadata to the document.
         /// </summary>
         /// <param name="document">a MigraDoc document</param>
         /// <param name="content">the Data content</param>
-        public static void SetProjectInfo(Document document, DocumentContent content)
+        public static void SetDocumentInfo(Document document, DocumentContent content)
         {
-            document.Info.Author = content.CoverPage.CompanyName;
-            document.Info.Title = content.CoverPage.Title;
-            document.Info.Subject = content.CoverPage.Subtitle;
+            document.Info = content.DocumentInfo;
         }
 
 
@@ -411,7 +497,7 @@ namespace ExportFactory.Services
             // Table of content style
             var tocStyle = document.Styles.AddStyle("TOC", "Normal");
             //tocStyle.Font.Size = 12;
-            tocStyle.ParagraphFormat.TabStops.AddTabStop(Unit.FromCentimeter(17), TabAlignment.Right, TabLeader.MiddleDot);
+            tocStyle.ParagraphFormat.TabStops.AddTabStop(Unit.FromCentimeter(18), TabAlignment.Right, TabLeader.MiddleDot);
 
             // h1
             var heading1 = document.Styles.AddStyle("Heading1", "Normal");
@@ -474,16 +560,14 @@ namespace ExportFactory.Services
 
             // Header style
             var headerStyle = document.Styles.AddStyle("Header", "Normal");
-            //headerStyle.Font.Size = 12;
-            //headerStyle.Font.Bold = true;
+            headerStyle.Font.Size = 0.75 * content.Font.Size;
             headerStyle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
             headerStyle.Font.Color = content.HeaderColor;
 
             // Footer style
             var footerStyle = document.Styles.AddStyle("Footer", "Normal");
-            footerStyle.Font.Size = 1.5 * content.Font.Size;
+            footerStyle.Font.Size = 0.75 * content.Font.Size;
             footerStyle.Font.Color = content.FooterColor;
-            footerStyle.Font.Bold = !true;
             footerStyle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
 
 
@@ -497,32 +581,57 @@ namespace ExportFactory.Services
         private static void DefineHeaderAndFooter(Section section, DocumentContent content)
         {
             ArgumentNullException.ThrowIfNull(section);
-            section.PageSetup.HeaderDistance = 0;
-            section.PageSetup.OddAndEvenPagesHeaderFooter = true;
+
+            section.PageSetup = GetPageSetupForDocument(content).Clone();
+
+
             var header = section.Headers.Primary;
 
-            //header.Format.LeftIndent = -Unit.FromMillimeter(15);
-
-            // gebruik een textArea
-            //var headerFrame = header.AddTextFrame();
-            //headerFrame.Left = Unit.FromMillimeter(-15);
 
             // Add a table for the header
             var headerTable = header.AddTable();
             headerTable.Borders.Visible = false;
             headerTable.Borders.Bottom.Visible = true;
-            headerTable.AddColumn(Unit.FromCentimeter(18)); // Full page width column
+            headerTable.AddColumn(Unit.FromCentimeter(6));
+            headerTable.AddColumn(Unit.FromCentimeter(6));
+            headerTable.AddColumn(Unit.FromCentimeter(6));
+
+            //headerTable.AddColumn(Unit.FromCentimeter(18)); // Full page width column
             headerTable.TopPadding = Unit.FromMillimeter(2);
-            headerTable.BottomPadding = Unit.FromMillimeter(2);
+            headerTable.BottomPadding = Unit.FromMillimeter(1);
             var headerRow = headerTable.AddRow();
 
 
+            // 
+            int headerIndex = 1;
+            if (content.PageMarginSetting.HasValue)
+            {
+                switch (content.PageMarginSetting.Value)
+                {
+                    case DocumentContent.PageMarginAndPageNumberSettingsEnum.Gecentreerd:
+                        headerIndex = 1;
+                        break;
+                    case DocumentContent.PageMarginAndPageNumberSettingsEnum.MargeLinks_PaginaNummerRechts:
+                        headerIndex = 1;
+                        break;
+                    case DocumentContent.PageMarginAndPageNumberSettingsEnum.EvenOnevenGespiegeld:
+                        headerIndex = 1;
+                        break;
+                }
+            }
+
             // Add document title in header
-            var titleParagraph = headerRow.Cells[0].AddParagraph(content.PageHeader.Text);
-            titleParagraph.Style = "Header";
+            var par = headerRow.Cells[0].AddParagraph(); AddMarkdownToParagraph(par, content.PageHeader.Text1); par.Format.Alignment = ParagraphAlignment.Left;
+            par = headerRow.Cells[1].AddParagraph(); AddMarkdownToParagraph(par, content.PageHeader.Text2); par.Format.Alignment = ParagraphAlignment.Center;
+            par = headerRow.Cells[2].AddParagraph(); AddMarkdownToParagraph(par, content.PageHeader.Text3); par.Format.Alignment = ParagraphAlignment.Right;
 
-            headerRow.Cells[0].Shading.Color = content.HeaderBackgroundColor;
 
+            headerRow.Shading.Color = content.HeaderBackgroundColor;
+            headerRow.Style = "Header";
+            //headerRow.Cells[0].Shading.Color = content.HeaderBackgroundColor;
+            headerRow.Borders.Visible = false;
+            headerRow.Borders.Bottom.Visible = true;
+            headerRow.Borders.Bottom.Color = content.HeaderLineColor;
 
             // Add company logo as SVG in header
             if (!string.IsNullOrEmpty(content.PageHeader.SvgLogo))
@@ -549,66 +658,163 @@ namespace ExportFactory.Services
             }
             //headerRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
 
+            // even same settings, so clone
             section.Headers.EvenPage = header.Clone();
 
 
 
 
-            // Configure the footer to extend across the full page
-            section.PageSetup.FooterDistance = 0; // Align footer at the bottom of the page
+            // PRIMARY
             var footer1 = section.Footers.Primary;
+
+
+            int colIndex1 = 1;
+            int colIndex11 = 0;
+            int colIndex12 = 2;
+
+            int colIndex2 = 1;
+            int colIndex21 = 0;
+            int colIndex22 = 2;
+
+            ParagraphAlignment alignment1 = ParagraphAlignment.Center;
+            ParagraphAlignment alignment11 = ParagraphAlignment.Center;
+            ParagraphAlignment alignment12 = ParagraphAlignment.Center;
+
+            ParagraphAlignment alignment2 = ParagraphAlignment.Center;
+            ParagraphAlignment alignment21 = ParagraphAlignment.Center;
+            ParagraphAlignment alignment22 = ParagraphAlignment.Center;
+
+            if (content.PageMarginSetting.HasValue)
+            {
+                switch (content.PageMarginSetting.Value)
+                {
+                    case DocumentContent.PageMarginAndPageNumberSettingsEnum.Gecentreerd:
+                        colIndex1 = 1;
+                        colIndex11 = 0;
+                        colIndex12 = 2;
+
+                        colIndex2 = 1;
+                        colIndex21 = 0;
+                        colIndex22 = 2;
+
+                        alignment1 = ParagraphAlignment.Center;
+                        alignment11 = ParagraphAlignment.Left;
+                        alignment12 = ParagraphAlignment.Right;
+
+                        alignment2 = ParagraphAlignment.Center;
+                        alignment21 = ParagraphAlignment.Left;
+                        alignment22 = ParagraphAlignment.Right;
+
+
+                        break;
+                    case DocumentContent.PageMarginAndPageNumberSettingsEnum.MargeLinks_PaginaNummerRechts:
+                        colIndex1 = 2;
+                        alignment1 = ParagraphAlignment.Right;
+
+                        colIndex11 = 0;
+                        alignment11 = ParagraphAlignment.Left;
+
+                        colIndex12 = 1;
+                        alignment12 = ParagraphAlignment.Center;
+
+                        colIndex2 = 2;
+                        alignment2 = ParagraphAlignment.Right;
+
+                        colIndex21 = 0;
+                        alignment21 = ParagraphAlignment.Left;
+
+                        colIndex22 = 1;
+                        alignment22 = ParagraphAlignment.Center;
+
+
+
+                        break;
+                    case DocumentContent.PageMarginAndPageNumberSettingsEnum.EvenOnevenGespiegeld:
+                        colIndex1 = 0;
+                        alignment1 = ParagraphAlignment.Left;
+
+                        colIndex11 = 2;
+                        alignment11 = ParagraphAlignment.Right;
+
+                        colIndex12 = 1;
+                        alignment12 = ParagraphAlignment.Center;
+
+                        colIndex2 = 2;
+                        alignment2 = ParagraphAlignment.Right;
+
+                        colIndex21 = 0;
+                        alignment21 = ParagraphAlignment.Left;
+
+                        colIndex22 = 1;
+                        alignment22 = ParagraphAlignment.Center;
+                        break;
+                }
+            }
+
+
+
+
 
             // Add a table for the footer
             var footerTable = footer1.AddTable();
             footerTable.Borders.Visible = false;
-            footerTable.TopPadding = Unit.FromMillimeter(2);
-            footerTable.BottomPadding = Unit.FromMillimeter(4);
-            footerTable.AddColumn(Unit.FromCentimeter(8));
-            footerTable.AddColumn(Unit.FromCentimeter(2));
-            footerTable.AddColumn(Unit.FromCentimeter(8));
+            footerTable.TopPadding = Unit.FromMillimeter(1);
+            footerTable.BottomPadding = Unit.FromMillimeter(2);
+            footerTable.AddColumn(Unit.FromCentimeter(6));
+            footerTable.AddColumn(Unit.FromCentimeter(6));
+            footerTable.AddColumn(Unit.FromCentimeter(6));
             var footerRow = footerTable.AddRow();
+            footerRow.Style = "Footer";
+            footerRow.Borders.Visible = false;
+            footerRow.Borders.Width = 0.1;
+            footerRow.Borders.Top.Visible = true;
+            footerRow.Borders.Top.Color = content.FooterLineColor;
 
             // Add a background color for the footer
-            var footerCell = footerRow.Cells[1];
+            var footerCell = footerRow.Cells[colIndex1];
             footerCell.Style = "Footer";
             footerCell.Shading.Color = content.FooterBackgroundColor;
+
             //footerRow.Format.Shading.Color = content.AccentColor;
 
-
-            // Add page number centered in the footer
-            var pageNumberParagraph = footerRow.Cells[1].AddParagraph("");
-            pageNumberParagraph.Style = "Footer";
-            pageNumberParagraph.AddPageField();
-            pageNumberParagraph.Format.Alignment = ParagraphAlignment.Center;
+            footerRow.Cells[colIndex1].AddParagraph("Pag. ").AddPageField();
+            footerRow.Cells[colIndex1].Style = "Footer";
+            footerRow.Cells[colIndex1].Format.Alignment = alignment1;
 
 
+            par = footerRow.Cells[colIndex11].AddParagraph(); AddMarkdownToParagraph(par, content.PageFooter.Text1); par.Format.Alignment = alignment11;
+            par = footerRow.Cells[colIndex12].AddParagraph(); AddMarkdownToParagraph(par, content.PageFooter.Text2); par.Format.Alignment = alignment12;
+
+
+
+            // even page
             var footer2 = section.Footers.EvenPage;
             var f2t = footer2.AddTable();
             f2t.Borders.Visible = false;
-            f2t.TopPadding = Unit.FromMillimeter(2);
-            f2t.BottomPadding = Unit.FromMillimeter(4);
-            f2t.AddColumn(Unit.FromCentimeter(8));
-            f2t.AddColumn(Unit.FromCentimeter(2));
-            f2t.AddColumn(Unit.FromCentimeter(8));
+            f2t.TopPadding = Unit.FromMillimeter(1);
+            f2t.BottomPadding = Unit.FromMillimeter(2);
+            f2t.AddColumn(Unit.FromCentimeter(6));
+            f2t.AddColumn(Unit.FromCentimeter(6));
+            f2t.AddColumn(Unit.FromCentimeter(6));
             var f2r = f2t.AddRow();
+            f2r.Borders.Top.Visible = true;
+            f2r.Borders.Top.Color = content.FooterLineColor;
+            f2r.Style = "Footer";
 
             // Add a background color for the footer
-            f2r.Cells[2].AddParagraph().AddPageField();
-            f2r.Cells[2].Style = "Footer";
-            f2r.Cells[2].Shading.Color = content.FooterBackgroundColor;
+            f2r.Cells[colIndex2].AddParagraph("Pag. ").AddPageField();
+            f2r.Cells[colIndex2].Style = "Footer";
+            f2r.Cells[colIndex2].Shading.Color = content.FooterBackgroundColor;
+            f2r.Cells[colIndex2].Format.Alignment = alignment2;
+
+            par = f2r.Cells[colIndex21].AddParagraph(); AddMarkdownToParagraph(par, content.PageFooter.Text1); par.Format.Alignment = alignment21;
+            par = f2r.Cells[colIndex22].AddParagraph(); AddMarkdownToParagraph(par, content.PageFooter.Text2); par.Format.Alignment = alignment22;
 
 
 
 
 
-
-            // Set padding for full-width header/footer alignment
-            section.PageSetup.LeftMargin = Unit.FromMillimeter(15);
-            section.PageSetup.RightMargin = Unit.FromMillimeter(15);
-            section.PageSetup.TopMargin = Unit.FromMillimeter(15);
-            section.PageSetup.BottomMargin = Unit.FromMillimeter(15);
         }
-
 
 
 
@@ -635,11 +841,10 @@ namespace ExportFactory.Services
         {
             var section = document.AddSection();
 
-            section.PageSetup.PageFormat = PageFormat.A4;
-            section.PageSetup.TopMargin = Unit.FromCentimeter(1);
-            section.PageSetup.BottomMargin = Unit.FromCentimeter(1);
-            section.PageSetup.LeftMargin = Unit.FromCentimeter(1);
-            section.PageSetup.RightMargin = Unit.FromCentimeter(1);
+            section.PageSetup.BackgroundColor = coverPage.BackgroundColor;
+            // setup for page size and margin
+            section.PageSetup = CoverPageSetup.Clone();
+
 
             if (!string.IsNullOrEmpty(coverPage.CompanyLogoPath))
             {
@@ -777,7 +982,7 @@ namespace ExportFactory.Services
         private static void AddTableOfContents(Document document, out Section tocSection)
         {
             // Create a TOC section
-            tocSection = document.LastSection;
+            tocSection = document.AddSection();
 
             // Add a title for the TOC
             var titleParagraph = tocSection.AddParagraph("Inhoudsopgave", "Heading1");

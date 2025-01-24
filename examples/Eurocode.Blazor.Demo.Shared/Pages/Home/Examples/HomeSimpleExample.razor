@@ -14,6 +14,16 @@
     <FluentTextField Label="Font-family" @bind-Value="@fontFamily"></FluentTextField>
 
     <FluentButton OnClick="TestDoc">Maak PDF test</FluentButton>
+    <EurocodeRazorClassLibrary.Custom.FluentSelectEnum
+    Label="Pagina indeling" 
+    TEnum="ExportFactory.MigraDocContentModels.DocumentContent.PageMarginAndPageNumberSettingsEnum" 
+    @bind-EnumSelectedValue="pageSetting" />
+
+
+
+
+
+
 
 </FluentCard>
 
@@ -23,6 +33,11 @@
 
     public string fontFamily { get; set; } = "Verdana";
     public int fontSize { get; set; } = 9;
+    //public bool mirror
+
+    public ExportFactory.MigraDocContentModels.DocumentContent.PageMarginAndPageNumberSettingsEnum? pageSetting = DocumentContent.PageMarginAndPageNumberSettingsEnum.EvenOnevenGespiegeld;
+
+
 
     public void Test(){
         if (SampleProject != null){
@@ -37,7 +52,7 @@
 
     public void TestDoc(){
 
-        var content = ExampleDocumentContent.GetExampleDocumentContent(fontFamily, fontSize);
+        var content = ExampleDocumentContent.GetExampleDocumentContent(fontFamily, fontSize, pageSetting);
 
         // Generate and save the document
         var document = MigraDocCreator.GenerateDocument(content);

@@ -1,28 +1,54 @@
 ﻿using MigraDoc.DocumentObjectModel;
+using System.ComponentModel;
 
 namespace ExportFactory.MigraDocContentModels
 {
     public class DocumentContent
     {
 
+        public DocumentInfo DocumentInfo { get; set; } = new DocumentInfo()
+        {
+            Author = "Kaskon",
+            Title = "Title",
+            Comment = "",
+            Keywords = "prefabbeton, trappen en bordessen",
+            Subject = "",
+
+
+        };
+
         public Color AccentColor { get; set; } = Colors.Teal;
 
-        public Color HeaderBackgroundColor { get; set; } = Colors.LightBlue;
+        public Color HeaderBackgroundColor { get; set; } = Colors.Transparent;
+        public Color HeaderLineColor { get; set; } = Colors.Teal;
         public Color HeaderColor { get; set; } = Colors.Black;
 
-        public Color FooterBackgroundColor { get; set; } = Colors.DarkBlue;
-        public Color FooterColor { get; set; } = Colors.White;
+        public Color FooterBackgroundColor { get; set; } = Colors.Transparent;
+        public Color FooterLineColor { get; set; } = Colors.Teal;
+        public Color FooterColor { get; set; } = Colors.Black;
 
 
         public Font Font { get; set; } = new Font("Verdana", 9);
-
         public CoverPageContent CoverPage { get; set; } = new CoverPageContent();
         public PageHeaderContent PageHeader { get; set; } = new PageHeaderContent();
+        public PageFooterContent PageFooter { get; set; } = new PageFooterContent();
         //public PageFooterContent PageFooter { get; set; } = new PageFooterContent();    
         public List<SectionContent> Sections { get; set; } = new List<SectionContent>();
         public TableOfContentsContent TableOfContents { get; set; }
 
+        public PageMarginAndPageNumberSettingsEnum? PageMarginSetting { get; set; } = PageMarginAndPageNumberSettingsEnum.EvenOnevenGespiegeld;
 
+
+        public enum PageMarginAndPageNumberSettingsEnum
+        {
+            [Description("Alles gecentreerd")]
+            Gecentreerd,
+            [Description("Marge links")]
+            MargeLinks_PaginaNummerRechts,
+            [Description("Even/Oneven gespiegeld")]
+            EvenOnevenGespiegeld,
+
+        }
 
     }
 

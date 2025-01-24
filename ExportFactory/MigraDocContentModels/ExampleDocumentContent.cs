@@ -38,20 +38,34 @@ namespace ExportFactory.MigraDocContentModels
         const string _svgExample1 = @"<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100'> <rect width='200' height='100' style='fill:blue;stroke-width:3;stroke:rgb(0,0,0)' /> </svg>";
 
 
-        public static DocumentContent GetExampleDocumentContent(string fontFamily, int fontSize)
+        public static DocumentContent GetExampleDocumentContent(string fontFamily, int fontSize, DocumentContent.PageMarginAndPageNumberSettingsEnum? pageMarginSetting)
         {
             Font font = new Font(fontFamily, Unit.FromPoint(fontSize));
             font.Color = Colors.Black;
 
 
+
             return new DocumentContent
             {
+                HeaderLineColor = Colors.LightGray,
+                HeaderColor = Colors.Gray,
+                FooterLineColor = Colors.LightGray,
+                FooterColor = Colors.Gray,
 
+
+                PageMarginSetting = pageMarginSetting,
                 Font = font,
                 PageHeader = new PageHeaderContent()
                 {
-                    Text = "Hallo wereld",
-                    //SvgLogo = _svgKaskon,
+
+                    Text1 = "Hallo wereld",
+                    Text2 = "|Xi|,|Omega|,|Psi|",
+                    Text3 = "Trappen en bordessen",//SvgLogo = _svgKaskon,
+                },
+                PageFooter = new PageFooterContent()
+                {
+                    Text1 = "Hallo MigraDoc",
+                    Text2 = "*E*=*M**C*^2^",
                 },
 
                 CoverPage = new CoverPageContent()
@@ -118,8 +132,8 @@ namespace ExportFactory.MigraDocContentModels
                             {
                                 Title = "My table title",
                                 Alignment = TableAlignment.Left,
-                                Order = 1,
-                                ColumnWidths = [5, 10],
+                                Order = 0,
+                                //ColumnWidths = [5, 10, 10, 10, 10, 10],
                                 Headers =
                                 [
                                     new TableCellHeaderContent()
@@ -140,9 +154,131 @@ namespace ExportFactory.MigraDocContentModels
                                         Width = Unit.FromCentimeter(10),
                                         CellContent = new TableCellContent() { Markdown = "Translates to" },
                                     },
+                                    new TableCellHeaderContent()
+                                    {
+                                        Width = Unit.FromCentimeter(10),
+                                        CellContent = new TableCellContent() { Markdown = "Demo" },
+                                    },
+                                    new TableCellHeaderContent()
+                                    {
+                                        Width = Unit.FromCentimeter(10),
+                                        CellContent = new TableCellContent() { Markdown = "Demo" },
+                                    },
+                                    new TableCellHeaderContent()
+                                    {
+                                        Width = Unit.FromCentimeter(10),
+                                        CellContent = new TableCellContent() { Markdown = "Demo page break" },
+                                    },
+                                     new TableCellHeaderContent()
+                                    {
+                                        Width = Unit.FromCentimeter(10),
+                                        CellContent = new TableCellContent() { Markdown = "Demo page break" },
+                                    },
+                                     new TableCellHeaderContent()
+                                    {
+                                        Width = Unit.FromCentimeter(10),
+                                        CellContent = new TableCellContent() { Markdown = "Demo page break" },
+                                    },
+
                                 ],
                                 Rows =
                                 [
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
+                                    [
+                                        new TableCellContent { Markdown = "`**Bold**`" },
+                                        new TableCellContent { Markdown = "**Bold**" }
+                                    ],
                                     [
                                         new TableCellContent { Markdown = "`**Bold**`" },
                                         new TableCellContent { Markdown = "**Bold**" }
@@ -182,24 +318,42 @@ namespace ExportFactory.MigraDocContentModels
                                         new TableCellContent("*|beta|*~sub~"),
                                     ],
 
-                                     [   new TableCellContent("```# Heading1```"),
-                                        new TableCellContent("# Heading1"),
-                                    ],
-                                     [   new TableCellContent("`## Heading2`"),
-                                        new TableCellContent("## Heading2"),
-                                    ],
-                                      [   new TableCellContent("`## Heading3`"),
-                                        new TableCellContent("## Heading3"),
-                                    ],
-                                    //  [   new TableCellContent("`<svg></svg>`"),
-                                    //    new TableCellContent(){SvgImage = _svgExample1},
-                                    //],
+
                                       [   new TableCellContent("`<svg></svg>`"),
                                         new TableCellContent(){SvgImage = _svgDemo},
                                     ],
 
                                 ]
-                            }
+                            },
+
+                            new HeadingContent{
+                                Style = "Kop 1",
+                                Text = "H1"
+                            },
+
+                            new ParagraphContent{
+                                Markdown = "bla bla bla"
+                            },
+
+                            new HeadingContent{
+                                Style = "Kop 1",
+                                Text = "H1"
+                            },
+
+                            new ParagraphContent{
+                                Markdown = "bla bla bla"
+                            },
+
+                            new HeadingContent{
+                                Style = "Kop 1",
+                                Text = "H1"
+                            },
+
+                            new ParagraphContent{
+                                Markdown = "bla bla bla"
+                            },
+
+
                         }
                     }
                 ]
