@@ -34,6 +34,14 @@
 
 
 
+    //public class TableContent<T> : SectionElement
+    //{
+    //     public List<T> TableData { get; set; } = [];
+    // }
+
+    //public class TableContent2
+
+
     public enum TableAlignment
     {
         Left,

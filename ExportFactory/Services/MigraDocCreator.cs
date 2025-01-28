@@ -1,10 +1,18 @@
-﻿using ExportFactory.MigraDocContentModels;
+﻿using CommonLibrary;
+using ExportFactory.MigraDocContentModels;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
+using System.Reflection;
+//using System.Reflection.Metadata;
+
+//
+
+
 
 //using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
+using static ExportFactory.MigraDocContentModels.ExampleDocumentContent;
 
 namespace ExportFactory.Services
 {
@@ -27,6 +35,10 @@ namespace ExportFactory.Services
                 AddCoverPage(document, content.CoverPage);
             }
 
+            //if (content.Revisions != null)
+            //{
+            //    AddRevisionPage(document, content.Revisions);
+            //}
 
 
 
@@ -204,34 +216,146 @@ namespace ExportFactory.Services
 
             foreach (var element in sortedElements)
             {
-                switch (element)
+                // Check if the element is a TableModel<T> where T is derived from BaseClass
+                if (IsTableModelDerivedFromBaseClass(element))
                 {
-                    case HeadingContent headingContent:
-                        AddHeading(section, headingContent, bookmarks);
-                        break;
+                    var tableModel = (TableModel<DemoDataClass>)element; // Cast to TableModel<BaseClass>
+                    HandleTableModel(section, tableModel); // Handle the TableModel<BaseClass> case
+                }
+                else
+                {
+                    switch (element)
+                    {
+                        case HeadingContent headingContent:
+                            AddHeading(section, headingContent, bookmarks);
+                            break;
 
-                    case ParagraphContent paragraphContent:
-                        var par = section.AddParagraph("", paragraphContent.Style);
-                        AddMarkdownToParagraph(par, paragraphContent.Markdown);
-                        break;
+                        case ParagraphContent paragraphContent:
+                            var par = section.AddParagraph("", paragraphContent.Style);
+                            AddMarkdownToParagraph(par, paragraphContent.Markdown);
+                            break;
 
-                    case TableContent tableContent:
-                        //section = document.AddSection(); // new section? needed for center
-                        //var target = section.AddTextFrame();
-                        var target = document.LastSection;
-
-
+                        case TableContent tableContent:
+                            //section = document.AddSection(); // new section? needed for center
+                            //var target = section.AddTextFrame();
+                            var target = document.LastSection;
 
 
-                        //frame.Left = "4cm"; // todo uitlijnen
-                        AddTable(target, tableContent);
-                        break;
+
+
+                            //frame.Left = "4cm"; // todo uitlijnen
+                            AddTable(target, tableContent);
+                            break;
+
+
+
+
+                        // Handle other types if necessary
+                        default:
+                            break;
+
+                    }
+
+
+
+
+
                 }
             }
         }
 
+        private static bool IsTableModelDerivedFromBaseClass(object element)
+        {
+            // Check if the element is a TableModel<T> and T is derived from BaseClass
+            var elementType = element.GetType();
+
+            if (elementType.IsGenericType && elementType.GetGenericTypeDefinition() == typeof(TableModel<>))
+            {
+                var genericArgType = elementType.GetGenericArguments()[0]; // Get the type argument T
+                return genericArgType.IsSubclassOf(typeof(BaseDataClass)); // Check if T is derived from BaseClass
+            }
+
+            return false;
+        }
 
 
+
+        private static bool IsTableModel(object element)
+        {
+            var type = element.GetType();
+            var isGeneric = type.IsGenericType;
+            var genericTypeDefinition = type.GetGenericTypeDefinition();
+            var isTableModelT = genericTypeDefinition == typeof(TableModel<>);
+
+
+
+            // Check if the element is of type TableModel<T> dynamically using reflection
+            return
+                element.GetType().IsGenericType &&
+                element.GetType().GetGenericTypeDefinition() == typeof(TableModel<>);
+        }
+
+
+        // Generic method to handle different TableModel<T>
+        private static void HandleTableModelBAK<T>(Section section, TableModel<T> tableModel)
+        {
+            // Your logic to process TableModel<T>
+            // Example:
+            AddTable(section, tableModel, $"{typeof(T).Name} Table");
+        }
+
+
+        // Generic method to handle any TableModel<T> where T is derived from BaseClass
+        private static void HandleTableModel<T>(Section section, TableModel<T> tableModel) where T : BaseDataClass
+        {
+            // Process TableModel<T> here, where T is a type derived from BaseClass
+            Console.WriteLine($"Handling table with {tableModel.Data.Count} rows of type {typeof(T).Name}");
+
+            // Add logic for adding a table to the section
+            AddTable(section, tableModel, $"{typeof(T).Name} Table");
+        }
+
+        //private static void HandleTableModel<T>(Section target, TableModel<T> tableModel)
+        //{
+        //    // Check the actual type of TableModel<T> and handle accordingly
+        //    var elementType = tableModel.GetType();
+
+        //    // If the element is a TableModel<T>, check its generic type argument
+        //    if (elementType.IsGenericType && elementType.GetGenericTypeDefinition() == typeof(TableModel<>))
+        //    {
+        //        // Get the actual type of T in TableModel<T>
+        //        var genericArgument = elementType.GetGenericArguments()[0];
+
+        //        if (genericArgument == typeof(object) ||
+        //            typeof(object).IsAssignableFrom(genericArgument))
+        //        {
+
+
+        //            var tableModelObj = (TableModel<object>)tableModel;
+        //            AddTable(target, tableModelObj, "Hoi");
+        //        }
+        //        else if (genericArgument == typeof(int))
+        //        {
+        //            var tableModelInt = (TableModel<int>)tableModel;
+        //            AddTable(target, tableModelInt, "Integer Table");
+        //        }
+        //        else if (genericArgument == typeof(string))
+        //        {
+        //            var tableModelString = (TableModel<string>)tableModel;
+        //            AddTable(target, tableModelString, "String Table");
+        //        }
+        //        else
+        //        {
+        //            // Handle other types of TableModel<T> as needed
+        //            Console.WriteLine($"Unhandled TableModel type: {genericArgument.Name}");
+        //        }
+        //    }
+
+
+
+
+
+        //}
 
 
 
@@ -268,6 +392,123 @@ namespace ExportFactory.Services
             else
             {
                 throw new InvalidOperationException("Target must be a Section of TextFrame.");
+            }
+        }
+
+
+
+        private static void AddTable<T>(DocumentObject target, TableModel<T> tableModel, string title)
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                var par = AddParagraphToContainer(target);
+                AddMarkdownToParagraph(par, title);
+                par.Style = "TableHeading";
+            }
+
+            var table = AddTableToContainer(target);
+            table.Borders.Width = 0.1;
+
+            // haal de header op
+            var firstRow = tableModel.Data.FirstOrDefault();
+            if (firstRow != null)
+            {
+                var properties = firstRow.GetType().GetProperties();
+
+
+                var columns = new List<TableColumn>();
+
+                foreach (var property in properties)
+                {
+                    // Check if the propery has a ColumnAttribute
+                    var columnAttribute = property.GetCustomAttribute<CustomColumnAttribute>();
+                    if (columnAttribute != null && columnAttribute.Visible)
+                    {
+                        // Use values from attribute 
+                        columns.Add(new TableColumn(
+                            property.Name,
+                            columnAttribute.HeaderName ?? property.Name,
+                            columnAttribute.Format,
+                            columnAttribute.Width,
+                            columnAttribute.Alignment,
+                            columnAttribute.ColumnPosition
+                            ));
+                    }
+                    else if (columnAttribute == null)
+                    {
+                        // fallback to default
+                        columns.Add(new TableColumn(property.Name));
+                    }
+                }
+
+                // Sort columns based on ColumnPosition (if specified)
+                columns = [.. columns.OrderBy(c => c.ColumnPosition)];
+
+                // Add columns to the TableModel
+                tableModel.Columns.AddRange(columns);
+
+            }
+
+
+
+
+            // Create columns based on the column configuration
+            foreach (var column in tableModel.Columns)
+            {
+                Column newColumn = table.AddColumn(Unit.FromCentimeter(column.Width));
+                newColumn.Format.Alignment = column.Alignment;
+            }
+
+            // Add header row
+            Row headerRow = table.AddRow();
+            foreach (var column in tableModel.Columns)
+            {
+                var headerPar = headerRow.Cells[tableModel.Columns.IndexOf(column)].AddParagraph();
+
+                // add markdown
+                AddMarkdownToParagraph(headerPar, column.HeaderName);
+            }
+
+            // Add data rows
+            foreach (var dataItem in tableModel.Data)
+            {
+                if (dataItem != null)
+                {
+                    Row dataRow = table.AddRow();
+                    var properties = dataItem.GetType().GetProperties();
+
+
+                    foreach (var column in tableModel.Columns)
+                    {
+                        PropertyInfo property = properties.FirstOrDefault(p => string.Equals(p.Name, column.Name, StringComparison.OrdinalIgnoreCase));
+
+                        if (property != null)
+                        {
+                            int columnIndex = tableModel.Columns.IndexOf(column);
+                            var value = property.GetValue(dataItem);
+                            string formattedValue = value?.ToString();
+
+                            if (!string.IsNullOrEmpty(column.Format))
+                            {
+                                string format = column.Format;
+
+                                if (format.StartsWith("{") && format.EndsWith("}"))
+                                {
+                                    // format opgave bijvoorbeeld gedaan als "{0:D}"
+                                }
+                                else
+                                {
+                                    // 
+                                    format = "{0:" + column.Format + "}";
+                                }
+
+                                formattedValue = string.Format(format, value);
+                            }
+
+                            dataRow.Cells[columnIndex].AddParagraph(formattedValue);
+                        }
+                    }
+                }
             }
         }
 
@@ -832,6 +1073,36 @@ namespace ExportFactory.Services
         }
 
 
+        private static void AddRevisionPage(Document document, RevisionContent content)
+        {
+            var section = document.AddSection();
+            var table = section.AddTable();
+            //var row = table.AddRow();
+
+            //if (content.ColumnNames.TryGetValue("Name", out string? colNameHeaderTitle))
+            //{
+            //    table.AddColumn(Unit.FromMillimeter(15));
+            //    row.Cells[table.Columns.Count - 1].AddParagraph(colNameHeaderTitle);
+            //}
+            //if (content.ColumnNames.TryGetValue("Date", out string? colDateHeaderTitle))
+            //{
+            //    table.AddColumn(Unit.FromMillimeter(30));
+            //    row.Cells[table.Columns.Count - 1].AddParagraph(colDateHeaderTitle);
+            //}
+            //if (content.ColumnNames.TryGetValue("Description", out string? colDescriptionHeaderTitle))
+            //{
+            //    table.AddColumn(Unit.FromMillimeter(70));
+            //    row.Cells[table.Columns.Count - 1].AddParagraph(colDescriptionHeaderTitle);
+            //}
+
+
+
+
+
+
+
+        }
+
         /// <summary>
         /// Adds a cover page to a document
         /// </summary>
@@ -841,7 +1112,8 @@ namespace ExportFactory.Services
         {
             var section = document.AddSection();
 
-            section.PageSetup.BackgroundColor = coverPage.BackgroundColor;
+            //document.Styles.
+            //section.PageSetup.BackgroundColor = coverPage.BackgroundColor;
             // setup for page size and margin
             section.PageSetup = CoverPageSetup.Clone();
 
@@ -860,8 +1132,9 @@ namespace ExportFactory.Services
         }
 
 
-        private static void AddMarkdownToParagraph(Paragraph paragraph, string markdown)
+        public static void AddMarkdownToParagraph(Paragraph paragraph, string? markdown)
         {
+            if (markdown == null) return;
             if (string.IsNullOrWhiteSpace(markdown))
                 return;
 
@@ -983,6 +1256,7 @@ namespace ExportFactory.Services
         {
             // Create a TOC section
             tocSection = document.AddSection();
+            tocSection.Tag = "TOC";
 
             // Add a title for the TOC
             var titleParagraph = tocSection.AddParagraph("Inhoudsopgave", "Heading1");

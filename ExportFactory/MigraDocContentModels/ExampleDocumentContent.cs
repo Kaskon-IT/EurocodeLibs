@@ -1,4 +1,5 @@
-﻿using MigraDoc.DocumentObjectModel;
+﻿using CommonLibrary;
+using MigraDoc.DocumentObjectModel;
 
 namespace ExportFactory.MigraDocContentModels
 {
@@ -36,6 +37,28 @@ namespace ExportFactory.MigraDocContentModels
         const string _loremIpsumMarkdown = "**Lorem Ipsum** is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
         const string _loremIpsumPlainText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
         const string _svgExample1 = @"<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100'> <rect width='200' height='100' style='fill:blue;stroke-width:3;stroke:rgb(0,0,0)' /> </svg>";
+
+
+
+
+        public class DemoDataClass : BaseDataClass
+        {
+            [CustomColumn(headerName: "*M*~Ed~", alignment: ParagraphAlignment.Right, format: "0.00 kNm")]
+            public double Med { get; set; } = 48.3;
+
+            [CustomColumn(headerName: "*M*~freq~", alignment: ParagraphAlignment.Right, format: "0.00 kNm")]
+            public double Mfreq { get; set; } = 30.98123554245;
+
+        }
+
+        public class BaseDataClass
+        {
+            [CustomColumn(headerName: "Name", alignment: ParagraphAlignment.Left)]
+            public string Name { get; set; } = "";
+
+
+        }
+
 
 
         public static DocumentContent GetExampleDocumentContent(string fontFamily, int fontSize, DocumentContent.PageMarginAndPageNumberSettingsEnum? pageMarginSetting)
@@ -127,6 +150,16 @@ namespace ExportFactory.MigraDocContentModels
                                 Style = "",
                             },
 
+
+                            new TableModel<DemoDataClass>{
+                                Data =
+                                [
+                                    new DemoDataClass(){ Med = 240, Mfreq = 200},
+                                    new DemoDataClass(){ },
+                                    new DemoDataClass(){ },
+                                ],
+
+                            },
 
                             new TableContent
                             {

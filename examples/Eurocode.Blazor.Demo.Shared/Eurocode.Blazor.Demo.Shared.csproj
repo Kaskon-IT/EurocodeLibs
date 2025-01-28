@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj" />
     <ProjectReference Include="..\..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
     <ProjectReference Include="..\..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />
     <ProjectReference Include="..\..\Eurocode2.BetonConstructies\Eurocode2.BetonConstructies.csproj" />

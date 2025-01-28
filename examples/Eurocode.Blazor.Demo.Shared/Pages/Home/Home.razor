@@ -11,10 +11,16 @@
         <p>
             De Eurocode Blazor bibliotheek is er voor specifieke Eurocode Componenten.
             Deze componenten zijn opgebouwd met de <code>Microsoft.FluenUI.AspNetCore.Components</code> bibliotheek.
-
         </p>
         <p>
-            To get up and running with the <code>Microsoft.FluentUI.AspNetCore.Components</code> library, see the &quot;Getting Started&quot; section below.
+           Van de meeste eurocode componenten is het mogelijk om de data weer te geven in tabellen. 
+           Deze tabellen kunnen geexporteerd worden als:
+           <ul>
+               <li>textbestand (CSV)</li>
+               <li>opgemaakte tekst (RTF)</li>
+               <li>grafisch bestand (PDF)</li>
+               <li>webpagina (HTML)</li>
+           </ul>
         </p>
         
 
@@ -29,79 +35,12 @@
             </p>
         </div>
 
-        <h2 id="whatsnew">What's new?</h2>
-        <p>
-            If you are already up-and-running and upgrading from an earlier version of the library, please go to the <a href="/WhatsNew">What's new</a> page
-            for information on additions, fixes and (breaking) changes.
-        </p>
-        <h2 id="interactivity">Components & render modes</h2>
-        <p>
-            As described in the <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor/components/render-modes?view=aspnetcore-8.0" target="_blank"> Blazor documentation</a>:
-        </p>
-        <blockquote>
-            By default, components use Static Server-side rendering (SSR). The component renders to the response stream and there is no interactivity.
-        </blockquote>
-        <p>
-            A component inherits its render mode from its parent. So unless a render mode is specified on the app, page or component level, every
-            component (including ours) is <em>statically rendered</em> on the server and <strong>will not be interactive</strong>. For the
-            Fluent UI Blazor library this means most components will display correctly but <strong>will not offer</strong> complete, if any, functionality.
-        </p>
-    </FluentGridItem>
-    <FluentGridItem xs="12" sm="12" md="6">
-        <h2 id="getting-started">Getting Started</h2>
-        <p>
-            By far the easiest way to get started is by using our templates. Setting them up is quick and easy. See the <a href="/Templates">templates</a> page
-            for instructions and usage.
-        </p>
-        <h3>Manual setup</h3>
-        <p>
-            To start using the Fluent UI Blazor components from scratch, you first need to install the main <a href="https://www.nuget.org/packages/Microsoft.FluentUI.AspNetCore.Components/">Nuget package</a>
-            in the project you want to use the components. You can use the NuGet package manager in your IDE for that or use the following command when using a CLI:
-        </p>
-        <CodeSnippet>dotnet add package Microsoft.FluentUI.AspNetCore.Components</CodeSnippet>
-
-        <p>
-            Refer to the <a href="/CodeSetup">code setup</a> document to learn what else needs done to get up-and-running. This includes adding code to the
-            <code>Program.cs</code> file so all necessary services are available and setup in the correct way.
-        </p>
+        
     </FluentGridItem>
 
-    <FluentGridItem xs="12" sm="12" md="6">
-        <h3>Scripts</h3>
-        <p>
-            As mentioned, we wrap the Fluent UI Web Components for some of our compnents. The needed script is included in the library and will
-            be loaded for you automatically by using Blazor's built-in capabilities. You do not need to download or pull the script from a CDN manually.
-        </p>
-       <p>
-            Please refer to the <a href="/CodeSetup#script">script section</a> on the Code setup page for infomation on how to manually add the script to your pages (which should normally not be necessary).
-        </p>
 
-        <h3>Styles</h3>
-        <p>
-            In order for this library to work as expected, it expects the composed scoped CSS file to be loaded. When using our templates, this will already
-            be set up.
-        </p>
-        <p>
-            Please refer to the <a href="/CodeSetup#styles">styles section</a> on the Code setup page for more information on:
-            <ul>
-                <li>Manually adding the style link</li>
-                <li>Our <code>Reboot.css</code> file</li>
-                <li>Possible configuration steps needed when combining the library with other CSS frameworks (like <i>Tailwind</i>)</li>
-            </ul>
-
-        </p>
-    </FluentGridItem>
-
-    <FluentGridItem xs="12" sm="12" md="8" >
-        <h2 id="using-the-fluentui-web-components">Using the Fluent UI Blazor components</h2>
-        <p>With the package installed, you can begin using the Fluent UI Blazor components in the same way as any other Blazor component. Just be sure to add the following using statement to your views:</p>
-        <CodeSnippet>@@using Microsoft.FluentUI.AspNetCore.Components</CodeSnippet>
-
-
-        <blockquote>
-            <p><strong>Tip</strong></p>
-            <p>You can add <code>@@using Microsoft.FluentUI.AspNetCore.Components.</code> to the namespace collection in <code>_Imports.razor</code>, so you don't have to add it to every razor page that uses one of the components.</p>
-        </blockquote>
+    <FluentGridItem xs="12" sm="12" md="12" >
+       
 
         <DemoSection Title="Simple components example" Component="@typeof(HomeSimpleExample)" ShowDownloads=false HideAllButExample="true">
             <Description>
@@ -120,18 +59,9 @@
             </ChildContent>
         </DemoSection>
     </FluentGridItem>
-    <FluentGridItem xs="12" sm="12" md="4">
-        <h2 id="configuring-the-design-system">Configuring the Design System</h2>
-        <p>
-            The Fluent UI Blazor components are built on FAST's Adaptive UI technology, which enables design customization and personalization, while
-            automatically maintaining accessibility. This is accomplished through setting various &quot;Design Tokens&quot;.
-        </p>
-        <p>
-            The library exposes all of the available Design Tokens, which you can use both from code as in a declarative way in your <code>.razor</code> pages. The different
-            ways of working with design tokens are described on the <a href="/DesignTokens">design tokens</a> page.
-        </p>
 
-    </FluentGridItem>
+
+   
 
     <FluentGridItem xs="12" sm="12" md="6">
         <h2 id="support">Support</h2>

@@ -27,12 +27,11 @@ namespace ExportFactory.MigraDocContentModels
         public Color FooterLineColor { get; set; } = Colors.Teal;
         public Color FooterColor { get; set; } = Colors.Black;
 
-
+        public RevisionContent Revisions { get; set; } = new();
         public Font Font { get; set; } = new Font("Verdana", 9);
         public CoverPageContent CoverPage { get; set; } = new CoverPageContent();
         public PageHeaderContent PageHeader { get; set; } = new PageHeaderContent();
         public PageFooterContent PageFooter { get; set; } = new PageFooterContent();
-        //public PageFooterContent PageFooter { get; set; } = new PageFooterContent();    
         public List<SectionContent> Sections { get; set; } = new List<SectionContent>();
         public TableOfContentsContent TableOfContents { get; set; }
 
@@ -50,6 +49,26 @@ namespace ExportFactory.MigraDocContentModels
 
         }
 
+    }
+
+
+    public class RevisionContent
+    {
+        public List<Revision> Revisions { get; set; } = [];
+        public Dictionary<string, string> ColumnNames { get; set; } = new Dictionary<string, string>()
+        {
+            { "Name", "Rev."},
+            { "Date", "Datum" },
+            { "Description", "Beschrijving" }
+        };
+       
+    }
+
+    public class Revision
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public DateTime Date { get; set; } = DateTime.Now;
     }
 
 

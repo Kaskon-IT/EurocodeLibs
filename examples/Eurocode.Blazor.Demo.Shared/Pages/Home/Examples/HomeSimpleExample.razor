@@ -3,8 +3,13 @@
 @using ExportFactory.Services
 @using Microsoft.FluentUI.AspNetCore.Components
 @using MigraDoc.Rendering
+@using MigraDoc.DocumentObjectModel
+@using CommonLibrary
+@using ExportFactory.Shared
+@using ExportFactory.Extensions
 
-<FluentCard Width="350px" Height="250px">
+
+<FluentCard Width="100%" Height="100%">
     <h2>Hello World!</h2>
     <FluentButton Appearance="@Appearance.Accent">Click Me</FluentButton>
 
@@ -19,6 +24,18 @@
     TEnum="ExportFactory.MigraDocContentModels.DocumentContent.PageMarginAndPageNumberSettingsEnum" 
     @bind-EnumSelectedValue="pageSetting" />
 
+    <h5>Preview HTML</h5>
+    <FluentCard>
+       @*  <FluentHeader>
+            <h2>HTML Preview</h2>
+        </FluentHeader> *@
+        <FluentBodyContent>
+            <div>
+                <!-- Render the raw HTML string here using MarkupString -->
+                <div>@((MarkupString)htmlString)</div>
+            </div>
+        </FluentBodyContent>
+    </FluentCard>
 
 
 
@@ -33,10 +50,61 @@
 
     public string fontFamily { get; set; } = "Verdana";
     public int fontSize { get; set; } = 9;
+    public string htmlString { get; set; } = "<h1>Title</h1><p>This is a <strong>preview</strong> of HTML content in a Blazor app using Fluent UI!</p>";
+
     //public bool mirror
 
     public ExportFactory.MigraDocContentModels.DocumentContent.PageMarginAndPageNumberSettingsEnum? pageSetting = DocumentContent.PageMarginAndPageNumberSettingsEnum.EvenOnevenGespiegeld;
 
+
+
+
+
+    public class ProductDemo
+    {
+        [TableColumn(headerText: "Productnaam", alignment: ParagraphAlignment.Left, width: 5.0)]
+        public string Name { get; set; } = "";
+
+        [TableColumn("Prijs", stringFormat: "C", width: 4, alignment: ParagraphAlignment.Right, order: 2, visible: true)]
+        public decimal Price { get; set; } = 999.99M;
+
+        [TableColumn("|alpha|~subscript~", stringFormat: "0.0", width: 4, alignment: ParagraphAlignment.Right, order: 1, visible: true)]
+        public double AlphaSubscript { get; set; } = 3.1423456454654;
+
+        public string ZonderAttributen = "Komt niet in de tabel";
+
+        [TableColumn(visible: false)]
+        public string Exclude { get; set; } = "BOE!!";
+
+
+
+    }
+
+    public List<ProductDemo> ProductDemos { get; set; } = [
+        new(){ Name = "Product 1", Price = 999.99M, AlphaSubscript = 3.1434 }, 
+    new(){ Name = "Product 2", Price = 10M, AlphaSubscript = 33525.35325}, 
+    new(){ Name = "Product *E=MC*~2~", Price = 3435251351M, AlphaSubscript = 342.3151}];
+
+
+    public class DemoData{
+
+
+
+        [CustomColumn("*V*~oornaam~", format: "{0,-8}", width: 4, alignment: ParagraphAlignment.Left, visible: true)]
+        public string Name { get; set; } = "Naam";
+
+        [CustomColumn("Salaris", format: "C", width: 4, alignment: ParagraphAlignment.Right, columnPosition: 2, visible: true)]
+        public double Salaris { get; set; } = 3999.09;
+
+        [CustomColumn("Datum in dienst", format: "yyyy-MM-dd", width: 4, alignment: ParagraphAlignment.Center, columnPosition: 1,visible: true)]
+        public DateTime DatumInDienst { get; set; } = new DateTime(2001, 1, 1);
+
+    }
+
+    public List<DemoData> Persons { get; set; } = [
+        new(){Name = "Kees", Salaris = 2999},
+    new(){Name = "Koos", Salaris = 3033},
+    ];
 
 
     public void Test(){
@@ -58,6 +126,30 @@
         var document = MigraDocCreator.GenerateDocument(content);
 
 
+        // demo (met correcte data)
+        var section = document.LastSection;
+        var dtProductDemos = ProductDemos.ToDataTable();
+        var table = dtProductDemos.ToMigraDocTable(typeof(ProductDemo));
+
+
+
+        if (table != null){
+            section = document.AddSection();
+            section.Add(table);
+        }
+
+
+
+        // demo (incorrecte data)
+        var dtPersons = Persons.ToDataTable();
+        table = dtPersons.ToMigraDocTable(typeof(DemoData));
+        if (table != null)
+        {
+            section = document.AddSection();
+            section.Add(table);
+        }
+
+
 
         // Render the document
         var renderer = new PdfDocumentRenderer(true) 
@@ -77,12 +169,29 @@
         var h1 = rtfString.Replace("Heading1", "Kop 1");
         var h2 = h1.Replace("Heading2", "Kop 2");
 
-        
+
         var test = h2;
 
 
+        // HTML
+        // HTML Document opslaan
+        // todo test eigen HTML voor preview!
+        // dit wordt de BOM!
+        var html = HtmlCreator.GenerateHtmlFromDocument(document);
+
+        htmlString = html;
 
 
+
+        PdfTableGenerator tableGen = new();
+        tableGen.MakeDemoTable(Persons);
+
+
+        
+
+
+
+        
     }
 
 

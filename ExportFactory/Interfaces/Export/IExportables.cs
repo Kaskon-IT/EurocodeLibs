@@ -3,6 +3,13 @@ using MigraDoc.DocumentObjectModel.Tables;
 
 namespace ExportFactory.Interfaces.Export
 {
+    public interface IExportable
+    {
+        TableData<T> ToTableData<T>() where T : class;
+    }
+
+
+
     /// <summary>
     /// Interface for export to CSV (Comma Seperated Value) 
     /// </summary>
