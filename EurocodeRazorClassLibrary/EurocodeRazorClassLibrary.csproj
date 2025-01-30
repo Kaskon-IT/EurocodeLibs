@@ -44,4 +44,9 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\js\downloadFile.js" />
+    <None Include="wwwroot\js\downloadFileFromStream.js" />
+  </ItemGroup>
+
 </Project>

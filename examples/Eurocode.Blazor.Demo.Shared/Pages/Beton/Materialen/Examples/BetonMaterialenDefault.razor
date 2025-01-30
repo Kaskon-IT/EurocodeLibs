@@ -3,6 +3,8 @@
     <EurocodeBetonMaterialen 
         Disabled = "@Disabled"
         @bind-Model="@SampleProject.Beton"></EurocodeBetonMaterialen>
+
+    <ExportTableComponent T="Eurocode.BetonConstructies.BetonContext" Item="@SampleProject.Beton"></ExportTableComponent>
 }
 
 @code {

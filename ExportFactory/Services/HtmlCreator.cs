@@ -34,9 +34,9 @@
             htmlBuilder.AppendLine("sub { font-size: 0.8em; vertical-align: sub; }");
             htmlBuilder.AppendLine("sup { font-size: 0.8em; vertical-align: super; }");
             htmlBuilder.AppendLine("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
-            htmlBuilder.AppendLine("table, th, td { border: 1px solid #ddd; }");
-            htmlBuilder.AppendLine("th, td { padding: 8px 12px; text-align: left; }");
-            htmlBuilder.AppendLine("th { background-color: #f4f4f4; font-weight: bold; }");
+            //htmlBuilder.AppendLine("table, th, td { border: 1px solid #ddd; }");
+            htmlBuilder.AppendLine("th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f4f4f4; }");
+            //htmlBuilder.AppendLine("th { background-color: #f4f4f4; font-weight: bold; }");
             htmlBuilder.AppendLine("img { max-width: 100%; height: auto; display: block; margin: 20px 0; }");
             htmlBuilder.AppendLine("</style>");
 
@@ -46,7 +46,7 @@
 
 
             // Apply centered style if the 'centered' parameter is true
-            string containerStyle = centered ? "text-align: center; margin: 0 auto; max-width: 900px;" : "text-align: left; max-width: 900px";
+            string containerStyle = centered ? "text-align: center; margin: 0 auto; max-width: 680px;" : "text-align: left; max-width: 680px;";
 
             // Wrap the entire content in a container with the appropriate style
             htmlBuilder.Append($"<div style='{containerStyle} {fontStyleString}'>");
@@ -102,10 +102,16 @@
                     // Als het een tabel is
                     else if (element is Table table)
                     {
-                        htmlBuilder.AppendLine("<table>");
+                        htmlBuilder.AppendLine("<table class='fluent-data-grid grid'>");
+                        var index = 0;
                         foreach (Row row in table.Rows)
                         {
-                            htmlBuilder.AppendLine("<tr>");
+                            if (index == 0)
+                            {
+                                htmlBuilder.AppendLine("<thead>");
+                            }
+
+                            htmlBuilder.AppendLine("<tr class='fluent-data-grid-row'>");
                             foreach (Cell cell in row.Cells)
                             {
                                 Paragraph cellPar = null;
@@ -120,9 +126,26 @@
                                     }
                                 }
 
-                                htmlBuilder.AppendLine("<td>" + ProcessParagraph(cellPar) + "</td>");
+                                var htmlTag = "td"; // <td> by default;
+                                if (index == 0)
+                                {
+                                    htmlTag = "th"; // <th> first row;
+                                }
+
+                                htmlBuilder.AppendLine($"<{htmlTag}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
                             }
                             htmlBuilder.AppendLine("</tr>");
+
+                            if (index == 0)
+                            {
+                                htmlBuilder.AppendLine("</thead>");
+                            }
+
+
+
+                            index++;
+
+
                         }
                         htmlBuilder.AppendLine("</table>");
                     }

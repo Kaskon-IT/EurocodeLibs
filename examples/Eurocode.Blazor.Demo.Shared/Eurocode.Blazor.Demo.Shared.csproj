@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\downloadFile.js" />
+    <Content Remove="wwwroot\js\downloadFileFromStream.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="App.razor.BAK" />
     <Content Include="Routes.razor.BAK" />
   </ItemGroup>
@@ -20,6 +25,11 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\downloadFile.js" />
+    <None Include="wwwroot\js\downloadFileFromStream.js" />
   </ItemGroup>
 
   <ItemGroup>

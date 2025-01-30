@@ -66,7 +66,10 @@ namespace ExportFactory.MigraDocContentModels
             Font font = new Font(fontFamily, Unit.FromPoint(fontSize));
             font.Color = Colors.Black;
 
-
+            string title = "Sample Project";
+            string subtitle = "Toont de mogelijkheden van de export library";
+            string docNaam = "ber-01";
+            string onderdeel = "Trappen en bordessen";
 
             return new DocumentContent
             {
@@ -81,22 +84,22 @@ namespace ExportFactory.MigraDocContentModels
                 PageHeader = new PageHeaderContent()
                 {
 
-                    Text1 = "Hallo wereld",
-                    Text2 = "|Xi|,|Omega|,|Psi|",
-                    Text3 = "Trappen en bordessen",//SvgLogo = _svgKaskon,
+                    Text1 = title,
+                    Text2 = docNaam,
+                    Text3 = onderdeel,//SvgLogo = _svgKaskon,
                 },
                 PageFooter = new PageFooterContent()
                 {
-                    Text1 = "Hallo MigraDoc",
-                    Text2 = "*E*=*M**C*^2^",
+                    Text1 = title,
+                    Text2 = docNaam,
                 },
 
                 CoverPage = new CoverPageContent()
                 {
                     CompanyName = "Kaskon",
-                    ProjectNumber = "123",
-                    Title = "My First Generic Project",
-                    Subtitle = "Coding's fun",
+                    ProjectNumber = "1234",
+                    Title = title,
+                    Subtitle = subtitle,
 
                 },
 
@@ -114,7 +117,7 @@ namespace ExportFactory.MigraDocContentModels
                         {
                             new HeadingContent {
                                 Style = "Kop 1",
-                                Text = "Kop1",
+                                Text = "Hoofdstuk 1",
                                 AddToTOC = true,
                                 Level = 1,
                                 Order = 0,
@@ -127,7 +130,7 @@ namespace ExportFactory.MigraDocContentModels
 
                              new HeadingContent {
                                 Style = "Kop 2",
-                                Text = "Kop2",
+                                Text = "Hoofdstuk 1.1",
                                 AddToTOC = true,
                                 Level = 2,
                                 Order = 0,
@@ -139,7 +142,7 @@ namespace ExportFactory.MigraDocContentModels
                             },
                              new HeadingContent {
                                 Style = "Kop 3",
-                                Text = "Kolommen",
+                                Text = "Hoofdstuk 1.1.1",
                                 AddToTOC = !true,
                                 Level = 3,
                                 Order = 0,
@@ -197,101 +200,12 @@ namespace ExportFactory.MigraDocContentModels
                                         Width = Unit.FromCentimeter(10),
                                         CellContent = new TableCellContent() { Markdown = "Demo" },
                                     },
-                                    new TableCellHeaderContent()
-                                    {
-                                        Width = Unit.FromCentimeter(10),
-                                        CellContent = new TableCellContent() { Markdown = "Demo page break" },
-                                    },
-                                     new TableCellHeaderContent()
-                                    {
-                                        Width = Unit.FromCentimeter(10),
-                                        CellContent = new TableCellContent() { Markdown = "Demo page break" },
-                                    },
-                                     new TableCellHeaderContent()
-                                    {
-                                        Width = Unit.FromCentimeter(10),
-                                        CellContent = new TableCellContent() { Markdown = "Demo page break" },
-                                    },
+
 
                                 ],
                                 Rows =
                                 [
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
-                                    [
-                                        new TableCellContent { Markdown = "`**Bold**`" },
-                                        new TableCellContent { Markdown = "**Bold**" }
-                                    ],
+
                                     [
                                         new TableCellContent { Markdown = "`**Bold**`" },
                                         new TableCellContent { Markdown = "**Bold**" }
@@ -338,8 +252,8 @@ namespace ExportFactory.MigraDocContentModels
                                         new TableCellContent { Markdown = "```x^3.14^```" },
                                         new TableCellContent { Markdown = "x^3.14^" }
                                     ],
-                                    [   new TableCellContent("```~~strikethrough~~````"),
-                                        new TableCellContent("~~strikethrough~~")
+                                    [   new TableCellContent("```~~rode tekst~~````"),
+                                        new TableCellContent("~~rode tekst~~")
                                     ],
                                     [   new TableCellContent("```M~subscript~```"),
                                         new TableCellContent("M~subscript~"),
@@ -361,7 +275,7 @@ namespace ExportFactory.MigraDocContentModels
 
                             new HeadingContent{
                                 Style = "Kop 1",
-                                Text = "H1"
+                                Text = "Hoofdstuk 2"
                             },
 
                             new ParagraphContent{
@@ -370,7 +284,7 @@ namespace ExportFactory.MigraDocContentModels
 
                             new HeadingContent{
                                 Style = "Kop 1",
-                                Text = "H1"
+                                Text = "Hoofdstuk 3"
                             },
 
                             new ParagraphContent{
@@ -379,7 +293,7 @@ namespace ExportFactory.MigraDocContentModels
 
                             new HeadingContent{
                                 Style = "Kop 1",
-                                Text = "H1"
+                                Text = "Hoofdstuk 4"
                             },
 
                             new ParagraphContent{

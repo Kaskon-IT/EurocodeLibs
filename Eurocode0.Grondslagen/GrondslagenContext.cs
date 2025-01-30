@@ -5,6 +5,7 @@
 ///using CsvFactory;
 using ExportFactory.Interfaces.Export;
 using ExportFactory.Services;
+using ExportFactory.Shared;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 
@@ -66,7 +67,7 @@ namespace Eurocode.Grondslagen
 
 
 
-
+        [TableColumn("Normland")]
         public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
 
         /// <summary>
@@ -75,13 +76,16 @@ namespace Eurocode.Grondslagen
         /// worden gedefinieerd door het beschouwen van de gevolgen van bezwijken of het slecht functioneren van de
         /// constructie
         /// </summary>
+        /// 
+        [TableColumn("Gevolgklasse (Consequence Class)")]
         public GevolgklasseEnum? Gevolgklasse { get; set; } = GevolgklasseEnum.CC2;
 
+        [TableColumn("Ontwerplevensduur")]
         public OntwerpLevensduurEnum? OntwerpLevensduur { get; set; } = OntwerpLevensduurEnum.Vijftig;
 
 
 
-
+        [TableColumn("Betrouwbaarheidsklasse (Reliability Class)")]
         public BetrouwbaarheidsklasseEnum Betrouwbaarheidsklasse
         {
             get { return this.Gevolgklasse.GetBetrouwbaarheidsklasse(); }
@@ -92,6 +96,7 @@ namespace Eurocode.Grondslagen
         /// B.3.3
         /// Vermenigvuldigingsfactor KFI die wordt toegepast op de partiele factoren.
         /// </summary>
+        [TableColumn("K~FI~", stringFormat: "0.0", order: 3)]
         public double Kfi
         {
             get { return this.Betrouwbaarheidsklasse.GetKfi(); }
@@ -101,12 +106,15 @@ namespace Eurocode.Grondslagen
         /// ξ (xi) is een reductiefactor voor ongunstige, blijvende belastingen G
         /// Deze wordt gebruikt in de fundamentele combinatie (6.10b) en is afhankelijk van de nationale bijlage.
         /// </summary>
+        [TableColumn("|xi|", order: 4, stringFormat: "0.00")]
         public double Xi
         {
             get { return this.NationaleBijlage.GetReductieFactorVoorOngunstigeBlijvendeBelastingen(); }
         }
 
-
+        /// <summary>
+        /// Obsolete, use Custom Attributes 'TableColumn' for export
+        /// </summary>
         public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>()
         {
             { "NationaleBijlage", "Eurocode [NB]"},
@@ -117,12 +125,16 @@ namespace Eurocode.Grondslagen
             { "Xi", "ξ" },
         };
 
+
+        /// <summary>
+        /// Obsolete, generic DataTable with Custom Attributes.
+        /// </summary>
         public Dictionary<string, string> RowData { get { return this.GetRowData(); } }
 
 
         public void AddToSection(Section section)
         {
-
+            //  voeg een tabel toe aan een secties.
 
             throw new NotImplementedException();
         }

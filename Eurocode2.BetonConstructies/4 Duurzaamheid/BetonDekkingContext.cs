@@ -1,4 +1,5 @@
 ﻿using Eurocode.Grondslagen;
+using ExportFactory.Shared;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
@@ -10,6 +11,12 @@ namespace Eurocode.BetonConstructies
         /// Referentie naar de context uit de Eurocode1
         /// </summary>
         public GrondslagenContext Grondslagen;
+
+        public BetonDekkingContext()
+        {
+            Grondslagen = new();
+            Beton = new();
+        }
 
         public BetonDekkingContext(GrondslagenContext grondslagen, BetonContext beton)
         {
@@ -47,6 +54,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Naam van de betondekking context, bijvoorbeeld 'bovenzijde' of 'onderzijde' 
         /// </summary>
+        [TableColumn("Positie", order: -2)]
         public string Naam { get; set; } = "Mijn dekkingscontext";
 
 
@@ -73,11 +81,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien plaatgeometrie van toepassing dan een vermindering van 1 op de constructieklasse.
         /// </summary>
+        [TableColumn("Plaatgeometrie?")]
         public bool IsPlaatGeometrie { get; set; }
 
         /// <summary>
         /// Indien specifieke kwaliteitsbeheersing (bijvoorbeeld bij prefab beton) vermindering met 1 op constructieklasse.
         /// </summary>
+        [TableColumn("Kwaliteitsbeheersing?")]
         public bool IsKwaliteitsBeheersing { get; set; }
 
         /// <summary>
@@ -86,11 +96,12 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         //public IEnumerable<MilieuklasseEnum> Milieuklassen { get; set; } = [MilieuklasseEnum.XC3];
 
+
         public IEnumerable<MilieuklasseEnum> Milieuklassen = [MilieuklasseEnum.XC1];
 
         public IEnumerable<Eurocode.BetonConstructies.MilieuklasseEnum> SelectedMilieuklassen = [];
 
-
+        [TableColumn("Milieuklasse")]
         public string MilieuklassenUserFriendlyName
         {
             get
@@ -111,6 +122,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// De nominale betondekking (c,nom) is de minimale betondekking inclusief uitvoeringstoleranties (Δc,dev)
         /// </summary>
+        [TableColumn("c~nom~")]
         public double BetondekkingNominaal
         {
             get { return this.GetDekkingNominaal(); }
@@ -131,6 +143,7 @@ namespace Eurocode.BetonConstructies
         /// - voldoende brandwerendheid (zie EN 1992-1-2)
         /// zie 4.4.1.2
         /// </summary>
+        [TableColumn("c~min~")]
         public double BetondekkingMin
         {
             get { return this.GetMinimaleBetondekking(); }
@@ -154,6 +167,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Verhoging van de dekking tbv uitvoeringstoleranties (Δc,dev) volgens 4.4.1.3 (1)
         /// </summary>
+        [TableColumn("|delta|c~dev~")]
         public double BetondekkingMinUitvoeringsToleranties { get { return this.Grondslagen.NationaleBijlage.GetUitvoeringstoleraties(); } }
 
         /// <summary>

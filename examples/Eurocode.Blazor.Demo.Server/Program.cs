@@ -18,6 +18,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddFluentUIComponents();
 builder.Services.AddFluentUIDemoServerServices();
 
+builder.Services.AddScoped<ExportFactory.Services.MigraDocCreator>();
+
 builder.Services.AddScoped<DataSource>();
 
 builder.Services.AddCascadingValue(sp =>

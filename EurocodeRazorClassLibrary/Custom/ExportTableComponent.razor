@@ -1,0 +1,177 @@
+﻿@using ExportFactory.Services
+@using ExportFactory.Extensions
+@using System.Text
+@using MigraDoc.Rendering
+@using MigraDoc.RtfRendering
+
+
+@typeparam T where T : class
+@inject MigraDocCreator MigraDocCreator
+@inject IJSRuntime JSRuntime
+
+
+<h6>Exporteer</h6>
+<FluentButton OnClick="ExportData">Export Data</FluentButton>
+<div style="display:block; height:120px;">
+    <FluentSelect Label="Selecteer formaat:"
+                  TOption="Option<string>"
+                  Multiple="true"
+                  Items="stringOptions2"
+                  OptionText="@(i => i.Text)"
+                  OptionValue="@(i => i.Value)"
+                  OptionSelected="@(i => i.Selected)"
+                  @bind-SelectedOptions="@selectedStrings" />
+</div>
+
+
+
+
+
+
+
+
+
+@if (html != null)
+{
+    <div>@((MarkupString)html)</div>
+}
+
+
+@code {
+    private string? html;
+    IEnumerable<Option<string>>? selectedStrings;
+
+    static List<Option<string>> stringOptions2 = new()
+    {
+        { new Option<string> { Value = "1", Text = "HTML", Selected = true } },
+        { new Option<string> { Value = "2", Text = "PDF", Selected = true } },
+        { new Option<string> { Value = "3", Text = "RTF", Selected = false } },
+
+
+    };
+
+    private string selectedFormat = "HTML";
+
+    [Parameter]
+    public IEnumerable<T>? Data { get; set; }
+
+    //[Parameter]
+    //public required Type DataType{ get; set; }
+
+    [Parameter]
+    public T? Item{ get; set; }
+
+
+    // Method to export data
+    private async Task ExportData()
+    {
+        if (Data == null || !Data.Any())
+        {
+            // Optionally handle empty data or show a message
+
+            // Single item?
+            if (Item != null)
+            {
+                Data = [Item];
+            }
+            else
+            {
+                return;
+            }
+
+
+
+
+        }
+
+
+
+        //var list = ConvertToDataTypeList(Data);
+
+        List<T> list = Data.ToList<T>();
+
+        // Convert Data to DataTable
+        var dataTable = list.ToDataTable();
+        var table = dataTable.ToMigraDocTable(typeof(T));
+        var document = new MigraDoc.DocumentObjectModel.Document();
+        document.AddSection().Add(table);
+
+        // export based on selected items
+        if (selectedStrings != null)
+        {
+            if (selectedStrings.Any(option => option.Text == "PDF"))
+            {
+                // Export the document to a PDF
+                string filename = $"{typeof(T)}_Example.pdf";
+                PdfDocumentRenderer pdfRenderer = new(true);
+                pdfRenderer.Document = document;
+                pdfRenderer.RenderDocument();
+
+                var stream = new MemoryStream();
+                pdfRenderer.PdfDocument.Save(stream);
+                await DownloadFile(stream, filename, "application/pdf");
+            }
+            if (selectedStrings.Any(option => option.Text == "HTML"))
+            {
+                html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(document);
+            }
+            if (selectedStrings.Any(x => x.Text == "RTF"))
+            {
+                string filename = $"{typeof(T)}_Example.rtf";
+                RtfDocumentRenderer rtfRenderer = new();
+                var stream = new MemoryStream();
+                rtfRenderer.Render(document, stream, null);
+                await DownloadFile(stream, filename, "application/rtf");
+            }
+
+
+            // switch (selectedStrings)
+            // {
+            //     case "PDF": 
+            //         byte[] pdf = new byte[0];
+            //         DownloadFile(pdf, "data.pdf");
+            //         break;
+            //     case "HTML":
+            //         html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(document);
+            //         break;
+            // }
+
+
+
+        }
+    }
+
+
+
+
+
+    // Method to trigger file download in the browser
+    private void DownloadFile(byte[] fileContent, string fileName)
+    {
+        var fileStream = new MemoryStream(fileContent);
+        var fileUri = new Uri(fileName);
+        var contentDisposition = $"attachment; filename={fileName}";
+
+        // Using JSInterop to trigger file download
+        InvokeAsync(() => JSRuntime.InvokeVoidAsync("downloadFile", fileUri, fileContent, contentDisposition));
+    }
+
+    private void DownloadFile(string htmlContent, string fileName)
+    {
+        // If exporting to HTML, just create a downloadable file with the content
+        var fileStream = new MemoryStream(Encoding.UTF8.GetBytes(htmlContent));
+        var fileUri = new Uri(fileName);
+        var contentDisposition = $"attachment; filename={fileName}";
+
+        // Trigger the download with JSInterop
+        InvokeAsync(() => JSRuntime.InvokeVoidAsync("downloadFile", fileUri, fileStream.ToArray(), contentDisposition));
+    }
+
+    private async Task DownloadFile(MemoryStream stream, string fileName, string contentType){
+        // file content (any stream)
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", stream.ToArray(), fileName, contentType);
+    }
+
+
+
+}

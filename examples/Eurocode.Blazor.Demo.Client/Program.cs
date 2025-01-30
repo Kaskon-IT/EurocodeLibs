@@ -1,6 +1,7 @@
 using Eurocode.Blazor.Demo.Shared;
 using Eurocode.Blazor.Demo.Shared.Extensions;
 using Eurocode.Blazor.Demo.Shared.SampleData;
+using ExportFactory.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
@@ -13,7 +14,12 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddFluentUIComponents();
 builder.Services.AddFluentUIDemoClientServices();
+builder.Services.AddScoped<MigraDocCreator>();
+//builder.Services.AddSingleton<MigraDocCreator>();
+//builder.Services.AddTransient<MigraDocCreator>();
+
 
 builder.Services.AddScoped<DataSource>();
+
 
 await builder.Build().RunAsync();

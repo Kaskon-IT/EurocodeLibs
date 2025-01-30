@@ -1,4 +1,6 @@
-﻿namespace Eurocode.BetonConstructies
+﻿using ExportFactory.Shared;
+
+namespace Eurocode.BetonConstructies
 {
     /// <summary>
     /// 3 Materialen
@@ -51,6 +53,7 @@
         /// <summary>
         /// 3.1.2 (6) Het soort cement.
         /// </summary>
+        [TableColumn("Cement")]
         public CementklasseEnum? CementKlasse { get; set; }
 
         public double CoefficientCementKlasse
@@ -82,6 +85,7 @@
 
         public BetonsterkteklasseEnum? Betonsterkteklasse { get; set; } = BetonsterkteklasseEnum.C40_50;
 
+        [TableColumn("Sterkteklasse")]
         public string BetonSterkteKlasseGebruiksvriendelijkeNaam
         {
             get
