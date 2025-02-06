@@ -1,0 +1,21 @@
+﻿@implements IDialogContentComponent<string>
+@using Microsoft.FluentUI.AspNetCore.Components
+
+
+
+<FluentDialogBody>
+
+    <!-- Render the raw HTML string here using MarkupString -->
+    <div>@((MarkupString)Content)</div>
+
+   
+   
+</FluentDialogBody>
+
+@code {
+    [Parameter]
+    public string Content { get; set; } = default!;
+
+    
+
+}

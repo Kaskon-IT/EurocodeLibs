@@ -12,17 +12,17 @@ namespace Eurocode.Grondslagen
         /// <summary>
         /// Reliability Class 1 (betrouwbaarheidsklasse) 
         /// </summary>
-        [Description("RC1 (Reliability Class 1)")]
+        [Description("RC1")]
         RC1 = 1,
         /// <summary>
         /// Reliability Class 2 (betrouwbaarheidsklasse) 
         /// </summary>
-        [Description("RC2 (Reliability Class 2)")]
+        [Description("RC2")]
         RC2 = 2,
         /// <summary>
         /// Reliability Class 3 (betrouwbaarheidsklasse) 
         /// </summary>
-        [Description("RC3 (Reliability Class 3)")]
+        [Description("RC3")]
         RC3 = 3,
     }
 

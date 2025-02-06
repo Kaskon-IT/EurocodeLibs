@@ -1,13 +1,14 @@
 ﻿namespace ExportFactory.Services
 {
     using MigraDoc.DocumentObjectModel;
+    using MigraDoc.DocumentObjectModel.Fields;
     using MigraDoc.DocumentObjectModel.Tables;
     using System.Text;
 
     public class HtmlCreator
     {
         // Methode om HTML te genereren van een MigraDoc Document
-        public static string GenerateHtmlFromDocument(Document document, bool centered = true)
+        public static string GenerateHtmlFromDocument(Document document, bool centered = !true)
         {
             StringBuilder htmlBuilder = new StringBuilder();
 
@@ -23,24 +24,36 @@
 
             // Voeg een stijl toe aan de pagina (CSS)
             htmlBuilder.AppendLine("<style>");
-            htmlBuilder.AppendLine($"body {{ font-family: {fontFamily}, sans-serif; line-height: 1.6; }}");
-            htmlBuilder.AppendLine("h1 { font-size: 2.5em; }");
-            htmlBuilder.AppendLine("h2 { font-size: 2em;  }");
-            htmlBuilder.AppendLine("h3 { font-size: 1.75em; }");
-            htmlBuilder.AppendLine("h4 { font-size: 1.5em;  }");
-            htmlBuilder.AppendLine($"p {{ margin: 10px 0; font-size: 1.1em; font-family:{fontFamily}; line-height: 1.6; }}");
-            htmlBuilder.AppendLine("b { font-weight: bold; }");
-            htmlBuilder.AppendLine("i { font-style: italic; }");
-            htmlBuilder.AppendLine("sub { font-size: 0.8em; vertical-align: sub; }");
-            htmlBuilder.AppendLine("sup { font-size: 0.8em; vertical-align: super; }");
-            htmlBuilder.AppendLine("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
-            //htmlBuilder.AppendLine("table, th, td { border: 1px solid #ddd; }");
-            htmlBuilder.AppendLine("th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f4f4f4; }");
-            //htmlBuilder.AppendLine("th { background-color: #f4f4f4; font-weight: bold; }");
-            htmlBuilder.AppendLine("img { max-width: 100%; height: auto; display: block; margin: 20px 0; }");
-            htmlBuilder.AppendLine("</style>");
+            //htmlBuilder.AppendLine($"body {{ font-family: {fontFamily}, sans-serif; line-height: 1.6; }}");
+            //htmlBuilder.AppendLine("h1 { font-size: 2.5em; background-color:var(--fluent-color-background); }");
+            //htmlBuilder.AppendLine("h2 { font-size: 2em;  }");
+            //htmlBuilder.AppendLine("h3 { font-size: 1.75em; }");
+            //htmlBuilder.AppendLine("h4 { font-size: 1.5em;  }");
+            //htmlBuilder.AppendLine("hr { border: 1px solid; width: 100%; margin: 10px auto; }");
+            //htmlBuilder.AppendLine(".document-title { font-size: 4em; font-weight: bold; margin-top: 20px; margin-bottom: 20px; line-height: initial;}");
+            //htmlBuilder.AppendLine(".document-subtitle { font-size: 1.75em; font-style: italic;}");
+            //htmlBuilder.AppendLine(".to-toc-btn { position: fixed; bottom: 15px; right: 45px; z-index: 1000; padding: 15px 15px;cursor:pointer;}");
 
+
+
+            //htmlBuilder.AppendLine($"p {{ margin: 10px 0; font-size: 1.1em; font-family:{fontFamily}; line-height: 1.6; }}");
+            //htmlBuilder.AppendLine("b { font-weight: bold; }");
+            //htmlBuilder.AppendLine("i { font-style: italic; }");
+            //htmlBuilder.AppendLine("sub { font-size: 0.8em; vertical-align: sub; }");
+            //htmlBuilder.AppendLine("sup { font-size: 0.8em; vertical-align: super; }");
+            //htmlBuilder.AppendLine("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
+
+            // //htmlBuilder.AppendLine("table, th, td { border: 1px solid #ddd; }");
+            //htmlBuilder.AppendLine("th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f4f4f4; }");
+            //htmlBuilder.AppendLine("th { background-color: #f4f4f4; font-weight: bold; }");
+            // htmlBuilder.AppendLine("img { max-width: 100%; height: auto; display: block; margin: 20px 0; }");
+
+
+
+
+            htmlBuilder.AppendLine("</style>");
             htmlBuilder.AppendLine("</head>");
+            htmlBuilder.AppendLine("<script>function scrollToToc() { document.getElementById('toc-embvg01f').scrollIntoView({ behavior: 'smooth' });  }</script>");
             htmlBuilder.AppendLine("<body>");
 
 
@@ -49,7 +62,7 @@
             string containerStyle = centered ? "text-align: center; margin: 0 auto; max-width: 680px;" : "text-align: left; max-width: 680px;";
 
             // Wrap the entire content in a container with the appropriate style
-            htmlBuilder.Append($"<div style='{containerStyle} {fontStyleString}'>");
+            htmlBuilder.Append($"<div class='preview-container'>");
 
             // TOC
             //htmlBuilder.Append(GenerateHtmlFromBookmarks(document));
@@ -57,43 +70,74 @@
 
 
             // Loop door de secties en paragrafen in het document
+            bool inhoudsopgaveIsVerwerkt = false;
             foreach (Section section in document.Sections)
             {
                 foreach (var element in section.Elements)
                 {
-
+                    string bookmarkId = "";
 
                     // Als het een paragraaf is
                     if (element is Paragraph paragraph)
                     {
+                        if (paragraph.Elements.LastObject is BookmarkField bookmarkField)
+                        {
+                            bookmarkId = $"id='{bookmarkField.Name}'";
+                        }
+
+
                         switch (paragraph.Style)
                         {
                             case "Title":
+                                htmlBuilder.AppendLine("<h1 class='document-title'>" + ProcessParagraph(paragraph) + "</h1>");
+                                break;
                             case "Heading1":
                             case "Heading 1":
                             case "Kop 1":
-                                htmlBuilder.AppendLine("<h1>" + ProcessParagraph(paragraph) + "</h1>");
 
-                                if (paragraph.Elements.First != null && paragraph.Elements.First is Text text)
+
+
+
+
+                                if (!inhoudsopgaveIsVerwerkt &&
+                                    paragraph.Elements.First != null &&
+                                    paragraph.Elements.First is Text text)
                                 {
                                     if (text.Content.ToLower() == "inhoudsopgave")
                                     {
                                         // TOC hyperlinks
+
+                                        // The button that will scroll to the TOC
+                                        htmlBuilder.Append("<div id='toc-embvg01f'>");
+                                        htmlBuilder.AppendLine($"<h1 class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
+                                        htmlBuilder.Append("<a class='to-toc-btn' onclick='scrollToToc()'>Naar Inhoudsopgave</a>");
                                         htmlBuilder.Append(GenerateHtmlFromBookmarks(document));
+                                        htmlBuilder.Append("</div>");
                                     }
+                                    // vanaf nu niet meer in deze if-statement, geef aan dat toc is verwerkt.
+                                    inhoudsopgaveIsVerwerkt = true;
+                                }
+                                else
+                                {
+                                    //htmlBuilder.AppendLine("<hr />");
+                                    htmlBuilder.AppendLine($"<h1 {bookmarkId} class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
                                 }
 
                                 break;
 
                             case "Subtitle":
+                                htmlBuilder.AppendLine("<h2 class='document-subtitle'>" + ProcessParagraph(paragraph) + "</h2>");
+                                break;
                             case "Heading2":
                             case "Heading 2":
                             case "Kop 2":
-                                htmlBuilder.AppendLine("<h2>" + ProcessParagraph(paragraph) + "</h2>");
+
+
+                                htmlBuilder.AppendLine($"<h2 {bookmarkId} class='kop2'>" + ProcessParagraph(paragraph) + "</h2>");
                                 break;
 
                             default:
-                                htmlBuilder.AppendLine("<p>" + ProcessParagraph(paragraph) + "</p>");
+                                htmlBuilder.AppendLine("<p class='ec-par'>" + ProcessParagraph(paragraph) + "</p>");
                                 break;
                         }
 
@@ -102,16 +146,16 @@
                     // Als het een tabel is
                     else if (element is Table table)
                     {
-                        htmlBuilder.AppendLine("<table class='fluent-data-grid grid'>");
+                        htmlBuilder.AppendLine("<table class='ec-table fluent-data-gridXX gridXX'>");
                         var index = 0;
                         foreach (Row row in table.Rows)
                         {
                             if (index == 0)
                             {
-                                htmlBuilder.AppendLine("<thead>");
+                                htmlBuilder.AppendLine("<thead class='ec-table-head'>");
                             }
 
-                            htmlBuilder.AppendLine("<tr class='fluent-data-grid-row'>");
+                            htmlBuilder.AppendLine("<tr class='ec-table-row fluent-data-grid-rowXX'>");
                             foreach (Cell cell in row.Cells)
                             {
                                 Paragraph cellPar = null;
@@ -170,6 +214,7 @@
             var htmlContent = new StringBuilder();
 
             // Loop through sections and their elements to find bookmarks
+            //int index = 0;
             foreach (var item in document.Sections)
             {
                 if (item is Section section)
@@ -200,7 +245,7 @@
                                                     }
                                                 }
                                             }
-                                            htmlContent.Append($"<a id='{hyperlink.Name}' href='#{hyperlink.Name}'>{txtValue}</a><br/>");
+                                            htmlContent.Append($"<a href='#{hyperlink.Name}'>{txtValue}</a><br/>");
 
                                         }
                                     }
@@ -254,42 +299,75 @@
         // Methode om een paragraaf te verwerken en te converteren naar HTML
         public static string ProcessParagraph(Paragraph? paragraph)
         {
-            if (paragraph == null) return "";
+            if (paragraph == null)
+                return "";
+
             StringBuilder sb = new StringBuilder();
 
-            foreach (var inline in paragraph.Elements)
+            // test <svg>
+            if (paragraph.Tag != null)
             {
-                if (inline is FormattedText ft)
+                string? svgTag = paragraph.Tag.ToString();
+                if (svgTag != null)
                 {
-                    string content = "";
-                    foreach (var ftElement in ft.Elements)
+
+                    // bingo
+                    if (svgTag.StartsWith("<svg"))
                     {
-                        if (ftElement is Text ftText)
-                        {
-                            content += ftText.Content;
-                        }
+                        sb.AppendLine(svgTag);
                     }
 
 
-
-
-                    // Verwerk opmaak
-                    if (ft.Bold)
-                        content = "<b>" + content + "</b>";
-                    if (ft.Italic)
-                        content = "<i>" + content + "</i>";
-                    if (ft.Subscript)
-                        content = "<sub>" + content + "</sub>";
-                    if (ft.Superscript)
-                        content = "<sup>" + content + "</sup>";
-
-                    sb.Append(content);
-                }
-                else if (inline is Text text)
-                {
-                    sb.Append(text.Content);
                 }
             }
+            else
+            {
+                foreach (var inline in paragraph.Elements)
+                {
+                    if (inline is FormattedText ft)
+                    {
+                        string content = "";
+                        foreach (var ftElement in ft.Elements)
+                        {
+                            if (ftElement is Text ftText)
+                            {
+                                content += ftText.Content;
+                            }
+                        }
+
+
+
+
+                        // Verwerk opmaak
+                        if (ft.Bold)
+                            content = "<b>" + content + "</b>";
+                        if (ft.Italic)
+                            content = "<i>" + content + "</i>";
+                        if (ft.Subscript)
+                            content = "<sub>" + content + "</sub>";
+                        if (ft.Superscript)
+                            content = "<sup>" + content + "</sup>";
+
+                        sb.Append(content);
+                    }
+                    else if (inline is Text text)
+                    {
+                        sb.Append(text.Content);
+                    }
+                    else if (inline is Character character)
+                    {
+                        if (character.Char == '\0')
+                        {
+                            sb.Append("<br/>");
+                        }
+
+                    }
+                }
+
+            }
+
+
+
 
             return sb.ToString();
         }

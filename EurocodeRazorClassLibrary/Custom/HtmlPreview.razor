@@ -1,0 +1,62 @@
+﻿@inject IDialogService DialogService
+@using Microsoft.FluentUI.AspNetCore.Components
+
+<FluentButton @onclick="@OpenPanelRightAsync" Appearance="Appearance.Accent">
+    Preview
+</FluentButton>
+
+
+
+
+
+
+@code{
+    [Parameter] 
+    public string HtmlContent { get; set; } = default!;
+
+    
+
+
+    private IDialogReference? _dialog;
+
+
+    private async Task OpenPanelRightAsync()
+    {
+        
+        _dialog = await DialogService.ShowPanelAsync<SimplePanel>(HtmlContent, new DialogParameters<string>()
+            {
+                Content = HtmlContent,
+                Alignment = HorizontalAlignment.Right,
+                Title = $"Document Preview",
+                ShowTitle = true,
+                PrimaryAction = null,
+                SecondaryAction = null,
+                Width = "90%",
+                Height = "100%"
+            });
+        DialogResult result = await _dialog.Result;
+        HandlePanel(result);
+
+    }
+
+    private static void HandlePanel(DialogResult result)
+    {
+        if (result.Cancelled)
+        {
+            return;
+        }
+
+        
+
+
+        if (result.Data is not null)
+        {
+            if (result.Data is string str)
+            {
+                
+            }
+
+            return;
+        }
+    }
+}

@@ -7,6 +7,25 @@
 
     public class HeadingContent : SectionElement
     {
+        public HeadingContent() { }
+
+        public HeadingContent(string text, int level)
+        {
+            Text = text;
+            Style = $"Kop {level}";
+            AddToTOC = (level == 1 || level == 2);
+            Level = level;
+        }
+
+
+        public HeadingContent(string text, string style, bool addToTOC, int level)
+        {
+            Text = text;
+            Style = style;
+            AddToTOC = addToTOC;
+            Level = level;
+        }
+
         public string Text { get; set; } = "Untitled Heading";
         public string Style { get; set; } = "Normal";
         public bool AddToTOC { get; set; } = true; // optional set to false to skip from TOC
@@ -18,6 +37,13 @@
 
     public class ParagraphContent : SectionElement
     {
+        public ParagraphContent() { }
+
+        public ParagraphContent(string markdown)
+        {
+            Markdown = markdown;
+        }
+
         public string Markdown { get; set; } = ""; // Markdown string for formatting
         public string Style { get; set; } = "Normal"; // Default style
     }

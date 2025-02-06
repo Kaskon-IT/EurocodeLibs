@@ -5,45 +5,68 @@
 <h3>Grondslagen voor de berekening (EC 0)</h3>
 
 
-<FluentSelectEnum Label="Nationale bijlage" Placeholder="Selecteer..." TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
-ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
-<p>
-    @*    Selectie: @Model.NationaleBijlage.ToString()&nbsp; *@
-
-    @if (Model != null && Model.NationaleBijlage != null)
-    {
-
-        <img class="flag" src="Flags/@(Model.NationaleBijlage.ToString().ToLower()).svg" alt="Land vlag" />
-    }
-</p>
 
 
-<FluentSelectEnum Label="Gevolgklasse (Consequence Class)" 
-Placeholder="Selecteer..." 
-TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
-ShowDescription="false"
-@bind-EnumSelectedValue="@Model.Gevolgklasse" />
 
-<FluentSelectEnum Label="Ontwerplevensduur" 
-TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum" 
-@bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
+<FluentGrid>
+    <FluentGridItem xs="0">
+        <FluentSelectEnum Label="Nationale bijlage" Placeholder="Selecteer..." TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
+        ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
+        @* <p> *@
+        @*    Selectie: @Model.NationaleBijlage.ToString()&nbsp; *@
+
+        @* @if (Model != null && Model.NationaleBijlage != null) *@
+        @* { *@
+
+        @* <img style="width:40px;" src="Flags/@(Model.NationaleBijlage.ToString().ToLower()).svg" alt="Land vlag" /> *@
+        @* } *@
+        @* </p> *@
+    </FluentGridItem>
+
+    <FluentGridItem xs="0">
+        <FluentSelectEnum Label="Gevolgklasse (Consequence Class)" 
+        Placeholder="Selecteer..." 
+        TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
+        ShowDescription="false"
+        @bind-EnumSelectedValue="@Model.Gevolgklasse" />
+    </FluentGridItem>
+
+    <FluentGridItem xs="0">
+        <FluentSelectEnum Label="Ontwerplevensduur" 
+        TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum" 
+        @bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
+    </FluentGridItem>
+
+</FluentGrid>
+
+@if (ToonGevolgEigenschappen)
+{
 
 
-<FluentTextField    Label="Betrouwbaarheidsklasse" 
-Value="@Model.Betrouwbaarheidsklasse.ToString()" 
-ReadOnly="true" 
-Appearance="FluentInputAppearance.Filled" />
+    <FluentGrid>
+        <FluentGridItem xs="0">
+            <FluentTextField    Label="Betrouwbaarheidsklasse" 
+            Value="@Model.Betrouwbaarheidsklasse.ToString()" 
+            ReadOnly="true" 
+            Appearance="FluentInputAppearance.Filled" />
+        </FluentGridItem>
 
-<FluentTextField    Label="K,FI" 
-Value="@Model.Kfi.ToString("0.0")" 
-ReadOnly="true" 
-Appearance="FluentInputAppearance.Filled" />
+        <FluentGridItem xs="0">
+            <FluentTextField    Label="K,FI" 
+            Value="@Model.Kfi.ToString("0.0")" 
+            ReadOnly="true" 
+            Appearance="FluentInputAppearance.Filled" />
+        </FluentGridItem>
 
-<FluentTextField    Label="ξ (Xi)" 
-Value="@Model.Xi.ToString("0.00")" 
-ReadOnly="true" 
-Appearance="FluentInputAppearance.Filled" />
+        <FluentGridItem xs="0">
+            <FluentTextField    Label="ξ (Xi)" 
+            Value="@Model.Xi.ToString("0.00")" 
+            ReadOnly="true" 
+            Appearance="FluentInputAppearance.Filled" />
+        </FluentGridItem>
 
+    </FluentGrid>
+}
 
 @* <FluentButton OnClick="() => ExportCsv()">Export CSV</FluentButton> *@
 @* <FluentButton OnClick="() => ExportCsvAsync()">Export CSV Async</FluentButton> *@
@@ -66,6 +89,9 @@ Appearance="FluentInputAppearance.Filled" />
     public required GrondslagenContext Model { get; set; }
 
     [Parameter]
+    public bool ToonGevolgEigenschappen { get; set; } = false;
+
+    [Parameter]
     public EventCallback<GrondslagenContext> ModelChanged { get; set; }
 
     async Task UpdateModel()
@@ -73,39 +99,39 @@ Appearance="FluentInputAppearance.Filled" />
         await ModelChanged.InvokeAsync(Model);
     }
 
-    private string csvContent { get; set; } = "";
-    private string? rtfContent { get; set; } = "";
+    //private string csvContent { get; set; } = "";
+    //private string? rtfContent { get; set; } = "";
 
 
-    async Task ExportPdf(){
+    //async Task ExportPdf(){
 
         // altijd bijwerken
         //await ExportCsv();
-        var pdfCreator = new CsvFactory.CsvToRtfService();
-        rtfContent = pdfCreator.CreateRtfFromCsvUsingMigradoc(csvContent: csvContent, "output.pdf");
+        //var pdfCreator = new CsvFactory.CsvToRtfService();
+        //rtfContent = pdfCreator.CreateRtfFromCsvUsingMigradoc(csvContent: csvContent, "output.pdf");
 
    
-    }
+    //}
 
 
 
-    public void ExportCsv(bool excludeHeaders = false){
-        if (Model is IExportableCsv csvExporter){
-            csvContent = csvExporter.Export(excludeHeaders);
-        }
-    }
+    // public void ExportCsv(bool excludeHeaders = false){
+    //     if (Model is IExportableCsv csvExporter){
+    //         csvContent = csvExporter.Export(excludeHeaders);
+    //     }
+    // }
 
-    async Task ExportCsvAsync(bool excludeHeaders = false){
-        if (Model is IExportableCsv csvExporter){
-            csvContent = await csvExporter.ExportAsync(excludeHeaders);
-        }
-    }
+    // async Task ExportCsvAsync(bool excludeHeaders = false){
+    //     if (Model is IExportableCsv csvExporter){
+    //         csvContent = await csvExporter.ExportAsync(excludeHeaders);
+    //     }
+    // }
 
-    public void ExportTable(){
-        if (Model is IExportableMigraDoc migraDocExporter){
-            var demo = migraDocExporter.ExportTable();
-        }
-    }
+    // public void ExportTable(){
+    //     if (Model is IExportableMigraDoc migraDocExporter){
+    //         var demo = migraDocExporter.ExportTable();
+    //     }
+    // }
 
            
 

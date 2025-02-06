@@ -8,13 +8,15 @@
 @using ExportFactory.Shared
 @using ExportFactory.Extensions
 
+@* @layout DemoMainLayout *@
+@* @inject LayoutComponentBase Layout *@ 
 
 <FluentCard Width="100%" Height="100%">
-    <h2>Hello World!</h2>
-    <FluentButton Appearance="@Appearance.Accent">Click Me</FluentButton>
+    @* <h2>Hello World!</h2> *@
+    @* <FluentButton Appearance="@Appearance.Accent">Click Me</FluentButton> *@
 
     @* Zet hier een voorbeeld voor MigraDoc VOORBLAD *@
-    <button @onclick="() => Test()">Test</button>
+    @* <button @onclick="() => Test()">Test</button> *@
 
     <FluentTextField Label="Font-family" @bind-Value="@fontFamily"></FluentTextField>
 
@@ -24,18 +26,24 @@
     TEnum="ExportFactory.MigraDocContentModels.DocumentContent.PageMarginAndPageNumberSettingsEnum" 
     @bind-EnumSelectedValue="pageSetting" />
 
-    <h5>Preview HTML</h5>
-    <FluentCard>
-       @*  <FluentHeader>
+    <EurocodeRazorClassLibrary.Custom.FontSelector />
+    <EurocodeRazorClassLibrary.Custom.FontSelector CssItems=".kop1, .kop2, .document-title, .document-subtitle" Label="Headings Font" />
+
+
+    <EurocodeRazorClassLibrary.Custom.HtmlPreview HtmlContent="@GetHtml()" ></EurocodeRazorClassLibrary.Custom.HtmlPreview>
+
+    @* <h5>Preview HTML</h5> *@
+    @* <FluentCard> *@
+    @*  <FluentHeader>
             <h2>HTML Preview</h2>
         </FluentHeader> *@
-        <FluentBodyContent>
-            <div>
-                <!-- Render the raw HTML string here using MarkupString -->
-                <div>@((MarkupString)htmlString)</div>
-            </div>
-        </FluentBodyContent>
-    </FluentCard>
+    @* <FluentBodyContent> *@
+    @* <div> *@
+    <!-- Render the raw HTML string here using MarkupString -->
+    @* <div>@((MarkupString)htmlString)</div> *@
+    @* </div> *@
+    @* </FluentBodyContent> *@
+    @* </FluentCard> *@
 
 
 
@@ -47,6 +55,19 @@
 @code{
     [CascadingParameter]
     public SampleProject? SampleProject { get; set; }
+
+    //[CascadingParameter]
+    //public Eurocode.Blazor.Demo.Shared.Shared.ILayoutState? Layout { get; set; }
+
+    // private void SetLoading()
+    // {
+    //     if (Layout != null)
+    //     {
+    //         Layout.SetLoadingState(!true);  // Call the method on the layout
+    //     }
+    // }
+
+
 
     public string fontFamily { get; set; } = "Verdana";
     public int fontSize { get; set; } = 9;
@@ -117,8 +138,26 @@
     }
 
 
+    public string GetHtml(){
+        var content = ExampleDocumentContent.GetExampleDocumentContent(fontFamily, fontSize, pageSetting);
+        var document = MigraDocCreator.GenerateDocument(content);
+        return (HtmlCreator.GenerateHtmlFromDocument(document));
+    }
+
 
     public void TestDoc(){
+
+
+        // Access the layout and set loading state
+        //var layout = (DemoMainLayout)Layout;  // Replace `YourLayoutType` with your actual layout type
+        //layout.SetLoadingState(true);  // Show the loading progress ring
+
+        
+        
+        
+
+
+
 
         var content = ExampleDocumentContent.GetExampleDocumentContent(fontFamily, fontSize, pageSetting);
 
@@ -181,6 +220,11 @@
 
         htmlString = html;
 
+
+       
+
+        // Hide the loading progress ring
+        //layout.SetLoadingState(false);
 
 
         PdfTableGenerator tableGen = new();

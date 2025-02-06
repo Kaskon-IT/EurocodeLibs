@@ -5,6 +5,8 @@
 {
     <EurocodeGrondslagen @bind-Model="@SampleProject.Grondslagen" />
 
+    <EurocodeRazorClassLibrary.Custom.HtmlPreview HtmlContent="@GetHtml()"></EurocodeRazorClassLibrary.Custom.HtmlPreview>
+
     <ExportTableComponent T="@Eurocode.Grondslagen.GrondslagenContext" Item="@SampleProject.Grondslagen"></ExportTableComponent>
 
 
@@ -30,6 +32,23 @@
     public SampleProject? SampleProject { get; set; }
 
     private string html { get; set; } = "";
+
+    public string GetHtml(){
+        string returnVal = "";
+        if (SampleProject != null)
+        {
+            List<Eurocode.Grondslagen.GrondslagenContext> list = [SampleProject.Grondslagen];
+            var dt = list.ToDataTable<Eurocode.Grondslagen.GrondslagenContext>();
+            var table = dt.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext));
+            MigraDoc.DocumentObjectModel.Document document = new();
+            document.AddSection().Add(table);
+            returnVal = HtmlCreator.GenerateHtmlFromDocument(document);
+
+        }
+        return returnVal;
+
+    }
+
 
     public void Export(){
 

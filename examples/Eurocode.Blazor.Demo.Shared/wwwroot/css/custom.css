@@ -1,0 +1,87 @@
+﻿.preview-container {
+    text-align: left; 
+    max-width: 1400px;
+    padding-right: 20px;
+}
+
+
+.ec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.ec-table-borderless{
+
+}
+
+.ec-table-head {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.ec-table-row {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+
+
+
+
+.kop1 {
+    font-size: 2.5em;
+    border-bottom: 1px solid #000; /* Underline color and thickness */
+    padding-bottom: 5px; /* Optional: space between the text and the underline */
+    background-color: var(--fluent-color-background);
+}
+
+.kop2{
+    font-size: 2em;
+}
+
+.kop3{
+    font-size: 1.75em;
+}
+
+.document-title{ 
+    font-size: 4em;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    line-height: initial;
+    /*background: var(--fluent-color-accent, #b6ff00);*/
+}
+
+.document-subtitle{
+    font-size: 1.1em;
+    font-style:italic;
+
+}
+
+.to-toc-btn{
+    position: fixed;
+    bottom: 15px;
+    right: 45px;
+    z-index: 1000;
+    padding: 15px;
+    cursor: pointer;
+}
+
+
+
+/*
+
+htmlBuilder.AppendLine($"p {{ margin: 10px 0; font-size: 1.1em; font-family:{fontFamily}; line-height: 1.6; }}");
+htmlBuilder.AppendLine("b { font-weight: bold; }");
+htmlBuilder.AppendLine("i { font-style: italic; }");
+htmlBuilder.AppendLine("sub { font-size: 0.8em; vertical-align: sub; }");
+htmlBuilder.AppendLine("sup { font-size: 0.8em; vertical-align: super; }");
+htmlBuilder.AppendLine("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
+//htmlBuilder.AppendLine("table, th, td { border: 1px solid #ddd; }");
+htmlBuilder.AppendLine("th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f4f4f4; }");
+//htmlBuilder.AppendLine("th { background-color: #f4f4f4; font-weight: bold; }");
+htmlBuilder.AppendLine("img { max-width: 100%; height: auto; display: block; margin: 20px 0; }");
+*/

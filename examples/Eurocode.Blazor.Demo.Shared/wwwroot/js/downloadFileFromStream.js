@@ -1,4 +1,4 @@
-﻿<script>
+﻿
     window.downloadFileFromStream = (stream, fileName, contentType) => {
         // Convert the stream (byte array) to a Blob
         const byteArray = new Uint8Array(stream);
@@ -18,4 +18,4 @@
     // Clean up
     document.body.removeChild(link);
     };
-</script>
+

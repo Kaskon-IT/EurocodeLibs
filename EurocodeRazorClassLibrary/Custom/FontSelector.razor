@@ -1,0 +1,78 @@
+﻿@page "/font-selector"
+@inject IJSRuntime JSRuntime
+
+@* <h3>Font Selector</h3> *@
+
+
+
+<div>
+    <label for="fontSelect">Choose a font (@Label):</label>
+    <select id="fontSelect" @onchange="OnFontChange">
+        @foreach (var font in fonts)
+        {
+            <option value="@font">@font</option>
+        }
+
+
+    </select>
+
+
+
+</div>
+
+@code {
+    [Parameter]
+    public string CssItems { get; set; } = ".ec-table, .ec-table-row, .ec-table-head, .ec-par";
+    [Parameter]
+    public string Label { get; set; } = "default";
+
+    private string selectedFont = "Arial";
+    
+    
+    private List<string> fonts = new List<string>
+    {
+        "Arial",
+        "Arial Narrow",
+        "Calibri",
+        "Consolas",
+        "Comic Sans MS",
+        "Courier New", 
+        "Georgia", 
+        "ISOCPEUR",
+        "Montserrat",
+        "Papyrus",
+        "Poppins",
+        "Times New Roman", 
+        "Verdana", 
+        "Roboto",
+        "Roboto Slab",
+    };
+
+    private async Task OnFontChange(ChangeEventArgs e)
+    {
+        selectedFont = e.Value.ToString();
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "selectedFont", selectedFont);
+        ApplyFont(selectedFont);
+    }
+
+    private async Task OnInitializedAsync()
+    {
+        var savedFont = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedFont");
+        if (!string.IsNullOrEmpty(savedFont))
+        {
+            selectedFont = savedFont;
+            ApplyFont(selectedFont);
+        }
+        else
+        {
+            selectedFont = "Arial";
+        }
+    }
+
+    private void ApplyFont(string font)
+    {
+        //var style = $"body, h1, h2, h3, p, .body-content, table, th, tr, td, label {{ font-family: {font};";
+        var style = $"{CssItems} {{ font-family: {font}}};";
+        JSRuntime.InvokeVoidAsync("applyCustomStyle", style);
+    }
+}
