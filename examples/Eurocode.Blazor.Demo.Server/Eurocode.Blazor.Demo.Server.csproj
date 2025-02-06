@@ -14,4 +14,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Eurocode.Blazor.Demo.Shared\Eurocode.Blazor.Demo.Shared.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\demo\" />
+  </ItemGroup>
 </Project>

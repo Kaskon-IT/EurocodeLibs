@@ -593,7 +593,9 @@ namespace ExportFactory.Services
                             if (imgStream != null)
                             {
                                 Console.WriteLine($"SVG converted successfully. Width: {width}, Height: {height}");
-                                AddImageFromStream(cell, imgStream);
+                                var parWithSvgImage = cell.AddParagraph();
+                                parWithSvgImage.Tag = row[i].SvgImage; // write svg to Tag for HtmlCreator.
+                                AddImageFromStream(parWithSvgImage, imgStream);
                             }
                             else
                             {
@@ -633,25 +635,26 @@ namespace ExportFactory.Services
         {
             // Convert the image stream to a Base64 string
             string base64Image = ConvertStreamToBase64(imageStream);
+            string fileName = $"base64:{base64Image}";
 
             if (target is Paragraph paragraph)
             {
                 // Add image to Paragraph
-                var image = paragraph.AddImage($"base64:{base64Image}");
+                var image = paragraph.AddImage(fileName);
                 image.LockAspectRatio = true; // Maintain the aspect ratio
                 image.Width = "9cm";          // Adjust size as needed
             }
             else if (target is Cell tableCell)
             {
                 // Add image to TableCell
-                var image = tableCell.AddImage($"base64:{base64Image}");
+                var image = tableCell.AddImage(fileName);
                 image.LockAspectRatio = true; // Maintain the aspect ratio
                 image.Width = "9cm";          // Adjust size as needed
             }
             else if (target is Section section)
             {
                 // Add image to Section
-                var image = section.AddImage($"base64:{base64Image}");
+                var image = section.AddImage(fileName);
                 image.LockAspectRatio = true;
                 image.Width = "9cm";
             }
