@@ -139,8 +139,13 @@
 
 
     public string GetHtml(){
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
+        //Console.WriteLine($"Demo document wordt geladen ({DateTime.Now})");
         var content = ExampleDocumentContent.GetExampleDocumentContent(fontFamily, fontSize, pageSetting);
         var document = MigraDocCreator.GenerateDocument(content);
+        stopwatch.Stop();
+        Console.WriteLine($"Demo geladen ({stopwatch.ElapsedMilliseconds} ms)");
         return (HtmlCreator.GenerateHtmlFromDocument(document));
     }
 
@@ -152,9 +157,9 @@
         //var layout = (DemoMainLayout)Layout;  // Replace `YourLayoutType` with your actual layout type
         //layout.SetLoadingState(true);  // Show the loading progress ring
 
-        
-        
-        
+
+
+
 
 
 
@@ -188,7 +193,7 @@
             section.Add(table);
         }
 
-
+        var fileName = @"wwwroot/demo/sample-document";
 
         // Render the document
         var renderer = new PdfDocumentRenderer(true) 
@@ -196,20 +201,21 @@
             Document = document 
         };
         renderer.RenderDocument();
-        renderer.PdfDocument.Save("SampleDocument.pdf");
+        renderer.PdfDocument.Save(fileName+".pdf");
 
 
 
         //Save the document as RTF
         var migraDocRtf = new MigraDoc.RtfRendering.RtfDocumentRenderer();
-        migraDocRtf.Render(document, "SampleDocument.rtf", null);
-        var rtfString = migraDocRtf.RenderToString(document, null);
+        migraDocRtf.Render(document, fileName + ".rtf", null);
+        
+        //var rtfString = migraDocRtf.RenderToString(document, null);
         //var rtfClean = rtfString.Replace(@"\\", @"\");
-        var h1 = rtfString.Replace("Heading1", "Kop 1");
-        var h2 = h1.Replace("Heading2", "Kop 2");
+        //var h1 = rtfString.Replace("Heading1", "Kop 1");
+        //var h2 = h1.Replace("Heading2", "Kop 2");
 
 
-        var test = h2;
+        //var test = h2;
 
 
         // HTML
@@ -227,8 +233,8 @@
         //layout.SetLoadingState(false);
 
 
-        PdfTableGenerator tableGen = new();
-        tableGen.MakeDemoTable(Persons);
+        //PdfTableGenerator tableGen = new();
+        //tableGen.MakeDemoTable(Persons);
 
 
         

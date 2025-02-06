@@ -13,6 +13,7 @@
               AdditionalAttributes="@AdditionalAttributes"
               Disabled ="@Disabled"
               Width = "@Width"
+              Style = "@Style"
               Multiple ="@Multiple"/>
 @code {
     [Parameter] public TEnum? EnumSelectedValue { get; set; }
@@ -26,6 +27,7 @@
     private bool Multiple = false; // geen multiple mogelijk
     [Parameter] public bool Disabled { get; set; } = false;
     [Parameter] public string? Width { get; set; } = null;
+    [Parameter] public string? Style { get; set; } = "max-height: 200px;";
 
 
     private Option<int> _selectedIntOption { get; set; } = new();

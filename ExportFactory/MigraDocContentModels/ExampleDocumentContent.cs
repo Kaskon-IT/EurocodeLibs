@@ -81,7 +81,7 @@ namespace ExportFactory.MigraDocContentModels
 
 
 
-        public static DocumentContent GetExampleDocumentContent(string fontFamily, int fontSize, DocumentContent.PageMarginAndPageNumberSettingsEnum? pageMarginSetting)
+        public static DocumentContent GetExampleDocumentContent(string fontFamily = "Consolas", int fontSize = 9, DocumentContent.PageMarginAndPageNumberSettingsEnum? pageMarginSetting = DocumentContent.PageMarginAndPageNumberSettingsEnum.MargeLinks_PaginaNummerRechts)
         {
             Font font = new Font(fontFamily, Unit.FromPoint(fontSize));
             font.Color = Colors.Black;

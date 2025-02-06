@@ -28,20 +28,7 @@ public class DemoNavProvider
                 title: "Home"
             ),
 
-            new NavGroup(
-                icon: new Icons.Regular.Size20.PersonRunning(),
-                title: "Getting Started",
-                expanded: !true,
-                gap: Gap,
-                children:
-                [
-                    new NavLink(
-                        href: "/WhatsNew",
-                        icon: new Icons.Regular.Size20.Info(),
-                        title: "What's new"
-                    ),
-                ]
-            ),
+
 
 
 
@@ -162,33 +149,20 @@ public class DemoNavProvider
 
             new NavGroup(
                 icon: new Icons.Regular.Size20.Beaker(),
-                title: "Incubation lab",
+                title: "Test lab",
                 expanded: false,
                 gap: "10px",
                 children:
                 [
-                    new NavLink(
-                        href: "/Lab/Overview",
-                        icon: new Icons.Regular.Size20.Beaker(),
-                        title: "Overview"
-                    ),
+
 
                     new NavLink(
-                        href: "/Lab/MarkdownSection",
+                        href: "/lab/datagrid-test-lab",
                         icon: new Icons.Regular.Size20.ArrowSortDown(),
-                        title: "MarkdownSection"
+                        title: "DataGrid"
                     ),
 
-                    new NavLink(
-                        href: "/Lab/TableOfContents",
-                        icon: new Icons.Regular.Size20.DocumentTextLink(),
-                        title: "TableOfContents"
-                    ),
-                    new NavLink(
-                        href: "/issue-tester",
-                        icon: new Icons.Regular.Size20.WrenchScrewdriver(),
-                        title: "Issue Tester"
-                    ),
+
                 ]
             )
         ];

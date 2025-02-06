@@ -1,0 +1,22 @@
+﻿
+<FluentCard Height="auto" Width="auto">
+    <h3>Document voorbeeld</h3>
+    <p>Bekijk een voorbeeld (Weblayout) van het document of download het document in het gewenste formaat.</p>
+ 
+    <FluentStack>
+        <HtmlPreview HtmlContent="@CreateHtml()" />
+        <ExportDocumentComponent Document="@Document" />
+    </FluentStack>
+
+</FluentCard>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public MigraDoc.DocumentObjectModel.Document Document { get; set; } = new();
+
+    public string CreateHtml(){
+        return ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(Document);
+    }
+
+}
