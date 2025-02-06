@@ -33,21 +33,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="BetonProfielen">
-      <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\BetonProfielen.dll</HintPath>
-    </Reference>
-    <Reference Include="Kaskon_it.Algemeen">
-      <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\Kaskon_it.Algemeen.dll</HintPath>
-    </Reference>
-    <Reference Include="ParametrischeProfielen">
-      <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\ParametrischeProfielen.dll</HintPath>
-    </Reference>   
-	  <!--UPDATE 8:07-->
+    <None Include="wwwroot\js\downloadFile.js" />
+    <None Include="wwwroot\js\downloadFileFromStream.js" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\js\downloadFile.js" />
-    <None Include="wwwroot\js\downloadFileFromStream.js" />
+    <Reference Include="BetonProfielen">
+      <HintPath>..\examples\Eurocode.Blazor.Demo.Shared\wwwroot\libs\BetonProfielen.dll</HintPath>
+    </Reference>
+    <Reference Include="Kaskon_it.Algemeen">
+      <HintPath>..\examples\Eurocode.Blazor.Demo.Shared\wwwroot\libs\Kaskon_it.Algemeen.dll</HintPath>
+    </Reference>
+    <Reference Include="ParametrischeProfielen">
+      <HintPath>..\examples\Eurocode.Blazor.Demo.Shared\wwwroot\libs\ParametrischeProfielen.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
