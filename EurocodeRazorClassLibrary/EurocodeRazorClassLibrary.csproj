@@ -41,7 +41,8 @@
     </Reference>
     <Reference Include="ParametrischeProfielen">
       <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\ParametrischeProfielen.dll</HintPath>
-    </Reference>
+    </Reference>   
+	  <!--UPDATE 8:07-->
   </ItemGroup>
 
   <ItemGroup>
