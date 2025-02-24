@@ -14,7 +14,19 @@
     [Parameter] 
     public string HtmlContent { get; set; } = default!;
 
-    
+    [Parameter] 
+    public EventCallback OnGenerateNewHtmlContent { get; set; }
+
+    private async void HandleGenerateNewHtmlContent()
+    {
+        // Notify the parent to regenerate the document
+        await OnGenerateNewHtmlContent.InvokeAsync();
+
+        await Task.Delay(200);
+
+        StateHasChanged();
+    }
+
 
 
     private IDialogReference? _dialog;
@@ -22,7 +34,14 @@
 
     private async Task OpenPanelRightAsync()
     {
-        
+        // first send message to parent to get an updated content
+        HandleGenerateNewHtmlContent();
+
+        // snap er niks van
+        await Task.Delay(200);
+
+       
+
         _dialog = await DialogService.ShowPanelAsync<SimplePanel>(HtmlContent, new DialogParameters<string>()
             {
                 Content = HtmlContent,

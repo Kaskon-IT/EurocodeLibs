@@ -93,10 +93,26 @@
 
     [Parameter]
     public EventCallback<GrondslagenContext> ModelChanged { get; set; }
+    
+
+
+
+
+
+    private async Task OnInputChanged()
+    {
+        // Trigger the event to notify the parent of the model change
+        await ModelChanged.InvokeAsync(Model);
+    }
+
+
+
 
     async Task UpdateModel()
     {
+        // so we can use @bind-Model
         await ModelChanged.InvokeAsync(Model);
+        
     }
 
     //private string csvContent { get; set; } = "";

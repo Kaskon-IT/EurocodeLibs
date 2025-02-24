@@ -2,10 +2,10 @@
 <FluentCard Height="auto" Width="auto">
     <h3>Document voorbeeld</h3>
     <p>Bekijk een voorbeeld (Weblayout) van het document of download het document in het gewenste formaat.</p>
- 
+
     <FluentStack>
-        <HtmlPreview HtmlContent="@CreateHtml()" />
-        <ExportDocumentComponent Document="@Document" />
+        <HtmlPreview OnGenerateNewHtmlContent="@HandleGenerateNewHtmlContent" HtmlContent="@htmlContent" />
+        <ExportDocumentComponent OnGenerateNewDocument="@HandleGenerateNewDocument" Document="@Document" />
     </FluentStack>
 
 </FluentCard>
@@ -14,6 +14,36 @@
 @code {
     [Parameter, EditorRequired]
     public MigraDoc.DocumentObjectModel.Document Document { get; set; } = new();
+
+    [Parameter] 
+    public EventCallback OnGenerateNewDocument { get; set; }
+
+    private string htmlContent { get; set; } = "";
+
+
+
+    private void HandleGenerateNewDocument()
+    {
+        // Notify the parent to regenerate the document
+        OnGenerateNewDocument.InvokeAsync();
+    }
+
+    private async void HandleGenerateNewHtmlContent()
+    {
+        // Notify the parent to regenerate the document
+        await OnGenerateNewDocument.InvokeAsync(); 
+        htmlContent = CreateHtml(); // update de html
+
+        // wachten
+        await Task.Delay(200); // ....
+        StateHasChanged();
+
+        // again
+        htmlContent = CreateHtml();
+
+
+    }
+
 
     public string CreateHtml(){
         return ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(Document);

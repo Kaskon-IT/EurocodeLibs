@@ -3,13 +3,24 @@
 
 namespace ExportFactory.Shared
 {
+    [Flags]
+    public enum WeergaveEnum
+    {
+        Geen = 0,
+        StandaardTabel = 1,
+        DraaiTabel = 2,
+        AlleTabellen = StandaardTabel | DraaiTabel,
+    }
+
 
     [AttributeUsage(AttributeTargets.Property)]
     public class TableColumnAttribute : Attribute
     {
         public string? HeaderText { get; set; } = null;
+        public string? HeaderTextPivot { get; set; } = null;
         public string? StringFormat { get; set; } = null;
         public ParagraphAlignment Alignment { get; set; } = ParagraphAlignment.Center;
+        public WeergaveEnum Weergave { get; set; } = WeergaveEnum.AlleTabellen;
         public bool Visible { get; set; } = true;
         public double Width { get; set; } = 3.00;
         public int Order { get; set; } = -1;
@@ -19,16 +30,20 @@ namespace ExportFactory.Shared
 
         public TableColumnAttribute(
             string? headerText = null,
+            string? headerTextPivot = null,
             string? stringFormat = null,
             ParagraphAlignment alignment = ParagraphAlignment.Center,
             bool visible = true,
+            WeergaveEnum weergave = WeergaveEnum.AlleTabellen,
             double width = 3.00,
             int order = -1)
         {
             HeaderText = headerText;
+            HeaderTextPivot = headerTextPivot;
             StringFormat = stringFormat;
             Alignment = alignment;
             Visible = visible;
+            Weergave = weergave;
             Width = width;
             Order = order;
         }

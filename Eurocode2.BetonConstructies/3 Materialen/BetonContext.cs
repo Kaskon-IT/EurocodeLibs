@@ -1,4 +1,5 @@
 ﻿using ExportFactory.Shared;
+using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
 {
@@ -44,8 +45,15 @@ namespace Eurocode.BetonConstructies
         //public bool IsParabolischSpanningsRekDiagram { get; set; } = !true;
 
 
+        [TableColumn("Diagram", Order = 1, HeaderTextPivot = "Spanning-rekdiagram")]
         public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.BiLineair;
-        public enum SpanningRekDiagramType { Parabolisch, BiLineair }
+        public enum SpanningRekDiagramType
+        {
+            [Description("Parabolisch")]
+            Parabolisch,
+            [Description("Bi-Lineair")]
+            BiLineair
+        }
 
 
 
@@ -53,8 +61,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// 3.1.2 (6) Het soort cement.
         /// </summary>
-        [TableColumn("Cement")]
-        public CementklasseEnum? CementKlasse { get; set; }
+        [TableColumn("Cement", Order = 21, HeaderTextPivot = "Cement klasse")]
+        public CementklasseEnum? CementKlasse { get; set; } = CementklasseEnum.N;
 
         public double CoefficientCementKlasse
         {
@@ -85,7 +93,7 @@ namespace Eurocode.BetonConstructies
 
         public BetonsterkteklasseEnum? Betonsterkteklasse { get; set; } = BetonsterkteklasseEnum.C40_50;
 
-        [TableColumn("Sterkteklasse")]
+        [TableColumn("Betonsterkteklasse", Order = -10)]
         public string BetonSterkteKlasseGebruiksvriendelijkeNaam
         {
             get
@@ -96,9 +104,12 @@ namespace Eurocode.BetonConstructies
 
 
 
+
+
         /// <summary>
         /// De representieve cilinder druksterkte in N/mm²
         /// </summary>
+        [TableColumn("f~ck~", HeaderTextPivot = "f~ck~ karakteristieke cilinderdruksterkte van beton na 28 dagen", StringFormat = "0 N/mm²")]
         public double Fck
         {
             get
@@ -127,6 +138,7 @@ namespace Eurocode.BetonConstructies
 
 
         //(MPa)
+        [TableColumn("f~ck,cube~", HeaderTextPivot = "f~ck,cube~ karakteristieke kubusdruksterkte van beton na 28 dagen", StringFormat = "0 N/mm²")]
         public double FckCube
         {
             get
@@ -266,7 +278,11 @@ namespace Eurocode.BetonConstructies
 
         public double Rho1Max { get { return this.GetRho1Max(); } }
 
+        [TableColumn("E~cm~", HeaderTextPivot = "E~cm~ secans-elasticiteitsmodulus van beton", StringFormat = "0.## GPa")]
         public double Ecm { get { return this.GetEcm(); } }
+
+        [TableColumn("Poisson", "Poisson factor")]
+        public double PoissonFactor { get; set; } = 0.2;
 
 
         public double EpsilonC

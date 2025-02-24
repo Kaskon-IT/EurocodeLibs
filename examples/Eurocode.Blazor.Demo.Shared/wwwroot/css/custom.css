@@ -8,23 +8,59 @@
 .ec-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin-bottom: 10px;
+    border:solid 1px gray;
 }
 
 .ec-table-borderless{
 
 }
 
+.ec-th-right {
+    text-align: right;
+    padding: 0.5em;
+    border-right: solid 1px gray;
+    width: 50%;
+    font-weight: normal;
+    font-style: italic;
+}
+
+.ec-td {
+    padding: 0.5em;
+}
+
+.ec-th {
+    font-weight: normal;
+    font-style: italic;
+    padding: 0.5em;
+}
+
+
 .ec-table-head {
     padding: 8px 12px;
     text-align: left;
     border-bottom: 1px solid #f4f4f4;
+    
 }
+
+.ec-table-heading{
+    font-weight: 500;
+    font-size: 1.1em;
+    margin-bottom: 0.5em;
+    text-align: center;
+}
+
 
 .ec-table-row {
     padding: 8px 12px;
     text-align: left;
-    border-bottom: 1px solid #f4f4f4;
+    border-bottom: 1px solid #929292;
+}
+
+
+.ec-table-row-pivot{
+    border-bottom: none; /* gedraaide table heeft borders right*/
+    border-right: 1px solid #929292;
 }
 
 .ec-par{
@@ -75,16 +111,3 @@
 
 
 
-/*
-
-htmlBuilder.AppendLine($"p {{ margin: 10px 0; font-size: 1.1em; font-family:{fontFamily}; line-height: 1.6; }}");
-htmlBuilder.AppendLine("b { font-weight: bold; }");
-htmlBuilder.AppendLine("i { font-style: italic; }");
-htmlBuilder.AppendLine("sub { font-size: 0.8em; vertical-align: sub; }");
-htmlBuilder.AppendLine("sup { font-size: 0.8em; vertical-align: super; }");
-htmlBuilder.AppendLine("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
-//htmlBuilder.AppendLine("table, th, td { border: 1px solid #ddd; }");
-htmlBuilder.AppendLine("th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f4f4f4; }");
-//htmlBuilder.AppendLine("th { background-color: #f4f4f4; font-weight: bold; }");
-htmlBuilder.AppendLine("img { max-width: 100%; height: auto; display: block; margin: 20px 0; }");
-*/

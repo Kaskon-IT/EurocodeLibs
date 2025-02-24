@@ -13,6 +13,16 @@
     [Parameter, EditorRequired]
     public MigraDoc.DocumentObjectModel.Document Document { get; set; } = new();
 
+    [Parameter] 
+    public EventCallback OnGenerateNewDocument { get; set; }
+
+    private void HandleGenerateNewDocument()
+    {
+        // Notify the parent to regenerate the document
+        OnGenerateNewDocument.InvokeAsync();
+    }
+
+
     [Parameter]
     public string Text { get; set; } = "Download";
 
@@ -24,6 +34,9 @@
 
     private async Task HandleOnMenuChanged(MenuChangeEventArgs args)
     {
+        // first ask for update from parent
+        HandleGenerateNewDocument();
+
         await ExportData($"{args.Id}");
     }
 

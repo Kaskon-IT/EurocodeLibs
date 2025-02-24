@@ -3,72 +3,104 @@
 
 @if(SampleProject != null)
 {
-    <EurocodeGrondslagen @bind-Model="@SampleProject.Grondslagen" />
+    @* Component *@
+    <EurocodeGrondslagen @bind-Model="@SampleProject.Grondslagen"  />
 
-    <EurocodeRazorClassLibrary.Custom.HtmlPreview HtmlContent="@GetHtml()"></EurocodeRazorClassLibrary.Custom.HtmlPreview>
-
-    <ExportTableComponent T="@Eurocode.Grondslagen.GrondslagenContext" Item="@SampleProject.Grondslagen"></ExportTableComponent>
-
-
-    @* <FluentButton OnClick="Export" Title="Export ALL"/>
-
-    @if (!string.IsNullOrEmpty(html))
-    {
-        <div>@((MarkupString)html)</div>
-    } *@
+    @* Export demo *@
+    <EurocodeRazorClassLibrary.Custom.ExportDemoSectie 
+    Document="@SetDocument()" 
+    OnGenerateNewDocument="GenerateNewDocument"/> 
 
 }
-
-
-
-
-
-
-
 
 
 @code {
     [CascadingParameter]
     public SampleProject? SampleProject { get; set; }
 
-    private string html { get; set; } = "";
+    //private string html { get; set; } = "";
+    private MigraDoc.DocumentObjectModel.Document document = new();
 
-    public string GetHtml(){
-        string returnVal = "";
-        if (SampleProject != null)
-        {
-            List<Eurocode.Grondslagen.GrondslagenContext> list = [SampleProject.Grondslagen];
-            var dt = list.ToDataTable<Eurocode.Grondslagen.GrondslagenContext>();
-            var table = dt.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext));
-            MigraDoc.DocumentObjectModel.Document document = new();
-            document.AddSection().Add(table);
-            returnVal = HtmlCreator.GenerateHtmlFromDocument(document);
 
-        }
-        return returnVal;
-
+    private void HandelModelChanged(){
+        StateHasChanged();
     }
 
 
-    public void Export(){
+    private MigraDoc.DocumentObjectModel.Document SetDocument(){
+        GenerateNewDocument();
+        return document;
+    }
 
-        if (SampleProject == null) return;
 
-        // use a List<T> 
+    private async void GenerateNewDocument(){
+        document = new();
+        document.AddSection();
         List<Eurocode.Grondslagen.GrondslagenContext> list = [SampleProject.Grondslagen];
-        // map to datatable
-        var dataTable = list.ToDataTable();
-        // map to migradoc.Table
-        var migraDocTable = dataTable.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext));
-        // create document
-        MigraDoc.DocumentObjectModel.Document document = new();
-        // add section, add table
-        document.AddSection().Add(migraDocTable);
 
-        // HTML
-        html = HtmlCreator.GenerateHtmlFromDocument(document, centered: false);
 
+        var table = list.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext));
+        document.LastSection.AddParagraph("Grondslagen", "TableHeading");
+        document.LastSection.Add(table);
+
+        var pivotTable = list.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext), true);
+        document.LastSection.AddParagraph("Grondslagen (Pivot-table)", "TableHeading");
+        document.LastSection.Add(pivotTable);
+
+
+        //html = GetHtml();
+
+        await Task.Delay(200);
+        StateHasChanged();
 
     }
+
+
+    // private void GenerateNewHtmlContent(){
+    //     html = GetHtml();
+    //     StateHasChanged();
+    // }
+
+
+    // public string GetHtml(){
+    //     string returnVal = "";
+    //     if (SampleProject != null)
+    //     {
+    //         List<Eurocode.Grondslagen.GrondslagenContext> list = [SampleProject.Grondslagen];
+    //         var dt = list.ToDataTable<Eurocode.Grondslagen.GrondslagenContext>();
+    //         var table = dt.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext));
+    //         MigraDoc.DocumentObjectModel.Document document = new();
+    //         document.AddSection().Add(table);
+    //         returnVal = HtmlCreator.GenerateHtmlFromDocument(document);
+
+    //     }
+    //     return returnVal;
+
+    // }
+
+    
+
+
+
+    // public void Export(){
+
+    //     if (SampleProject == null) return;
+
+    //     // use a List<T> 
+    //     List<Eurocode.Grondslagen.GrondslagenContext> list = [SampleProject.Grondslagen];
+    //     // map to datatable
+    //     var dataTable = list.ToDataTable();
+    //     // map to migradoc.Table
+    //     var migraDocTable = dataTable.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext));
+    //     // create document
+    //     MigraDoc.DocumentObjectModel.Document document = new();
+    //     // add section, add table
+    //     document.AddSection().Add(migraDocTable);
+
+    //     // HTML
+    //     html = HtmlCreator.GenerateHtmlFromDocument(document, centered: false);
+
+
+    // }
 
 }

@@ -94,11 +94,6 @@
                             case "Heading1":
                             case "Heading 1":
                             case "Kop 1":
-
-
-
-
-
                                 if (!inhoudsopgaveIsVerwerkt &&
                                     paragraph.Elements.First != null &&
                                     paragraph.Elements.First is Text text)
@@ -131,9 +126,16 @@
                             case "Heading2":
                             case "Heading 2":
                             case "Kop 2":
-
-
                                 htmlBuilder.AppendLine($"<h2 {bookmarkId} class='kop2'>" + ProcessParagraph(paragraph) + "</h2>");
+                                break;
+
+                            case "Kop 3":
+                            case "Heading3":
+                                htmlBuilder.AppendLine($"<h3>{ProcessParagraph(paragraph)}</h3>");
+                                break;
+
+                            case "TableHeading":
+                                htmlBuilder.AppendLine($"<h6 class='ec-table-heading'>{ProcessParagraph(paragraph)}</h6>");
                                 break;
 
                             default:
@@ -146,19 +148,37 @@
                     // Als het een tabel is
                     else if (element is Table table)
                     {
-                        htmlBuilder.AppendLine("<table class='ec-table fluent-data-gridXX gridXX'>");
+                        bool isPivotTable = table.Tag != null && table.Tag.ToString() == "pivot";
+
+                        htmlBuilder.AppendLine("<table class='ec-table'>");
                         var index = 0;
                         foreach (Row row in table.Rows)
                         {
+                            var cellIndex = 0;
                             if (index == 0)
                             {
-                                htmlBuilder.AppendLine("<thead class='ec-table-head'>");
+                                if (isPivotTable)
+                                {
+                                    htmlBuilder.AppendLine("<tbody>");
+                                }
+                                else
+                                {
+                                    htmlBuilder.AppendLine("<thead class='ec-table-head'>");
+                                }
                             }
 
-                            htmlBuilder.AppendLine("<tr class='ec-table-row fluent-data-grid-rowXX'>");
+                            if (isPivotTable)
+                            {
+                                htmlBuilder.AppendLine("<tr class='ec-table-row ec-table-row-pivot'>");
+                            }
+                            else
+                            {
+                                htmlBuilder.AppendLine("<tr class='ec-table-row'>");
+                            }
+
                             foreach (Cell cell in row.Cells)
                             {
-                                Paragraph cellPar = null;
+                                Paragraph? cellPar = null;
 
                                 // Manually iterate through the elements to find the first Paragraph
                                 foreach (var documentElement in cell.Elements)
@@ -171,16 +191,24 @@
                                 }
 
                                 var htmlTag = "td"; // <td> by default;
-                                if (index == 0)
+                                var htmlClass = " class='ec-td'";
+                                // check for th
+                                if ((index == 0 && !isPivotTable) || (isPivotTable && cellIndex == 0))
                                 {
-                                    htmlTag = "th"; // <th> first row;
+                                    htmlTag = "th"; // <th> first row (normal) of first column (pivot)
+                                    htmlClass = " class='ec-th'";
+                                    if (isPivotTable)
+                                    {
+                                        htmlClass = " class='ec-th-right'";
+                                    }
                                 }
-
-                                htmlBuilder.AppendLine($"<{htmlTag}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
+                                htmlBuilder.AppendLine($"<{htmlTag}{htmlClass}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
+                                cellIndex++;
                             }
                             htmlBuilder.AppendLine("</tr>");
 
-                            if (index == 0)
+
+                            if (index == 0 && !isPivotTable)
                             {
                                 htmlBuilder.AppendLine("</thead>");
                             }
@@ -190,6 +218,11 @@
                             index++;
 
 
+                        }
+
+                        if (isPivotTable)
+                        {
+                            htmlBuilder.AppendLine("</tbody>");
                         }
                         htmlBuilder.AppendLine("</table>");
                     }
