@@ -54,6 +54,9 @@
             htmlBuilder.AppendLine("</style>");
             htmlBuilder.AppendLine("</head>");
             htmlBuilder.AppendLine("<script>function scrollToToc() { document.getElementById('toc-embvg01f').scrollIntoView({ behavior: 'smooth' });  }</script>");
+
+            //htmlBuilder.AppendLine("<script>\r\n    // Selecteer alle knoppen met de klasse \"accordion\"\r\n    var acc = document.getElementsByClassName(\"ec-accordion\");\r\n\r\n    // Voeg een klik-gebeurtenis toe aan elke knop\r\n    for (var i = 0; i < acc.length; i++) {\r\n        acc[i].addEventListener(\"click\", function() {\r\n            // Toon of verberg de inhoud\r\n            this.classList.toggle(\"active\");\r\n            var panel = this.nextElementSibling;\r\n            if (panel.style.display === \"block\") {\r\n                panel.style.display = \"none\";\r\n            } else {\r\n                panel.style.display = \"block\";\r\n            }\r\n        });\r\n    }\r\n</script>");
+
             htmlBuilder.AppendLine("<body>");
 
 
@@ -71,8 +74,27 @@
 
             // Loop door de secties en paragrafen in het document
             bool inhoudsopgaveIsVerwerkt = false;
+            bool accordionIsOpen = false;
             foreach (Section section in document.Sections)
             {
+                // onderzoek: maak section inklapbaar (accordion)
+                // <button class="accordion">Hoofdstuk 1</button>
+                // <div class="panel">
+                // <p>Dit is de inhoud van hoofdstuk 1. Hier kun je tekst plaatsen die je wilt inklappen.</p>
+                //</div>
+                accordionIsOpen = false;
+                if (section.Tag != null)
+                {
+                    accordionIsOpen = true;
+                    var guid = Guid.NewGuid();
+                    htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{section.Tag}</button>");
+                    htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+
+                }
+
+
+
+
                 foreach (var element in section.Elements)
                 {
                     string bookmarkId = "";
@@ -115,7 +137,28 @@
                                 else
                                 {
                                     //htmlBuilder.AppendLine("<hr />");
+
+
+
+                                    if (accordionIsOpen)
+                                    {
+                                        // sluit
+                                        htmlBuilder.AppendLine("</div>");
+                                    }
+
+                                    // start nieuwe
+                                    accordionIsOpen = true;
+                                    var guid = Guid.NewGuid();
+                                    htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{ProcessParagraph(paragraph)}</button>");
+                                    htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
                                     htmlBuilder.AppendLine($"<h1 {bookmarkId} class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
+
+
+
+
+
+
+
                                 }
 
                                 break;
@@ -135,6 +178,10 @@
                                 break;
 
                             case "TableHeading":
+
+                                // maak een button voor inklapbaar
+                                //htmlBuilder.AppendLine
+
                                 htmlBuilder.AppendLine($"<h6 class='ec-table-heading'>{ProcessParagraph(paragraph)}</h6>");
                                 break;
 
@@ -150,7 +197,11 @@
                     {
                         bool isPivotTable = table.Tag != null && table.Tag.ToString() == "pivot";
 
-                        htmlBuilder.AppendLine("<table class='ec-table'>");
+                        string cssTable = "ec-table";
+                        if (isPivotTable)
+                            cssTable += "-pivot";
+
+                        htmlBuilder.AppendLine($"<table class='{cssTable}'>");
                         var index = 0;
                         foreach (Row row in table.Rows)
                         {
@@ -191,18 +242,31 @@
                                 }
 
                                 var htmlTag = "td"; // <td> by default;
-                                var htmlClass = " class='ec-td'";
+                                var htmlClass = "ec-td";
+                                if (isPivotTable)
+                                    htmlClass = "ec-td add-colonX"; // 'add-colon' plaatst een : voor de tekst
                                 // check for th
-                                if ((index == 0 && !isPivotTable) || (isPivotTable && cellIndex == 0))
+                                if ((index == 0 && !isPivotTable) || (isPivotTable && cellIndex <= 2))
                                 {
                                     htmlTag = "th"; // <th> first row (normal) of first column (pivot)
-                                    htmlClass = " class='ec-th'";
+                                    htmlClass = "ec-th";
                                     if (isPivotTable)
                                     {
-                                        htmlClass = " class='ec-th-right'";
+                                        htmlClass = "ec-th-pivot";
                                     }
+
+                                    if (cellPar != null && cellPar.Tag != null)
+                                    {
+                                        switch (cellPar.Tag)
+                                        {
+                                            case "symbol": htmlClass += " ec-symbol"; break;
+                                            case "description": htmlClass += " ec-description"; break;
+                                            case "article": htmlClass += " ec-article"; break;
+                                        }
+                                    }
+
                                 }
-                                htmlBuilder.AppendLine($"<{htmlTag}{htmlClass}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
+                                htmlBuilder.AppendLine($"<{htmlTag} class='{htmlClass}'>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
                                 cellIndex++;
                             }
                             htmlBuilder.AppendLine("</tr>");
@@ -227,6 +291,14 @@
                         htmlBuilder.AppendLine("</table>");
                     }
                 }
+
+                // Close the accordion div
+                if (accordionIsOpen)
+                {
+                    htmlBuilder.Append("</div>");
+                }
+
+
             }
 
             // Close the container div
@@ -338,23 +410,17 @@
             StringBuilder sb = new StringBuilder();
 
             // test <svg>
-            if (paragraph.Tag != null)
+            if (paragraph.Tag != null &&
+                paragraph.Tag.ToString().StartsWith("<svg"))
             {
-                string? svgTag = paragraph.Tag.ToString();
-                if (svgTag != null)
-                {
-
-                    // bingo
-                    if (svgTag.StartsWith("<svg"))
-                    {
-                        sb.AppendLine(svgTag);
-                    }
-
-
-                }
+                sb.AppendLine(paragraph.Tag.ToString());
             }
             else
             {
+                // aanvulling splits elementen by tabs (indien aanwezig)
+                string currentText = string.Empty;
+
+
                 foreach (var inline in paragraph.Elements)
                 {
                     if (inline is FormattedText ft)
@@ -381,21 +447,49 @@
                         if (ft.Superscript)
                             content = "<sup>" + content + "</sup>";
 
-                        sb.Append(content);
-                    }
-                    else if (inline is Text text)
-                    {
-                        sb.Append(text.Content);
-                    }
-                    else if (inline is Character character)
-                    {
-                        if (character.Char == '\0')
-                        {
-                            sb.Append("<br/>");
-                        }
+                        //sb.Append(content);
+                        currentText += content;
 
                     }
+                    if (inline is Text text)
+                    {
+                        //sb.Append(text.Content);
+                        currentText += text.Content;
+                    }
+                    if (inline is Character character)
+                    {
+                        if (character.SymbolName == SymbolName.Tab)
+                        {
+                            // Als het een tab is, voeg de huidige verzamelde tekst toe en voeg een <span> voor de tab toe
+                            if (!string.IsNullOrEmpty(currentText))
+                            {
+                                sb.Append($"<span class=\"tab-simulated\">{currentText}</span>");
+                                currentText = string.Empty; // Reset de tekst na een tab
+                            }
+
+
+                        }
+
+
+                        if (character.Char == '\0')
+                        {
+                            //sb.Append("<br/>");
+                            //sb.Append("___");
+                        }
+
+
+
+
+                    }
+
+
+
+
                 }
+                // en de rest
+                if (!string.IsNullOrEmpty(currentText))
+                    sb.Append(currentText);
+
 
             }
 

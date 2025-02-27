@@ -5,15 +5,79 @@
 }
 
 
+
+.ec-accordion {
+    background-color: #f1f1f1;
+    color: #444;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    font-size: 18px;
+}
+
+    .ec-accordion:hover {
+        background-color: #ddd;
+    }
+
+
+    .ec-accordion::before {
+        content: "✒️ "; 
+        white-space: pre;
+    }
+
+
+
+    .ec-accordion.active + .ec-panel {
+        display: block; /* Toon de inhoud als de accordion actief is */
+    }
+
+
+    .ec-accordion:not(.active):after {
+        content: "🔽"; /* + */
+        font-size: 20px;
+        padding-left: 10px;
+        float: right;
+    }
+
+    .ec-accordion.active:after {
+        content: "🔼"; /* Unicode voor een pijl naar boven */
+        font-size: 20px;
+        float: right;
+    }
+
+
+
+.ec-panel {
+    padding: 0 18px;
+    display: none; /* in de basis verborgen*/
+    overflow: hidden; 
+    background-color: #f9f9f9;
+}
+
+
 .ec-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 10px;
-    border:solid 1px gray;
+    /*border:solid 1px gray;*/
+}
+
+.ec-table-pivot{
+    border-collapse: collapse;
+    border: none;
+
 }
 
 .ec-table-borderless{
 
+}
+
+.tab-simulated {
+    display: inline-block;
+    min-width: 75px; /* De breedte van de "tab" */
 }
 
 .ec-th-right {
@@ -23,6 +87,15 @@
     width: 50%;
     font-weight: normal;
     font-style: italic;
+}
+
+.ec-th-pivot {
+    text-align: left;
+    padding: 0.5em;
+    /*border-right: solid 1px gray;*/
+    /*width: 40%;*/
+    font-weight: normal;
+    /*font-style: italic;*/
 }
 
 .ec-td {
@@ -47,9 +120,19 @@
     font-weight: 500;
     font-size: 1.1em;
     margin-bottom: 0.5em;
-    text-align: center;
+    padding-left: 0.5em;
+    padding-bottom: 0.25em;
+    border-left: 5px solid green;
+    /*border-bottom: 1px solid green;*/
+
+    /*text-align: center;*/
 }
 
+.add-colon::before {
+    content: "🔹 "; /* Voeg ": " vóór de tekst toe */
+    color: #333; /* Optioneel: pas de kleur aan */
+    white-space: pre;
+}
 
 .ec-table-row {
     padding: 8px 12px;
@@ -59,8 +142,22 @@
 
 
 .ec-table-row-pivot{
-    border-bottom: none; /* gedraaide table heeft borders right*/
-    border-right: 1px solid #929292;
+    border-bottom: none; /* geen horizontale lijntjes */
+    /*border-right: 1px solid #929292;*/
+}
+
+
+.ec-symbol{
+    font-style: italic;
+}
+
+.ec-description{
+    font-weight: 100;
+}
+
+.ec-article{
+    color: gray;
+    font-size: smaller;
 }
 
 .ec-par{

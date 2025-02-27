@@ -13,7 +13,32 @@ namespace ExportFactory.Shared
     }
 
 
-    [AttributeUsage(AttributeTargets.Property)]
+    public class AttributesMapping
+    {
+        public AttributesMapping()
+        {
+
+        }
+
+        public AttributesMapping(string? symbol = null, string? description = null, string? article = null)
+        {
+
+            Symbol = symbol;
+            Description = description;
+            Article = article;
+        }
+
+
+        public string? Symbol { get; set; }
+        public string? Description { get; set; } = "";
+        public string? Article { get; set; } = "";
+
+
+
+    }
+
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
     public class TableColumnAttribute : Attribute
     {
         public string? HeaderText { get; set; } = null;

@@ -1154,6 +1154,7 @@ namespace ExportFactory.Services
         private static void AddCoverPage(Document document, CoverPageContent coverPage)
         {
             var section = document.AddSection();
+            section.Tag = "Voorblad";
 
             //document.Styles.
             //section.PageSetup.BackgroundColor = coverPage.BackgroundColor;

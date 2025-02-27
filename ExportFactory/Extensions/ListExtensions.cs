@@ -8,8 +8,17 @@ namespace ExportFactory.Extensions
 
 
 
+
     public static class ListExtensions
     {
+
+        private static readonly Dictionary<string, AttributesMapping> _myDictionary = new Dictionary<string, AttributesMapping>
+        {
+            {"Fck", new(){Article = "3.1", Description = "karakteristieke cilinderdruksterkte", Symbol = "f~ck~"} },
+            {"FckCube", new(){Article = "3.1", Description = "karakteristieke kubusdruksterkte", Symbol = "f~ck,cube~"} },
+
+        };
+
 
         // Extensiemethode om een List<T> om te zetten naar een DataTable, inclusief kolominstellingen zoals header, uitlijning en zichtbaarheid
         public static DataTable ToDataTable<T>(this List<T> list) where T : class
@@ -29,6 +38,24 @@ namespace ExportFactory.Extensions
             {
                 // Haal het ColumnAttribute op (indien aanwezig)
                 var columnAttribute = prop.GetCustomAttribute<TableColumnAttribute>();
+
+                // Aanvulling dynamisch vullen mbv Dictionary 
+                if (columnAttribute != null)
+                {
+                    string columnName = prop.Name;
+
+                    if (_myDictionary.ContainsKey(columnName))
+                    {
+                        var dictProperties = _myDictionary[columnName];
+
+                        if (dictProperties.Symbol != null)
+                        {
+
+                        }
+
+                    }
+
+                }
 
                 //if (columnAttribute == null)
                 //    continue;
@@ -107,6 +134,9 @@ namespace ExportFactory.Extensions
 
             return dataTable;
         }
+
+
+
 
         public static MigraDoc.DocumentObjectModel.Tables.Table? ToMigraDocTable<T>(this List<T> list, Type type, bool isPivotTable = false) where T : class
         {

@@ -1,5 +1,6 @@
 ﻿@implements IDialogContentComponent<string>
 @using Microsoft.FluentUI.AspNetCore.Components
+@inject IJSRuntime JS;
 
 
 
@@ -19,6 +20,10 @@
     public string Content { get; set; } = default!;
 
 
+    private async Task ToggleAccordion(string accordionId)
+    {
+        await JS.InvokeVoidAsync("toggleAccordion", accordionId);
+    }
 
     
 

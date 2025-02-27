@@ -11,6 +11,23 @@
 
     public static class DataTableExtensions
     {
+
+        private static readonly Dictionary<string, AttributesMapping> _propertieMap = new Dictionary<string, AttributesMapping>
+        {
+            { "Fck", new(){Article = "3.1", Description = "karakteristieke cilinderdruksterkte", Symbol = "f~ck~"} },
+            { "FckCube", new(){Article = "3.1", Description = "karakteristieke kubusdruksterkte", Symbol = "f~ck,cube~"} },
+            { "Fcm", new(symbol:"f~cm~", description: "gemiddelde cilinderdruksterkte" ) },
+            { "GammaC", new("|gamma|~c~", "bla bla") },
+            { "Ecm", new("E~cm~", "...") },
+            { "Fctm", new("f~ctm~", "axiale trekstrekste") },
+            { "Betonsterkteklasse", new( null, "betonsterkteklasse", "tabel 3.1") },
+            { "CementKlasse", new( null, "cement klasse", "art.")},
+            { "PoissonFactor", new( "|nu|", "poissonfactor") },
+            { "SpanningRekDiagram", new(null, "spanning-rekdiagram")},
+
+        };
+
+
         public static Table? ToMigraDocTable(this DataTable dataTable, Type objectType, bool isPivotTable = true)
         {
             Table migraDocTable = new();
@@ -54,6 +71,9 @@
 
             // i
 
+
+
+
             // Create a list of column names to use for matching
             var columnNames = propertiesWithAttributes
                 .Select(p => p.Property.Name)
@@ -68,7 +88,10 @@
                 int colIndex = 0;
                 Column descriptionColumn = migraDocTable.AddColumn();
 
-                for (int k = 0; k < dataTable.Rows.Count; k++)
+                for (int k = 0; k < dataTable.Rows.Count + 2; k++)   // col[0,1,2] zijn voor de header. 
+                                                                     // col[0]=Symbol
+                                                                     // col[1]=Description
+                                                                     // col[2]=Article
                 {
                     migraDocTable.AddColumn();
                 }
@@ -80,13 +103,46 @@
                     ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
                     string headerText = propertyWithAttribute.Attribute.HeaderTextPivot ?? propertyWithAttribute.Attribute.HeaderText ?? propertyWithAttribute.Property.Name;
 
-                    // add a paragraph with and apply markdown (if any) to it.
-                    var par = row.Cells[colIndex].AddParagraph();
-                    MigraDocCreator.AddMarkdownToParagraph(par, headerText);
+
+                    // mapping
+                    if (_propertieMap.ContainsKey(propertyWithAttribute.Property.Name))
+                    {
+                        var mapping = _propertieMap[propertyWithAttribute.Property.Name];
+
+                        if (mapping.Symbol != null)
+                        {
+                            var parSymbol = row.Cells[0].AddParagraph();
+                            parSymbol.Tag = "symbol";
+                            MigraDocCreator.AddMarkdownToParagraph(parSymbol, mapping.Symbol);
+                        }
+                        if (mapping.Description != null)
+                        {
+                            var parDesc = row.Cells[1].AddParagraph();
+                            parDesc.Tag = "description";
+                            MigraDocCreator.AddMarkdownToParagraph(parDesc, mapping.Description);
+                        }
+                        if (mapping.Article != null)
+                        {
+                            var parArticle = row.Cells[2].AddParagraph();
+                            parArticle.Tag = "article";
+                            MigraDocCreator.AddMarkdownToParagraph(parArticle, mapping.Article);
+                        }
+
+
+                        //headerText = $"DICTIONARY{mapping.Symbol}";
+                    }
+                    else
+                    {
+                        // add a paragraph with and apply markdown (if any) to it.
+                        var par = row.Cells[colIndex].AddParagraph();
+                        MigraDocCreator.AddMarkdownToParagraph(par, headerText);
+                    }
+
+
                 }
 
                 // Fill data column(s)
-                colIndex = 1;
+                colIndex = 3; // start with index 3 when pivottable
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
                     int rowIndex = 0;
@@ -135,7 +191,7 @@
 
 
             }
-            else
+            else if (!isPivotTable)
             {
                 // Add columns to the MigraDoc table based on the property attributes
                 foreach (var propertyWithAttribute in propertiesWithAttributes)

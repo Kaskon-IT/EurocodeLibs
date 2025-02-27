@@ -45,7 +45,7 @@ namespace Eurocode.BetonConstructies
         //public bool IsParabolischSpanningsRekDiagram { get; set; } = !true;
 
 
-        [TableColumn("Diagram", Order = 1, HeaderTextPivot = "Spanning-rekdiagram")]
+        [TableColumn("Diagram", Order = 1, HeaderTextPivot = "\tspanning-rekdiagram")]
         public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.BiLineair;
         public enum SpanningRekDiagramType
         {
@@ -61,7 +61,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// 3.1.2 (6) Het soort cement.
         /// </summary>
-        [TableColumn("Cement", Order = 21, HeaderTextPivot = "Cement klasse")]
+        [TableColumn("Cement", Order = 21, HeaderTextPivot = "\tcement klasse")]
         public CementklasseEnum? CementKlasse { get; set; } = CementklasseEnum.N;
 
         public double CoefficientCementKlasse
@@ -90,10 +90,10 @@ namespace Eurocode.BetonConstructies
         public double FckCubeEigenOpgave { get; set; }
 
 
-
+        [TableColumn("Betonsterkteklasse", Order = -20)]
         public BetonsterkteklasseEnum? Betonsterkteklasse { get; set; } = BetonsterkteklasseEnum.C40_50;
 
-        [TableColumn("Betonsterkteklasse", Order = -10)]
+        //[TableColumn("Betonsterkteklasse", HeaderTextPivot = "&nbsp;\tbetonsterkteklasse", Order = -10)]
         public string BetonSterkteKlasseGebruiksvriendelijkeNaam
         {
             get
@@ -109,7 +109,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// De representieve cilinder druksterkte in N/mm²
         /// </summary>
-        [TableColumn("f~ck~", HeaderTextPivot = "f~ck~ karakteristieke cilinderdruksterkte van beton na 28 dagen", StringFormat = "0 N/mm²")]
+        [TableColumn("f~ck~", HeaderTextPivot = "f~ck~\tkarakteristieke cilinderdruksterkte van beton na 28 dagen", StringFormat = "0 N/mm²")]
         public double Fck
         {
             get
@@ -138,7 +138,7 @@ namespace Eurocode.BetonConstructies
 
 
         //(MPa)
-        [TableColumn("f~ck,cube~", HeaderTextPivot = "f~ck,cube~ karakteristieke kubusdruksterkte van beton na 28 dagen", StringFormat = "0 N/mm²")]
+        [TableColumn("f~ck,cube~", HeaderTextPivot = "f~ck,cube~\tkarakteristieke kubusdruksterkte van beton na 28 dagen", StringFormat = "0 N/mm²")]
         public double FckCube
         {
             get
@@ -168,11 +168,14 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// gemiddelde waarde van de cilinderdruksterkte van beton 
         /// </summary>
+        [TableColumn("f~cm~", HeaderTextPivot = "f~cm~\tgemiddelde cilinderdruksterkte", StringFormat = "0 N/mm²", Weergave = WeergaveEnum.DraaiTabel)]
         public double Fcm { get { return Fck + 8; } }
 
         /// <summary>
         /// gemiddelde waarde van de axiale treksterkte van beton 
         /// </summary>
+        [TableColumn("f~ctm~", HeaderTextPivot = "f~ctm~\tgemiddelde axiale treksterkte", StringFormat = "0 N/mm²", Weergave = WeergaveEnum.DraaiTabel)]
+
         public double Fctm
         {
             get
@@ -197,7 +200,7 @@ namespace Eurocode.BetonConstructies
 
         public bool IsOntwerpSituatieBuitenGewoon = false;  // default Blijvend en tijdelijk conform art. 2.4.2.4 (1) Partiële factoren voor materialen 
 
-
+        [TableColumn("|gamma|~c~", HeaderTextPivot = "|gamma|~c~\tpartiële veiligheidsfactor", StringFormat = "0.0", Weergave = WeergaveEnum.DraaiTabel)]
         public double GammaC
         {
             get
@@ -207,6 +210,7 @@ namespace Eurocode.BetonConstructies
             }
         }
         // conform art. 2.4.2.4 (1) Partiële factoren voor materialen
+
 
         public double Fcd { get { return AlphaCC * Fck / GammaC; } }
 
@@ -278,10 +282,10 @@ namespace Eurocode.BetonConstructies
 
         public double Rho1Max { get { return this.GetRho1Max(); } }
 
-        [TableColumn("E~cm~", HeaderTextPivot = "E~cm~ secans-elasticiteitsmodulus van beton", StringFormat = "0.## GPa")]
+        [TableColumn("E~cm~", HeaderTextPivot = "E~cm~\tsecans-elasticiteitsmodulus van beton", StringFormat = "0.## GPa")]
         public double Ecm { get { return this.GetEcm(); } }
 
-        [TableColumn("Poisson", "Poisson factor")]
+        [TableColumn("Poisson", "\tpoisson factor")]
         public double PoissonFactor { get; set; } = 0.2;
 
 

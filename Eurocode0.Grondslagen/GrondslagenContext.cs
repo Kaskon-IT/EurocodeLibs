@@ -89,6 +89,22 @@ namespace Eurocode.Grondslagen
             }
         }
 
+        [TableColumn("Land")]
+        public string FlagEmoji
+        {
+            get
+            {
+                switch (NationaleBijlage)
+                {
+                    default:
+                    case NationaleBijlageEnum.NL: return "🇳🇱";
+                    case NationaleBijlageEnum.EU: return "🇪🇺";
+                    case NationaleBijlageEnum.BE: return "🇧🇪";
+                    case NationaleBijlageEnum.DE: return "🇩🇪";
+                }
+            }
+        }
+
 
 
         [TableColumn("Ontwerp Levensduur", order: 0)]
@@ -119,7 +135,7 @@ namespace Eurocode.Grondslagen
         /// B.3.3
         /// Vermenigvuldigingsfactor KFI die wordt toegepast op de partiele factoren.
         /// </summary>
-        [TableColumn("K~FI~", stringFormat: "0.0", order: 3, width: 1.5)]
+        [TableColumn("K~FI~", stringFormat: "0.0", order: 3, width: 1.5, HeaderTextPivot = "K~FI~\tfactor toepasbaar op belastingen ten behoeve van de betrouwbaarheidsdifferentiatie")]
         public double Kfi
         {
             get { return this.Betrouwbaarheidsklasse.GetKfi(); }
@@ -129,7 +145,7 @@ namespace Eurocode.Grondslagen
         /// ξ (xi) is een reductiefactor voor ongunstige, blijvende belastingen G
         /// Deze wordt gebruikt in de fundamentele combinatie (6.10b) en is afhankelijk van de nationale bijlage.
         /// </summary>
-        [TableColumn("|xi|", order: 4, stringFormat: "0.00", width: 1.5)]
+        [TableColumn("|xi|", order: 4, stringFormat: "0.00", width: 1.5, HeaderTextPivot = "|xi|\treductiefactor voor ongunstige blijvende belastingen (nationale bijlage)")]
         public double Xi
         {
             get { return this.NationaleBijlage.GetReductieFactorVoorOngunstigeBlijvendeBelastingen(); }
