@@ -9,23 +9,10 @@
     using System.Linq;
     using System.Reflection;
 
-    public static class DataTableExtensions
+    public static partial class DataTableExtensions
     {
 
-        private static readonly Dictionary<string, AttributesMapping> _propertieMap = new Dictionary<string, AttributesMapping>
-        {
-            { "Fck", new(){Article = "3.1", Description = "karakteristieke cilinderdruksterkte", Symbol = "f~ck~"} },
-            { "FckCube", new(){Article = "3.1", Description = "karakteristieke kubusdruksterkte", Symbol = "f~ck,cube~"} },
-            { "Fcm", new(symbol:"f~cm~", description: "gemiddelde cilinderdruksterkte" ) },
-            { "GammaC", new("|gamma|~c~", "bla bla") },
-            { "Ecm", new("E~cm~", "...") },
-            { "Fctm", new("f~ctm~", "axiale trekstrekste") },
-            { "Betonsterkteklasse", new( null, "betonsterkteklasse", "tabel 3.1") },
-            { "CementKlasse", new( null, "cement klasse", "art.")},
-            { "PoissonFactor", new( "|nu|", "poissonfactor") },
-            { "SpanningRekDiagram", new(null, "spanning-rekdiagram")},
 
-        };
 
 
         public static Table? ToMigraDocTable(this DataTable dataTable, Type objectType, bool isPivotTable = true)
@@ -103,6 +90,8 @@
                     ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
                     string headerText = propertyWithAttribute.Attribute.HeaderTextPivot ?? propertyWithAttribute.Attribute.HeaderText ?? propertyWithAttribute.Property.Name;
 
+                    string? format = null;
+
 
                     // mapping
                     if (_propertieMap.ContainsKey(propertyWithAttribute.Property.Name))
@@ -126,6 +115,10 @@
                             var parArticle = row.Cells[2].AddParagraph();
                             parArticle.Tag = "article";
                             MigraDocCreator.AddMarkdownToParagraph(parArticle, mapping.Article);
+                        }
+                        if (mapping.Format != null)
+                        {
+
                         }
 
 
@@ -152,12 +145,35 @@
                         //var columnName = dataTable.Columns[i].ColumnName;
                         var value = dataRow[columnName];
 
+
+
+
+
                         // Get the column's custom string format if applied
+
                         int i = columnNames.IndexOf(columnName);
 
                         var rowProperties = propertiesWithAttributes[i];
-
                         string? format = rowProperties.Attribute.StringFormat;
+                        if (_propertieMap.ContainsKey(columnName))
+                        {
+                            var mapping = _propertieMap[columnName];
+
+
+                            if (mapping.Format != null)
+                            {
+                                format = mapping.Format;
+
+                            }
+
+
+                            //headerText = $"DICTIONARY{mapping.Symbol}";
+                        }
+
+
+
+
+
 
                         // Format the value if stringFormat exists
                         if (!string.IsNullOrEmpty(format))

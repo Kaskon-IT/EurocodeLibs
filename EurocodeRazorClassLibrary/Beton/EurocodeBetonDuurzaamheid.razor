@@ -28,17 +28,17 @@
 
 
 
-<p>Dekking nominaal: @Model.BetondekkingNominaal mm</p>
+<p>Dekking nominaal: @Model.DekkingNom mm</p>
 
 <FluentNumberField 
 Label = "Dekking toegepast"
 Min = "10"
 Max = "70"
 Step = "5"
-@bind-Value="Model.Betondekking">
+@bind-Value="Model.DekkingToe">
 </FluentNumberField>
 
-@if (Model.Betondekking < Model.BetondekkingNominaal){
+@if (Model.DekkingToe < Model.DekkingNom){
     <FluentLabel Typo="Typography.Body" Color="@Color.Warning">Let op! <strong>te weining dekking</strong> toegepast.</FluentLabel>
     <p class="alert">Let op te weinig dekking.</p>
 }

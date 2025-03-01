@@ -141,14 +141,14 @@ namespace Eurocode.BetonConstructies
 
         public static double GetMinimaleBetondekking(this BetonDekkingContext dekking)
         {
-            List<double> doubles = [dekking.GetCminDur(), dekking.BetondekkingMinBetonstaal, 10.00]; // 4.4.1.2 vergelijking (4.2)
+            List<double> doubles = [dekking.GetCminDur(), dekking.DekkingMinAanhechting, 10.00]; // 4.4.1.2 vergelijking (4.2)
             return doubles.Max();
         }
 
 
         public static double GetDekkingBetonstaalMinimaal(this BetonDekkingContext dekking)
         {
-            if (dekking.Korreldiameter <= 32)
+            if (dekking.GrootsteKorrelDiameter <= 32)
                 return (int)dekking.WapeningDiameterGelijkwaardig;
             else
                 return (int)dekking.WapeningDiameterGelijkwaardig + 5;
@@ -159,7 +159,7 @@ namespace Eurocode.BetonConstructies
         public static double GetDekkingNominaal(this BetonDekkingContext dekking)
         {
 
-            var cNom = dekking.GetMinimaleBetondekking() + dekking.BetondekkingMinUitvoeringsToleranties; // 4.4.1.1 vergelijking (4.1)
+            var cNom = dekking.GetMinimaleBetondekking() + dekking.DekkingToeslagUitvoeringsToleranties; // 4.4.1.1 vergelijking (4.1)
             List<double> values = [cNom];
             switch (dekking.BetonStortOndergrond) // 4.4.1.3 (4)
             {

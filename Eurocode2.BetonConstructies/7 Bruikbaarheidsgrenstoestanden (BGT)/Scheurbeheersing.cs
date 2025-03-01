@@ -74,7 +74,7 @@ namespace Eurocode.BetonConstructies
                         _factorKx = 1.0;
                         break;
                     case Grondslagen.NationaleBijlageEnum.NL:
-                        _factorKx = Math.Min(2, Duurzaamheid.Betondekking / Duurzaamheid.BetondekkingNominaal); // niet groter dan 2, dus math.min()
+                        _factorKx = Math.Min(2, Duurzaamheid.DekkingToe / Duurzaamheid.DekkingNom); // niet groter dan 2, dus math.min()
                         break;
                 }
             }

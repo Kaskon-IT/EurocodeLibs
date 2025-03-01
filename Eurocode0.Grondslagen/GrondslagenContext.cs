@@ -64,11 +64,11 @@ namespace Eurocode.Grondslagen
 
 
 
-        [TableColumn("Eurocode")]
+        //[TableColumn("Eurocode")]
         public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
 
-        //[TableColumn("")]
-        public string Flag
+        [TableColumn("NB")]
+        public string FlagSvg
         {
             get
             {

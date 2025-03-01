@@ -20,18 +20,20 @@ namespace ExportFactory.Shared
 
         }
 
-        public AttributesMapping(string? symbol = null, string? description = null, string? article = null)
+        public AttributesMapping(string? symbol = null, string? description = null, string? article = null, string? format = null)
         {
 
             Symbol = symbol;
             Description = description;
             Article = article;
+            Format = format;
         }
 
 
         public string? Symbol { get; set; }
         public string? Description { get; set; } = "";
         public string? Article { get; set; } = "";
+        public string? Format { get; set; } = null;
 
 
 

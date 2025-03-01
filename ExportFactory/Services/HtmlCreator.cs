@@ -23,35 +23,8 @@
             htmlBuilder.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
 
             // Voeg een stijl toe aan de pagina (CSS)
-            htmlBuilder.AppendLine("<style>");
-            //htmlBuilder.AppendLine($"body {{ font-family: {fontFamily}, sans-serif; line-height: 1.6; }}");
-            //htmlBuilder.AppendLine("h1 { font-size: 2.5em; background-color:var(--fluent-color-background); }");
-            //htmlBuilder.AppendLine("h2 { font-size: 2em;  }");
-            //htmlBuilder.AppendLine("h3 { font-size: 1.75em; }");
-            //htmlBuilder.AppendLine("h4 { font-size: 1.5em;  }");
-            //htmlBuilder.AppendLine("hr { border: 1px solid; width: 100%; margin: 10px auto; }");
-            //htmlBuilder.AppendLine(".document-title { font-size: 4em; font-weight: bold; margin-top: 20px; margin-bottom: 20px; line-height: initial;}");
-            //htmlBuilder.AppendLine(".document-subtitle { font-size: 1.75em; font-style: italic;}");
-            //htmlBuilder.AppendLine(".to-toc-btn { position: fixed; bottom: 15px; right: 45px; z-index: 1000; padding: 15px 15px;cursor:pointer;}");
-
-
-
-            //htmlBuilder.AppendLine($"p {{ margin: 10px 0; font-size: 1.1em; font-family:{fontFamily}; line-height: 1.6; }}");
-            //htmlBuilder.AppendLine("b { font-weight: bold; }");
-            //htmlBuilder.AppendLine("i { font-style: italic; }");
-            //htmlBuilder.AppendLine("sub { font-size: 0.8em; vertical-align: sub; }");
-            //htmlBuilder.AppendLine("sup { font-size: 0.8em; vertical-align: super; }");
-            //htmlBuilder.AppendLine("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
-
-            // //htmlBuilder.AppendLine("table, th, td { border: 1px solid #ddd; }");
-            //htmlBuilder.AppendLine("th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f4f4f4; }");
-            //htmlBuilder.AppendLine("th { background-color: #f4f4f4; font-weight: bold; }");
-            // htmlBuilder.AppendLine("img { max-width: 100%; height: auto; display: block; margin: 20px 0; }");
-
-
-
-
-            htmlBuilder.AppendLine("</style>");
+            //htmlBuilder.AppendLine("<style>");
+            //htmlBuilder.AppendLine("</style>");
             htmlBuilder.AppendLine("</head>");
             htmlBuilder.AppendLine("<script>function scrollToToc() { document.getElementById('toc-embvg01f').scrollIntoView({ behavior: 'smooth' });  }</script>");
 
@@ -242,9 +215,14 @@
                                 }
 
                                 var htmlTag = "td"; // <td> by default;
+
+
                                 var htmlClass = "ec-td";
+
+
+
                                 if (isPivotTable)
-                                    htmlClass = "ec-td add-colonX"; // 'add-colon' plaatst een : voor de tekst
+                                    htmlClass = "ec-td-pivot"; // 'add-colon' plaatst een : voor de tekst
                                 // check for th
                                 if ((index == 0 && !isPivotTable) || (isPivotTable && cellIndex <= 2))
                                 {

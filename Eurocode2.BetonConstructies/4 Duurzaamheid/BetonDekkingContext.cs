@@ -35,7 +35,7 @@ namespace Eurocode.BetonConstructies
             BetonAfwerkingOppervlak = context.BetonAfwerkingOppervlak;
             BetonStortOndergrond = context.BetonStortOndergrond;
             Milieuklassen = context.Milieuklassen;
-            Korreldiameter = context.Korreldiameter;
+            GrootsteKorrelDiameter = context.GrootsteKorrelDiameter;
 
         }
 
@@ -70,7 +70,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// De toegepaste dekking (c,toe) in mm.
         /// </summary>
-        public double Betondekking { get; set; } = 20;
+        public double DekkingToe { get; set; } = 20;
 
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Eurocode.BetonConstructies
             headerText: "c~nom~ ",
             HeaderTextPivot = "c~nom~\tnominale dekking art. 4.4.1.1",
             Order = 1, StringFormat = "0 mm")]
-        public double BetondekkingNominaal
+        public double DekkingNom
         {
             get { return this.GetDekkingNominaal(); }
         }
@@ -147,7 +147,7 @@ namespace Eurocode.BetonConstructies
             headerText: "c~min,dur~",
             headerTextPivot: "c~min,dur~\tminimumdekking duurzaamheid art. 4.4.1.2 (5)",
             order: 41, StringFormat = "0 mm")]
-        public double BetondekkingMinDuurzaamheid
+        public double DekkingMinDuurzaamheid
         {
             get { return this.GetCminDur(); }
         }
@@ -163,7 +163,7 @@ namespace Eurocode.BetonConstructies
             headerText: "c~min~",
             headerTextPivot: "c~min~\tminimale dekking art.4.4.1.2",
             order: 39, StringFormat = "0 mm")]
-        public double BetondekkingMin
+        public double DekkingMin
         {
             get { return this.GetMinimaleBetondekking(); }
         }
@@ -176,7 +176,7 @@ namespace Eurocode.BetonConstructies
             headerText: "c~min,b~",
             headerTextPivot: "c~min,b~\tminimumdekking aanhechting art. 4.4.1.2 (3)",
             order: 40, StringFormat = "0 mm")]
-        public double BetondekkingMinBetonstaal
+        public double DekkingMinAanhechting
         {
             get
             {
@@ -193,7 +193,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             headerText: "|Delta|c~dev~",
             headerTextPivot: "|Delta|c~dev~\t toeslag uitvoeringstoleranties art. 4.4.1.3(1)", order: 50, StringFormat = "0 mm")]
-        public double BetondekkingMinUitvoeringsToleranties { get { return this.Grondslagen.NationaleBijlage.GetUitvoeringstoleraties(); } }
+        public double DekkingToeslagUitvoeringsToleranties { get { return this.Grondslagen.NationaleBijlage.GetUitvoeringstoleraties(); } }
 
         /// <summary>
         /// Is een reductie van de minimumdekking bij gebruik van aanvullende bescherming, zie 4.4.1.2 (8)
@@ -244,7 +244,7 @@ namespace Eurocode.BetonConstructies
             headerText: "korrel",
             headerTextPivot: "Grootste korrel",
             Order = 5, StringFormat = "≤ 0 mm")]
-        public double Korreldiameter { get; set; } = 31.5;
+        public double GrootsteKorrelDiameter { get; set; } = 31.5;
 
 
         public BetonAfwerkingOppervlakEnum? BetonAfwerkingOppervlak { get; set; } = BetonAfwerkingOppervlakEnum.Glad;

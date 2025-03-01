@@ -254,7 +254,7 @@ namespace Eurocode.BetonConstructies
 
             // deel 7.3.4
             sw.EpsSmMinusEpsCm = sw.GetEpsSmMinusEpsCm();
-            sw.DekkingOpLangsWapening = sw.Dekking.Betondekking + sw.AfstandVerdeelWapening;
+            sw.DekkingOpLangsWapening = sw.Dekking.DekkingToe + sw.AfstandVerdeelWapening;
 
             sw.SrMax = sw.GetSrMax(150, formule: out string formule); // todo HOH validaties
             sw.GebruiktArtikel = formule;

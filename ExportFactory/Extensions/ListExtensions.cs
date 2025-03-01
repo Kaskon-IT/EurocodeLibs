@@ -12,12 +12,7 @@ namespace ExportFactory.Extensions
     public static class ListExtensions
     {
 
-        private static readonly Dictionary<string, AttributesMapping> _myDictionary = new Dictionary<string, AttributesMapping>
-        {
-            {"Fck", new(){Article = "3.1", Description = "karakteristieke cilinderdruksterkte", Symbol = "f~ck~"} },
-            {"FckCube", new(){Article = "3.1", Description = "karakteristieke kubusdruksterkte", Symbol = "f~ck,cube~"} },
 
-        };
 
 
         // Extensiemethode om een List<T> om te zetten naar een DataTable, inclusief kolominstellingen zoals header, uitlijning en zichtbaarheid
@@ -44,16 +39,7 @@ namespace ExportFactory.Extensions
                 {
                     string columnName = prop.Name;
 
-                    if (_myDictionary.ContainsKey(columnName))
-                    {
-                        var dictProperties = _myDictionary[columnName];
 
-                        if (dictProperties.Symbol != null)
-                        {
-
-                        }
-
-                    }
 
                 }
 
