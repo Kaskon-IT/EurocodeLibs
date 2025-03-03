@@ -1,4 +1,5 @@
-﻿using MigraDoc.DocumentObjectModel;
+﻿using CommonLibrary;
+using MigraDoc.DocumentObjectModel;
 
 
 namespace ExportFactory.Shared
@@ -12,6 +13,36 @@ namespace ExportFactory.Shared
         AlleTabellen = StandaardTabel | DraaiTabel,
     }
 
+    public class KeyValueMappingModel
+    {
+
+        [TableColumn("Key")]
+        public required string Key { get; set; }
+        public required AttributesMapping Mapping { get; set; }
+
+        [TableColumn("Symbool")]
+        public string? Symbool { get { return Mapping.Symbol; } }
+
+        [TableColumn("Omschrijving")]
+        public string? Omschrijving { get { return Mapping.Description; } }
+
+        [TableColumn("Norm")]
+        public string? Norm { get { return Mapping.Norm; } }
+
+        [TableColumn("Artikel")]
+        public string? Artikel { get { return Mapping.Article; } }
+
+        [TableColumn("Formaat")]
+        public string? Formaat { get { return Mapping.Format; } }
+
+
+
+    }
+
+
+
+
+
 
     public class AttributesMapping
     {
@@ -20,21 +51,28 @@ namespace ExportFactory.Shared
 
         }
 
-        public AttributesMapping(string? symbol = null, string? description = null, string? article = null, string? format = null)
+        public AttributesMapping(string? symbol = null, string? description = null, string? article = null, string? format = null, string? norm = null)
         {
 
             Symbol = symbol;
             Description = description;
+
             Article = article;
             Format = format;
+            Norm = norm;
+
+
         }
 
 
         public string? Symbol { get; set; }
         public string? Description { get; set; } = "";
         public string? Article { get; set; } = "";
+        public string? Norm { get; set; } = "EN 19..";
         public string? Format { get; set; } = null;
 
+
+        public EurocodeParagraaf? Paragraaf { get; set; } = null;
 
 
     }

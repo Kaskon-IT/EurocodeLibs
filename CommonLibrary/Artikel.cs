@@ -2,9 +2,12 @@
 
 namespace CommonLibrary
 {
-    public enum EurocodeNorm
+
+    public enum EurocodeNormEnum
     {
+
         [Description("Grondslagen van de berekening")]
+
         Grondslagen = 0,
         Belastingen = 1,
         Betonconstructies = 2,
@@ -16,15 +19,65 @@ namespace CommonLibrary
         Aardbevingen = 8,
     }
 
+    public class Norm
+    {
+        public Norm()
+        {
+        }
+
+        public Norm(string naam, string titel)
+        {
+            Naam = naam;
+            Titel = titel;
+        }
+
+        public string Naam { get; set; } = "";
+        public string Titel { get; set; } = "";
+    }
+
+
+
+    public class EurocodeParagraaf
+    {
+        public EurocodeParagraaf(Norm normVerwijzing, string nummer, string naam)
+        {
+            NormVerwijzing = normVerwijzing;
+            Nummer = nummer;
+            Naam = naam;
+        }
+
+        public Norm NormVerwijzing { get; set; }
+        public string Nummer { get; set; } = "";
+        public string Naam { get; set; } = "";
+
+
+
+
+
+    }
+
+    public class EurocodeFormule
+    {
+        public required EurocodeParagraaf Paragraaf;
+        public string Nummer { get; set; }
+        public string Formule { get; set; }
+
+    }
+
+
+
+
     public class Artikel
     {
-        public EurocodeNorm Norm { get; set; }
+        public EurocodeNormEnum Norm { get; set; }
         public string Nummer { get; set; }
         public string Omschrijving { get; set; }
 
 
 
     }
+
+
 
 
 

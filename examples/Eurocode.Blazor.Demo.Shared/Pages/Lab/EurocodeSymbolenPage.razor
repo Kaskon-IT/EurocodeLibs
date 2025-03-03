@@ -1,0 +1,13 @@
+﻿@using ExportFactory.Shared
+@page "/lab/eurocode-symbolen"
+
+<h3>EurocodeSymbolen</h3>
+
+<EurocodeRazorClassLibrary.Shared.EurocodeSymbolen Mappings="eurocodeDictionary"></EurocodeRazorClassLibrary.Shared.EurocodeSymbolen>
+
+
+
+
+@code {
+    private Dictionary<string, AttributesMapping> eurocodeDictionary = ExportFactory.Extensions.DataTableExtensions._propertieMap;
+}

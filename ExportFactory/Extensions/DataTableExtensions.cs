@@ -13,7 +13,18 @@
     {
 
 
+        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false)
+        {
+            MigraDoc.DocumentObjectModel.Document document = new();
+            var table = dataTable.ToMigraDocTable(objectType, isPivotTable);
 
+            if (table != null)
+            {
+                document.AddSection();
+                document.LastSection.Add(table);
+            }
+            return document;
+        }
 
         public static Table? ToMigraDocTable(this DataTable dataTable, Type objectType, bool isPivotTable = true)
         {

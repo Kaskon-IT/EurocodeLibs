@@ -51,7 +51,7 @@ namespace Eurocode.BetonConstructies
 
         public List<MilieuklasseEnum> Milieuklassen { get; set; } = [];
 
-        [TableColumn("Belastingduur", Weergave = WeergaveEnum.DraaiTabel)]
+        //[TableColumn("Belastingduur", Weergave = WeergaveEnum.DraaiTabel)]
         public BelastingduurEnum Belastingduur { get; set; } = BelastingduurEnum.kortdurend;
 
 
@@ -69,19 +69,23 @@ namespace Eurocode.BetonConstructies
 
         public double FactorKt { get; set; } = 0.6;
 
-        [TableColumn("factor k~c~", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "0.##")]
+        //[TableColumn("factor k~c~", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "0.##")]
 
-        public double FactorKc { get; set; } = 0.4;
+        public double FactorKc { get; set; } = 0.4; // naar 7.3.2
 
         [TableColumn("k~1~", Weergave = WeergaveEnum.DraaiTabel)]
-        public double FactorK1 { get; set; } = 0.8;
+        public double MaximaleScheurAfstandFactorK1 { get; set; } = 0.8; // naar 7.3.2
 
-        [TableColumn("Type", Weergave = WeergaveEnum.DraaiTabel)]
-        public ScheurwijdteTypeEnum ScheurwijdteType { get; set; } = ScheurwijdteTypeEnum.Buiging;
+        //[TableColumn("Type", Weergave = WeergaveEnum.DraaiTabel)]
+        public ScheurwijdteTypeEnum ScheurwijdteType { get; set; } = ScheurwijdteTypeEnum.Buiging; // naar 7.3.2
 
+
+        /// <summary>
+        /// is een factor die rekening houdt met de rekverdeling (in 7.11)
+        /// </summary>
         [TableColumn("k~2~", Weergave = WeergaveEnum.DraaiTabel)]
 
-        public double FactorK2
+        public double MaximaleScheurAfstandFactorK2
         {
             get
             {
@@ -93,11 +97,12 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+
         [TableColumn("k~3~", Weergave = WeergaveEnum.DraaiTabel)]
-        public double FactorK3 { get; set; } = 3.4;
+        public double MaximaleScheurAfstandFactorK3 { get; set; } = 3.4;
 
         [TableColumn("k~4~", Weergave = WeergaveEnum.DraaiTabel)]
-        public double FactorK4 { get; set; } = 0.425;
+        public double MaximaleScheurAfstandFactorK4 { get; set; } = 0.425;
 
 
 
@@ -125,7 +130,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn("s~r,max~", StringFormat = "0.##")]
         public double SrMax { get; internal set; }
 
-        [TableColumn("Art.", Weergave = WeergaveEnum.DraaiTabel, HeaderTextPivot = "gebruikt artikel voor s~r,max~")]
+        //[TableColumn("Art.", Weergave = WeergaveEnum.DraaiTabel, HeaderTextPivot = "gebruikt artikel voor s~r,max~")]
         public string GebruiktArtikel { get; set; } = "";
 
 
@@ -136,8 +141,8 @@ namespace Eurocode.BetonConstructies
         [TableColumn("w~k~", headerTextPivot: "(7.8) berekende scheurwijdte w~k~ = s~r,max~ (|epsilon|~sm~-|epsilon|~cm~)", StringFormat = "0.## mm")]
         public double Wk { get; internal set; }
 
-        [TableColumn("k~x~", headerTextPivot: "k~x~", StringFormat = "0.0")]
-        public double FactorKx
+        [TableColumn("k~x~", headerTextPivot: "k~x~", StringFormat = "0.##")]
+        public double ScheurwijdteGrenswaardeFactorKx
         {
             get
             {
@@ -167,9 +172,12 @@ namespace Eurocode.BetonConstructies
         public Scheurbeheersing.ScheurwijdteGrenswaarde ScheurwijdteGrenswaarde { get; set; }
 
 
+        public Scheurbeheersing.ScheurwijdteMinimumWapening ScheurwijdteMinimumWapening { get; set; }
 
 
-        [TableColumn("U.C.", "Unity Check", StringFormat = "0.00")]
+
+
+        //[TableColumn("U.C.", "Unity Check", StringFormat = "0.00")]
         public double UnityCheck
         {
             get
@@ -192,7 +200,9 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn("A~s,min~", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "0 mm²")]
-        public double AsMin { get; set; }
+        public double ScheurwijdteAsMin { get; set; }
+
+
         public double AsToe { get; set; }
         public double AsBen { get; set; }
 
@@ -233,13 +243,15 @@ namespace Eurocode.BetonConstructies
 
             // verplaats naar 7.3.2
             sw.SetFactorKt(sw.Belastingduur);
+
+
             sw.FactorK = GetFactorK(sw);
             sw.SetFctEff();
 
             sw.Mcr = sw.SetMcr();
             sw.Staalspanning = sw.GetStaalspanning();
             sw.Act = sw.GetAct();
-            sw.AsMin = sw.GetAsMin();
+            sw.ScheurwijdteAsMin = sw.GetAsMin();
             sw.AsToe = Wapening.GetDsnOpp(sw.WapString);
 
             sw.StaalspanningOptredend = sw.GetStaalspanningOptredend();
@@ -278,7 +290,7 @@ namespace Eurocode.BetonConstructies
             {
                 formule = "7.11";
                 // s;r,max = k3 × c + k1 × k2 × k4 × Øeq / ρ;p,eff              conform (7.11)
-                double srMax = sw.FactorK3 * sw.DekkingOpLangsWapening + sw.FactorK1 * sw.FactorK2 * sw.FactorK4 * sw.WapDiameterEquivalent / sw.VerhoudingWapeningBetonEffectief;
+                double srMax = sw.MaximaleScheurAfstandFactorK3 * sw.DekkingOpLangsWapening + sw.MaximaleScheurAfstandFactorK1 * sw.MaximaleScheurAfstandFactorK2 * sw.MaximaleScheurAfstandFactorK4 * sw.WapDiameterEquivalent / sw.VerhoudingWapeningBetonEffectief;
 
                 List<double> bovengrenzen = [
                      (50 - 0.8 * sw.Beton.Fck) * sw.WapDiameterEquivalent,

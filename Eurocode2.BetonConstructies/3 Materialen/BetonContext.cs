@@ -194,6 +194,19 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        public int Tijdstip { get; set; } = 28;
+
+        ///// <summary>
+        ///// (3.4)
+        ///// </summary>
+        //public double FctmT
+        //{
+        //    get
+        //    {
+        //        return 
+        //    }
+        //}
+
         [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
         public double FctkVijfProcent { get { return 0.7 * Fctm; } }    // 5% fractiel
 

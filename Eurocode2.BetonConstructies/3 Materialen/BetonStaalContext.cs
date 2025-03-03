@@ -90,6 +90,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// conform art. 2.4.2.4 Partiële factoren voor materialen
         /// </summary>
+        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
         public double GammaS
         {
             get
@@ -103,12 +104,14 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// 3.2.7 (2) rekenwaarde van de vloeigrens van betonstaal
         /// </summary>
+        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
         public double Fyd { get { return Fyk / GammaS; } }  // 3.2.7 (2)
 
 
         /// <summary>
         /// 6.2 rekenwaarde van de vloeigrens van dwarskrachtwapening
         /// </summary>
+        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
         public double Fywd { get { return Fyk / GammaS; } }	// conform art. 6.2
 
 

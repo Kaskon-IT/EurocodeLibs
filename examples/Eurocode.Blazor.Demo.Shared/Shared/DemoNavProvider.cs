@@ -162,6 +162,11 @@ public class DemoNavProvider
                         title: "DataGrid"
                     ),
 
+                    new NavLink(
+                        href: "/lab/eurocode-symbolen",
+                        icon: new Icons.Regular.Size20.Symbols(),
+                        title: "Symbolen (TEST)"
+                    ),
 
                 ]
             )
