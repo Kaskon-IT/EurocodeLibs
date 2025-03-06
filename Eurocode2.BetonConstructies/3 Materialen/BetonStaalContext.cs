@@ -81,6 +81,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        public double Fywk { get { return Fyk; } }
 
 
 
@@ -112,7 +113,7 @@ namespace Eurocode.BetonConstructies
         /// 6.2 rekenwaarde van de vloeigrens van dwarskrachtwapening
         /// </summary>
         [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
-        public double Fywd { get { return Fyk / GammaS; } }	// conform art. 6.2
+        public double Fywd { get { return Fywk / GammaS; } }	// conform art. 6.2
 
 
 

@@ -4,9 +4,51 @@
     using MigraDoc.DocumentObjectModel.Fields;
     using MigraDoc.DocumentObjectModel.Tables;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     public class HtmlCreator
     {
+
+        public static string MarkdownToHtml(string? markdown)
+        {
+            string html = "";
+
+            if (!string.IsNullOrEmpty(markdown))
+            {
+                // |greek| 
+                markdown = MigraDocCreator.ReplaceGreekLetters(markdown);
+
+                // Subscript: ~sub~ -> <sub>sub</sub> 
+                markdown = Regex.Replace(markdown, @"~(.*?)~", "<sub>$1</sub>");
+
+                // Superscript: ^super^ -> <sup><text</sup>
+                markdown = Regex.Replace(markdown, @"\^(.*?)\^", "<sup>$1</sup>");
+
+                // Bold: **text** -> <strong>text</strong>
+                markdown = Regex.Replace(markdown, @"\*\*(.*?)\*\*", "<strong>$1</strong>");
+
+                // Italic: *text* -> <em>text</em>
+                markdown = Regex.Replace(markdown, @"\*(.*?)\*", "<em>$1</em>");
+
+                // Underline: __text__ -> <u>text</u>
+                markdown = Regex.Replace(markdown, @"__(.*?)__", "<u>$1</u>");
+
+                // Strikethrough: ~~text~~ -> <s>text</s>
+                markdown = Regex.Replace(markdown, @"~~(.*?)~~", "<s>$1</s>");
+
+                // Line breaks: dubbele nieuwe regel -> <br/>
+                markdown = Regex.Replace(markdown, @"\n\s*\n", "<br/>");
+
+
+                html = markdown;
+
+            }
+
+
+            return html;
+        }
+
+
         // Methode om HTML te genereren van een MigraDoc Document
         public static string GenerateHtmlFromDocument(Document document, bool centered = !true)
         {

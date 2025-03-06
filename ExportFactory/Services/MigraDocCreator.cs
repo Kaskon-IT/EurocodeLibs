@@ -6,6 +6,7 @@ using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using MigraDoc.DocumentObjectModel.Tables;
 using System.Reflection;
 
+
 //using System.Reflection.Metadata;
 
 //
@@ -1105,7 +1106,7 @@ namespace ExportFactory.Services
 
 
         // Helper function to replace Greek letters in Markdown
-        private static string ReplaceGreekLetters(string markdown)
+        public static string ReplaceGreekLetters(string markdown)
         {
             foreach (var (key, value) in GreekLetters)
             {
@@ -1231,6 +1232,8 @@ namespace ExportFactory.Services
                 }
             }
         }
+
+
 
 
         private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown)

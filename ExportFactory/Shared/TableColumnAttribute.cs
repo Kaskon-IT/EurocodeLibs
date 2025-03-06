@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using ExportFactory.Services;
 using MigraDoc.DocumentObjectModel;
 
 
@@ -23,8 +24,14 @@ namespace ExportFactory.Shared
         [TableColumn("Symbool")]
         public string? Symbool { get { return Mapping.Symbol; } }
 
+        public string SymboolHtml { get { return HtmlCreator.MarkdownToHtml(Symbool); } }
+
         [TableColumn("Omschrijving")]
         public string? Omschrijving { get { return Mapping.Description; } }
+
+        public string OmschrijvingHtml { get { return HtmlCreator.MarkdownToHtml(Omschrijving); } }
+
+
 
         [TableColumn("Norm")]
         public string? Norm { get { return Mapping.Norm; } }
@@ -34,6 +41,9 @@ namespace ExportFactory.Shared
 
         [TableColumn("Formaat")]
         public string? Formaat { get { return Mapping.Format; } }
+
+        [TableColumn("Vergelijking")]
+        public string? Vergelijking { get { return Mapping.Vergelijking; } }
 
 
 
@@ -51,16 +61,19 @@ namespace ExportFactory.Shared
 
         }
 
-        public AttributesMapping(string? symbol = null, string? description = null, string? article = null, string? format = null, string? norm = null)
+
+
+
+        public AttributesMapping(string? sym, string? desc, string? art = null, string? format = null, string? norm = null, string? vgl = null)
         {
 
-            Symbol = symbol;
-            Description = description;
+            Symbol = sym;
+            Description = desc;
 
-            Article = article;
+            Article = art;
             Format = format;
             Norm = norm;
-
+            Vergelijking = vgl;
 
         }
 
@@ -68,7 +81,9 @@ namespace ExportFactory.Shared
         public string? Symbol { get; set; }
         public string? Description { get; set; } = "";
         public string? Article { get; set; } = "";
-        public string? Norm { get; set; } = "EN 19..";
+        public string? Norm { get; set; } = "EC";
+        public string? Vergelijking { get; set; } = null;
+        public string? Formule { get; set; } = null;
         public string? Format { get; set; } = null;
 
 

@@ -105,9 +105,9 @@
 
 
                     // mapping
-                    if (_propertieMap.ContainsKey(propertyWithAttribute.Property.Name))
+                    if (EurocodeMapping.ContainsKey(propertyWithAttribute.Property.Name))
                     {
-                        var mapping = _propertieMap[propertyWithAttribute.Property.Name];
+                        var mapping = EurocodeMapping[propertyWithAttribute.Property.Name];
 
                         if (mapping.Symbol != null)
                         {
@@ -166,9 +166,9 @@
 
                         var rowProperties = propertiesWithAttributes[i];
                         string? format = rowProperties.Attribute.StringFormat;
-                        if (_propertieMap.ContainsKey(columnName))
+                        if (EurocodeMapping.ContainsKey(columnName))
                         {
-                            var mapping = _propertieMap[columnName];
+                            var mapping = EurocodeMapping[columnName];
 
 
                             if (mapping.Format != null)
