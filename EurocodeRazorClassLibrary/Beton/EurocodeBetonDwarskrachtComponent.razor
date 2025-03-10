@@ -1,0 +1,63 @@
+﻿@using Eurocode.BetonConstructies
+
+<FluentGrid>
+    <FluentGridItem xs="0">
+        <FluentNumberField @bind-Value="Model.Ved">@((MarkupString)symVed)</FluentNumberField>
+    </FluentGridItem>
+
+    <FluentGridItem xs="0">
+        <FluentNumberField @bind-Value="Model.Theta">@((MarkupString)symTheta)</FluentNumberField>
+    </FluentGridItem>
+
+    <FluentGridItem xs="0">
+        <FluentNumberField @bind-Value="Model.NutHoogte">d</FluentNumberField>
+    </FluentGridItem>
+   
+    <FluentGridItem xs="0">
+        <FluentNumberField @bind-Value="Model.Z">z</FluentNumberField>
+    </FluentGridItem>
+
+
+
+    <FluentGridItem xs="0">
+  
+    </FluentGridItem>
+
+</FluentGrid>
+
+
+
+@code {
+    /// <summary>
+    /// Het model 
+    /// </summary>
+    [Parameter, EditorRequired]
+    public required DwarskrachtWapContext Model { get; set; }
+
+
+
+    [Parameter]
+    public BetonContext Beton { get; set; } = new();
+
+    [Parameter]
+    public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
+
+    /// <summary>
+    /// Callback is nodig voor @bind-Model
+    /// </summary>
+    [Parameter]
+    public EventCallback<DwarskrachtWapContext> ModelChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        //Model = new(Beton, Profiel, 100);
+        Model = DwarskrachtWap.GetDwarskrachtWapContext(Beton, Profiel, 21.8, 350, 0.9 * 350, 100, 2, 8, [100.0, 200.0, 300.0]);
+
+    }
+
+    string symVed = ExportFactory.Services.HtmlCreator.MarkdownToHtml("V~Ed~");
+    string symTheta = ExportFactory.Services.HtmlCreator.MarkdownToHtml("|theta|");
+
+
+
+}

@@ -1,6 +1,6 @@
 ﻿namespace Eurocode.BetonConstructies
 {
-    public class Wapening
+    public class WapeningHelper
     {
         /// <summary>
         /// Haalt het doorsnede oppervlak van staven op. 
@@ -13,7 +13,11 @@
             return n * Math.Pow(d, 2) * Math.PI / 4;
         }
 
-
+        /// <summary>
+        /// Voor doorsnede oppervlak van 1 of meerdere staafgroepen (As)
+        /// </summary>
+        /// <param name="wapening">wapening als string</param>
+        /// <returns>Doorsnede oppervlak (As)</returns>
         public static double GetDsnOpp(string wapening)
         {
             // splits 
@@ -87,6 +91,45 @@
         {
             return n * Math.Pow(d, 2) * Math.PI / 4 / hoh * 1000;
         } // van aantal (n), diameter (d) en hart-op-hart (hoh) naar As (bijvoorbeeld: 2Ø8-300 geeft 335 mm², handig voor beugels en vloer/wand-wapening)
+
+
+        public static List<BeugelWap> GetLijstBeugelWap(List<double> lijstBeugelDiameters, List<double> lijstHohAfstanden, List<int> lijstBeugelSneden)
+        {
+            if (lijstHohAfstanden == null) return null;
+            if (lijstBeugelSneden == null) return null;
+            List<BeugelWap> returnList = new List<BeugelWap>();
+            foreach (double bglDiam in lijstBeugelDiameters)
+            {
+                foreach (double hohAfstand in lijstHohAfstanden)
+                {
+                    foreach (int aantal in lijstBeugelSneden)
+                    {
+                        BeugelWap returnItem = new BeugelWap();
+                        returnItem.Hoh = hohAfstand;
+                        returnItem.AantalSnede = aantal;
+                        returnItem.Diameter = bglDiam;
+                        returnList.Add(returnItem);
+                    }
+                }
+            }
+            return returnList;
+        }
+
+        public static BeugelWap ZoekBeugelWap(double zoekwaarde, List<BeugelWap> lijstBeugelWap)
+        {
+            BeugelWap returnVal = null;
+            if (lijstBeugelWap == null) return null;
+            foreach (BeugelWap bglWap in lijstBeugelWap)
+            {
+                if (bglWap.AswToegepast >= zoekwaarde &&
+                    (returnVal == null || returnVal.AswToegepast > bglWap.AswToegepast))
+                {
+                    returnVal = bglWap;
+                }
+            }
+            return returnVal;
+        }
+
 
     }
 }

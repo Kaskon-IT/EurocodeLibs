@@ -1,0 +1,45 @@
+﻿@if (SampleProject != null)
+{
+    <EurocodeBetonDwarskrachtComponent @bind-Model=@SampleProject.DwarskrachtDemo>
+
+    </EurocodeBetonDwarskrachtComponent>
+
+    <FluentButton OnClick="Export">Export HTML</FluentButton>
+
+    @if (!string.IsNullOrEmpty(html))
+    {
+        <div>@((MarkupString)html)</div>
+    }
+
+
+    <div>
+        <ExportTableComponent T="Eurocode.BetonConstructies.DwarskrachtWapContext" Item="@SampleProject.DwarskrachtDemo"></ExportTableComponent>
+
+    </div>
+    <h1>Test</h1>
+
+}
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+    private string html;
+
+    private void Export()
+    {
+        if (SampleProject == null) return;
+
+
+        SampleProject.DwarskrachtDemo.Update(); // todo automatisch updaten methode afstemmen.
+
+        List<Eurocode.BetonConstructies.DwarskrachtWapContext> list = [SampleProject.DwarskrachtDemo];
+        var dataTable = list.ToDataTable();
+        var table = dataTable.ToMigraDocTable(typeof(DwarskrachtWapContext));
+        MigraDoc.DocumentObjectModel.Document document = new();
+        document.AddSection().Add(table);
+        html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(document);
+    }
+
+
+}

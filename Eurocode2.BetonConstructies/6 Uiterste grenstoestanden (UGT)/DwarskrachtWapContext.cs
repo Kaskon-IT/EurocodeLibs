@@ -1,4 +1,6 @@
-﻿using ExportFactory.Shared;
+﻿using CommonLibrary;
+using ExportFactory.MigraDocContentModels;
+using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
@@ -7,29 +9,42 @@ namespace Eurocode.BetonConstructies
         // context voor de dwarskrachtwapening volgens art. 6.2
         // Uitgangspunten voor niet-voorgespannen constructies
 
+        //private List<int> _meldingen { get; set; } = [];
+        //private Dictionary<int, Melding> _betonMeldingen = new MeldingenBeton().Meldingen;
+
+        public List<Melding> Meldingen { get; set; } = [];
+        public List<string> Artikelen { get; set; } = [];
 
 
+        [TableColumn("Opm.", "Opmerkingen")]
+        public string MeldingenUserFriendlyName { get { return string.Join(",", Meldingen); } }
+
+        //[TableColumn("Art.", "Artikelen")]
+        public string GebruikteArtikelenUserFriendlyName { get { return string.Join(",", Artikelen); } }
 
         //public WringingWapContext WringWap { get; set; } // voor berekeningen met dwarskracht EN wringing (als onderdeel van de dwarskrachtWap)
         //public MeldingenBeton MeldingenBeton = new MeldingenBeton(); // voor meldingen en foutmeldingen uit de betonModule
 
         // Vanuit het beton
-        public double Fck { get; set; }
+        //public double Fck { get; set; }
 
-        public required BetonContext Beton { get; set; }
+        public BetonContext Beton { get; set; }
 
-
+        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; }
 
 
         /// <summary>
         /// Rekenwaarde van de dwarskracht in kN
         /// </summary>
+        [TableColumn("V~Ed~", StringFormat = "0.##\tkN")]
         public double Ved { get; set; }
 
         /// <summary>
         /// is de hoek in graden tussen de drukdiagonaal van beton en de as van de ligger loodrecht op de dwarskracht;
         /// </summary>
-		public double Theta { get; set; }
+        [TableColumn("|theta|", StringFormat = "0.##\t°")]
+
+        public double Theta { get; set; }
 
         /// <summary>
         /// hoek drukdiagonaal in radialen
@@ -39,31 +54,54 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// tangens van de hoek drukdiagonaal
         /// </summary>
+        //[TableColumn("tan |theta|", StringFormat = "0.##")]
+
         public double TanTheta { get { return Math.Tan(Theta * Math.PI / 180); } }
 
         /// <summary>
         /// CoTangens van de hoek drukdiagonaal
         /// </summary>
+        /// 
+        [TableColumn("cot |theta|", StringFormat = "0.##")]
+
         public double CotTheta { get { return 1 / TanTheta; } }
 
         /// <summary>
         /// is de hoek tussen de dwarskrachtwapening en de as van de ligger loodrecht op de dwarskracht (positief gemeten zoals getoond in figuur 6.5) in graden;
         /// </summary>
+        [TableColumn("|alpha|", StringFormat = "0.##\t°")]
+
         public double Alpha { get; set; } = 90;  // hoek van de dwarskrachtwapning standaard 90 graden
+        [TableColumn("tan |alpha|", StringFormat = "0.##")]
+
+        private double TanAlpha { get { return Math.Tan(Alpha * Math.PI / 180); } }
+
+        //[TableColumn("cot |alpha|", StringFormat = "0.##")]
+
+        public double CotAlpha { get { return 1 / TanAlpha; } }
+
 
         /// <summary>
         /// Breedte van de doorsnede voor de dwarskracht in mm
         /// </summary>
-        public double Breedte { get; set; }
+        [TableColumn("b")]
+
+        public double Breedte
+        {
+            get { return Profiel.BreedteDwarskracht; }
+        }
 
         /// <summary>
         /// is de minimale breedte tussen de trek- en drukrand in mm²
         /// </summary>
+        [TableColumn("A~sl~")]
         public double AsLangs { get; set; }
 
         /// <summary>
         /// Nuttige hooge (d) van de dwarskrachtdoorsnede in mm
         /// </summary>
+        [TableColumn("d")]
+
         public double NutHoogte { get; set; }
 
 
@@ -74,6 +112,13 @@ namespace Eurocode.BetonConstructies
         public double BeugelSnedeAantal;
         public double BeugelAfstandDwarsToegepast;
         public double DekkingZijkantToegepast;
+
+        public DwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, double ved)
+        {
+            Beton = beton; // materiaal, staal, dekking, etcetera
+            Profiel = profiel; // geometrie 
+            Ved = ved; // krachten
+        }
 
 
 
@@ -88,7 +133,10 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return (AswBenPerMeter / AswToegepast) * Fywd;
+                if (AswToegepast == 0)
+                    return Fywd;
+                else
+                    return (AswBenPerMeter / AswToegepast) * Fywd;
             }
         }
         public bool SpanningWapeningKleinerDan80ProcentKarakteristiekeVloeigrens
@@ -103,57 +151,77 @@ namespace Eurocode.BetonConstructies
 
 
 
-        //public List<BeugelWap> LijstBeugelWap { get; set; }
+        public List<BeugelWap> LijstBeugelWap { get; set; }
 
 
 
-        [TableColumn("|alpha~cw~|", Weergave = WeergaveEnum.Geen)]
+        [TableColumn("|alpha|~cw~", Weergave = WeergaveEnum.AlleTabellen)]
         public double AlphaCw { get; } = 1; // art. 6.2.3 (3) NB cw = 1 voor niet-voorgespannen constructies
 
-        [TableColumn("k1", Weergave = WeergaveEnum.Geen)]
-        public double K1 { get; } = 0.15;   // 6.2.2(1) De waarde van k1 moet gelijk aan 0,15 zijn genomen.
+        [TableColumn("k1", Weergave = WeergaveEnum.AlleTabellen)]
+        public double FactorK1DwarskrachtWeerstandBeton { get; } = 0.15;   // 6.2.2(1) De waarde van k1 moet gelijk aan 0,15 zijn genomen.
 
 
 
-
-        public double FactorK { get; set; }
+        [TableColumn("k", StringFormat = "0.##")]
+        public double FactorKDwarskrachtWeerstandBeton { get; set; }
+        [TableColumn("|rho|~1~")]
         public double Rho1 { get; set; }
-        public double RhoMin { get; set; }
+
+
+        [TableColumn("|rho|~min~", StringFormat = "0.##")]
+        public double RhoWMin { get; set; }
 
 
 
-
+        [TableColumn("C~rdc~", StringFormat = "0.##")]
         public double Crdc { get; set; }               // conform art. 6.4.4 (1) PONS
 
-        public double SterkteReductieV { get; set; }
+        [TableColumn("|nu|", StringFormat = "0.##\t-")]
+        public double SterkteReductieFactorBetonGescheurdDoorDwarskracht { get; set; }
 
 
-
-        public double SterkteReductieV1
+        [TableColumn("|nu|~1~", StringFormat = "0.##\t-")]
+        public double SterkteReductieFactorBetonGescheurdDoorDwarskracht1
         {
-            get
-            {
-                return 1.00; // todo op juiste plek zetten
-                //return DwarskrachtWap.GetSterkteReductieV1(Beton.Fck, SpanningDwarskrachtWapening, Beton.BetonStaal.Fyk);
-            }
+            get; set;
+            //get
+            //{
+            //    return DwarskrachtHelpers.GetSterkteReductieV1(Beton.Fck, SpanningDwarskrachtWapening, Beton.BetonStaal.Fyk);
+            //}
         }
 
 
+        [TableColumn("|nu|~Rd,max~", StringFormat = "0.##\tN/mm²")]
+        public double SchuifspanningWeerstandMax { get { return DwarskrachtWeerstandMax * 1000 / Breedte / NutHoogte; } }
 
-        public double SchuifspanningMax { get { return VrdMax * 1000 / Breedte / NutHoogte; } }
-        public double SchuifspanningWeerstandZonderDwarskrachtWapening { get; set; } // (6.2.a)
-        public double SchuifspanningWeerstandZonderDwarskrachtWapeningMin { get; set; } // (6.2.b)
+        [TableColumn("|nu|~Rd,c~", StringFormat = "0.##\tN/mm²")]
+        public double SchuifspanningWeerstandBeton { get; set; } // (6.2.a)
+
+        [TableColumn("|nu|~Rd,s~", StringFormat = "0.##\tN/mm²")]
+        public double SchuifspanningWeerstandStaal { get; set; } // (6.2.b)
 
 
         /// <summary>
         /// vEd is de rekenwaarde van de schuifspanning in N/mm²
         /// </summary>
+        [TableColumn("|nu|~Ed~", StringFormat = "0.##\tN/mm²")]
         public double SchuifspanningD { get { return Ved * 1000 / Breedte / NutHoogte; } }
 
-        public double VrdMax { get; set; }
-        public double VrdC { get { return Math.Max(SchuifspanningWeerstandZonderDwarskrachtWapening, SchuifspanningWeerstandZonderDwarskrachtWapeningMin) * Breedte * NutHoogte / 1000; } } // kN
-        public double VrdS { get; set; }
-        public double Vrd { get; set; }
+        [TableColumn("V~Rd,max~", StringFormat = "0.##\tkN")]
+        public double DwarskrachtWeerstandMax { get; set; }
+
+        [TableColumn("V~Rd,c~", StringFormat = "0.##\tkN")]
+        public double DwarskrachtWeerstandBeton { get { return Math.Max(SchuifspanningWeerstandBeton, SchuifspanningWeerstandStaal) * Breedte * NutHoogte / 1000; } } // kN
+
+        [TableColumn("V~Rd,s~", StringFormat = "0.##\tkN")]
+        public double DwarskrachtWeerstandStaal { get; set; }
+
+        [TableColumn("V~Rd~", StringFormat = "0.##\tkN")]
+        public double DwarskrachtWeerstand { get; set; }
+
+
+
         public bool BerekeningVrd { get; set; } = false;    // bool om aan te geven of we beugels berekenen, of de Vrd bepalen. 
 
         /// <summary>
@@ -161,12 +229,16 @@ namespace Eurocode.BetonConstructies
         /// buigend moment in het beschouwde element. In de dwarskrachtberekening van de gewapend beton
         /// zonder normaalkracht mag in het algemeen de benaderende waarde z = 0,9d zijn gebruikt.
         /// </summary>
+        [TableColumn("z", StringFormat = "0.##\tmm")]
         public double Z { get; set; }
 
+        [TableColumn("A~sw,min~", StringFormat = "0.##\tmm²/m")]
         public double AswMin { get; set; }
 
+        [TableColumn("A~sw,ber~", StringFormat = "0.##\tmm²/m")]
         public double AswBerekend { get; set; }
 
+        [TableColumn("A~sw,ben~", StringFormat = "0\tmm²/m")]
         public double AswBenPerMeter { get; set; }
 
 

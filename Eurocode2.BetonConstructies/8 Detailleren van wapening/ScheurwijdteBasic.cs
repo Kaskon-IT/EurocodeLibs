@@ -14,8 +14,8 @@ namespace Eurocode.BetonConstructies
 
         public ScheurwijdteContext(double momBGT, double momUGT, BetonContext beton, BetonDekkingContext dekking, NationaleBijlageEnum nationaleBijlage)
         {
-            MomentBGT = momBGT;
-            MomentUGT = momUGT;
+            MomentFrequent = momBGT;
+            MomentRekenwaarde = momUGT;
             Beton = beton;
             Dekking = dekking;
             ScheurwijdteGrenswaarde = new(dekking, nationaleBijlage);
@@ -26,10 +26,10 @@ namespace Eurocode.BetonConstructies
 
         // input
         [TableColumn("M~E,freq~", headerTextPivot: "Moment (BGT) M~E,freq~", StringFormat = "0.# kNm")]
-        public double MomentBGT { get; set; }
+        public double MomentFrequent { get; set; }
 
         [TableColumn("M~Ed~", Weergave = WeergaveEnum.Geen)]
-        public double MomentUGT { get; set; }
+        public double MomentRekenwaarde { get; set; }
 
         [TableColumn("M~cr~", Weergave = WeergaveEnum.DraaiTabel, HeaderTextPivot = "Scheurmoment M~cr~", StringFormat = "0.0 kNm")]
         public double Mcr { get; set; }
@@ -46,7 +46,7 @@ namespace Eurocode.BetonConstructies
         public double NuttigeHoogte { get; set; } = 80;
 
         [TableColumn("A~s,toe~", Weergave = WeergaveEnum.DraaiTabel)]
-        public string WapString { get; set; } = "8-150"; // todo Profiel +  wapening
+        public string WapeningToegepastTekst { get; set; } = "8-150"; // todo Profiel +  wapening
         public double WapDiameterEquivalent { get; set; } = 8.0;
 
         public List<MilieuklasseEnum> Milieuklassen { get; set; } = [];
@@ -208,7 +208,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("Element type", Weergave = WeergaveEnum.DraaiTabel)]
+        //[TableColumn("Element type", Weergave = WeergaveEnum.DraaiTabel)]
         public AanhechtingTypeEnum Aanhechting { get; set; } = AanhechtingTypeEnum.Standaard;
 
 
@@ -252,7 +252,7 @@ namespace Eurocode.BetonConstructies
             sw.Staalspanning = sw.GetStaalspanning();
             sw.Act = sw.GetAct();
             sw.ScheurwijdteAsMin = sw.GetAsMin();
-            sw.AsToe = Wapening.GetDsnOpp(sw.WapString);
+            sw.AsToe = WapeningHelper.GetDsnOpp(sw.WapeningToegepastTekst);
 
             sw.StaalspanningOptredend = sw.GetStaalspanningOptredend();
             sw.Rho = sw.GetRho();
@@ -408,14 +408,14 @@ namespace Eurocode.BetonConstructies
         public static double GetStaalspanningOptredend(this ScheurwijdteContext sw)
         {
             // σ;s = (M;frequent / M;Ed) * (A;s,ben / A;s,toegepast) * f;yd
-            return (sw.MomentBGT / sw.MomentUGT) * (sw.AsBen / sw.AsToe) * sw.Staalspanning;
+            return (sw.MomentFrequent / sw.MomentRekenwaarde) * (sw.AsBen / sw.AsToe) * sw.Staalspanning;
 
         }
 
         public static double GetStaalspanningOptredendVerbeterd(this ScheurwijdteContext sw)
         {
             // σ_s =  M_frequent/(A_s  ( d-x/3)) 
-            return sw.MomentBGT * 1e6 / (sw.AsToe * (sw.NuttigeHoogte - sw.HoogteBetonDrukZoneBGT / 3));
+            return sw.MomentFrequent * 1e6 / (sw.AsToe * (sw.NuttigeHoogte - sw.HoogteBetonDrukZoneBGT / 3));
             //betonElement.ScheurwijdteSpanningTrekwapening = betonElement.Moment_Mf * 1000000 / (betonElement.gScheurwijdteWapeningToegepast * (betonElement.NutHoogte - betonElement.HoogteBetondrukzoneBGT / 3));
 
         }

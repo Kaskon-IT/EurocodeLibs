@@ -19,4 +19,7 @@
       <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\ParametrischeProfielen.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder2\" />
+  </ItemGroup>
 </Project>

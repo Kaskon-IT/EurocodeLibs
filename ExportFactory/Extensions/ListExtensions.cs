@@ -25,98 +25,102 @@ namespace ExportFactory.Extensions
                 return dataTable;
             }
 
-            // Verkrijg de eigenschappen van T (de kolommen)
-            var properties = typeof(T).GetProperties();
-
-            // Voeg kolommen toe aan de DataTable op basis van de eigenschappen van T
-            foreach (var prop in properties)
+            try
             {
-                // Haal het ColumnAttribute op (indien aanwezig)
-                var columnAttribute = prop.GetCustomAttribute<TableColumnAttribute>();
+                // Verkrijg de eigenschappen van T (de kolommen)
+                var properties = typeof(T).GetProperties();
 
-                // Aanvulling dynamisch vullen mbv Dictionary 
-                if (columnAttribute != null)
-                {
-                    string columnName = prop.Name;
-
-
-
-                }
-
-                //if (columnAttribute == null)
-                //    continue;
-
-                var column = new DataColumn();
-                // Maak een nieuwe DataColumn voor elke eigenschap
-                Console.WriteLine($"Adding column: {prop.Name} of type {prop.PropertyType}");
-
-                // check if nullable enum (not supported in datatable)
-                if (IsNullableEnum(prop) || IsEnum(prop) || IsNullable(prop))
-                {
-                    //continue; // skip Enum?
-                    column = new DataColumn(prop.Name);
-                }
-                else
-                {
-                    column = new DataColumn(prop.Name, prop.PropertyType);
-
-                }
-
-
-
-
-
-                if (columnAttribute != null)
-                {
-                    // Stel de headertekst in
-                    //if (!string.IsNullOrEmpty(columnAttribute.HeaderText))
-                    //    column.ColumnName = columnAttribute.HeaderText;
-                    //else
-                    //    column.ColumnName = prop.Name;
-
-                    // Stel de uitlijning in
-                    //if (columnAttribute.Alignment != ParagraphAlignment.Center)
-                    //    column.SetOrdinal(0);  // Stel in de gewenste plaats van de kolom indien nodig (optie)
-
-                    // Stel de zichtbaarheid in
-                    column.ExtendedProperties["Visible"] = columnAttribute.Visible;
-
-                    // Hier kan je custom formatting of andere eigenschappen toevoegen
-                    if (!string.IsNullOrEmpty(columnAttribute.StringFormat))
-                    {
-                        column.ExtendedProperties["StringFormat"] = columnAttribute.StringFormat;
-                    }
-                }
-
-                dataTable.Columns.Add(column);
-            }
-
-            // Voeg rijen toe aan de DataTable op basis van de objecten in de lijst
-            // Add rows to the DataTable
-            foreach (var item in list)
-            {
-                // Create a new DataRow for each item
-                var row = dataTable.NewRow();
-
+                // Voeg kolommen toe aan de DataTable op basis van de eigenschappen van T
                 foreach (var prop in properties)
                 {
-                    // Assign the property value to the corresponding column in the DataRow
-                    Console.WriteLine($"Setting value for {prop.Name}: {prop.GetValue(item)}");
-                    row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
+                    // Haal het ColumnAttribute op (indien aanwezig)
+                    var columnAttribute = prop.GetCustomAttribute<TableColumnAttribute>();
 
-                    // description
-                    if (TryGetEnumDescription(row[prop.Name], prop, out string description))
+                    // Aanvulling dynamisch vullen mbv Dictionary 
+                    if (columnAttribute != null)
                     {
-                        row[prop.Name] = description;
+                        string columnName = prop.Name;
+                    }
+
+                    //if (columnAttribute == null)
+                    //    continue;
+
+                    var column = new DataColumn();
+                    // Maak een nieuwe DataColumn voor elke eigenschap
+                    Console.WriteLine($"Adding column: {prop.Name} of type {prop.PropertyType}");
+
+                    // check if nullable enum (not supported in datatable)
+                    if (IsNullableEnum(prop) || IsEnum(prop) || IsNullable(prop))
+                    {
+                        //continue; // skip Enum?
+                        column = new DataColumn(prop.Name);
+                    }
+                    else
+                    {
+                        column = new DataColumn(prop.Name, prop.PropertyType);
                     }
 
 
+                    if (columnAttribute != null)
+                    {
+                        // Stel de headertekst in
+                        //if (!string.IsNullOrEmpty(columnAttribute.HeaderText))
+                        //    column.ColumnName = columnAttribute.HeaderText;
+                        //else
+                        //    column.ColumnName = prop.Name;
 
+                        // Stel de uitlijning in
+                        //if (columnAttribute.Alignment != ParagraphAlignment.Center)
+                        //    column.SetOrdinal(0);  // Stel in de gewenste plaats van de kolom indien nodig (optie)
+
+                        // Stel de zichtbaarheid in
+                        column.ExtendedProperties["Visible"] = columnAttribute.Visible;
+
+                        // Hier kan je custom formatting of andere eigenschappen toevoegen
+                        if (!string.IsNullOrEmpty(columnAttribute.StringFormat))
+                        {
+                            column.ExtendedProperties["StringFormat"] = columnAttribute.StringFormat;
+                        }
+                    }
+
+                    dataTable.Columns.Add(column);
                 }
 
-                // Add the populated row to the DataTable
-                dataTable.Rows.Add(row);
+                // Voeg rijen toe aan de DataTable op basis van de objecten in de lijst
+                // Add rows to the DataTable
+                foreach (var item in list)
+                {
+                    // Create a new DataRow for each item
+                    var row = dataTable.NewRow();
+
+                    foreach (var prop in properties)
+                    {
+                        // Assign the property value to the corresponding column in the DataRow
+                        Console.WriteLine($"Setting value for {prop.Name}: {prop.GetValue(item)}");
+
+
+
+                        row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
+
+                        // description
+                        if (TryGetEnumDescription(row[prop.Name], prop, out string description))
+                        {
+                            row[prop.Name] = description;
+                        }
+                    }
+
+                    // Add the populated row to the DataTable
+                    dataTable.Rows.Add(row);
+                }
+
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Algemene fout: {ex.Message} \r\n{ex.InnerException?.Message}");
+            }
+
+
+
 
             return dataTable;
         }

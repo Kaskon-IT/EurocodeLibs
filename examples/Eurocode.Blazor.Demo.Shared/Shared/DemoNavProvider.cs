@@ -51,11 +51,7 @@ public class DemoNavProvider
                                 icon: new Icons.Regular.Size20.Badge(),
                                 title: "Grondslagen"
                             ),
-                            new NavLink(
-                                href: "/button",
-                                icon: new Icons.Regular.Size20.Button(),
-                                title: "Button"
-                            ),
+
                         ]
                     ),
                     new NavGroup(
@@ -84,27 +80,35 @@ public class DemoNavProvider
                         icon: new Icons.Regular.Size20.NumberCircle2(),
                         children:
                         [
-                            new NavLink(
+                            new NavLink
+                            (
                                 href: "/beton/materialen",
                                 icon: new Icons.Regular.Size20.Diamond(),
                                 title: "Materialen"
                             ),
-                            new NavLink(
+                            new NavLink
+                            (
                                 href: "/beton/duurzaamheid",
                                 icon: new Icons.Regular.Size20.WeatherBlowingSnow(),
                                 title: "Duurzaamheid"
                             ),
-                            new NavLink(
+                            new NavLink
+                            (
                                 href: "/beton/profiel",
                                 icon: new Icons.Regular.Size20.NotebookSection(),
                                 title: "Profiel"
-                                ),
-
-
-                             new NavLink(
+                            ),
+                            new NavLink
+                            (
                                 href: "/beton/buiging",
                                 icon: new Icons.Regular.Size20.ArrowTurnLeftDown(),
                                 title: "Buiging"
+                            ),
+                              new NavLink
+                            (
+                                href: "/beton/dwarskracht",
+                                icon: new Icons.Regular.Size20.ClipboardMathFormula(),
+                                title: "Dwarskracht"
                             ),
 
                         ]

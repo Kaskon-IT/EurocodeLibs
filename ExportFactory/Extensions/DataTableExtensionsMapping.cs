@@ -5,17 +5,21 @@ namespace ExportFactory.Extensions
     public static partial class DataTableExtensions
     {
 
-        const string? _formatSpanning = "0.##\tN/mm²";
-        const string? _formatPromille = "0.##\t‰";
-        const string? _formatProcent = "0.##\t%";
-        const string? _formatKracht = "0.#\tkN";
-        const string? _formatMoment = "0.#\tkNm";
-        const string? _formatVerhouding = null;
+        const string? _MPa = "0.##\tN/mm²";
+        const string? _Promille = "0.##\t‰";
+        // const string? _formatProcent = "0.##\t%";
+        const string? _kN = "0.#\tkN";
+        const string? _kNm = "0.#\tkNm";
+        const string? _mm = "0\tmm";
+        const string? _mmExact = "0.##\tmm";
+        const string? _mm2 = "0\tmm²";
+        const string? _formatVerhouding = "0.##"; // eenheidsloos
+        const string? _graden = "0.##°"; // 
 
 
 
         // EC0
-        private static readonly Dictionary<string, AttributesMapping> _mappings0 = new Dictionary<string, AttributesMapping>
+        private static readonly Dictionary<string, AttributesMapping> _mappingEurocode0 = new Dictionary<string, AttributesMapping>
         {
             { "GebruikteNorm", new(sym: null, desc: "gebruikte norm", norm: null, art: null ) },
             { "Gevolgklasse", new(sym:"CC", desc: "gevolgklasse (Consequence Class)", norm: "EC0", art:"2.3") },
@@ -29,8 +33,11 @@ namespace ExportFactory.Extensions
         };
 
 
+        // EC1
+
+
         // EC2
-        private static readonly Dictionary<string, AttributesMapping> _mapping2 = new Dictionary<string, AttributesMapping>
+        private static readonly Dictionary<string, AttributesMapping> _mappingEurcode2 = new Dictionary<string, AttributesMapping>
         {
 
             { "Betonsterkteklasse", new(sym : "C", desc : "betonsterkteklasse", norm: "EC2", art: "3.1.2", vgl: "tabel 3.1") },
@@ -39,12 +46,10 @@ namespace ExportFactory.Extensions
             { "SpanningRekDiagram", new(sym: null, desc: "spanning-rekdiagram")},
 
 
-
-
             // B
             { "BetonStaalKwaliteit", new(sym : "B",desc : "sterkteklasse",norm : "EC2",art : "") },
-            { "Betonstuik",         new(sym : "|epsilon|~c~",   desc : "betonstruik",                       norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format: _formatPromille ) },
-            { "BetonstuikGrens",    new(sym : "|epsilon|~cu~",  desc : "grenswaarde betonstruik",           norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format: _formatPromille) },
+            { "Betonstuik",         new(sym : "|epsilon|~c~",   desc : "betonstruik",                       norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format: _Promille ) },
+            { "BetonstuikGrens",    new(sym : "|epsilon|~cu~",  desc : "grenswaarde betonstruik",           norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format: _Promille) },
             
             // C
 
@@ -57,37 +62,32 @@ namespace ExportFactory.Extensions
 
 
             // E
-            { "EpsilonC",           new(sym : "|epsilon|~c~",   desc : "betonstruik",                               norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format: _formatPromille) },
-            { "EpsilonCu",          new(sym : "|epsilon|~cu~",  desc : "grenswaarde betonstruik",                   norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format :_formatPromille) },
-            { "Ecm",                new(sym: "E~cm~",           desc: "secans-elasticiteitsmodulus van beton",       norm: "EC2",art: "3.1.3",             vgl : "tabel 3.1",      format : _formatSpanning) },
-            { "Es",                 new(sym : "E~s~",           desc : "rekenwaarde elasticiteitsmodulus betonstaal", norm: "EC2", art: "3.2.7 (4)", vgl: "", format : _formatSpanning) },
+            { "EpsilonC",           new(sym : "|epsilon|~c~",   desc : "betonstruik",                               norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format: _Promille) },
+            { "EpsilonCu",          new(sym : "|epsilon|~cu~",  desc : "grenswaarde betonstruik",                   norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format :_Promille) },
+            { "Ecm",                new(sym: "E~cm~",           desc: "secans-elasticiteitsmodulus van beton",       norm: "EC2",art: "3.1.3",             vgl : "tabel 3.1",      format : _MPa) },
+            { "Es",                 new(sym : "E~s~",           desc : "rekenwaarde elasticiteitsmodulus betonstaal", norm: "EC2", art: "3.2.7 (4)", vgl: "", format : _MPa) },
 
             // F
             { "Fck", new(sym: "f~ck~", desc: "karakteristieke cilinderdrukstertke",norm: "EC2", art: "3.1.2", vgl: "tabel 3.1" ) },
             { "FckCube", new(){Norm = "EC2" , Vergelijking = "tabel 3.1" , Article = "3.1.2", Description = "karakteristieke kubusdruksterkte", Symbol = "f~ck,cube~"} },
-            { "Fcm", new(sym:"f~cm~",desc: "gemiddelde cilinderdruksterkte",norm:"EC2",art:"3.1.3", vgl: "tabel 3.1", format: _formatSpanning) },
+            { "Fcm", new(sym:"f~cm~",desc: "gemiddelde cilinderdruksterkte",norm:"EC2",art:"3.1.3", vgl: "tabel 3.1", format: _MPa) },
 
-            { "Fctm", new(sym: "f~ctm~",desc:"gemiddelde axiale trekstrekste",norm: "EC2",art: "3.1.2",vgl: "tabel 3.1", format: _formatSpanning) },
-            { "FctmFl", new(sym: "f~ctm,fl~",desc : "gemiddelde buigtreksterkte", norm: "EC2", art: "3.1.8 (1)", vgl: "(3.23)", format : _formatSpanning) },
-            { "FctkVijfProcent", new(sym: "f~ctk,0,05~", desc:"karakteristieke axiale treksterkte 5% fractiel",art : "3.1.3", vgl: "tabel 3.1", format : _formatSpanning) },
-            { "FctkVijfEnNegentigProcent", new(sym: "f~ctk,0,95~",desc: "karakteristiek", norm: "EC2", art: "3.1.3", vgl: "tabel 3.1", format: _formatSpanning) },
-            { "Fcd", new(sym: "f~cd~", desc:"rekenwaarde van de druksterkte",norm: "EC2", art:"3.1.6 (1)", vgl : "(3.15)",format: _formatSpanning)},
-            { "Fctd", new(sym: "f~ctd~",desc: "rekenwaarde van de treksterkte", "3.1.6 (2)", vgl: "(3.16)",format :  _formatSpanning)},
+            { "Fctm", new(sym: "f~ctm~",desc:"gemiddelde axiale trekstrekste",norm: "EC2",art: "3.1.2",vgl: "tabel 3.1", format: _MPa) },
+            { "FctmFl", new(sym: "f~ctm,fl~",desc : "gemiddelde buigtreksterkte", norm: "EC2", art: "3.1.8 (1)", vgl: "(3.23)", format : _MPa) },
+            { "FctkVijfProcent", new(sym: "f~ctk,0,05~", desc:"karakteristieke axiale treksterkte 5% fractiel", norm: "EC2",art : "3.1.3", vgl: "tabel 3.1", format : _MPa) },
+            { "FctkVijfEnNegentigProcent", new(sym: "f~ctk,0,95~",desc: "karakteristieke axiale treksterkte 95% fractiel", norm: "EC2", art: "3.1.3", vgl: "tabel 3.1", format: _MPa) },
+            { "Fcd", new(sym: "f~cd~", desc:"rekenwaarde van de druksterkte",norm: "EC2", art:"3.1.6 (1)", vgl : "(3.15)",format: _MPa)},
+            { "Fctd", new(sym: "f~ctd~",desc: "rekenwaarde van de treksterkte",norm: "EC2",art:  "3.1.6 (2)", vgl: "(3.16)",format :  _MPa)},
 
-            { "Fyd", new(sym : "f~yd~",desc : "rekenwaarde sterkte betonstaal",norm: "EC2",art: "?",format:  _formatSpanning) },
-            { "Fywd", new(sym : "f~ywd~",desc : "rekenwaarde sterkte betonstaal (dwarskracht)",norm: "EC2",art: "?",format: _formatSpanning) },
-            { "Fyk", new(sym : "f~yk~",desc : "karakteristieke stekte betonstaal",norm:"EC2",art: "3.2.2 (1)P", vgl : "",format : _formatSpanning) },
+            { "Fyd", new(sym : "f~yd~",desc : "rekenwaarde sterkte betonstaal",norm: "EC2",art: "3.2",format:  _MPa) },
+            { "Fywd", new(sym : "f~ywd~",desc : "rekenwaarde sterkte betonstaal (dwarskracht)",norm: "EC2",art: "3.2",format: _MPa) },
+            { "Fyk", new(sym : "f~yk~",desc : "karakteristieke stekte betonstaal",norm:"EC2",art: "3.2.2 (1)P", vgl : "",format : _MPa) },
             
             // G
             { "GammaC",             new(sym : "|gamma|~C~",     desc : "partiële factor voor beton",        norm : "EC2",   art : "2.4.2.4 (1)",    vgl : "tabel 2.1N",     format : null) },
             { "GammaS",             new(sym : "|gamma|~S~",     desc : "partiële factor voor betonstaal",   norm : "EC2",   art : "2.4.2.4 (1)",    vgl : "tabel 2.1N",     format : null) },
             // K
-            { "Kruipfactor",        new(sym : "|phi|(t,t~0~)",  desc : "kruipcoëfficiënt",                  norm : "EC2",   art : "Bijlage B",      vgl : "(B.1)",          format: null) },
-
-
-                                   
-           
-            
+            { "Kruipfactor",        new(sym : "|phi|(t,t~0~)",  desc : "kruipcoëfficiënt",                  norm : "EC2",   art : "Bijlage B.1",      vgl : "(B.1)",          format: null) },
 
 
             // Dekking en duurzaamheid
@@ -98,65 +98,125 @@ namespace ExportFactory.Extensions
             { "GrootsteKorrelDiameter", new(sym : null, desc : "grootste korrel diameter", norm : "EC2", art : "4.4.1.2 (3)", vgl: "tabel 4.2") },
             { "ConstructieklasseUserFriendlyName", new(sym : "S", desc : "constructieklasse", norm : "EC2", art : "4.4.1.2 (5)", vgl : "tabel 4.3N")  },
             { "Naam", new(sym : null, desc : "", norm : null, art : null) }, // todo iets voor bedenken (universeel)
-            { "WapeningDiameterGelijkwaardig", new(sym : "Ø~eq~", "gelijkwaardige diameter", norm : "EC2", art : "?") },
-
+            { "WapeningDiameterGelijkwaardig", new(sym : "Ø~eq~", "gelijkwaardige diameter", norm : "EC2", art : "8.9.1") },
 
 
             // 6.2 Dwarskracht
+            { "Ved", new(sym : "V~Ed~",desc : "rekenwaarde dwarskracht", norm : "", art:"" ,vgl: "", format : _kN) },
+            { "DwarskrachtWeerstandBeton", new(sym : "V~Rd,c~", desc : "rekenwaarde dwarskracht opneembaar zonder dwarskrachtwapening", norm: "EC2" ,art : "6.2.1 (1)P\r\n6.2.2 (1)\r\n6.2.2 (2)", vgl: "(6.2)\r\n(6.4)", format : _kN) },
+            { "DwarskrachtWeerstandStaal", new(sym : "V~Rd,s~", desc : "rekenwaarde dwarskracht opneembaar door dwarskrachtwapening",norm : "EC2", art :  "6.2.1 (1)P\r\n6.2.3 (3)" , vgl : "(6.8)"  , format : _kN) },
+            { "DwarskrachtWeerstandMax", new(sym : "V~Rd,max~", desc : "rekenwaarde dwarskracht bovengrens bezwijken drukdiagonalen",norm : "EC2", art :  "6.2.1 (1)P", vgl : "(6.9)", format : _kN) },
+            { "DwarskrachtWeerstand", new(sym : "V~Rd~",desc : "rekenwaarde opneembare krachtskracht", norm : "EC2", art:"6.2.1 (2)" ,vgl: "(6.1)", format : _kN) },
 
-            { "DwarskrachtOpneembaarBeton", new(sym : "V~Rd,c~", desc : "rekenwaarde dwarskracht opneembaar zonder dwarskrachtwapening", norm: "EC2" ,art : "6.2.1 (1)P\r\n6.2.2 (1)\r\n6.2.2 (2)", vgl: "(6.2)\r\n(6.4)", format : _formatKracht) },
-            { "DwarskrachtOpneembaarStaal", new(sym : "V~Rd,s~", desc : "rekenwaarde dwarskracht opneembaar door dwarskrachtwapening",norm : "EC2", art :  "6.2.1 (1)P\r\n6.2.3 (3)" , vgl : "(6.8)"  , format : _formatKracht) },
-            { "DwarskrachtOpneembaarMax", new(sym : "V~Rd,max~", desc : "rekenwaarde dwarskracht bovengrens bezwijken drukdiagonalen",norm : "EC2", art :  "6.2.1 (1)P", vgl : "(6.9)", format : _formatKracht) },
-            { "DwarskrachtOpneembaar", new(sym : "V~Rd~",desc : "rekenwaardopneembare krachtskracht", norm : "EC2", art:"6.2.1 (2)" ,vgl: "(6.1)", format : _formatKracht) },
-            { "ThetaHoekDrukdiagonaal", new(sym: "|theta|", desc: "hoek tussen drukdiagonaal en as van ligger loodrecht op de dwarskracht", norm : "EC2", art : "6.2.3 (1)\r\n6.2.3 (2)", vgl: "(6.7N)") },
+            { "SchuifspanningD", new(sym : "|nu|~Ed~",desc : "rekenwaarde schuifspanning", norm : "", art:"" ,vgl: "", format : _MPa) },
+            { "SchuifspanningWeerstandBeton", new(sym : "|nu|~Rd,c~", desc : "rekenwaarde schuifspanning opneembaar zonder dwarskrachtwapening", norm: "EC2" ,art : "6.2.1 (1)P\r\n6.2.2 (1)\r\n6.2.2 (2)", vgl: "(6.2)\r\n(6.4)", format : _MPa) },
+            { "SchuifspanningWeerstandStaal", new(sym : "|nu|~Rd,s~", desc : "rekenwaarde schuifspanning opneembaar door dwarskrachtwapening",norm : "EC2", art :  "6.2.1 (1)P\r\n6.2.3 (3)" , vgl : "(6.8)"  , format : _MPa) },
+            { "SchuifspanningWeerstandMax", new(sym : "|nu|~Rd,max~", desc : "rekenwaarde schuifspanning bovengrens bezwijken drukdiagonalen",norm : "EC2", art :  "6.2.1 (1)P", vgl : "(6.9)", format : _MPa) },
+            { "SchuifspanningWeerstand", new(sym : "|nu|~Rd~",desc : "rekenwaarde opneembare schuifspanning", norm : "EC2", art:"6.2.1 (2)" ,vgl: "(6.1)", format : _MPa) },
 
-            { "HohAfstandBeugels", new(sym : "s", desc : "hart-op-hartafstand van de beugels", norm : "EC2", art : "", format : "0\tmm") },
+
+
+            { "ThetaHoekDrukdiagonaal", new(sym: "|theta|", desc: "hoek tussen drukdiagonaal en as van ligger loodrecht op de dwarskracht", norm : "EC2", art : "6.2.3 (1)\r\n6.2.3 (2)", vgl: "(6.7N)", format:_graden) },
+
+            { "Alpha", new(sym:"|alpha|",  desc: "hoek dwarskrachtwapening", norm: "EC2", art:"6.2.3 (1)", vgl: "", format: _graden) },
+            { "Theta", new(sym:"|theta|",  desc: "hoek drukdiagonaal", norm: "EC2", art:"6.2.3 (1)", vgl: "", format : _graden) },
+            { "CotTheta", new(sym:"cot |theta|",  desc: "cotangens hoek drukdiagonaal", norm: "EC2", art:"6.2.3 (2)", vgl: "", format : _formatVerhouding) },
+
+            { "AlphaCw", new(sym:"|alpha|~cw~",  desc: "factor spanning drukrand", norm: "EC2", art:"6.2.3 (3)", vgl: "(6.9)", format : _formatVerhouding) },
+            { "NutHoogte", new(sym:"d",  desc: "nuttige hoogte voor dwarskracht", norm: "EC2", art:"6.2", vgl: "", format: _mm) },
+            { "Breedte", new(sym:"b~w~",  desc: "minimale breedte tussen trek- en drukrand", norm: "EC2", art:"6.2.3 (1)", vgl: "", format : _mm) },
+            { "Z", new(sym:"z",  desc: "inwendige hefboom", norm: "EC2", art:"6.2.3 (1)", vgl: "", format : _mm) },
+            { "Asw", new(sym:"A~sw~",  desc: "doorsnedeoppervlak dwarskrachtwapening", norm: "EC2", art:"6.2.3 (3)", vgl: "(6.8)", format : _mm2) },
+            { "AswMin", new(sym:"A~sw,min~",  desc: "minimale doorsnedeoppervlak dwarskrachtwapening", norm: "EC2", art:"6.2.3 (3)", vgl: "(6.8)", format: _mm2) },
+            { "AswBerekend", new(sym:"A~sw~",  desc: "berekende doorsnedeoppervlak dwarskrachtwapening", norm: "EC2", art:"6.2.3 (3)", vgl: "(6.8)", format : _mm2) },
+            { "AswBenPerMeter", new(sym:"A~sw,ben~",  desc: "benodigde doorsnedeoppervlak dwarskrachtwapening", norm: "EC2", art:"6.2.3 (3)", vgl: "(6.8)") },
+            { "AsLangs", new(sym:"A~sl~",  desc: "doorsnedeoppervlak trekwapening", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _mm2) },
+            { "Rho1", new(sym:"|rho|~1~",  desc: "= A~sl~ / (b~w~ d) ≤ 0,02", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _formatVerhouding) },
+            { "RhoWMin", new(sym:"|rho|~w,min~",  desc: "= (0,08 / √f~ck~) / f~yk~", norm: "EC2", art:"9.2.2 (5)", vgl: "(9.5N)", format : _formatVerhouding) },
+
+            { "Crdc", new(sym:"C~Rd,c~",  desc: "factor", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _formatVerhouding) },
+            { "SterkteReductieFactorBetonGescheurdDoorDwarskracht", new(sym: "|nu|", desc: "sterktereductiefactor beton gescheurd door dwarskracht", norm: "EC2", art: "6.2.2 (6)", vgl:"(6.6N)", format : _formatVerhouding ) },
+            { "SterkteReductieFactorBetonGescheurdDoorDwarskracht1", new(sym: "|nu|~1~", desc: "sterktereductiefactor beton gescheurd door dwarskracht", norm: "EC2", art: "6.2.3 (3)", vgl:"(6.9)", format : _formatVerhouding ) },
+
+            { "FactorKDwarskrachtWeerstandBeton", new(sym:"k",  desc: "factor", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _formatVerhouding) },
+            { "FactorK1DwarskrachtWeerstandBeton", new(sym:"k~1~",  desc: "factor", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _formatVerhouding) },
+
+
+
+            { "HohAfstandBeugels", new(sym : "s", desc : "hart-op-hartafstand van de beugels", norm : "EC2", art : "", format : _mm) },
             //{ "Fywd", new(sym : "f~ywd~", desc : "rekenwaarde van de vloeigrens van de dwarskrachtwapening", norm : "EC2", art : "6.2.3 (3)", format : _formatSpanning) },
             { "Key", new(sym : "", desc : "", norm : "EC2", art : "", vgl: null, format : "") },
            
 
             // 7.3.2 Oppervlaktes van de minimumwapening
-            
-
             // 7.3.4 Scheurwijdte
             // 
             { "SrMax", new(sym: "s~r,max~",desc: "maximale scheurafstand", norm:"EC2", art: "7.3.4", vgl: "(7.11)\r\n(7.14)\r\n(7.15)",format: "0.##" )},
-            { "Mcr", new("M~cr~", "scheurmoment", "", _formatMoment, "") },
-            { "EpsSmMinusEpsCm", new(sym:"|epsilon|~sm~ - |epsilon|~cm~", desc:"gemiddelde rek wapening minus gemiddelde betonrek",norm:"EC2",art:"7.3.4 (2)",vgl: "(7.9)", format:"e2")  },
-            { "FactorKt", new("k~t~", "factor belastingsduur", "7.3.4 (2)", _formatVerhouding) },
-            { "StaalspanningOptredend", new("|sigma|~s~", "spanning trekwapening", "7.3.4 (2)", _formatSpanning)},
-            { "RhoPeff", new(sym: "|rho|~p,eff~",desc: "= (A~s~ + |xi|~1~ A~p~')/A~c,eff~",art: "7.3.4 (2)" , vgl: "(7.10)", format : _formatVerhouding) },
-            { "ScheurwijdteVerhoudingElasticiteitsmodulusStaalBeton", new("|alpha|~e~", "verhouding E~s~ / E~cm~", "7.3.4 (2)", _formatVerhouding) },
-            { "Wk", new(sym: "w~k~", desc: "scheurwijdte",norm: "EC2", art:"",vgl: "(7.8)",format: "0.## mm") },
-            { "ScheurwijdteMax", new(sym:"w~max~",desc: "grenswaarde scheurwijdte", norm: "EC2", art: "7.3.1 (5)", format: "0.## mm") },
-            { "ScheurwijdteGrenswaardeFactorKx", new(sym:"k~x~",desc: "factor voor w~max~", norm: "EC2", art: "7.3.1 (5)", vgl:"", format: _formatVerhouding) },
-            { "MaximaleScheurAfstandFactorK1", new(sym: "k~1~", desc: "factor aanhechtingseigenschappen", art: "7.3.4 (3)", vgl:"", format: _formatVerhouding) },
-            { "MaximaleScheurAfstandFactorK2", new(sym : "k~2~", desc : "factor rekverdeling", art : "7.3.4 (3)",vgl:"", format: _formatVerhouding) },
-            { "MaximaleScheurAfstandFactorK3", new(sym : "k~3~", desc : "factor zie nationale bijlage", art : "7.3.4 (3)", vgl : "(7.11)", format : _formatVerhouding) },
-            { "MaximaleScheurAfstandFactorK4", new(sym : "k~4~", desc : "factor zie nationale bijlage", art : "7.3.4 (3)", vgl : "(7.11)", format : _formatVerhouding) },
-            { "ScheurwijdteAsMin", new(sym:"A~s,min~", desc: "minimale wapening",norm:"EC2", art: "7.3.?", vgl: "", format:"0 mm²") },
+            { "Mcr", new("M~cr~", "scheurmoment", "", _kNm, "") },
+            { "MomentFrequent", new(sym: "M~E,freq~", desc : "moment frequente combinatie", norm: "", art : "", format: _kNm) },
+            { "MomentRekenwaarde", new(sym: "M~Ed~", desc : "moment rekenwaarde", norm: "", art : "", format: _kNm) },
 
+            { "EpsSmMinusEpsCm", new(sym:"|epsilon|~sm~ - |epsilon|~cm~", desc:"gemiddelde rek wapening minus gemiddelde betonrek",norm:"EC2",art:"7.3.4 (2)",vgl: "(7.9)", format:"e2")  },
+            { "FactorKt", new(sym: "k~t~",desc:  "factor belastingsduur",norm:"EC2",art: "7.3.4 (2)", format: _formatVerhouding) },
+            { "StaalspanningOptredend", new(sym: "|sigma|~s~", desc: "spanning trekwapening",norm: "EC2",art: "7.3.4 (2)",format: _MPa)},
+            { "RhoPeff", new(sym: "|rho|~p,eff~",desc: "= (A~s~ + |xi|~1~ A~p~')/A~c,eff~", norm: "EC2", art: "7.3.4 (2)" , vgl: "(7.10)", format : _formatVerhouding) },
+            { "ScheurwijdteVerhoudingElasticiteitsmodulusStaalBeton", new(sym : "|alpha|~e~", desc : "verhouding E~s~ / E~cm~", norm : "EC2", art : "7.3.4 (2)", format : _formatVerhouding) },
+            { "Wk", new(sym: "w~k~", desc: "berekende scheurwijdte",norm: "EC2", art:"7.3.4 (1)",vgl: "(7.8)",format: _mmExact) },
+            { "ScheurwijdteMax", new(sym:"w~max~",desc: "grenswaarde scheurwijdte", norm: "EC2", art: "7.3.1 (5)", format: _mmExact) },
+            { "ScheurwijdteGrenswaardeFactorKx", new(sym:"k~x~",desc: "factor voor w~max~", norm: "EC2", art: "7.3.1 (5)", vgl:"", format: _formatVerhouding) },
+            { "MaximaleScheurAfstandFactorK1", new(sym: "k~1~", desc: "factor aanhechtingseigenschappen", norm:"EC2", art: "7.3.4 (3)", vgl:"", format: _formatVerhouding) },
+            { "MaximaleScheurAfstandFactorK2", new(sym : "k~2~", desc : "factor rekverdeling", norm : "EC2", art : "7.3.4 (3)",vgl:"", format: _formatVerhouding) },
+            { "MaximaleScheurAfstandFactorK3", new(sym : "k~3~", desc : "factor zie nationale bijlage", norm : "EC2", art : "7.3.4 (3)", vgl : "(7.11)", format : _formatVerhouding) },
+            { "MaximaleScheurAfstandFactorK4", new(sym : "k~4~", desc : "factor zie nationale bijlage", norm : "EC2", art : "7.3.4 (3)", vgl : "(7.11)", format : _formatVerhouding) },
+            { "ScheurwijdteAsMin", new(sym:"A~s,min~", desc: "minimale wapening",norm:"EC2", art: "7.3.1", vgl: "", format: _mm2) },
+            { "WapeningToegepastTekst", new(sym:"A~s,toe~", desc: "toegepaste wapening",norm:"", art: "", vgl: "", format: null) },
 
 
             { "e", new() },
 
 
-            { "BijlageB1", new(sym : "|sigma|(t,t~0~)", desc : "kruipcoëfficiënt", norm : "EC2", art : "Bijlage B", vgl: "(B.1)", format : "") },
-            { "BijlageB2", new(sym : "|sigma|~0~", desc : "theoretische kruipcoëfficiënt", norm : "EC2", art : "Bijlage B", vgl: "(B.2)", format : "") },
-            { "BijlageB3", new(sym : "|sigma|~RH~", desc : "factor relatieve vochtigheid", norm : "EC2", art : "Bijlage B", vgl: "(B.3)", format : "") },
-            { "BijlageB4", new(sym : "|beta|(f~cm~)", desc : "factor betonsterkte", norm : "EC2", art : "Bijlage B", vgl: "(B.4)", format : "") },
-            { "BijlageB5", new(sym : "|beta|(t~0~)", desc : "factor ouderdom beton", norm : "EC2", art : "Bijlage B", vgl: "(B.5)", format : "") },
-            { "BijlageB6", new(sym : "h~0~", desc : "theoretische dikte", norm : "EC2", art : "Bijlage B", vgl: "(B.6)", format : "") },
-            { "BijlageB7", new(sym : "|beta|~c~(t,t~0~)", desc : "", norm : "EC2", art : "Bijlage B", vgl: "(B.7)", format : "") },
+            { "BijlageB1", new(sym : "|phi|(t,t~0~)", desc : "kruipcoëfficiënt", norm : "EC2", art : "Bijlage B.1", vgl: "(B.1)", format : "") },
+            { "BijlageB2", new(sym : "|phi|~0~", desc : "theoretische kruipcoëfficiënt", norm : "EC2", art : "Bijlage B.1", vgl: "(B.2)", format : "") },
+            { "BijlageB3", new(sym : "|phi|~RH~", desc : "factor relatieve vochtigheid", norm : "EC2", art : "Bijlage B.1", vgl: "(B.3)", format : "") },
+            { "BijlageB4", new(sym : "|beta|(f~cm~)", desc : "factor betonsterkte", norm : "EC2", art : "Bijlage B.1", vgl: "(B.4)", format : "") },
+            { "BijlageB5", new(sym : "|beta|(t~0~)", desc : "factor ouderdom beton", norm : "EC2", art : "Bijlage B.1", vgl: "(B.5)", format : "") },
+
+            { "BijlageB6", new(sym : "h~0~", desc : "theoretische dikte", norm : "EC2", art : "Bijlage B.1", vgl: "(B.6)", format : "") },
+            { "BijlageB7", new(sym : "|beta|~c~(t,t~0~)", desc : "coëfficiënt ontwikkeling kruip in de tijd na belasten", norm : "EC2", art : "Bijlage B.1", vgl: "(B.7)", format : "") },
+            { "BijlageB8", new(sym : "", desc : "", norm : "EC2", art : "Bijlage B.1", vgl: "(B.8)", format : "") },
+            { "BijlageB9", new(sym : "t~0~", desc : "ouderdom in dagen", norm : "EC2", art : "Bijlage B.1", vgl: "(B.9)", format : "0\tdagen") },
+            { "BijlageB10", new(sym : "t~T~", desc : "voor temperatuur gecorrigeerde ouderdom van het beton", norm : "EC2", art : "Bijlage B.1", vgl: "(B.10)", format : "0\tdagen") },
+
+            { "BijlageB11", new(sym : "|epsilon|~cd,0~", desc : "basisverkorting ten gevolge van uitdrogingskrimp", norm : "EC2", art : "Bijlage B.2", vgl: "(B.11)", format : "") },
+            { "BijlageB12", new(sym : "|beta|~RH~", desc : "factor relatieve vochtigheid", norm : "EC2", art : "Bijlage B.2", vgl: "(B.12)", format : "") },
 
 
 
-            { "BijlageB8", new(sym : "", desc : "", norm : "EC2", art : "Bijlage B", vgl: "(B.8)", format : "") },
+            // Oplegging
+            { "OplegLengteNominaal", new(sym: "a~nom~", desc: "nominale opleglengte = a~1~ + a~2~ + a~3~ + √(|Detla|a~2~^2^ + |Delta|a~3~^2^)", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
+            { "OplegLengteNetto", new(sym: "a~1~", desc: "netto-opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
+            { "OplegLengteAanwezig", new(sym: "a~aanw~", desc: "aanwezige opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
+            { "OplegReactieRekenwaarde", new(sym: "F~Ed~", desc: "rekenwaarde oplegreactie", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _kN  )  },
+            { "OplegBreedteNetto", new(sym: "b~1~", desc: "netto-oplegbreedte", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
+            { "OplegSterkteRekenwaarde", new(sym: "f~Rd~", desc: "rekenwaarde oplegsterkte", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _MPa  )  },
 
-            { "BijlageB9", new(sym : "t~0~", desc : "", norm : "EC2", art : "Bijlage B", vgl: "(B.9)", format : "") },
-            { "BijlageB10", new(sym : "t~T~", desc : "", norm : "EC2", art : "Bijlage B", vgl: "(B.10)", format : "") },
-            { "BijlageB11", new(sym : "|epsilon|~cd,0~", desc : "", norm : "EC2", art : "Bijlage B", vgl: "(B.11)", format : "") },
-            { "BijlageB12", new(sym : "|beta|~RH~", desc : "", norm : "EC2", art : "Bijlage B", vgl: "(B.12)", format : "") },
+            { "AfstandA2", new(sym: "a~2~", desc: "randafstand dragende element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
+            { "AfstandA3", new(sym: "a~3~", desc: "randafstand ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
+            { "AfstandDeltaA2", new(sym: "|Delta|a~2~", desc: "tolerantie afstand tussen dragende elementen", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
+            { "AfstandDeltaA3", new(sym: "|Delta|a~3~", desc: "tolerantie lengte element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
+
+
+            { "LengteOndersteundeElement", new(sym: "l~n~", desc: "lengte ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
+
+            { "RelatieveOplegspanning", new(sym: "|sigma|~Ed~ / f~cd~", desc: "relatieve oplegspanning", norm:"EC2", art: "10.9.5.2", vgl: "Tabel 10.2/3", format: _formatVerhouding  )  },
+
+
+            { "RekenwaardeOplegmateriaal", new(sym: "f~bed~", desc: "rekenwaarde oplegmateriaal", norm:"EC2", art: "10.9.5.2 (2)", vgl: "", format: _MPa  )  },
+            { "LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement", new(sym: "f~cd~", desc: "laagste rekenwaarde van de sterktes van het ondersteunde en het ondersteunende element", norm:"EC2", art: "10.9.5.2 (2)", vgl: "", format: _MPa  )  },
+
+
+
+
 
 
 
@@ -164,8 +224,8 @@ namespace ExportFactory.Extensions
 
 
         public static readonly Dictionary<string, AttributesMapping> EurocodeMapping =
-            _mappings0
-            .Concat(_mapping2)
+            _mappingEurocode0
+            .Concat(_mappingEurcode2)
             .ToDictionary();
 
         public static readonly Dictionary<string, AttributesMapping> _propertieMap = new Dictionary<string, AttributesMapping>
