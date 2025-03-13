@@ -1,0 +1,41 @@
+﻿@if (SampleProject != null)
+{
+    <EurocodeBetonOpleggingComponent @bind-Model=@SampleProject.OpleggingDemo>
+
+    </EurocodeBetonOpleggingComponent>
+
+    <FluentButton OnClick="Export">Export HTML</FluentButton>
+
+    @if (!string.IsNullOrEmpty(html))
+    {
+        <div>@((MarkupString)html)</div>
+    }
+
+
+  
+
+}
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+    private string html;
+
+    private void Export()
+    {
+        if (SampleProject == null) return;
+
+
+        SampleProject.OpleggingDemo.Update(); 
+
+        List<Eurocode.BetonConstructies.OpleggingContext> list = [SampleProject.OpleggingDemo];
+        var dataTable = list.ToDataTable();
+        var table = dataTable.ToMigraDocTable(typeof(OpleggingContext));
+        MigraDoc.DocumentObjectModel.Document document = new();
+        document.AddSection().Add(table);
+        html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(document);
+    }
+
+
+}

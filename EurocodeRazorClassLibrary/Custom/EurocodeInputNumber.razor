@@ -1,0 +1,257 @@
+﻿@using System.Text.RegularExpressions
+@using System.Globalization
+@typeparam T where T : new()
+
+<div class="input-container">
+
+    <FluentTooltip Anchor="@Id">
+        @GetTooltip()
+
+    </FluentTooltip>
+
+    <FluentTextField @bind-Value="InputValue"
+                     @oninput="ValidateInput"
+                     Id="@Id"
+                     Disabled=@IsDisabled
+                     Placeholder="Voer een getal in"
+                     TextFieldType=TextFieldType.Text
+                     Style="width: 100%;">
+        @GetLabel()
+    </FluentTextField>
+    <span>@Unit</span>
+</div>
+
+
+
+<style>
+    .input-container {
+        display: flex;
+        align-items: flex-end;
+    }
+
+        .input-container FluentTextField {
+            flex-grow: 1;
+        }
+
+        .input-container span {
+            margin-left: 5px; /* Zorgt voor wat ruimte tussen het veld en de eenheid */
+            margin-bottom: 0.25em; /* Zorgt voor uitlijning met tekst in het invoerveld */
+            font-size: smaller;
+            font-style: italic;
+            color: gray !important; /* Pas de kleur aan indien minder opzichtig gewenst is */
+        }
+</style>
+
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div style="color: red;">@ErrorMessage</div>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public T? Value { get; set; } // Kan int, double of decimal zijn
+
+
+
+    [Parameter, EditorRequired]
+    public string Key { get; set; } = string.Empty;
+
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+
+    // ReadOnly is true als er geen binding is
+    private bool IsDisabled => !ValueChanged.HasDelegate;
+
+
+    [Parameter]
+    public RenderFragment? TooltipContent { get; set; }
+
+
+    [Parameter]
+    public EventCallback<T?> ValueChanged { get; set; } // Terugkoppeling van waarde
+
+    [Parameter]
+    public double MinValue { get; set; } = double.MinValue;
+
+    [Parameter]
+    public double MaxValue { get; set; } = double.MaxValue;
+
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Unit { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Id { get; set; } = Guid.NewGuid().ToString(); // Standaard unieke Id
+
+    [Parameter]
+    public string Tooltip { get; set; } = string.Empty;
+
+    private string InputValue { get; set; } = string.Empty;
+    private string? ErrorMessage { get; set; }
+    private bool IsFocused { get; set; } = false;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (Value == null) return;
+        InputValue = FormatValue(Value);
+        ExportFactory.Extensions.DataTableExtensions.EurocodeMapping.TryGetValue(Key, out var mapping);
+        Mapping = mapping;
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        // Werk InputValue bij als Value wijzigt
+        //InputValue = FormatValue(Value);
+    }
+
+    //private string FormatValue(T value) => $"{value} {Unit}".Trim();
+
+    private async Task ValidateInput(ChangeEventArgs e)
+    {
+        InputValue = e.Value?.ToString() ?? string.Empty;
+
+        // Regex voor numerieke input inclusief wetenschappelijke notatie
+        var isValid = Regex.IsMatch(InputValue, @"^-?\d+([.,]\d+)?([eE][-+]?\d+)?([.,]?)$");
+
+        if (!isValid)
+        {
+            ErrorMessage = "Ongeldige invoer: gebruik een getal of wetenschappelijke notatie.";
+            return;
+        }
+
+        var normalizedInput = InputValue.Replace(",", ".");
+
+        try
+        {
+            if (TryParseValue(normalizedInput, out T? newValue))
+            {
+                await SetValueAsync(newValue);
+            }
+            else
+            {
+                ErrorMessage = "Ongeldig type.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Fout bij invoer: {ex.Message}";
+        }
+    }
+
+    private async Task SetValueAsync(T? newValue)
+    {
+        if (newValue is IConvertible convertible)
+        {
+            var doubleValue = convertible.ToDouble(CultureInfo.InvariantCulture);
+
+            if (doubleValue < MinValue || doubleValue > MaxValue)
+            {
+                ErrorMessage = $"Waarde moet tussen {MinValue} en {MaxValue} liggen.";
+                return;
+            }
+        }
+
+        Value = newValue;
+        ErrorMessage = null;
+        await ValueChanged.InvokeAsync(newValue);
+    }
+
+    private bool TryParseValue(string input, out T? value)
+    {
+        value = default;
+
+        if (typeof(T) == typeof(int) && int.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out var intValue))
+        {
+            value = (T)(object)intValue;
+            return true;
+        }
+
+        if (typeof(T) == typeof(double) && double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out var doubleValue))
+        {
+            value = (T)(object)doubleValue;
+            return true;
+        }
+
+        if (typeof(T) == typeof(decimal) && decimal.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out var decimalValue))
+        {
+            value = (T)(object)decimalValue;
+            return true;
+        }
+
+        return false;
+    }
+
+    private string FormatValue(T value) => $"{value}";
+
+    private string DisplayValue
+    {
+        get
+        {
+            if (IsFocused)
+            {
+                return InputValue; // Alleen de waarde zonder eenheid tonen als het veld gefocust is
+            }
+            return $"{InputValue} {Unit}".Trim(); // Voeg de eenheid toe als het veld niet gefocust is
+        }
+
+    }
+
+
+    public MarkupString GetMarkupString(string markup, bool makeItalic = false)
+    {
+        string html = ExportFactory.Services.HtmlCreator.MarkdownToHtml(markup);
+
+        if (makeItalic)
+        {
+            html = $"<i>{html}</i>";
+        }
+
+        return (MarkupString)html;
+    }
+
+
+    private ExportFactory.Shared.AttributesMapping? Mapping{ get; set; } 
+
+
+
+    public MarkupString? GetLabel()
+    {
+        string markup = $"{Key}";
+        if (Mapping != null && Mapping.Symbol != null)
+        {
+            markup = $"{Mapping.Symbol}";
+        }
+        return GetMarkupString(markup, true);
+    }
+
+
+
+
+    public MarkupString? GetTooltip()
+    {
+        //var mapping = ExportFactory.Extensions.DataTableExtensions.EurocodeMapping[key];
+        
+        if (Mapping != null)
+        {
+            string markup = $"{Mapping.Symbol} = {Mapping.Description}";
+            if (Mapping.Referentie != null)
+                markup += $" {Mapping.Referentie}";
+
+            return GetMarkupString(markup, true);
+        }
+        else return null;
+
+    }
+
+
+
+
+}
+

@@ -87,6 +87,34 @@ namespace ExportFactory.Shared
         public string? Format { get; set; } = null;
 
 
+        public string? Referentie
+        {
+            get
+            {
+                if (Norm != null || Article != null || Vergelijking != null)
+                {
+                    string referentie = $"conform {Norm}";
+                    if (Article != null)
+                        referentie += $" art. {Article}";
+                    if (Vergelijking != null)
+                    {
+                        if (Vergelijking.StartsWith('('))
+                        {
+                            referentie += $" vgl. {Vergelijking}";
+                        }
+                        else
+                        {
+                            referentie += $" {Vergelijking}";
+                        }
+                    }
+
+                    return referentie;
+                }
+                else return null;
+
+            }
+        }
+
         public EurocodeParagraaf? Paragraaf { get; set; } = null;
 
 

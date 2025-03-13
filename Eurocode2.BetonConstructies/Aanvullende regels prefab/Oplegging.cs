@@ -1,4 +1,5 @@
 ﻿using ExportFactory.Shared;
+using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
 {
@@ -7,17 +8,26 @@ namespace Eurocode.BetonConstructies
     {
         public static void Update(this OpleggingContext context)
         {
-
+            context.SetOplegSterkteRekenwaarde();
+            context.SetAfstandA2();
+            context.SetAfstandDeltaA2();
+            context.SetAfstandA3();
+            context.SetOplegLengteNetto();
+            context.SetOplegLengteNominaal();
         }
+
+
+
+
 
         public static void SetOplegLengteNominaal(this OpleggingContext context)
         {
-            throw new NotImplementedException();
-            //context.OplegLengteNominaal = context.GetOplegLengte
+            //throw new NotImplementedException();
+            context.OplegLengteNominaal = context.GetOplegLengteNominmaal();
         }
         public static double GetOplegLengteNominmaal(this OpleggingContext context)
         {
-            return context.OplegBreedteNetto + context.AfstandA2 + context.AfstandA3 + Math.Sqrt(Math.Pow(context.AfstandDeltaA2, 2) + Math.Pow(context.AfstandDeltaA3, 2));
+            return context.OplegLengteNetto + context.AfstandA2 + context.AfstandA3 + Math.Sqrt(Math.Pow(context.AfstandDeltaA2, 2) + Math.Pow(context.AfstandDeltaA3, 2)) + context.AfstandDeltaElementType;
         }
 
 
@@ -95,85 +105,86 @@ namespace Eurocode.BetonConstructies
 
         public static double GetAfstandA2(this OpleggingContext context, out bool vellingkantNoodzakelijk)
         {
-            double returVal = 35;
+            double val = 35;
             vellingkantNoodzakelijk = false;
             switch (context.OplegMateriaal, context.OplegType, context.RelatieveOplegspanning)
             {
-                case (OplegmateriaalEnum.STAAL, OplegTypeEnum.LIJNVORMIG, <= 0.15):
-                    returVal = 0.0;
+                case (OplegMateriaalEnum.STAAL, OplegTypeEnum.LIJNVORMIG, <= 0.15):
+                    val = 0.0;
                     break;
-                case (OplegmateriaalEnum.STAAL, OplegTypeEnum.LIJNVORMIG, > 0.15 and <= 0.40):
-                    returVal = 0.0;
+                case (OplegMateriaalEnum.STAAL, OplegTypeEnum.LIJNVORMIG, > 0.15 and <= 0.40):
+                    val = 0.0;
                     break;
-                case (OplegmateriaalEnum.STAAL, OplegTypeEnum.LIJNVORMIG, > 0.40):
-                    returVal = 10.0;
+                case (OplegMateriaalEnum.STAAL, OplegTypeEnum.LIJNVORMIG, > 0.40):
+                    val = 10.0;
                     break;
-                case (OplegmateriaalEnum.STAAL, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, <= 0.15):
-                    returVal = 5.0;
+                case (OplegMateriaalEnum.STAAL, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, <= 0.15):
+                    val = 5.0;
                     break;
-                case (OplegmateriaalEnum.STAAL, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.15 and <= 0.40):
-                    returVal = 10.0;
+                case (OplegMateriaalEnum.STAAL, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.15 and <= 0.40):
+                    val = 10.0;
                     break;
-                case (OplegmateriaalEnum.STAAL, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.40):
-                    returVal = 15.0;
-                    break;
-
-                case (OplegmateriaalEnum.GEWAPEND_BETON_VANAF_C30_37, OplegTypeEnum.LIJNVORMIG, <= 0.15):
-                    returVal = 5.0;
-                    break;
-                case (OplegmateriaalEnum.GEWAPEND_BETON_VANAF_C30_37, OplegTypeEnum.LIJNVORMIG, > 0.15 and <= 0.40):
-                    returVal = 10.0;
-                    break;
-                case (OplegmateriaalEnum.GEWAPEND_BETON_VANAF_C30_37, OplegTypeEnum.LIJNVORMIG, > 0.40):
-                    returVal = 15.0;
-                    break;
-                case (OplegmateriaalEnum.GEWAPEND_BETON_VANAF_C30_37, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, <= 0.15):
-                    returVal = 10.0;
-                    break;
-                case (OplegmateriaalEnum.GEWAPEND_BETON_VANAF_C30_37, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.15 and <= 0.40):
-                    returVal = 15.0;
-                    break;
-                case (OplegmateriaalEnum.GEWAPEND_BETON_VANAF_C30_37, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.40):
-                    returVal = 25.0;
+                case (OplegMateriaalEnum.STAAL, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.40):
+                    val = 15.0;
                     break;
 
-                case (OplegmateriaalEnum.ONGEWAPEND_BETON or OplegmateriaalEnum.GEWAPEND_BETON_TOT_C30_37, OplegTypeEnum.LIJNVORMIG, <= 0.15):
-                    returVal = 10.0;
+                case (OplegMateriaalEnum.PREFAB_BETON or OplegMateriaalEnum.IHWG_BETON, OplegTypeEnum.LIJNVORMIG, <= 0.15):
+                    if (context.BetonsterkteklasseDragendeElement != null && (int)context.BetonsterkteklasseDragendeElement.Value >= 30)
+                        val = 5.0;
+                    else
+                        val = 10.0;
                     break;
-                case (OplegmateriaalEnum.ONGEWAPEND_BETON or OplegmateriaalEnum.GEWAPEND_BETON_TOT_C30_37, OplegTypeEnum.LIJNVORMIG, > 0.15 and <= 0.40):
-                    returVal = 15.0;
+                case (OplegMateriaalEnum.PREFAB_BETON, OplegTypeEnum.LIJNVORMIG, > 0.15 and <= 0.40):
+                    if (context.BetonsterkteklasseDragendeElement != null && (int)context.BetonsterkteklasseDragendeElement.Value >= 30)
+                        val = 10.0;
+                    else
+                        val = 15.0;
                     break;
-                case (OplegmateriaalEnum.ONGEWAPEND_BETON or OplegmateriaalEnum.GEWAPEND_BETON_TOT_C30_37, OplegTypeEnum.LIJNVORMIG, > 0.40):
-                    returVal = 25.0;
+                case (OplegMateriaalEnum.PREFAB_BETON, OplegTypeEnum.LIJNVORMIG, > 0.40):
+                    if (context.BetonsterkteklasseDragendeElement != null && (int)context.BetonsterkteklasseDragendeElement.Value >= 30)
+                        val = 15.0;
+                    else
+                        val = 25.0;
                     break;
-                case (OplegmateriaalEnum.ONGEWAPEND_BETON or OplegmateriaalEnum.GEWAPEND_BETON_TOT_C30_37, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, <= 0.15):
-                    returVal = 20.0;
+                case (OplegMateriaalEnum.PREFAB_BETON, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, <= 0.15):
+                    if (context.BetonsterkteklasseDragendeElement != null && (int)context.BetonsterkteklasseDragendeElement.Value >= 30)
+                        val = 10.0;
+                    else
+                        val = 20.0;
                     break;
-                case (OplegmateriaalEnum.ONGEWAPEND_BETON or OplegmateriaalEnum.GEWAPEND_BETON_TOT_C30_37, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.15 and <= 0.40):
-                    returVal = 25.0;
+                case (OplegMateriaalEnum.PREFAB_BETON, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.15 and <= 0.40):
+                    if (context.BetonsterkteklasseDragendeElement != null && (int)context.BetonsterkteklasseDragendeElement.Value >= 30)
+                        val = 15.0;
+                    else
+                        val = 25.0;
                     break;
-                case (OplegmateriaalEnum.ONGEWAPEND_BETON or OplegmateriaalEnum.GEWAPEND_BETON_TOT_C30_37, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.40):
-                    returVal = 35.0;
+                case (OplegMateriaalEnum.PREFAB_BETON, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.40):
+                    if (context.BetonsterkteklasseDragendeElement != null && (int)context.BetonsterkteklasseDragendeElement.Value >= 30)
+                        val = 25.0;
+                    else
+                        val = 35.0;
                     break;
 
-                case (OplegmateriaalEnum.METSELWERK, OplegTypeEnum.LIJNVORMIG, <= 0.15):
-                    returVal = 10.0;
+
+
+                case (OplegMateriaalEnum.METSELWERK, OplegTypeEnum.LIJNVORMIG, <= 0.15):
+                    val = 10.0;
                     break;
-                case (OplegmateriaalEnum.METSELWERK, OplegTypeEnum.LIJNVORMIG, > 0.15 and <= 0.40):
-                    returVal = 15.0;
+                case (OplegMateriaalEnum.METSELWERK, OplegTypeEnum.LIJNVORMIG, > 0.15 and <= 0.40):
+                    val = 15.0;
                     break;
-                case (OplegmateriaalEnum.METSELWERK, OplegTypeEnum.LIJNVORMIG, > 0.40):
-                    returVal = 25.0;
+                case (OplegMateriaalEnum.METSELWERK, OplegTypeEnum.LIJNVORMIG, > 0.40):
+                    val = 25.0;
                     vellingkantNoodzakelijk = true;// Vellingkant
                     break;
-                case (OplegmateriaalEnum.METSELWERK, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, <= 0.15):
-                    returVal = 20.0;
+                case (OplegMateriaalEnum.METSELWERK, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, <= 0.15):
+                    val = 20.0;
                     break;
-                case (OplegmateriaalEnum.METSELWERK, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.15 and <= 0.40):
-                    returVal = 25.0;
+                case (OplegMateriaalEnum.METSELWERK, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.15 and <= 0.40):
+                    val = 25.0;
                     break;
-                case (OplegmateriaalEnum.METSELWERK, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.40):
-                    returVal = 35.0;
+                case (OplegMateriaalEnum.METSELWERK, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER, > 0.40):
+                    val = 35.0;
                     vellingkantNoodzakelijk = true;// Vellingkant
                     break;
 
@@ -181,7 +192,63 @@ namespace Eurocode.BetonConstructies
 
             }
 
-            return returVal;
+            return val;
+        }
+
+
+        public static void SetAfstandDeltaA2(this OpleggingContext context)
+        {
+            context.AfstandDeltaA2 = context.GetAfstandDeltaA2();
+        }
+
+        public static double GetAfstandDeltaA2(this OpleggingContext context)
+        {
+            double ondergrens = 10;
+            double bovengrens = 40;
+            double val = 0;
+            switch (context.OplegMateriaal)
+            {
+                default:
+                case OplegMateriaalEnum.STAAL or OplegMateriaalEnum.PREFAB_BETON:
+                    ondergrens = 10; bovengrens = 30; val = context.LengteOndersteundeElement / 1200;
+                    break;
+                case OplegMateriaalEnum.IHWG_BETON or OplegMateriaalEnum.METSELWERK:
+                    ondergrens = 15; bovengrens = 40; val = context.LengteOndersteundeElement / 1200 + 5;
+                    break;
+            }
+            if (val < ondergrens) return ondergrens;
+            if (val > bovengrens) return bovengrens;
+            return val;
+        }
+
+
+        public static void SetAfstandA3(this OpleggingContext context)
+        {
+            context.AfstandA3 = context.GetAfstandA3();
+        }
+
+        /// <summary>
+        /// Tabel 10.4
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static double GetAfstandA3(this OpleggingContext context)
+        {
+            switch (context.DetailleringWapening, context.OplegType)
+            {
+                default: return 15;
+                case (OpleggingContext.DetailleringWapeningEnum.DoorgaandeStavenBovenOndersteuning, OplegTypeEnum.LIJNVORMIG): return 0;
+                case (OpleggingContext.DetailleringWapeningEnum.DoorgaandeStavenBovenOndersteuning, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER): return 0;
+
+                case (OpleggingContext.DetailleringWapeningEnum.RechteStavenHorizontaleHaarspelden, OplegTypeEnum.LIJNVORMIG): return 5;
+                case (OpleggingContext.DetailleringWapeningEnum.RechteStavenHorizontaleHaarspelden, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER): return Math.Max(15, context.EindDekking);
+
+                case (OpleggingContext.DetailleringWapeningEnum.Voorspanelementen, OplegTypeEnum.LIJNVORMIG): return 5;
+                case (OpleggingContext.DetailleringWapeningEnum.Voorspanelementen, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER): return 15;
+
+                case (OpleggingContext.DetailleringWapeningEnum.VerticaleHaarspelden, OplegTypeEnum.LIJNVORMIG): return 15;
+                case (OpleggingContext.DetailleringWapeningEnum.VerticaleHaarspelden, OplegTypeEnum.GECONCENTREERD or OplegTypeEnum.RIBBENVLOER): return context.EindDekking + context.BinnensteBuigstraal;
+            }
         }
 
 
@@ -207,6 +274,22 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        public enum OplegMateriaalEnumerator
+        {
+            [Description("Staal")]
+            STAAL,
+            [Description("Prefabbeton")]
+            PREFABBETON,
+            [Description("Metselwerk")]
+            METSELWERK,
+            [Description("In het werk gestort beton")]
+            IN_SITU_GESTORT_BETON
+        }
+
+
+
+
+
 
     }
 
@@ -216,6 +299,36 @@ namespace Eurocode.BetonConstructies
         // 10.9 bijzondere regels
         // 10.9.5 opleggingen
         // 10.9.5.2 opleggingen doorgaande elementen
+
+        [TableColumn("detaillering")]
+        public DetailleringWapeningEnum? DetailleringWapening { get; set; } = DetailleringWapeningEnum.VerticaleHaarspelden;
+        public enum DetailleringWapeningEnum
+        {
+            [Description("Doorgaande staven boven de ondersteuning (ingeklemd of niet)")]
+            DoorgaandeStavenBovenOndersteuning,
+            [Description("Rechte staven, horizontale haarspelden, dichtbij het einde van het element")]
+            RechteStavenHorizontaleHaarspelden,
+            [Description("Voorspanelementen of rechte staven die aan het \r\neinde van het element zichtbaar zijn")]
+            Voorspanelementen,
+            [Description("Verticale haarspelden")]
+            VerticaleHaarspelden
+        }
+
+        public OpleggingElementTypeEnum? OpleggingElementType { get; set; } = OpleggingElementTypeEnum.AfzonderlijkElement;
+        public enum OpleggingElementTypeEnum
+        {
+            [Description("Doorgaand element (meerdere steunpunten)")]
+            DoorgaandElement,
+            [Description("Afzonderlijk element")]
+            AfzonderlijkElement
+        }
+
+
+        public double EindDekking { get; set; } = 20;
+        public double BinnensteBuigstraal { get; set; } = 50;
+        public BetonsterkteklasseEnum? BetonsterkteklasseDragendeElement { get; set; } = BetonsterkteklasseEnum.C20_25;
+        public BetonContext BetonOndersteundeElement { get; set; } = new();
+
 
         /// <summary>
         /// a of a~nom~
@@ -233,21 +346,21 @@ namespace Eurocode.BetonConstructies
         /// a~aanw~
         /// </summary>
         [TableColumn("a~aanw~", "aanwezige opleglengte")]
-        public double OplegLengteAanwezig { get; set; }
+        public double OplegLengteAanwezig { get; set; } = 75;
 
 
         /// <summary>
         /// F~Ed~
         /// </summary>
         [TableColumn("F~Ed~", "rekenwaarde oplegreactie")]
-        public double OplegReactieRekenwaarde { get; set; }
+        public double OplegReactieRekenwaarde { get; set; } = 50;
 
 
         /// <summary>
         /// b~1~
         /// </summary>
         [TableColumn("b~1~", "oplegbreedte netto")]
-        public double OplegBreedteNetto { get; set; }
+        public double OplegBreedteNetto { get; set; } = 1000;
 
         /// <summary>
         /// f~Rd~
@@ -269,17 +382,63 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn("|Delta|a~3~", "tolerantie lengteafwijkingen ondersteunde element")]
 
-        public double AfstandDeltaA3 { get; set; }
+        public double AfstandDeltaA3
+        {
+            get { return LengteOndersteundeElement / 2500; }
+        }
+
+
+        [TableColumn("|Delta|~elem.type~")]
+        public double AfstandDeltaElementType
+        {
+            get
+            {
+                if (OpleggingElementType == OpleggingElementTypeEnum.AfzonderlijkElement) return 20;
+                else return 0;
+            }
+        }
 
         [TableColumn("l~n~", "lengte ondersteunde element")]
-        public double LengteOndersteundeElement { get; set; }
+        public double LengteOndersteundeElement { get; set; } = 2400;
 
+
+        /// <summary>
+        /// Indien metselwerk gekozen, dient Fcd opgegeven te worden.
+        /// </summary>
+        public double OpgaveDruksterkteMetselwerk { get; set; } = 5.00;
 
         /// <summary>
         /// f~cd~
         /// </summary>
         [TableColumn("f~cd~", "laagste rekenwaarde van de sterktes van het ondersteunde en het ondersteunende element")]
-        public double LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement { get; set; } = 13.333;
+        public double LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement
+        {
+            get
+            {
+                if (OplegMateriaal == OplegMateriaalEnum.STAAL)
+                {
+                    return this.BetonOndersteundeElement.Fcd;
+                }
+                else if (OplegMateriaal == OplegMateriaalEnum.METSELWERK)
+                {
+                    return Math.Min(this.OpgaveDruksterkteMetselwerk, this.BetonOndersteundeElement.Fcd);
+                }
+                else
+                {
+                    double fcdDragendeElement = 13.33;
+                    if (this.BetonsterkteklasseDragendeElement.HasValue)
+                    {
+                        fcdDragendeElement = (int)BetonsterkteklasseDragendeElement.Value / 1.5;
+                    }
+
+                    return Math.Min(this.BetonOndersteundeElement.Fcd, fcdDragendeElement);
+                }
+
+            }
+        }
+
+
+
 
         /// <summary>
         /// f~bed~
@@ -301,10 +460,13 @@ namespace Eurocode.BetonConstructies
         public bool AfzonderlijkeElementen { get; set; } = true;
 
 
+        [TableColumn("|sigma|~Ed~", "oplegspanning")]
         public double OplegSpanningRekenwaarde
         {
             get { return OplegReactieRekenwaarde * 1000 / (OplegBreedteNetto * OplegLengteAanwezig); }
         }
+
+
 
 
         [TableColumn("|sigma|~Ed~ / f~cd~", "relatieve oplegspanning")]
@@ -314,28 +476,37 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public OplegmateriaalEnum OplegMateriaal { get; set; } = OplegmateriaalEnum.GEWAPEND_BETON_VANAF_C30_37;
+        public OplegMateriaalEnum? OplegMateriaal { get; set; } = OplegMateriaalEnum.PREFAB_BETON;
 
-        public OplegTypeEnum OplegType { get; set; } = OplegTypeEnum.LIJNVORMIG;
+        public OplegTypeEnum? OplegType { get; set; } = OplegTypeEnum.LIJNVORMIG;
 
     }
 
-    public enum OplegmateriaalEnum
+    public enum OplegMateriaalEnum
     {
+        [Description("Staal")]
         STAAL,
-        GEWAPEND_BETON_VANAF_C30_37,
-        GEWAPEND_BETON_TOT_C30_37,
-        ONGEWAPEND_BETON,
-        METSELWERK
+        [Description("Prefabbeton")]
+        PREFAB_BETON,
+        [Description("Metselwerk")]
+        METSELWERK,
+        [Description("In het werk gestort beton")]
+        IHWG_BETON
 
     }
 
     public enum OplegTypeEnum
     {
+        [Description("Lijnvormig")]
         LIJNVORMIG,
+        [Description("Ribbenvloer")]
         RIBBENVLOER,
+        [Description("Geconcentreerd")]
         GECONCENTREERD
     }
+
+
+
 
 
 

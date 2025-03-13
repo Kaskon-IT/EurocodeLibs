@@ -193,7 +193,7 @@ namespace ExportFactory.Extensions
 
 
             // Oplegging
-            { "OplegLengteNominaal", new(sym: "a~nom~", desc: "nominale opleglengte = a~1~ + a~2~ + a~3~ + √(|Detla|a~2~^2^ + |Delta|a~3~^2^)", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
+            { "OplegLengteNominaal", new(sym: "a~nom~", desc: "nominale opleglengte = a~1~ + a~2~ + a~3~ + √(|Delta|a~2~^2^ + |Delta|a~3~^2^) + |Delta|~elementtype~", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
             { "OplegLengteNetto", new(sym: "a~1~", desc: "netto-opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
             { "OplegLengteAanwezig", new(sym: "a~aanw~", desc: "aanwezige opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
             { "OplegReactieRekenwaarde", new(sym: "F~Ed~", desc: "rekenwaarde oplegreactie", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _kN  )  },
@@ -204,15 +204,17 @@ namespace ExportFactory.Extensions
             { "AfstandA3", new(sym: "a~3~", desc: "randafstand ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandDeltaA2", new(sym: "|Delta|a~2~", desc: "tolerantie afstand tussen dragende elementen", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandDeltaA3", new(sym: "|Delta|a~3~", desc: "tolerantie lengte element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
-
+            { "AfstandDeltaElementType", new(sym: "|Delta|~elem.type~", desc: "indien afzonderlijke elementen nominale lengte 20 mm groter dan doorgaande elementen.", norm:"EC2", art: "10.9.5.3", vgl: "", format: _mm  )  },
 
             { "LengteOndersteundeElement", new(sym: "l~n~", desc: "lengte ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
 
             { "RelatieveOplegspanning", new(sym: "|sigma|~Ed~ / f~cd~", desc: "relatieve oplegspanning", norm:"EC2", art: "10.9.5.2", vgl: "Tabel 10.2/3", format: _formatVerhouding  )  },
+            { "OplegSpanningRekenwaarde", new(sym: "|sigma|~Ed~", desc: "oplegspanning", norm:"EC2", art: "10.9.5.2", vgl: "", format: _MPa  )  },
 
 
             { "RekenwaardeOplegmateriaal", new(sym: "f~bed~", desc: "rekenwaarde oplegmateriaal", norm:"EC2", art: "10.9.5.2 (2)", vgl: "", format: _MPa  )  },
             { "LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement", new(sym: "f~cd~", desc: "laagste rekenwaarde van de sterktes van het ondersteunde en het ondersteunende element", norm:"EC2", art: "10.9.5.2 (2)", vgl: "", format: _MPa  )  },
+            { "OpleggingElementType", new(sym: "", desc: "doorgaand of afzonderlijk", norm:"EC2", art: "10.9.5.2/3", vgl: "", format: _MPa  )  },
 
 
 

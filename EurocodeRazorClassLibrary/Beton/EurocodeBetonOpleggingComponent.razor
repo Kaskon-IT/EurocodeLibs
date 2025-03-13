@@ -1,0 +1,167 @@
+﻿@using Eurocode.BetonConstructies
+
+<FluentGrid>
+
+    <FluentGridItem xs="6" md="4" lg="3">
+        <EurocodeInputNumber @bind-Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN" />
+    </FluentGridItem>
+
+    <FluentGridItem xs="6" md="4" lg="3">
+        <EurocodeInputNumber @bind-Value="@Model.RekenwaardeOplegmateriaal" Key="RekenwaardeOplegmateriaal" Unit="N/mm²" />
+    </FluentGridItem>
+
+    <FluentGridItem xs="6" md="4" lg="3">
+        <EurocodeInputNumber Value="@Model.OplegSterkteRekenwaarde" Key="OplegSterkteRekenwaarde" Unit="N/mm²"></EurocodeInputNumber>
+    </FluentGridItem>
+   
+    <FluentGridItem xs="6" md="4" lg="3">
+        <EurocodeInputNumber Value="@Model.LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement" Key="LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement" Unit="N/mm²"></EurocodeInputNumber>
+    </FluentGridItem>
+
+</FluentGrid>
+
+<FluentGrid>
+
+  
+
+    <FluentGridItem xs="6" md="4" lg="3">
+        <EurocodeBetonMaterialen @bind-Model="Model.BetonOndersteundeElement" ToonBetonSpanningRekDiagram="false" ToonBetonstaal="false" ToonBetonStaalSpanningRekDiagram="false" />
+    </FluentGridItem>
+   
+    <FluentGridItem xs="6" md="4" lg="3">
+        <EurocodeInputNumber @bind-Value="@Model.LengteOndersteundeElement" Key="LengteOndersteundeElement" Unit="mm" />
+
+    </FluentGridItem>
+    <FluentGridItem xs="6" md="4" lg="3">
+        <FluentSelectEnum Label="type wapening"
+                          @bind-EnumSelectedValue="Model.DetailleringWapening"
+                          TEnum="Eurocode.BetonConstructies.OpleggingContext.DetailleringWapeningEnum">
+        </FluentSelectEnum>
+    </FluentGridItem>
+    
+    <FluentGridItem xs="6" md="4" lg="3">
+        <FluentSelectEnum Label="type element"
+                          @bind-EnumSelectedValue="Model.OpleggingElementType"
+                          TEnum="Eurocode.BetonConstructies.OpleggingContext.OpleggingElementTypeEnum">
+        </FluentSelectEnum>
+    </FluentGridItem>
+   
+
+
+
+    
+</FluentGrid>
+
+
+<FluentGrid>
+    @* <EurcodeVerticalHeader Tekst="Ondersteuning"></EurcodeVerticalHeader> *@
+    <FluentGridItem xs="6" md="4" lg="3">
+        <FluentSelectEnum Style="width: 100%;" Label="type oplegging"
+        @bind-EnumSelectedValue="Model.OplegType"
+        TEnum="Eurocode.BetonConstructies.OplegTypeEnum">
+        </FluentSelectEnum>
+    </FluentGridItem>
+
+    <FluentGridItem xs="6" md="4" lg="3">
+        <FluentSelectEnum Style="width: 100%;" Label="materiaal ondersteuning"
+        @bind-EnumSelectedValue="Model.OplegMateriaal"
+        TEnum="Eurocode.BetonConstructies.OplegMateriaalEnum">
+        </FluentSelectEnum>
+    </FluentGridItem>
+
+    
+
+
+    
+    @if (
+    Model.OplegMateriaal != null &&
+    (Model.OplegMateriaal == OplegMateriaalEnum.PREFAB_BETON || Model.OplegMateriaal == OplegMateriaalEnum.IHWG_BETON)
+    )
+    {
+        <FluentGridItem xs="6" md="4" lg="3">
+            <FluentSelectEnum Label="sterkteklasse"
+            @bind-EnumSelectedValue="Model.BetonsterkteklasseDragendeElement"
+            TEnum="Eurocode.BetonConstructies.BetonsterkteklasseEnum">
+            </FluentSelectEnum>
+        </FluentGridItem>
+    }
+    @if (
+    Model.OplegMateriaal != null &&
+    Model.OplegMateriaal == OplegMateriaalEnum.METSELWERK
+    )
+    {
+        <FluentGridItem xs="6" md="4" lg="3">
+            <EurocodeInputNumber @bind-Value="@Model.OpgaveDruksterkteMetselwerk" Key="OpgaveDruksterkteMetselwerk" Unit="N/mm²" />
+        </FluentGridItem>
+    }
+
+
+
+
+
+
+
+ 
+
+</FluentGrid>
+
+
+
+@code {
+    /// <summary>
+    /// Het model
+    /// </summary>
+    [Parameter, EditorRequired]
+    public required OpleggingContext Model { get; set; }
+
+
+
+
+
+    /// <summary>
+    /// Callback is nodig voor @bind-Model
+    /// </summary>
+    [Parameter]
+    public EventCallback<OpleggingContext> ModelChanged { get; set; }
+
+
+
+
+    protected override void OnInitialized()
+    {
+        //Model = new(Beton, Profiel, 100);
+        Model = new();
+        Model.Update();
+
+    }
+
+    string symFed = ExportFactory.Services.HtmlCreator.MarkdownToHtml("F~Ed~ oplegreactie [kN]");
+    string symFbed = ExportFactory.Services.HtmlCreator.MarkdownToHtml("F~bed~ druksterkte oplegmateriaal [N/mm²]");
+    string symFcd = ExportFactory.Services.HtmlCreator.MarkdownToHtml("F~cd~ laagste druksterkte elementen [N/mm²]");
+    string symLn = ExportFactory.Services.HtmlCreator.MarkdownToHtml("l~n~ lengte element [mm]");
+    string symFbd = ExportFactory.Services.HtmlCreator.MarkdownToHtml("f~bd~ druksterkte metselwerk [N/mm²]");
+
+    public MarkupString GetLabel(string markup)
+    {
+        string html = ExportFactory.Services.HtmlCreator.MarkdownToHtml(markup);
+        return (MarkupString)html;
+    }
+
+
+    public MarkupString? GetTooltip(string key)
+    {
+        var mapping = ExportFactory.Extensions.DataTableExtensions.EurocodeMapping[key];
+        if (mapping != null)
+        {
+            string markup = $"{mapping.Symbol} = {mapping.Description}";
+            if (mapping.Referentie != null)
+                markup += $" {mapping.Referentie}";
+
+            return GetLabel(markup);
+        }
+        else return null;
+
+    }
+
+
+}

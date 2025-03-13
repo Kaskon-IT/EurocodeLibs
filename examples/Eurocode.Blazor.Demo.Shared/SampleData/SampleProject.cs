@@ -31,6 +31,9 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
 
         public DwarskrachtWapContext DwarskrachtDemo { get; set; }
 
+        public OpleggingContext OpleggingDemo { get; set; } = new();
+
+
 
         public SampleProject(GrondslagenContext grondslagen)
         {
