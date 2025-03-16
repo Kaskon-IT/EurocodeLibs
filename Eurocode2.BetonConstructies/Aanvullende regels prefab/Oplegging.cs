@@ -268,8 +268,8 @@ namespace Eurocode.BetonConstructies
             }
             else
             {
-                double bovengrens = 0.85;
-                return Math.Max(context.RekenwaardeOplegmateriaal, bovengrens);
+                double bovengrens = 0.85 * context.LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement;
+                return Math.Min(context.RekenwaardeOplegmateriaal, bovengrens);
             }
         }
 
@@ -345,8 +345,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// a~aanw~
         /// </summary>
-        [TableColumn("a~aanw~", "aanwezige opleglengte")]
-        public double OplegLengteAanwezig { get; set; } = 75;
+        [TableColumn("a~1,aanw~", "aanwezige netto opleglengte")]
+        public double OplegLengteNettoAanwezig { get; set; } = 75;
 
 
         /// <summary>
@@ -463,7 +463,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn("|sigma|~Ed~", "oplegspanning")]
         public double OplegSpanningRekenwaarde
         {
-            get { return OplegReactieRekenwaarde * 1000 / (OplegBreedteNetto * OplegLengteAanwezig); }
+            get { return OplegReactieRekenwaarde * 1000 / (OplegBreedteNetto * OplegLengteNetto); }
         }
 
 

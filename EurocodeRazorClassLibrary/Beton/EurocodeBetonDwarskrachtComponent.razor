@@ -1,20 +1,46 @@
 ﻿@using Eurocode.BetonConstructies
 
-<FluentGrid>
-    <FluentGridItem xs="0">
-        <FluentNumberField @bind-Value="Model.Ved">@((MarkupString)symVed)</FluentNumberField>
+
+
+
+<FluentGrid Spacing="4">
+    <FluentGridItem xs="12">
+        <EurocodeInputNumber @bind-Value="Model.Ved" Key="Ved" Unit="kN"></EurocodeInputNumber>
+        <EurocodeInputNumber @bind-Value="Model.Profiel.Breedte" Key="Breedte" Unit="mm"></EurocodeInputNumber>
+        <EurocodeInputNumber @bind-Value="Model.NutHoogte" Key="NutHoogte" Unit="mm"></EurocodeInputNumber>
+        <EurocodeInputNumber @bind-Value="Model.Z" Key="Z" Unit="mm"></EurocodeInputNumber>
+        <EurocodeInputNumber @bind-Value="Model.AsLangs" Key="AsLangs" Unit="mm²"></EurocodeInputNumber>
+
+
+        <EurocodeInputNumber @bind-Value="Model.Theta" Key="Theta" Unit="graden" MinValue=21.8 MaxValue=45></EurocodeInputNumber>
+        <EurocodeInputNumber @bind-Value="Model.Alpha" Key="Alpha" Unit="graden" MinValue="45" MaxValue="90"></EurocodeInputNumber>
+
+
+        @* <FluentNumberField @bind-Value="Model.Ved">@((MarkupString)symVed)</FluentNumberField> *@
     </FluentGridItem>
 
-    <FluentGridItem xs="0">
-        <FluentNumberField @bind-Value="Model.Theta">@((MarkupString)symTheta)</FluentNumberField>
+    <FluentGridItem xs="12">
+        <EurocodeInputNumber ReadOnly=true Value="Model.AswBerekend" Key="AswBerekend" Unit="mm²/m¹" StringFormat="0"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=true Value="Model.AswMin" Key="AswMin" Unit="mm²/m¹" StringFormat="0"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=true Value="Model.AswBenPerMeter" Key="AswBenPerMeter" Unit="mm²/m¹" StringFormat="0"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=true Value="Model.AswToegepast" Key="AswToegepast" Unit="mm²/m¹" StringFormat="0"></EurocodeInputNumber>
+
+
+
+
+        @* <FluentNumberField @bind-Value="Model.Theta">@((MarkupString)symTheta)</FluentNumberField> *@
     </FluentGridItem>
 
-    <FluentGridItem xs="0">
-        <FluentNumberField @bind-Value="Model.NutHoogte">d</FluentNumberField>
+    <FluentGridItem xs="12">
+        <EurocodeInputNumber ReadOnly=true Value="Model.DwarskrachtWeerstand" Key="DwarskrachtWeerstand" Unit="kN" StringFormat="0.0"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=true Value="Model.DwarskrachtWeerstandBeton" Key="DwarskrachtWeerstandBeton" Unit="kN" StringFormat="0.0"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=true Value="Model.DwarskrachtWeerstandMax" Key="DwarskrachtWeerstandMax" Unit="kN" StringFormat="0.0"></EurocodeInputNumber>
+
+        @* <FluentNumberField @bind-Value="Model.NutHoogte">d</FluentNumberField> *@
     </FluentGridItem>
    
-    <FluentGridItem xs="0">
-        <FluentNumberField @bind-Value="Model.Z">z</FluentNumberField>
+    <FluentGridItem xs="12">
+        
     </FluentGridItem>
 
 

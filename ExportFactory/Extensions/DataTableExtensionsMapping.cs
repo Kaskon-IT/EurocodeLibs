@@ -106,7 +106,7 @@ namespace ExportFactory.Extensions
             { "DwarskrachtWeerstandBeton", new(sym : "V~Rd,c~", desc : "rekenwaarde dwarskracht opneembaar zonder dwarskrachtwapening", norm: "EC2" ,art : "6.2.1 (1)P\r\n6.2.2 (1)\r\n6.2.2 (2)", vgl: "(6.2)\r\n(6.4)", format : _kN) },
             { "DwarskrachtWeerstandStaal", new(sym : "V~Rd,s~", desc : "rekenwaarde dwarskracht opneembaar door dwarskrachtwapening",norm : "EC2", art :  "6.2.1 (1)P\r\n6.2.3 (3)" , vgl : "(6.8)"  , format : _kN) },
             { "DwarskrachtWeerstandMax", new(sym : "V~Rd,max~", desc : "rekenwaarde dwarskracht bovengrens bezwijken drukdiagonalen",norm : "EC2", art :  "6.2.1 (1)P", vgl : "(6.9)", format : _kN) },
-            { "DwarskrachtWeerstand", new(sym : "V~Rd~",desc : "rekenwaarde opneembare krachtskracht", norm : "EC2", art:"6.2.1 (2)" ,vgl: "(6.1)", format : _kN) },
+            { "DwarskrachtWeerstand", new(sym : "V~Rd~",desc : "rekenwaarde opneembare dwarskracht", norm : "EC2", art:"6.2.1 (2)" ,vgl: "(6.1)", format : _kN) },
 
             { "SchuifspanningD", new(sym : "|nu|~Ed~",desc : "rekenwaarde schuifspanning", norm : "", art:"" ,vgl: "", format : _MPa) },
             { "SchuifspanningWeerstandBeton", new(sym : "|nu|~Rd,c~", desc : "rekenwaarde schuifspanning opneembaar zonder dwarskrachtwapening", norm: "EC2" ,art : "6.2.1 (1)P\r\n6.2.2 (1)\r\n6.2.2 (2)", vgl: "(6.2)\r\n(6.4)", format : _MPa) },
@@ -130,6 +130,8 @@ namespace ExportFactory.Extensions
             { "AswMin", new(sym:"A~sw,min~",  desc: "minimale doorsnedeoppervlak dwarskrachtwapening", norm: "EC2", art:"6.2.3 (3)", vgl: "(6.8)", format: _mm2) },
             { "AswBerekend", new(sym:"A~sw~",  desc: "berekende doorsnedeoppervlak dwarskrachtwapening", norm: "EC2", art:"6.2.3 (3)", vgl: "(6.8)", format : _mm2) },
             { "AswBenPerMeter", new(sym:"A~sw,ben~",  desc: "benodigde doorsnedeoppervlak dwarskrachtwapening", norm: "EC2", art:"6.2.3 (3)", vgl: "(6.8)") },
+            { "AswToegepast", new(sym:"A~sw,toe~",  desc: "toegepaste doorsnedeoppervlak dwarskrachtwapening", norm: "EC2", art:"", vgl: "") },
+
             { "AsLangs", new(sym:"A~sl~",  desc: "doorsnedeoppervlak trekwapening", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _mm2) },
             { "Rho1", new(sym:"|rho|~1~",  desc: "= A~sl~ / (b~w~ d) ≤ 0,02", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _formatVerhouding) },
             { "RhoWMin", new(sym:"|rho|~w,min~",  desc: "= (0,08 / √f~ck~) / f~yk~", norm: "EC2", art:"9.2.2 (5)", vgl: "(9.5N)", format : _formatVerhouding) },
@@ -193,8 +195,8 @@ namespace ExportFactory.Extensions
 
 
             // Oplegging
-            { "OplegLengteNominaal", new(sym: "a~nom~", desc: "nominale opleglengte = a~1~ + a~2~ + a~3~ + √(|Delta|a~2~^2^ + |Delta|a~3~^2^) + |Delta|~elementtype~", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
-            { "OplegLengteNetto", new(sym: "a~1~", desc: "netto-opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
+            { "OplegLengteNominaal", new(sym: "a", desc: "nominale opleglengte a = a~1~ + a~2~ + a~3~ + √(|Delta|a~2~^2^ + |Delta|a~3~^2^) + |Delta|~elementtype~", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
+            { "OplegLengteNetto", new(sym: "a~1~", desc: "netto-opleglengte mbt oplegspanning a1 = F~Ed~ / (b~1~ f~Rd~), maar mag niet kleiner zijn dan de minimumwaarde in tabel 10.2", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
             { "OplegLengteAanwezig", new(sym: "a~aanw~", desc: "aanwezige opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
             { "OplegReactieRekenwaarde", new(sym: "F~Ed~", desc: "rekenwaarde oplegreactie", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _kN  )  },
             { "OplegBreedteNetto", new(sym: "b~1~", desc: "netto-oplegbreedte", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
@@ -203,7 +205,7 @@ namespace ExportFactory.Extensions
             { "AfstandA2", new(sym: "a~2~", desc: "randafstand dragende element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandA3", new(sym: "a~3~", desc: "randafstand ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandDeltaA2", new(sym: "|Delta|a~2~", desc: "tolerantie afstand tussen dragende elementen", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
-            { "AfstandDeltaA3", new(sym: "|Delta|a~3~", desc: "tolerantie lengte element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
+            { "AfstandDeltaA3", new(sym: "|Delta|a~3~", desc: "tolerantie lengte element Δ~a3~ = l~n~/2500", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandDeltaElementType", new(sym: "|Delta|~elem.type~", desc: "indien afzonderlijke elementen nominale lengte 20 mm groter dan doorgaande elementen.", norm:"EC2", art: "10.9.5.3", vgl: "", format: _mm  )  },
 
             { "LengteOndersteundeElement", new(sym: "l~n~", desc: "lengte ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },

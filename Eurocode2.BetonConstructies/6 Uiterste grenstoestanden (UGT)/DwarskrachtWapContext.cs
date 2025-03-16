@@ -4,6 +4,12 @@ using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
+    public enum BerekeningTypeEnum
+    {
+        BepaalBenodigeWapening,
+        ControleerWapening,
+    }
+
     public class DwarskrachtWapContext
     {
         // context voor de dwarskrachtwapening volgens art. 6.2
@@ -14,6 +20,8 @@ namespace Eurocode.BetonConstructies
 
         public List<Melding> Meldingen { get; set; } = [];
         public List<string> Artikelen { get; set; } = [];
+
+        public BerekeningTypeEnum BerekeningType { get; set; } = BerekeningTypeEnum.BepaalBenodigeWapening;
 
 
         [TableColumn("Opm.", "Opmerkingen")]
@@ -218,7 +226,7 @@ namespace Eurocode.BetonConstructies
         public double DwarskrachtWeerstandStaal { get; set; }
 
         [TableColumn("V~Rd~", StringFormat = "0.##\tkN")]
-        public double DwarskrachtWeerstand { get; set; }
+        public double DwarskrachtWeerstand { get { return Math.Min(DwarskrachtWeerstandStaal, DwarskrachtWeerstandMax); } }
 
 
 

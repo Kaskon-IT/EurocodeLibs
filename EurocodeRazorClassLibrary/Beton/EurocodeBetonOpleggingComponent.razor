@@ -1,84 +1,106 @@
 ﻿@using Eurocode.BetonConstructies
 
-<FluentGrid>
+<FluentGrid Spacing="1">
 
-    <FluentGridItem xs="6" md="4" lg="3">
-        <EurocodeInputNumber @bind-Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN" />
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
+        <EurocodeInputNumber @bind-Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN" 
+        LabelPosition="@LabelPosition" LabelType="@LabelType"/>
     </FluentGridItem>
 
-    <FluentGridItem xs="6" md="4" lg="3">
-        <EurocodeInputNumber @bind-Value="@Model.RekenwaardeOplegmateriaal" Key="RekenwaardeOplegmateriaal" Unit="N/mm²" />
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
+        <EurocodeInputNumber @bind-Value="@Model.OplegBreedteNetto" Key="OplegBreedteNetto" Unit="mm" 
+        LabelPosition="@LabelPosition" LabelType="@LabelType" />
     </FluentGridItem>
 
-    <FluentGridItem xs="6" md="4" lg="3">
-        <EurocodeInputNumber Value="@Model.OplegSterkteRekenwaarde" Key="OplegSterkteRekenwaarde" Unit="N/mm²"></EurocodeInputNumber>
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
+        <EurocodeInputNumber ReadOnly=true Value="@Model.OplegLengteNetto" Key="OplegLengteNetto" Unit="mm" 
+        LabelPosition="@LabelPosition" LabelType="@LabelType" />
     </FluentGridItem>
-   
-    <FluentGridItem xs="6" md="4" lg="3">
-        <EurocodeInputNumber Value="@Model.LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement" Key="LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement" Unit="N/mm²"></EurocodeInputNumber>
+
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
+        <EurocodeInputNumber @bind-Value="@Model.LengteOndersteundeElement" Key="LengteOndersteundeElement" Unit="mm"
+                             LabelPosition="@LabelPosition" LabelType="@LabelType" />
     </FluentGridItem>
 
 </FluentGrid>
 
-<FluentGrid>
 
-  
+<FluentGrid Spacing="1">
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
+        <EurocodeInputNumber @bind-Value="@Model.RekenwaardeOplegmateriaal" Key="RekenwaardeOplegmateriaal" Unit="N/mm²" 
+        LabelPosition="@LabelPosition" LabelType="@LabelType" />
+    </FluentGridItem>
 
-    <FluentGridItem xs="6" md="4" lg="3">
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
+        <EurocodeInputNumber ReadOnly="true" Value="@Model.OplegSterkteRekenwaarde" Key="OplegSterkteRekenwaarde" Unit="N/mm²" 
+        LabelPosition="@LabelPosition" LabelType="@LabelType" />
+    </FluentGridItem>
+
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
+        <EurocodeInputNumber ReadOnly=true Value="@Model.LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement"
+        Key="LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement" Unit="N/mm²" 
+        LabelPosition="@LabelPosition" LabelType="@LabelType" />
+    </FluentGridItem>
+
+</FluentGrid>
+
+<FluentGrid Spacing="0">
+
+
+
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeBetonMaterialen @bind-Model="Model.BetonOndersteundeElement" ToonBetonSpanningRekDiagram="false" ToonBetonstaal="false" ToonBetonStaalSpanningRekDiagram="false" />
     </FluentGridItem>
-   
-    <FluentGridItem xs="6" md="4" lg="3">
-        <EurocodeInputNumber @bind-Value="@Model.LengteOndersteundeElement" Key="LengteOndersteundeElement" Unit="mm" />
 
-    </FluentGridItem>
-    <FluentGridItem xs="6" md="4" lg="3">
+   
+
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <FluentSelectEnum Label="type wapening"
-                          @bind-EnumSelectedValue="Model.DetailleringWapening"
-                          TEnum="Eurocode.BetonConstructies.OpleggingContext.DetailleringWapeningEnum">
+        @bind-EnumSelectedValue="Model.DetailleringWapening"
+        TEnum="Eurocode.BetonConstructies.OpleggingContext.DetailleringWapeningEnum">
         </FluentSelectEnum>
     </FluentGridItem>
-    
-    <FluentGridItem xs="6" md="4" lg="3">
+
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <FluentSelectEnum Label="type element"
-                          @bind-EnumSelectedValue="Model.OpleggingElementType"
-                          TEnum="Eurocode.BetonConstructies.OpleggingContext.OpleggingElementTypeEnum">
+        @bind-EnumSelectedValue="Model.OpleggingElementType"
+        TEnum="Eurocode.BetonConstructies.OpleggingContext.OpleggingElementTypeEnum">
         </FluentSelectEnum>
     </FluentGridItem>
-   
+
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
+        <FluentSelectEnum Style="width: 100%;" Label="type oplegging"
+                          @bind-EnumSelectedValue="Model.OplegType"
+                          TEnum="Eurocode.BetonConstructies.OplegTypeEnum">
+        </FluentSelectEnum>
+    </FluentGridItem>
+
+    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
+        <FluentSelectEnum Style="width: 100%;" Label="materiaal ondersteuning"
+                          @bind-EnumSelectedValue="Model.OplegMateriaal"
+                          TEnum="Eurocode.BetonConstructies.OplegMateriaalEnum">
+        </FluentSelectEnum>
+    </FluentGridItem>
 
 
 
-    
 </FluentGrid>
 
 
-<FluentGrid>
+<FluentGrid Spacing="0">
     @* <EurcodeVerticalHeader Tekst="Ondersteuning"></EurcodeVerticalHeader> *@
-    <FluentGridItem xs="6" md="4" lg="3">
-        <FluentSelectEnum Style="width: 100%;" Label="type oplegging"
-        @bind-EnumSelectedValue="Model.OplegType"
-        TEnum="Eurocode.BetonConstructies.OplegTypeEnum">
-        </FluentSelectEnum>
-    </FluentGridItem>
-
-    <FluentGridItem xs="6" md="4" lg="3">
-        <FluentSelectEnum Style="width: 100%;" Label="materiaal ondersteuning"
-        @bind-EnumSelectedValue="Model.OplegMateriaal"
-        TEnum="Eurocode.BetonConstructies.OplegMateriaalEnum">
-        </FluentSelectEnum>
-    </FluentGridItem>
-
-    
+   
 
 
-    
+
+
+
     @if (
     Model.OplegMateriaal != null &&
     (Model.OplegMateriaal == OplegMateriaalEnum.PREFAB_BETON || Model.OplegMateriaal == OplegMateriaalEnum.IHWG_BETON)
     )
     {
-        <FluentGridItem xs="6" md="4" lg="3">
+        <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
             <FluentSelectEnum Label="sterkteklasse"
             @bind-EnumSelectedValue="Model.BetonsterkteklasseDragendeElement"
             TEnum="Eurocode.BetonConstructies.BetonsterkteklasseEnum">
@@ -90,7 +112,7 @@
     Model.OplegMateriaal == OplegMateriaalEnum.METSELWERK
     )
     {
-        <FluentGridItem xs="6" md="4" lg="3">
+        <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
             <EurocodeInputNumber @bind-Value="@Model.OpgaveDruksterkteMetselwerk" Key="OpgaveDruksterkteMetselwerk" Unit="N/mm²" />
         </FluentGridItem>
     }
@@ -101,7 +123,7 @@
 
 
 
- 
+
 
 </FluentGrid>
 
@@ -118,12 +140,54 @@
 
 
 
+
     /// <summary>
     /// Callback is nodig voor @bind-Model
     /// </summary>
     [Parameter]
     public EventCallback<OpleggingContext> ModelChanged { get; set; }
 
+
+
+    [Parameter]
+    public LabelType LabelType { get; set; } = LabelType.SymbolAndDescription;
+
+    [Parameter]
+    public LabelPosition LabelPosition { get; set; } = LabelPosition.Left;
+
+
+
+
+    private int xsSizeBAK => LabelPosition == LabelPosition.Left ? 12 : 6;
+    private int mdSizeBAK => LabelPosition == LabelPosition.Left ? 12 : 4;
+    private int lgSizeBAK => LabelPosition == LabelPosition.Left ? 12 : 3;
+
+    private int xsSize => (LabelPosition, LabelType) switch
+    {
+        (LabelPosition.Left, LabelType.Symbol) => 6,
+        (LabelPosition.Left, LabelType.SymbolAndDescription) => 12,
+        (LabelPosition.Top, LabelType.Symbol) => 6,
+        (LabelPosition.Top, LabelType.SymbolAndDescription) => 12,
+        _ => 12 // Standaardwaarde
+    };
+
+    private int mdSize => (LabelPosition, LabelType) switch
+    {
+        (LabelPosition.Left, LabelType.Symbol) => 4,
+        (LabelPosition.Left, LabelType.SymbolAndDescription) => 12,
+        (LabelPosition.Top, LabelType.Symbol) => 4,
+        (LabelPosition.Top, LabelType.SymbolAndDescription) => 12,
+        _ => 12 // Standaardwaarde
+    };
+
+    private int lgSize => (LabelPosition, LabelType) switch
+    {
+        (LabelPosition.Left, LabelType.Symbol) => 3,
+        (LabelPosition.Left, LabelType.SymbolAndDescription) => 12,
+        (LabelPosition.Top, LabelType.Symbol) => 3,
+        (LabelPosition.Top, LabelType.SymbolAndDescription) => 6,
+        _ => 12 // Standaardwaarde
+    };
 
 
 
@@ -135,33 +199,30 @@
 
     }
 
-    string symFed = ExportFactory.Services.HtmlCreator.MarkdownToHtml("F~Ed~ oplegreactie [kN]");
-    string symFbed = ExportFactory.Services.HtmlCreator.MarkdownToHtml("F~bed~ druksterkte oplegmateriaal [N/mm²]");
-    string symFcd = ExportFactory.Services.HtmlCreator.MarkdownToHtml("F~cd~ laagste druksterkte elementen [N/mm²]");
-    string symLn = ExportFactory.Services.HtmlCreator.MarkdownToHtml("l~n~ lengte element [mm]");
-    string symFbd = ExportFactory.Services.HtmlCreator.MarkdownToHtml("f~bd~ druksterkte metselwerk [N/mm²]");
+    
+   
 
-    public MarkupString GetLabel(string markup)
-    {
-        string html = ExportFactory.Services.HtmlCreator.MarkdownToHtml(markup);
-        return (MarkupString)html;
-    }
+    // public MarkupString GetLabel(string markup)
+    // {
+    //     string html = ExportFactory.Services.HtmlCreator.MarkdownToHtml(markup);
+    //     return (MarkupString)html;
+    // }
 
 
-    public MarkupString? GetTooltip(string key)
-    {
-        var mapping = ExportFactory.Extensions.DataTableExtensions.EurocodeMapping[key];
-        if (mapping != null)
-        {
-            string markup = $"{mapping.Symbol} = {mapping.Description}";
-            if (mapping.Referentie != null)
-                markup += $" {mapping.Referentie}";
+    // public MarkupString? GetTooltip(string key)
+    // {
+    //     var mapping = ExportFactory.Extensions.DataTableExtensions.EurocodeMapping[key];
+    //     if (mapping != null)
+    //     {
+    //         string markup = $"{mapping.Symbol} = {mapping.Description}";
+    //         if (mapping.Referentie != null)
+    //             markup += $" {mapping.Referentie}";
 
-            return GetLabel(markup);
-        }
-        else return null;
+    //         return GetLabel(markup);
+    //     }
+    //     else return null;
 
-    }
+    // }
 
 
 }

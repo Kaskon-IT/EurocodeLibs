@@ -194,7 +194,7 @@ namespace Eurocode.BetonConstructies
 
 
             // V_Rd is de kleinste van V_Rd,s en V_Rd,max
-            context.DwarskrachtWeerstand = Math.Min(context.DwarskrachtWeerstandStaal, context.DwarskrachtWeerstandMax);
+            //context.DwarskrachtWeerstand = Math.Min(context.DwarskrachtWeerstandStaal, context.DwarskrachtWeerstandMax);
 
             if (context.AswBenPerMeter > context.AswBerekend && !context.BerekeningVrd)
             {
@@ -240,7 +240,17 @@ namespace Eurocode.BetonConstructies
 
             context.AswBenPerMeter = Math.Max(context.AswMin, context.AswBerekend);
 
+            if (context.BerekeningType == BerekeningTypeEnum.BepaalBenodigeWapening)
+            {
+                context.AswToegepast = context.AswBenPerMeter + 0.01;
+            }
+
+
+
             context.SetVrdMax();
+            context.SetVrds();
+
+
             context.Artikelen.Add(context.SetBeugelAfstandMaxLangs());
         }
 
@@ -299,6 +309,30 @@ namespace Eurocode.BetonConstructies
         {
             context.DwarskrachtWeerstandMax = DwarskrachtHelpers.GetVrdMax(context.AlphaCw, context.Profiel.BreedteDwarskracht, context.Z, context.SterkteReductieFactorBetonGescheurdDoorDwarskracht1, context.Beton.Fcd, context.CotTheta, context.TanTheta, context.Alpha, out string art);
             return art;
+        }
+
+        public static string SetVrds(this DwarskrachtWapContext context)
+        {
+            // V_Rd,s volgens art. 6.2.3(3) formule (6.8)
+            string art = "";
+            double reductiefactorIndienVergelijkingZesPuntTienGebruikt = 1;
+            if (context.SpanningWapeningKleinerDan80ProcentKarakteristiekeVloeigrens)
+            {
+                //OPMERKING Indien vergelijking (6.10) is gebruikt behoort de waarde van fywd in vergelijking (6.8) te zijn verminderd tot
+                //0,8 fywk.
+                art = "(6.10)";
+                reductiefactorIndienVergelijkingZesPuntTienGebruikt = (context.Beton.BetonStaal.Fyk * 0.8) / (context.Beton.BetonStaal.Fyk / context.Beton.BetonStaal.GammaS);
+                context.DwarskrachtWeerstandStaal = 0.001 * (context.AswToegepast / 1000) * context.Z * context.Beton.BetonStaal.Fyk * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
+            }
+            else
+            {
+                art = "(6.14)";
+                reductiefactorIndienVergelijkingZesPuntTienGebruikt = 1;
+                context.DwarskrachtWeerstandStaal = 0.001 * (context.AswToegepast / 1000) * context.Z * context.Beton.BetonStaal.Fywd * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
+            }
+            return art;
+
+            //context.DwarskrachtWeerstandStaal = 
         }
 
         public static string SetAswMin(this DwarskrachtWapContext context)

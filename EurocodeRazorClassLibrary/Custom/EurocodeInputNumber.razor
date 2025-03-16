@@ -2,44 +2,207 @@
 @using System.Globalization
 @typeparam T where T : new()
 
-<div class="input-container">
+<div class="@GetContainerClass()">
 
-    <FluentTooltip Anchor="@Id">
+    <FluentTooltip Anchor="@GetTooltipId()">
         @GetTooltip()
 
     </FluentTooltip>
 
+    @if(LabelPosition == LabelPosition.Top)
+    {
+        @* <div class="row row-1">
+            <span class="truncate2">@GetLabel(LabelType == LabelType.SymbolAndDescription) </span>
+        </div> *@
+    }
+
+
+    @*    <div class="row row-2">
+        <span>row-2</span>
+        <span>Meer....</span>
+    </div>
+
+    <div>derde div in container column</div> *@
+
+    @if(LabelPosition == LabelPosition.Left)
+    {
+        <span id="@TooltipId" class="@GetLabelClass()">@GetLabel()</span>
+
+        @if(LabelType == LabelType.SymbolAndDescription)
+        {
+            @* <span class="label-left">@GetLabel()</span> *@
+            <span class="label-left label-long truncate-3">@GetDescription()</span>
+            <span class="symbol-prefix">@GetLabel() =</span>
+        }
+    }
+
+
+
+
+
     <FluentTextField @bind-Value="InputValue"
-                     @oninput="ValidateInput"
-                     Id="@Id"
-                     Disabled=@IsDisabled
-                     Placeholder="Voer een getal in"
-                     TextFieldType=TextFieldType.Text
-                     Style="width: 100%;">
-        @GetLabel()
+    @oninput="ValidateInput"
+    Id="@Id"
+    Disabled=@Disabled
+    ReadOnly=@ReadOnly
+    Placeholder="Voer een getal in"
+    TextFieldType=TextFieldType.Text
+    Style="min-width: 80px; max-width:130px;">
+
+        @if (LabelPosition == LabelPosition.Top)
+        {
+            <span class="truncate-1">@GetLabel(LabelType == LabelType.SymbolAndDescription) </span>
+            @*  @if (LabelType == LabelType.SymbolAndDescription)
+            {
+                <span class="label-left truncate2">@GetDescription()</span>
+                <span>TEST</span>
+            } *@
+
+        }
+
     </FluentTextField>
-    <span>@Unit</span>
+    @if (LabelPosition == LabelPosition.Left)
+    {
+        <span class="unit-right">@Unit</span>
+    }
+    @if (LabelPosition == LabelPosition.Top)
+    {
+        <span class="unit-right unit-bottom">@Unit</span>
+    }
+
 </div>
 
 
 
 <style>
+
+
+
     .input-container {
-        display: flex;
-        align-items: flex-end;
+    display: flex;
+    /* flex-direction:row; */
+    /* align-items: start; */
+    margin-right: 5px;
+    width: 100%;
     }
 
-        .input-container FluentTextField {
-            flex-grow: 1;
-        }
+    /* Flex alignment opties */
+    .align-start {
+    align-items: flex-start; /* Uitlijnen aan de bovenkant */
+    }
 
-        .input-container span {
-            margin-left: 5px; /* Zorgt voor wat ruimte tussen het veld en de eenheid */
-            margin-bottom: 0.25em; /* Zorgt voor uitlijning met tekst in het invoerveld */
-            font-size: smaller;
-            font-style: italic;
-            color: gray !important; /* Pas de kleur aan indien minder opzichtig gewenst is */
-        }
+    .align-center {
+    align-items: center; /* Centraal uitlijnen */
+    }
+
+    .align-end {
+    align-items: flex-end; /* Uitlijnen aan de onderkant */
+    }
+
+    .align-baseline {
+    align-items: baseline; /* Uitlijnen op de tekstbasislijn */
+    }
+
+
+    .row{
+    flex-direction:row;
+    }
+
+    /* Eerste rij (bijvoorbeeld een header of titel) */
+    .row-1 {
+    background-color: lightblue; /* Ter illustratie */
+    }
+
+    /* Tweede rij (flex-column content) */
+    .row-2 {
+    display: flex;
+    flex-direction: row; /* Zorgt dat de inhoud in een kolom wordt geplaatst */
+    flex-grow: 1; /* Neemt alle beschikbare ruimte in */
+    background-color: lightgreen; /* Ter illustratie */
+    }
+
+
+    .column{
+    flex-direction:column;
+    }
+
+    .input-container FluentTextField {
+    flex-grow: 1;
+    }
+
+    .input-container span {
+    margin-bottom: 0.35em; /* Zorgt voor uitlijning met tekst in het invoerveld */
+    margin-top: 0.35em;
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+    font-family: 'Cambria Math';
+    /* font-size: smaller; */
+    /* font-style: italic; */
+    color: gray !important; /* Pas de kleur aan indien minder opzichtig gewenst is */
+    }
+
+    /* Standaard: Unit rechts van het invoerveld */
+    .input-container .unit-right {
+    margin-left: 5px; /* Ruimte tussen input en eenheid */
+    margin-right: 5px;
+    /* font-size: smaller; */
+    min-width: 40px;
+    /* color: gray !important; */
+    }
+
+    .input-container .unit-bottom{
+    align-items: baseline;
+    }
+
+    /* Unit links van het invoerveld */
+    .input-container .label-left {
+    margin-right: 5px; /* Ruimte tussen eenheid en input */
+    min-width: 50px;
+    /* color: darkblue !important; */
+    }
+
+    .input-container .label-long{
+    width: calc(100% - 300px); /* 100% breedte min 50px */
+    flex-shrink: 0; /* Voorkomt dat het veld kleiner wordt */
+    /* color: darkgreen !important; */
+    }
+
+    .input-container .symbol-prefix{
+    min-width: 60px; /* Genoeg ruimte voor A~sw,min~ = */
+    text-align: right;
+    }
+
+    .input-container .truncate {
+    white-space: nowrap; /* Voorkomt dat de tekst wordt afgebroken */
+    max-width: 100%;
+    overflow: hidden; /* Verbergt de overtollige tekst */
+    text-overflow: ellipsis; /* Toont '...' als de tekst te lang is */
+    }
+
+    .input-container .truncate-1 {
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Maximaal aantal regels */
+    -webkit-box-orient: vertical;
+    overflow: hidden; /* Verbergt de rest van de tekst */
+    }
+
+    .input-container .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Maximaal aantal regels */
+    -webkit-box-orient: vertical;
+    overflow: hidden; /* Verbergt de rest van de tekst */
+    }
+
+    .input-container .truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Maximaal aantal regels */
+    -webkit-box-orient: vertical;
+    overflow: hidden; /* Verbergt de rest van de tekst */
+    }
+
+
+
 </style>
 
 
@@ -57,13 +220,21 @@
     [Parameter, EditorRequired]
     public string Key { get; set; } = string.Empty;
 
+    [Parameter]
+    public LabelPosition LabelPosition { get; set; } = LabelPosition.Left;
+
+    [Parameter]
+    public LabelType LabelType { get; set; } = LabelType.SymbolAndDescription;
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
 
-    // ReadOnly is true als er geen binding is
-    private bool IsDisabled => !ValueChanged.HasDelegate;
+    [Parameter]
+    public bool Disabled { get; set; } = false;
+
+    [Parameter]
+    public bool ReadOnly { get; set; } = false;
 
 
     [Parameter]
@@ -86,7 +257,8 @@
     public string Unit { get; set; } = string.Empty;
 
     [Parameter]
-    public string Id { get; set; } = Guid.NewGuid().ToString(); // Standaard unieke Id
+    public string? Id { get; set; } = Guid.NewGuid().ToString(); // Standaard unieke Id
+    private string TooltipId { get; set; } = Guid.NewGuid().ToString();
 
     [Parameter]
     public string Tooltip { get; set; } = string.Empty;
@@ -94,6 +266,18 @@
     private string InputValue { get; set; } = string.Empty;
     private string? ErrorMessage { get; set; }
     private bool IsFocused { get; set; } = false;
+
+
+    private string? GetTooltipId() =>
+        LabelPosition == LabelPosition.Left ? TooltipId : Id;
+
+    private string GetLabelClass() =>
+        LabelType == LabelType.SymbolAndDescription ? "label-left label-longX truncateX" : "label-left";
+
+    private string GetContainerClass() =>
+        LabelPosition == LabelPosition.Top ? "input-container align-end" : "input-container align-start";
+
+
 
     protected override void OnInitialized()
     {
@@ -104,12 +288,22 @@
         Mapping = mapping;
     }
 
+    // Detecteer wijzigingen in de parent (bij gebruik Value="")
     protected override void OnParametersSet()
     {
-        base.OnParametersSet();
-        // Werk InputValue bij als Value wijzigt
-        //InputValue = FormatValue(Value);
+        if (Value == null) return;
+        // Alleen bij Value="" en niet bij @bind-Value
+        if (ValueChanged.HasDelegate == false && Value is not null)
+        {
+            InputValue = FormatValue(Value);
+        }
+
+
+
     }
+
+    // Detecteer wijzigingen in de parent
+
 
     //private string FormatValue(T value) => $"{value} {Unit}".Trim();
 
@@ -188,7 +382,13 @@
         return false;
     }
 
-    private string FormatValue(T value) => $"{value}";
+    [Parameter]
+    public string StringFormat { get; set; } = "0.##";
+    private string FormatValue(T value) =>
+    value is not null && double.TryParse(value.ToString(), out var number)
+        ? number.ToString(StringFormat)
+        : string.Empty;
+    
 
     private string DisplayValue
     {
@@ -221,17 +421,29 @@
 
 
 
-    public MarkupString? GetLabel()
+    public MarkupString? GetLabel(bool withDescription = false)
     {
         string markup = $"{Key}";
         if (Mapping != null && Mapping.Symbol != null)
         {
             markup = $"{Mapping.Symbol}";
+            if (withDescription)
+            {
+                markup += $" {Mapping.Description}";
+            }
         }
         return GetMarkupString(markup, true);
     }
 
-
+    public MarkupString? GetDescription()
+    {
+        string markup = "";
+        if (Mapping != null && Mapping.Description != null)
+        {
+            markup = $"{Mapping.Description}";
+        }
+        return GetMarkupString(markup, false);
+    }
 
 
     public MarkupString? GetTooltip()
