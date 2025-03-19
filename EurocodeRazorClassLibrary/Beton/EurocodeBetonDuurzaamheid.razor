@@ -4,9 +4,15 @@
 <h3>EurocodeBetonDuurzaamheid</h3>
 
 
+
+
 <p>Ontwerplevensduur: @Model.Grondslagen.OntwerpLevensduur.GetOntwerplevensduurTekst()</p>
 <p>Betonsterkteklasse: @Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
 <p>Constructieklasse: @Model.Constructieklasse.UserFriendlyName</p>
+
+<EurocodeInputNumber ReadOnly=true Key="OntwerpLevensduur" Value="Model.Grondslagen.OntwerpLevensduur"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Key="BetonSterkteKlasseGebruiksvriendelijkeNaam" Value="Model.Beton.DemoDouble"></EurocodeInputNumber>
+
 
 <FluentCheckbox @bind-Value="Model.IsKwaliteitsBeheersing">Kwaliteitsbeheersing</FluentCheckbox>
 <FluentCheckbox @bind-Value="Model.IsPlaatGeometrie">Plaatgeometrie</FluentCheckbox>
@@ -28,8 +34,14 @@
 
 
 
-<p>Dekking nominaal: @Model.DekkingNom mm</p>
 
+
+
+
+<EurocodeInputNumber Key="DekkingToe" @bind-Value="Model.DekkingToe" MinValue="Model.DekkingNom" MaxValue=70 Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber Key="DekkingNom" Value="Model.DekkingNom" Unit="mm"></EurocodeInputNumber>
+
+@* 
 <FluentNumberField 
 Label = "Dekking toegepast"
 Min = "10"
@@ -41,7 +53,7 @@ Step = "5"
 @if (Model.DekkingToe < Model.DekkingNom){
     <FluentLabel Typo="Typography.Body" Color="@Color.Warning">Let op! <strong>te weining dekking</strong> toegepast.</FluentLabel>
     <p class="alert">Let op te weinig dekking.</p>
-}
+} *@
 
 
 <p>Naam: @Model.Naam</p>

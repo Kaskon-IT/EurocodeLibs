@@ -1,13 +1,19 @@
 ﻿@using System.Text.RegularExpressions
 @using System.Globalization
+@inject ExportFactory.Services.DataTableMappingService MappingService
 @typeparam T where T : new()
 
 <div class="@GetContainerClass()">
 
-    <FluentTooltip Anchor="@GetTooltipId()">
-        @GetTooltip()
 
-    </FluentTooltip>
+    @if(LabelType == LabelType.Symbol)
+    {
+        <FluentTooltip Anchor="@GetTooltipId()">
+            @GetTooltip()
+
+        </FluentTooltip>
+    }
+
 
     @if(LabelPosition == LabelPosition.Top)
     {
@@ -32,35 +38,53 @@
         {
             @* <span class="label-left">@GetLabel()</span> *@
             <span class="label-left label-long truncate-3">@GetDescription()</span>
-            <span class="symbol-prefix">@GetLabel() =</span>
+            <span class="symbol-prefix truncate">@GetLabel() =</span>
         }
     }
 
 
 
 
+    @if (ReadOnly && 1+1==3)
+    {
+        // niet meer gebruiken, is duidelijker als niet gebruikt...
+        <span style="width:70px; text-align:end;">@InputValue</span>
+    }
+    else
+    {
+        <FluentTextField 
+        @bind-Value="InputValue"
+        @oninput="ValidateInput"
+        @bind-MinValue="MinValue"
+        @bind-MaxValue="MaxValue"
+        Id="@Id"
+        Disabled=@Disabled
+        ReadOnly=@ReadOnly
+        Placeholder="Voer een getal in"
+        Size=10
+        Style="@style"
+        Appearance=@appearance
+        TextFieldType=TextFieldType.Text>
+            @* Style="min-width: 80px; max-width:110px; text-align:end;"> *@
 
-    <FluentTextField @bind-Value="InputValue"
-    @oninput="ValidateInput"
-    Id="@Id"
-    Disabled=@Disabled
-    ReadOnly=@ReadOnly
-    Placeholder="Voer een getal in"
-    TextFieldType=TextFieldType.Text
-    Style="min-width: 80px; max-width:130px;">
 
-        @if (LabelPosition == LabelPosition.Top)
-        {
-            <span class="truncate-1">@GetLabel(LabelType == LabelType.SymbolAndDescription) </span>
-            @*  @if (LabelType == LabelType.SymbolAndDescription)
+            @if (LabelPosition == LabelPosition.Top)
+            {
+                <span class="truncate-1">@GetLabel(LabelType == LabelType.SymbolAndDescription) </span>
+                @*  @if (LabelType == LabelType.SymbolAndDescription)
             {
                 <span class="label-left truncate2">@GetDescription()</span>
                 <span>TEST</span>
             } *@
 
-        }
+            }
 
-    </FluentTextField>
+        </FluentTextField>
+    }
+
+
+
+
     @if (LabelPosition == LabelPosition.Left)
     {
         <span class="unit-right">@Unit</span>
@@ -77,12 +101,19 @@
 <style>
 
 
+    fluent-text-field::part(control) {
+    text-align: right;
+    /* Zodat de getallen RECHTS uitgelijnd worden zoals het hoort, Microsoft!!!! knuppels */
+    }
+
 
     .input-container {
     display: flex;
     /* flex-direction:row; */
     /* align-items: start; */
     margin-right: 5px;
+    margin-bottom: 2px;
+    margin-top: 2px;
     width: 100%;
     }
 
@@ -131,14 +162,15 @@
     }
 
     .input-container span {
-    margin-bottom: 0.35em; /* Zorgt voor uitlijning met tekst in het invoerveld */
-    margin-top: 0.35em;
+    margin-bottom: 0.425em; /* Zorgt voor uitlijning als het label boven de input staat */
+    margin-top: 0.425em; /* Zorgt voor uitlijning als het label voor de input staat */
     margin-left: 0.25em;
     margin-right: 0.25em;
-    font-family: 'Cambria Math';
+    /* font-family: 'Cambria Math'; */
     /* font-size: smaller; */
     /* font-style: italic; */
-    color: gray !important; /* Pas de kleur aan indien minder opzichtig gewenst is */
+    /* color: gray !important;  */
+    /* Pas de kleur aan indien minder opzichtig gewenst is */
     }
 
     /* Standaard: Unit rechts van het invoerveld */
@@ -146,7 +178,7 @@
     margin-left: 5px; /* Ruimte tussen input en eenheid */
     margin-right: 5px;
     /* font-size: smaller; */
-    min-width: 40px;
+    width: 50px;
     /* color: gray !important; */
     }
 
@@ -208,7 +240,7 @@
 
 @if (!string.IsNullOrEmpty(ErrorMessage))
 {
-    <div style="color: red;">@ErrorMessage</div>
+    <div style="color: red; text-align: center; font-weight:600; background-color:transparent; border-radius: 4px; margin: 8px 50px 8px 60px; padding: 4px; border:1px solid red">@((MarkupString)ErrorMessage)</div>
 }
 
 @code {
@@ -258,10 +290,15 @@
 
     [Parameter]
     public string? Id { get; set; } = Guid.NewGuid().ToString(); // Standaard unieke Id
-    private string TooltipId { get; set; } = Guid.NewGuid().ToString();
 
-    [Parameter]
-    public string Tooltip { get; set; } = string.Empty;
+    private string? TooltipId { get; set; } = Guid.NewGuid().ToString();
+
+    private FluentInputAppearance appearance => ReadOnly ? FluentInputAppearance.Filled : FluentInputAppearance.Outline;
+
+    private string style => (  LabelPosition == LabelPosition.Top && LabelType == LabelType.SymbolAndDescription) ? "width:calc(100% - 100px);" : "max-width:100px;";
+
+    //[Parameter]
+    //public string Tooltip { get; set; } = string.Empty;
 
     private string InputValue { get; set; } = string.Empty;
     private string? ErrorMessage { get; set; }
@@ -269,7 +306,13 @@
 
 
     private string? GetTooltipId() =>
-        LabelPosition == LabelPosition.Left ? TooltipId : Id;
+        LabelPosition switch
+        {
+            LabelPosition.Left => TooltipId, 
+            LabelPosition.Top => Id, 
+            _ => TooltipId
+        };
+
 
     private string GetLabelClass() =>
         LabelType == LabelType.SymbolAndDescription ? "label-left label-longX truncateX" : "label-left";
@@ -283,8 +326,14 @@
     {
         base.OnInitialized();
         if (Value == null) return;
+
         InputValue = FormatValue(Value);
-        ExportFactory.Extensions.DataTableExtensions.EurocodeMapping.TryGetValue(Key, out var mapping);
+
+        //MappingService.Data.
+        //var mappingService = new ExportFactory.Services.DataTableMappingService();
+        //var mappingDict = mappingService.GetEurocodeMapping();
+
+        MappingService.Data.TryGetValue(Key, out var mapping);
         Mapping = mapping;
     }
 
@@ -296,6 +345,13 @@
         if (ValueChanged.HasDelegate == false && Value is not null)
         {
             InputValue = FormatValue(Value);
+            //ForceValidation(); // Check opnieuw bij elke parameterwijziging
+        }
+        else
+        {
+            //ForceValidation(); // Check opnieuw bij elke parameterwijziging
+
+            //InputValue = FormatValue(Value); // waarom stond dit uit?
         }
 
 
@@ -307,6 +363,12 @@
 
     //private string FormatValue(T value) => $"{value} {Unit}".Trim();
 
+    private async Task ForceValidation()
+    {
+        ValidateMinMax(new ChangeEventArgs { Value = InputValue});
+        //await ValidateInput(new ChangeEventArgs { Value = InputValue });
+    }
+
     private async Task ValidateInput(ChangeEventArgs e)
     {
         InputValue = e.Value?.ToString() ?? string.Empty;
@@ -316,7 +378,10 @@
 
         if (!isValid)
         {
-            ErrorMessage = "Ongeldige invoer: gebruik een getal of wetenschappelijke notatie.";
+            ErrorMessage = "⚠️ Ongeldige invoer: gebruik een getal of wetenschappelijke notatie.";
+
+
+
             return;
         }
 
@@ -330,31 +395,77 @@
             }
             else
             {
-                ErrorMessage = "Ongeldig type.";
+                ErrorMessage = "⚠️ Ongeldig type.";
             }
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Fout bij invoer: {ex.Message}";
+            ErrorMessage = $"⚠️ Fout bij invoer: {ex.Message}";
+        }
+    }
+
+    private string GetMinValueString => MinValue > double.MinValue ? MinValue.ToString("0.##") : string.Empty;
+    private string GetMaxValueString => MaxValue < double.MaxValue ? MaxValue.ToString("0.##") : string.Empty;
+
+ 
+
+    private void ValidateMinMax(ChangeEventArgs e)
+    {
+        if (e.Value is string value)
+        {
+            // Probeer te casten naar double voor validatie
+            if (value is IConvertible convertible)
+            {
+                var doubleValue = convertible.ToDouble(CultureInfo.InvariantCulture);
+
+                if (doubleValue < MinValue || doubleValue > MaxValue)
+                {
+                    if (!string.IsNullOrEmpty(GetMinValueString) && !string.IsNullOrEmpty(GetMaxValueString))
+                    {
+                        ErrorMessage = $"⚠️ Waarde {GetLabel()} moet tussen {GetMinValueString} en {GetMaxValueString} {Unit} liggen.";
+
+                    }
+                    else if (!string.IsNullOrEmpty(GetMinValueString))
+                    {
+                        ErrorMessage = $"⚠️ Minimum waarde {GetLabel()} is {GetMinValueString} {Unit}.";
+                    }
+                    else if (!string.IsNullOrEmpty(GetMaxValueString))
+                    {
+                        ErrorMessage = $"⚠️ Maximum waarde {GetLabel()} is {GetMaxValueString} {Unit}.";
+                    }
+                }
+            }
         }
     }
 
     private async Task SetValueAsync(T? newValue)
     {
+        ErrorMessage = null;
         if (newValue is IConvertible convertible)
         {
             var doubleValue = convertible.ToDouble(CultureInfo.InvariantCulture);
 
             if (doubleValue < MinValue || doubleValue > MaxValue)
             {
-                ErrorMessage = $"Waarde moet tussen {MinValue} en {MaxValue} liggen.";
-                return;
+                if (!string.IsNullOrEmpty(GetMinValueString) && !string.IsNullOrEmpty(GetMaxValueString))
+                {
+                    ErrorMessage = $"⚠️ Waarde {GetLabel()} moet tussen {GetMinValueString} en {GetMaxValueString} {Unit} liggen.";
+
+                }
+                else if (!string.IsNullOrEmpty(GetMinValueString))
+                {
+                    ErrorMessage = $"⚠️ Minimum waarde {GetLabel()} is {GetMinValueString} {Unit}.";
+                }
+                else if (!string.IsNullOrEmpty(GetMaxValueString))
+                {
+                    ErrorMessage = $"⚠️ Maximum waarde {GetLabel()} is {GetMaxValueString} {Unit}.";
+                }
             }
         }
 
         Value = newValue;
-        ErrorMessage = null;
         await ValueChanged.InvokeAsync(newValue);
+        //await InvokeAsync(StateHasChanged).ConfigureAwait(false); // Forceert UI-verversing
     }
 
     private bool TryParseValue(string input, out T? value)
@@ -386,9 +497,23 @@
     public string StringFormat { get; set; } = "0.##";
     private string FormatValue(T value) =>
     value is not null && double.TryParse(value.ToString(), out var number)
-        ? number.ToString(StringFormat)
+        ? FormatNumber(number)
         : string.Empty;
     
+    // Hulpmethode om getallen te formatteren
+    private string FormatNumber(double number)
+    {
+        // Als het getal buiten het bereik ligt, gebruik wetenschappelijke notatie
+        if (number != 0 && (Math.Abs(number) >= 1000000 || Math.Abs(number) < 0.001))
+        {
+            return number.ToString("0.#####E+0"); // Wetenschappelijke notatie met max 5 significante cijfers
+        }
+
+        // Anders gebruik het standaardformaat
+        return number.ToString(StringFormat);
+    }
+
+
 
     private string DisplayValue
     {

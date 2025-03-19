@@ -11,6 +11,8 @@
 
     public static partial class DataTableExtensions
     {
+        private static Services.DataTableMappingService _mappingService = new();
+        private static Dictionary<string, AttributesMapping> _mappingDict = _mappingService.GetEurocodeMapping();
 
 
         public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false)
@@ -105,9 +107,9 @@
 
 
                     // mapping
-                    if (EurocodeMapping.ContainsKey(propertyWithAttribute.Property.Name))
+                    if (_mappingDict.ContainsKey(propertyWithAttribute.Property.Name))
                     {
-                        var mapping = EurocodeMapping[propertyWithAttribute.Property.Name];
+                        var mapping = _mappingDict[propertyWithAttribute.Property.Name];
 
                         if (mapping.Symbol != null)
                         {
@@ -166,9 +168,9 @@
 
                         var rowProperties = propertiesWithAttributes[i];
                         string? format = rowProperties.Attribute.StringFormat;
-                        if (EurocodeMapping.ContainsKey(columnName))
+                        if (_mappingDict.ContainsKey(columnName))
                         {
-                            var mapping = EurocodeMapping[columnName];
+                            var mapping = _mappingDict[columnName];
 
 
                             if (mapping.Format != null)
@@ -182,13 +184,45 @@
                         }
 
 
-
+                        if (value is double && string.IsNullOrEmpty(format))
+                        {
+                            // getallen altijd een default format meegeven;
+                            format = "0.##e+0";
+                        }
 
 
 
                         // Format the value if stringFormat exists
                         if (!string.IsNullOrEmpty(format))
                         {
+                            // voor formats die beginnen met een 0 zoals 0.0 of 0.# moeten we controleren of ze niet wetenschappenlijk weergave nodig hebben.
+                            if (format.StartsWith("0"))
+                            {
+
+                                if (value is double)
+                                {
+                                    // aanvulling, waardes groter dan 10000 gaan we wetenschappelijk aanpassen, sowieso.
+                                    // ook als er per ongeluk geen rekening mee gehouden is.
+                                    var waarde = (double)value;
+                                    string suffix = "";
+                                    if (waarde != 0 && Math.Abs(waarde) >= 10000)
+                                    {
+                                        int index = format.IndexOf('\t');  // Zoek de index van het tab-teken
+
+                                        if (index != -1)  // Controleer of het tab-teken is gevonden
+                                        {
+                                            suffix = format.Substring(index);  // Haal alles vanaf de tab, inclusief de tab
+                                            //Console.WriteLine(result);
+                                        }
+
+                                        format = $"0.##e+0{suffix}";
+                                    }
+                                }
+                            }
+
+
+
+
                             if (!format.StartsWith("{"))
                             {
                                 format = "{0:" + format + "}";

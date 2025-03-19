@@ -11,6 +11,7 @@
     </FluentSelectEnum>
 
     <EurocodeBetonOpleggingComponent @bind-Model=@SampleProject.OpleggingDemo
+                                     ReadOnlyFields="ReadOnlyFields"
                                      LabelPosition="@labelPosition.GetValueOrDefault()"
                                      LabelType="@labelType.GetValueOrDefault()">
 
@@ -36,6 +37,17 @@
 
     private LabelPosition? labelPosition { get; set; } = LabelPosition.Left;
     private LabelType? labelType { get; set; } = LabelType.SymbolAndDescription;
+
+    private Dictionary<string, bool> ReadOnlyFields { get; set; } = new()
+    {
+        {nameof(OpleggingContext.RekenwaardeOplegmateriaal), true},
+        {nameof(OpleggingContext.OplegReactieRekenwaarde), true},
+        {nameof(OpleggingContext.OplegBreedteNetto), true},
+        {nameof(OpleggingContext.BetonOndersteundeElement), true},
+        {nameof(OpleggingContext.LengteOndersteundeElement), true},
+
+
+    };
 
 
 

@@ -4,19 +4,13 @@
 
     </EurocodeBetonDwarskrachtComponent>
 
-    <FluentButton OnClick="Export">Export HTML</FluentButton>
+    <FluentButton Appearance=Appearance.Accent OnClick="Export">Bijwerken</FluentButton>
 
     @if (!string.IsNullOrEmpty(html))
     {
         <div>@((MarkupString)html)</div>
     }
 
-
-    <div>
-        <ExportTableComponent T="Eurocode.BetonConstructies.DwarskrachtWapContext" Item="@SampleProject.DwarskrachtDemo"></ExportTableComponent>
-
-    </div>
-    <h1>Test</h1>
 
 }
 

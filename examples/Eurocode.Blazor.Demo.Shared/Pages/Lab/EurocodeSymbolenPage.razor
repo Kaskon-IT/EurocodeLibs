@@ -1,10 +1,11 @@
 ﻿@using ExportFactory.Shared
 @using Eurocode.Blazor.Demo.Shared.Helpers
+@inject ExportFactory.Services.DataTableMappingService MappingService
 @page "/lab/eurocode-symbolen"
 
 <h3>EurocodeSymbolen</h3>
 
-<EurocodeRazorClassLibrary.Shared.EurocodeSymbolen Mappings="eurocodeDictionary"></EurocodeRazorClassLibrary.Shared.EurocodeSymbolen>
+<EurocodeRazorClassLibrary.Shared.EurocodeSymbolen Mappings="MappingService.Data"></EurocodeRazorClassLibrary.Shared.EurocodeSymbolen>
 
 
 <!-- GRID DEMO -->
@@ -108,9 +109,10 @@ Style="white-space: pre-wrap;">
 
 
 @code {
-    private Dictionary<string, AttributesMapping> eurocodeDictionary = ExportFactory.Extensions.DataTableExtensions.EurocodeMapping;
+    
+    //private Dictionary<string, AttributesMapping> eurocodeDictionary = MappingService.GetEurocodeMapping(); ExportFactory.Extensions.DataTableExtensions.EurocodeMapping;
 
-    //private Dictionary<string, AttributesMapping> eurocodeDictionary = ExportFactory.Extensions.DataTableExtensions._propertieMap;
+    //private DictGetionary<string, AttributesMapping> eurocodeDictionary = ExportFactory.Extensions.DataTableExtensions._propertieMap;
     private IQueryable<KeyValueMappingModel> items;
     //private IQueryable<KeyValueMappingModel> filteredMappedAttributes;
     private List<ExportFactory.Shared.KeyValueMappingModel> keyValueMappings;
@@ -126,7 +128,7 @@ Style="white-space: pre-wrap;">
     {
         // Converteer Dictionary naar een List van KeyValuePair voor binding
 
-        keyValueMappings = eurocodeDictionary.Select(kv => new KeyValueMappingModel
+        keyValueMappings = MappingService.Data.Select(kv => new KeyValueMappingModel
             {
                 Key = kv.Key,
                 Mapping = kv.Value

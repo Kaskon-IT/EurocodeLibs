@@ -1,9 +1,23 @@
 ﻿using ExportFactory.Shared;
 
-namespace ExportFactory.Extensions
+namespace ExportFactory.Services
 {
-    public static partial class DataTableExtensions
+
+
+
+    public class DataTableMappingService
     {
+
+        public Dictionary<string, AttributesMapping> Data { get; } = new();
+
+        public DataTableMappingService()
+        {
+            Data = _algemeen
+                .Concat(_ec0)
+                .Concat(_ec1)
+                .Concat(_ec2)
+                .ToDictionary();
+        }
 
         const string? _MPa = "0.##\tN/mm²";
         const string? _Promille = "0.##\t‰";
@@ -17,9 +31,49 @@ namespace ExportFactory.Extensions
         const string? _graden = "0.##°"; // 
 
 
+        // ALGEMEEN
+        private readonly Dictionary<string, AttributesMapping> _algemeen = new()
+        {
+            { "Moment.Rekenwaarde", new(sym: "M~Ed~", desc: "rekenwaarde moment") },
+            { "Staalspanning", new(sym: "|sigma|~s~", desc: "staalspanning") },
+
+            { "BetonDoorsnedeOppervlak", new(sym: "A~c~", desc:"betondoorsnedeoppervlak") },
+            { "ProfielBreedte", new(sym: "b", desc:"breedte") },
+            { "ProfielHoogte", new(sym: "h", desc:"hoogte") },
+            { "B1", new(sym: "b~1~", desc:"afstand") },
+            { "B2", new(sym: "b~2~", desc:"afstand") },
+            { "H1", new(sym: "h~1~", desc:"afstand") },
+            { "H2", new(sym: "h~1~", desc:"afstand") },
+
+
+            { "Ix", new(sym: "I~x~", desc: "torsietraagheid (rond de x-as)") },
+            { "Iy", new(sym: "I~y~", desc: "traagheidsmoment (rond de y-as)") },
+            { "Iz", new(sym: "I~z~", desc: "traagheidsmoment (rond de z-as)") },
+
+            { "Wy", new(sym: "W~y~", desc: "weerstandsmoment (rond de y-as)") },
+            { "Wz", new(sym: "W~z~", desc: "weerstandsmoment (rond de z-as)") },
+
+            { "ReferentieAfstandVoorNuttigeHoogte", new(sym: "h~ref~", desc:"referentie afstand voor nuttige hoogte") },
+            { "XuD", new(sym: "x~u~/d", desc:"hoogte drukzone / nuttige hoogte") },
+            { "NuttigeHoogte", new(sym: "d", desc:"nuttige hoogte") },
+
+
+            {"AsBen", new(sym: "A~s,ben~", desc: "benodigde wapening") },
+            {"AsToe", new(sym: "A~s,toe~", desc: "toegepaste wapening") },
+            {"AsMin", new(sym: "A~s,min~", desc: "minimaal benodigde wapening") },
+            {"Xu", new(sym: "x~u~", desc: "hoogte drukzone") },
+
+
+
+
+
+
+
+        };
+
 
         // EC0
-        private static readonly Dictionary<string, AttributesMapping> _mappingEurocode0 = new Dictionary<string, AttributesMapping>
+        private readonly Dictionary<string, AttributesMapping> _ec0 = new Dictionary<string, AttributesMapping>
         {
             { "GebruikteNorm", new(sym: null, desc: "gebruikte norm", norm: null, art: null ) },
             { "Gevolgklasse", new(sym:"CC", desc: "gevolgklasse (Consequence Class)", norm: "EC0", art:"2.3") },
@@ -34,10 +88,13 @@ namespace ExportFactory.Extensions
 
 
         // EC1
+        private readonly Dictionary<string, AttributesMapping> _ec1 = new()
+        {
 
+        };
 
         // EC2
-        private static readonly Dictionary<string, AttributesMapping> _mappingEurcode2 = new Dictionary<string, AttributesMapping>
+        private readonly Dictionary<string, AttributesMapping> _ec2 = new Dictionary<string, AttributesMapping>
         {
 
             { "Betonsterkteklasse", new(sym : "C", desc : "betonsterkteklasse", norm: "EC2", art: "3.1.2", vgl: "tabel 3.1") },
@@ -217,6 +274,7 @@ namespace ExportFactory.Extensions
             { "RekenwaardeOplegmateriaal", new(sym: "f~bed~", desc: "rekenwaarde oplegmateriaal", norm:"EC2", art: "10.9.5.2 (2)", vgl: "", format: _MPa  )  },
             { "LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement", new(sym: "f~cd~", desc: "laagste rekenwaarde van de sterktes van het ondersteunde en het ondersteunende element", norm:"EC2", art: "10.9.5.2 (2)", vgl: "", format: _MPa  )  },
             { "OpleggingElementType", new(sym: "", desc: "doorgaand of afzonderlijk", norm:"EC2", art: "10.9.5.2/3", vgl: "", format: _MPa  )  },
+            { "OpgaveDruksterkteMetselwerk", new(sym: "f~bd~", desc: "rekenwaarde druksterkte metselwerk (volgens EN771)", norm: "", art:"", vgl:"", format: _MPa) },
 
 
 
@@ -227,28 +285,15 @@ namespace ExportFactory.Extensions
         };
 
 
-        public static readonly Dictionary<string, AttributesMapping> EurocodeMapping =
-            _mappingEurocode0
-            .Concat(_mappingEurcode2)
-            .ToDictionary();
-
-        public static readonly Dictionary<string, AttributesMapping> _propertieMap = new Dictionary<string, AttributesMapping>
+        public Dictionary<string, AttributesMapping> GetEurocodeMapping()
         {
+            return _ec0.Concat(_ec2).ToDictionary();
+        }
+        //_mappingEurocode0
+        //.Concat(_mappingEurcode2)
+        //.ToDictionary();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-        };
 
     }
 }

@@ -2,11 +2,15 @@
 
 
 <FluentSelectEnum 
-    Label="Betonsterkteklasse"
-    TEnum="BetonsterkteklasseEnum"
-    ExcludeEnumItems="@_betonSterkteklasseExcludedItems"
-    @bind-EnumSelectedValue="@Model.Betonsterkteklasse"
-    Disabled="@Disabled" />
+Label="@LabelBetonsterkteklasse"
+TEnum="BetonsterkteklasseEnum"
+ExcludeEnumItems="@_betonSterkteklasseExcludedItems"
+@bind-EnumSelectedValue="@Model.Betonsterkteklasse"
+ReadOnly="@ReadOnly"
+Disabled="@ReadOnly" />
+
+
+
 
 @if(ToonBetonSpanningRekDiagram)
 {
@@ -58,26 +62,32 @@
     public EventCallback<BetonContext> ModelChanged { get; set; }
 
 
+    [Parameter]
+    public bool ReadOnly{ get; set; }
+
+    [Parameter]
+    public string LabelBetonsterkteklasse { get; set; } = "betonsterkteklasse";
+
     /// <summary>
     /// Optie om keuze betonstaal wel/niet te tonen.
     /// Standaard true.
     /// </summary>
     [Parameter]
-    public bool ToonBetonstaal { get; set; } = true;
+    public bool ToonBetonstaal { get; set; } = !true;
 
     /// <summary>
     /// Optie om de keuze voor spanning-rek-diagram van beton wel/niet te tonen.
     /// Standaard true.
     /// </summary>
     [Parameter]
-    public bool ToonBetonSpanningRekDiagram { get; set; } = true;
+    public bool ToonBetonSpanningRekDiagram { get; set; } = !true;
 
     /// <summary>
     /// Optie om de keuze voor spanning-rek-diagram van het betonstaal wel/niet te tonen.
     /// Standaard true.
     /// </summary>
     [Parameter]
-    public bool ToonBetonStaalSpanningRekDiagram { get; set; } = true;
+    public bool ToonBetonStaalSpanningRekDiagram { get; set; } = !true;
 
     /// <summary>
     /// Optie voor keuze mogelijkheid te blokkeren

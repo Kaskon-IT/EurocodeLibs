@@ -1,34 +1,39 @@
 ﻿@using Eurocode.BetonConstructies
 
-<FluentGrid Spacing="1">
+<FluentGrid Spacing="0">
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <EurocodeInputNumber @bind-Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN" 
-        LabelPosition="@LabelPosition" LabelType="@LabelType"/>
+        <EurocodeInputNumber @bind-Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN"
+                             LabelPosition="@LabelPosition" LabelType="@LabelType" 
+                             ReadOnly="IsFieldReadOnly(nameof(Model.OplegReactieRekenwaarde))"  />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <EurocodeInputNumber @bind-Value="@Model.OplegBreedteNetto" Key="OplegBreedteNetto" Unit="mm" 
-        LabelPosition="@LabelPosition" LabelType="@LabelType" />
+        <EurocodeInputNumber @bind-Value="@Model.OplegBreedteNetto" Key="OplegBreedteNetto" Unit="mm"
+                             LabelPosition="@LabelPosition" LabelType="@LabelType" 
+                             ReadOnly="IsFieldReadOnly(nameof(Model.OplegBreedteNetto))" />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <EurocodeInputNumber ReadOnly=true Value="@Model.OplegLengteNetto" Key="OplegLengteNetto" Unit="mm" 
-        LabelPosition="@LabelPosition" LabelType="@LabelType" />
+        <EurocodeInputNumber ReadOnly=true Value="@Model.OplegLengteNetto" Key="OplegLengteNetto" Unit="mm"
+                             LabelPosition="@LabelPosition" LabelType="@LabelType"
+                             />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeInputNumber @bind-Value="@Model.LengteOndersteundeElement" Key="LengteOndersteundeElement" Unit="mm"
-                             LabelPosition="@LabelPosition" LabelType="@LabelType" />
+                             LabelPosition="@LabelPosition" LabelType="@LabelType"
+                             ReadOnly=IsFieldReadOnly(nameof(Model.LengteOndersteundeElement)) />
     </FluentGridItem>
 
 </FluentGrid>
 
 
-<FluentGrid Spacing="1">
+<FluentGrid Spacing="0">
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeInputNumber @bind-Value="@Model.RekenwaardeOplegmateriaal" Key="RekenwaardeOplegmateriaal" Unit="N/mm²" 
-        LabelPosition="@LabelPosition" LabelType="@LabelType" />
+                             LabelPosition="@LabelPosition" LabelType="@LabelType"
+                             ReadOnly=IsFieldReadOnly(nameof(Model.RekenwaardeOplegmateriaal)) />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
@@ -48,39 +53,42 @@
 
 
 
-    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <EurocodeBetonMaterialen @bind-Model="Model.BetonOndersteundeElement" ToonBetonSpanningRekDiagram="false" ToonBetonstaal="false" ToonBetonStaalSpanningRekDiagram="false" />
-    </FluentGridItem>
+        <EurocodeBetonMaterialen @bind-Model="Model.BetonOndersteundeElement"
+                                 ReadOnly=IsFieldReadOnly(nameof(Model.BetonOndersteundeElement))
+                                 LabelBetonsterkteklasse="betonsterkteklasse ondersteunde element" 
+                                 ToonBetonSpanningRekDiagram="false" ToonBetonstaal="false" ToonBetonStaalSpanningRekDiagram="false" />
 
-   
 
-    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <FluentSelectEnum Label="type wapening"
-        @bind-EnumSelectedValue="Model.DetailleringWapening"
-        TEnum="Eurocode.BetonConstructies.OpleggingContext.DetailleringWapeningEnum">
+
+        <FluentSelectEnum 
+            Label="type wapening"
+            LabelPosition="@LabelPosition"
+            @bind-EnumSelectedValue="Model.DetailleringWapening"
+            TEnum="Eurocode.BetonConstructies.OpleggingContext.DetailleringWapeningEnum">
         </FluentSelectEnum>
-    </FluentGridItem>
 
-    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <FluentSelectEnum Label="type element"
+        <FluentSelectEnum 
+            Label="type element"
+            LabelPosition="@LabelPosition"
         @bind-EnumSelectedValue="Model.OpleggingElementType"
         TEnum="Eurocode.BetonConstructies.OpleggingContext.OpleggingElementTypeEnum">
         </FluentSelectEnum>
-    </FluentGridItem>
 
-    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <FluentSelectEnum Style="width: 100%;" Label="type oplegging"
-                          @bind-EnumSelectedValue="Model.OplegType"
-                          TEnum="Eurocode.BetonConstructies.OplegTypeEnum">
+        <FluentSelectEnum 
+            Style="width: 100%;" 
+            Label="type oplegging"
+            LabelPosition="@LabelPosition"
+            @bind-EnumSelectedValue="Model.OplegType"
+            TEnum="Eurocode.BetonConstructies.OplegTypeEnum">
         </FluentSelectEnum>
-    </FluentGridItem>
 
-    <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <FluentSelectEnum Style="width: 100%;" Label="materiaal ondersteuning"
-                          @bind-EnumSelectedValue="Model.OplegMateriaal"
-                          TEnum="Eurocode.BetonConstructies.OplegMateriaalEnum">
+        <FluentSelectEnum 
+            Style="width: 100%;" 
+            Label="materiaal ondersteuning"
+            LabelPosition="@LabelPosition"
+            @bind-EnumSelectedValue="Model.OplegMateriaal"
+            TEnum="Eurocode.BetonConstructies.OplegMateriaalEnum">
         </FluentSelectEnum>
-    </FluentGridItem>
 
 
 
@@ -89,7 +97,7 @@
 
 <FluentGrid Spacing="0">
     @* <EurcodeVerticalHeader Tekst="Ondersteuning"></EurcodeVerticalHeader> *@
-   
+
 
 
 
@@ -137,10 +145,6 @@
     public required OpleggingContext Model { get; set; }
 
 
-
-
-
-
     /// <summary>
     /// Callback is nodig voor @bind-Model
     /// </summary>
@@ -155,8 +159,12 @@
     [Parameter]
     public LabelPosition LabelPosition { get; set; } = LabelPosition.Left;
 
+    [Parameter]
+    public Dictionary<string, bool> ReadOnlyFields { get; set; } = new() { { "OplegReactieRekenwaarde", true } };
 
-
+    
+    private bool IsFieldReadOnly(string fieldName) =>
+        ReadOnlyFields.TryGetValue($"{fieldName}", out var isReadOnly) && isReadOnly;
 
     private int xsSizeBAK => LabelPosition == LabelPosition.Left ? 12 : 6;
     private int mdSizeBAK => LabelPosition == LabelPosition.Left ? 12 : 4;

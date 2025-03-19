@@ -9,14 +9,14 @@ namespace Eurocode.BetonConstructies
             Beton = new();
         }
 
-        public BendingResults(BetonContext beton, double b, double h, double zRef, double m, double asApplied = 201)
+        public BendingResults(BetonContext beton, double b, double h, double zRef, double m)
         {
             Beton = beton;
             B = b;
             H = h;
             ZRef = zRef;
             M = m;
-            AsApplied = asApplied;
+
         }
 
 
@@ -78,7 +78,10 @@ namespace Eurocode.BetonConstructies
         }
 
         [TableColumn("A~s,toe~", Order = 41, StringFormat = "0 mm²")]
-        public double AsApplied { get; set; } = 1;
+        public double AsApplied
+        {
+            get { return Math.Ceiling(AsRequired); }
+        }
 
 
 
@@ -94,7 +97,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return M / (Z / 1000);
+                return Math.Abs(M) / (Z / 1000);
             }
         }
 

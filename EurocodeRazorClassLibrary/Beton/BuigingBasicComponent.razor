@@ -1,40 +1,51 @@
 ﻿@using Eurocode.BetonConstructies
 
-<FluentNumberField @bind-Value="Model.M">Moment [kNm]</FluentNumberField>
-<FluentNumberField @bind-Value="Model.B">B [mm]</FluentNumberField>
-<FluentNumberField @bind-Value="Model.H">H [mm]</FluentNumberField>
-<FluentNumberField @bind-Value="Model.ZRef">z-ref [mm]</FluentNumberField>
-<FluentNumberField ReadOnly="true" Value="Model.D">d [mm]</FluentNumberField>
+
+<EurocodeInputNumber @bind-Value=Model.M Key="MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
+<EurocodeInputNumber @bind-Value=Model.B Key="ProfielBreedte" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber @bind-Value=Model.H Key="ProfielHoogte" Unit="mm"></EurocodeInputNumber>
+
+
+<EurocodeInputNumber @bind-Value=Model.ZRef Key="ReferentieAfstandVoorNuttigeHoogte" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.D Key="NuttigeHoogte" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.Xu Key="Xu" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.XuD Key="XuD" Unit="-"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.Z Key="Z" Unit="mm"></EurocodeInputNumber>
+
+<EurocodeInputNumber ReadOnly=true Value=Model.SigmaS Key="Staalspanning" Unit="MPa"></EurocodeInputNumber>
 
 
 
-<FluentTextField Value="@Model.AsRequired.ToString("0 mm²")">As;required</FluentTextField>
-
-<FluentTextField Value="@Model.Xu.ToString("0.0 mm")">Xu</FluentTextField>
+@* <BetonProfiel @bind-Model="profielDemo"></BetonProfiel> *@
 
 
+@* <FluentNumberField @bind-Value="Model.B">B [mm]</FluentNumberField> *@
+@* <FluentNumberField @bind-Value="Model.H">H [mm]</FluentNumberField> *@
+@* <FluentNumberField @bind-Value="Model.ZRef">z-ref [mm]</FluentNumberField> *@
+@* <FluentNumberField ReadOnly="true" Value="Model.D">d [mm]</FluentNumberField> *@
 
-<FluentTextField Value="@Model.XuD.ToString("0.000")">Xu/d</FluentTextField>
-<FluentTextField Value="@Model.Z.ToString("0.0 mm")">z</FluentTextField>
-
-<FluentTextField Value="@Model.SigmaS.ToString("0.0 N/mm²")">Staalspanning</FluentTextField>
-
+<EurocodeInputNumber ReadOnly=true Value=Model.AsMin Key="AsMin" Unit="mm²"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.AsRequired Key="AsBen" Unit="mm²"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.AsApplied Key="AsToe" Unit="mm²"></EurocodeInputNumber>
 
 
 
 
+
+
+@* 
 <FluentTextField Value="@Model.AsMin1.ToString("0 mm²")">As;min</FluentTextField>
 <FluentTextField Value="@Model.AsMin1.ToString("0 mm²")">As;min1</FluentTextField>
 <FluentTextField Value="@Model.AsMin2.ToString("0 mm²")">As;min2</FluentTextField>
+ *@
 
-
-<FluentTextField Value="@Model.Beton.FactorN.ToString("0.00")">N</FluentTextField>
+@* <FluentTextField Value="@Model.Beton.FactorN.ToString("0.00")">N</FluentTextField>
 <FluentTextField Value="@Model.Beton.GetAlpha().ToString("0.000")">Alpha</FluentTextField>
 <FluentTextField Value="@Model.Beton.GetBeta().ToString("0.000")">Beta</FluentTextField>
+ *@
 
 
-
-<EurocodeBetonTabel Model="@Model.Beton" />
+@* <EurocodeBetonTabel Model="@Model.Beton" /> *@
 
 
 
@@ -52,11 +63,13 @@
     [Parameter, EditorRequired]
     public required BendingResults Model{ get; set; }
 
+
+
     [Parameter]
     public EventCallback<Eurocode.BetonConstructies.BendingResults> ModelChanged { get; set; }
 
+    public BetonProfielen.BetonProfiel profielDemo { get; set; } = new();
 
-    
 
 
 }

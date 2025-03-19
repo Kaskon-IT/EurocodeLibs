@@ -60,10 +60,10 @@ namespace Eurocode.BetonConstructies
             // maak de berekening
             context.Update();
 
-            if (context.Ved > context.DwarskrachtWeerstandMax)
+            if (Math.Abs(context.Ved) > context.DwarskrachtWeerstandMax)
             {
                 // overschrijding
-                double overschrijding = context.Ved / context.DwarskrachtWeerstandMax;
+                double overschrijding = Math.Abs(context.Ved) / context.DwarskrachtWeerstandMax;
 
                 //  
                 bool spanningBlijftOnderDeGrens = context.SchuifspanningD < 0.8 * context.Beton.BetonStaal.Fyk;
@@ -92,9 +92,9 @@ namespace Eurocode.BetonConstructies
                 // indien de VRdMax groter is dan VEd kunnen we nog met een grotere v1 rekenen indien de staalspanning < 80%fyk
                 double factor = 1;
 
-                if (context.Ved > context.DwarskrachtWeerstandMax)
+                if (Math.Abs(context.Ved) > context.DwarskrachtWeerstandMax)
                 {
-                    factor = context.Ved / context.DwarskrachtWeerstandMax;
+                    factor = Math.Abs(context.Ved) / context.DwarskrachtWeerstandMax;
                     if (factor > 1.25) factor = 1.25;   // meer dan 125% heeft geen zin.
                 }
 
@@ -108,7 +108,7 @@ namespace Eurocode.BetonConstructies
                 }
 
                 // Beschouw opnieuw de VRdMax
-                context.DwarskrachtWeerstandMax = DwarskrachtHelpers.GetVrdMax(context.AlphaCw, context.Breedte, context.Z, context.SterkteReductieFactorBetonGescheurdDoorDwarskracht1, beton.Fcd, context.CotTheta, context.TanTheta, context.Alpha, out _);
+                //context.DwarskrachtWeerstandMax = DwarskrachtHelpers.GetVrdMax(context.AlphaCw, context.Breedte, context.Z, context.SterkteReductieFactorBetonGescheurdDoorDwarskracht1, beton.Fcd, context.CotTheta, context.TanTheta, context.Alpha, out _);
 
                 // en controleer of VEd (nog steeds) niet groter is dan VRdMax 
                 if (context.Ved > context.DwarskrachtWeerstandMax)
@@ -146,7 +146,7 @@ namespace Eurocode.BetonConstructies
 
             // s;t,max  art. 9.2.2 (8) NB
             bool testBeugelsnedeAfstand;                  // true or false om te kijken of we de maximale s;t,max kunnen opschroeven
-            testBeugelsnedeAfstand = context.Ved <= 0.5 * context.DwarskrachtWeerstandMax ? true : false;     // als true, dan s;t,max = 500
+            testBeugelsnedeAfstand = Math.Abs(context.Ved) <= 0.5 * context.DwarskrachtWeerstandMax ? true : false;     // als true, dan s;t,max = 500
             if (testBeugelsnedeAfstand)
             {
                 context.BeugelAfstandMaxDwars = 500;                                                         // als true, dan s;t,max = 500
@@ -183,12 +183,12 @@ namespace Eurocode.BetonConstructies
                 //OPMERKING Indien vergelijking (6.10) is gebruikt behoort de waarde van fywd in vergelijking (6.8) te zijn verminderd tot
                 //0,8 fywk.
                 reductiefactorIndienVergelijkingZesPuntTienGebruikt = (beton.BetonStaal.Fyk * 0.8) / (beton.BetonStaal.Fyk / beton.BetonStaal.GammaS);
-                context.DwarskrachtWeerstandStaal = 0.001 * (context.AswToegepast / 1000) * context.Z * beton.BetonStaal.Fyk * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
+                //context.DwarskrachtWeerstandStaal = 0.001 * (context.AswToegepast / 1000) * context.Z * beton.BetonStaal.Fyk * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
             }
             else
             {
                 reductiefactorIndienVergelijkingZesPuntTienGebruikt = 1;
-                context.DwarskrachtWeerstandStaal = 0.001 * (context.AswToegepast / 1000) * context.Z * beton.BetonStaal.Fywd * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
+                //context.DwarskrachtWeerstandStaal = 0.001 * (context.AswToegepast / 1000) * context.Z * beton.BetonStaal.Fywd * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
             }
 
 
@@ -217,28 +217,22 @@ namespace Eurocode.BetonConstructies
 
     public static class DwarskrachtExtensions
     {
-        // diverse (binnen vergelijkingen)
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="d">Nuttige hoogte</param>
-        /// <returns></returns>
-        /// 
+
 
         public static void Update(this DwarskrachtWapContext context)
         {
-            context.SetFactorK();
-            context.SetRho1();
-            context.SetRhoWMin();
-            context.SetSterkteReductieNu();
-            context.SetSterkteReductieV1();
-            context.SetSchuifspanningWeerstandZonderWapeningMin();
-            context.SetCrdc();
-            context.SetSchuifspanningWeerstandZonderDwarskrachtWapening();
-            context.Artikelen.Add(context.SetAswMin());
-            context.Artikelen.Add(context.SetAswBerekend());
+            //context.SetFactorK();
+            //context.SetRho1();
+            //context.SetRhoWMin();
+            //context.SetSterkteReductieFactorBetonGescheurdDoorDwarskracht();
+            //context.SetSterkteReductieFactorBetonGescheurdDoorDwarskracht1();
+            //context.SetSchuifspanningWeerstandZonderWapeningMin();
+            //context.SetCrdc();
+            //context.SetSchuifspanningWeerstandZonderDwarskrachtWapening();
+            //context.Artikelen.Add(context.SetAswMin());
+            //context.Artikelen.Add(context.SetAswBerekend());
 
-            context.AswBenPerMeter = Math.Max(context.AswMin, context.AswBerekend);
+            //context.AswBenPerMeter = Math.Max(context.AswMin, context.AswBerekend);
 
             if (context.BerekeningType == BerekeningTypeEnum.BepaalBenodigeWapening)
             {
@@ -247,8 +241,8 @@ namespace Eurocode.BetonConstructies
 
 
 
-            context.SetVrdMax();
-            context.SetVrds();
+            //context.SetVrdMax();
+            //context.SetVrds();
 
 
             context.Artikelen.Add(context.SetBeugelAfstandMaxLangs());
@@ -256,45 +250,45 @@ namespace Eurocode.BetonConstructies
 
 
 
-        public static void SetFactorK(this DwarskrachtWapContext context)
+        public static double SetFactorK(this DwarskrachtWapContext context)
         {
-            context.FactorKDwarskrachtWeerstandBeton = DwarskrachtHelpers.GetFactorK(context.NutHoogte);
+            return DwarskrachtHelpers.GetFactorK(context.NutHoogte);
         }
 
-        public static void SetRho1(this DwarskrachtWapContext context)
+        public static double SetRho1(this DwarskrachtWapContext context)
         {
-            context.Rho1 = DwarskrachtHelpers.GetRho1(context.AsLangs, context.Profiel.BreedteDwarskracht, context.NutHoogte);
+            return DwarskrachtHelpers.GetRho1(context.AsLangs, context.Profiel.BreedteDwarskracht, context.NutHoogte);
         }
 
-        public static void SetRhoWMin(this DwarskrachtWapContext context)
+        public static double SetRhoWMin(this DwarskrachtWapContext context)
         {
-            context.RhoWMin = DwarskrachtHelpers.GetRhoWMin(context.Beton.Fck, context.Beton.BetonStaal.Fyk);
+            return DwarskrachtHelpers.GetRhoWMin(context.Beton.Fck, context.Beton.BetonStaal.Fyk);
         }
 
-        public static void SetSterkteReductieNu(this DwarskrachtWapContext context)
+        public static double SetSterkteReductieFactorBetonGescheurdDoorDwarskracht(this DwarskrachtWapContext context)
         {
-            context.SterkteReductieFactorBetonGescheurdDoorDwarskracht = DwarskrachtHelpers.GetSterkteReductieV(context.Beton.Fck);
+            return DwarskrachtHelpers.GetSterkteReductieV(context.Beton.Fck);
         }
 
-        public static void SetSterkteReductieV1(this DwarskrachtWapContext context)
+        public static double SetSterkteReductieFactorBetonGescheurdDoorDwarskracht1(this DwarskrachtWapContext context)
         {
-            context.SterkteReductieFactorBetonGescheurdDoorDwarskracht1 = DwarskrachtHelpers.GetSterkteReductieV1(context.Beton.Fck, context.SpanningDwarskrachtWapening, context.Beton.BetonStaal.Fyk);
+            return DwarskrachtHelpers.GetSterkteReductieV1(context.Beton.Fck, context.SpanningDwarskrachtWapening, context.Beton.BetonStaal.Fyk);
         }
 
-        public static void SetSchuifspanningWeerstandZonderWapeningMin(this DwarskrachtWapContext context)
+        public static double SetSchuifspanningWeerstandZonderWapeningMin(this DwarskrachtWapContext context)
         {
-            context.SchuifspanningWeerstandStaal = DwarskrachtHelpers.GetSchuifSpanningWeerstandZonderDwarskrachtWapeningMin(context.FactorKDwarskrachtWeerstandBeton, context.Beton.Fck);
+            return DwarskrachtHelpers.GetSchuifSpanningWeerstandZonderDwarskrachtWapeningMin(context.FactorKDwarskrachtWeerstandBeton, context.Beton.Fck);
         }
 
-        public static void SetSchuifspanningWeerstandZonderDwarskrachtWapening(this DwarskrachtWapContext context)
+        public static double SetSchuifspanningWeerstandZonderDwarskrachtWapening(this DwarskrachtWapContext context)
         {
-            context.SchuifspanningWeerstandBeton = DwarskrachtHelpers.GetSchuifSpanningWeerstandZonderDwarskrachtWapening(
+            return DwarskrachtHelpers.GetSchuifSpanningWeerstandZonderDwarskrachtWapening(
                 context.SchuifspanningWeerstandStaal, context.Crdc, context.FactorKDwarskrachtWeerstandBeton, context.Rho1, context.Beton.Fcd);
         }
 
-        public static void SetCrdc(this DwarskrachtWapContext context)
+        public static double SetCrdc(this DwarskrachtWapContext context)
         {
-            context.Crdc = DwarskrachtHelpers.GetCrdC(context.Beton.GammaC);
+            return DwarskrachtHelpers.GetCrdC(context.Beton.GammaC);
         }
 
         public static string SetBeugelAfstandMaxLangs(this DwarskrachtWapContext context)
@@ -305,46 +299,48 @@ namespace Eurocode.BetonConstructies
 
 
 
-        public static string SetVrdMax(this DwarskrachtWapContext context)
+        public static (double value, string art) SetVrdMax(this DwarskrachtWapContext context)
         {
-            context.DwarskrachtWeerstandMax = DwarskrachtHelpers.GetVrdMax(context.AlphaCw, context.Profiel.BreedteDwarskracht, context.Z, context.SterkteReductieFactorBetonGescheurdDoorDwarskracht1, context.Beton.Fcd, context.CotTheta, context.TanTheta, context.Alpha, out string art);
-            return art;
+            double returnVal = DwarskrachtHelpers.GetVrdMax(context.AlphaCw, context.Profiel.BreedteDwarskracht, context.Z, context.SterkteReductieFactorBetonGescheurdDoorDwarskracht1, context.Beton.Fcd, context.CotTheta, context.TanTheta, context.Alpha, out string art);
+            return (returnVal, art);
         }
 
-        public static string SetVrds(this DwarskrachtWapContext context)
+        public static (double value, string art) SetVrds(this DwarskrachtWapContext context)
         {
             // V_Rd,s volgens art. 6.2.3(3) formule (6.8)
             string art = "";
             double reductiefactorIndienVergelijkingZesPuntTienGebruikt = 1;
+            double returnVal = 0;
             if (context.SpanningWapeningKleinerDan80ProcentKarakteristiekeVloeigrens)
             {
                 //OPMERKING Indien vergelijking (6.10) is gebruikt behoort de waarde van fywd in vergelijking (6.8) te zijn verminderd tot
                 //0,8 fywk.
                 art = "(6.10)";
                 reductiefactorIndienVergelijkingZesPuntTienGebruikt = (context.Beton.BetonStaal.Fyk * 0.8) / (context.Beton.BetonStaal.Fyk / context.Beton.BetonStaal.GammaS);
-                context.DwarskrachtWeerstandStaal = 0.001 * (context.AswToegepast / 1000) * context.Z * context.Beton.BetonStaal.Fyk * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
+                returnVal = 0.001 * (context.AswToegepast / 1000) * context.Z * context.Beton.BetonStaal.Fyk * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
+
             }
             else
             {
                 art = "(6.14)";
                 reductiefactorIndienVergelijkingZesPuntTienGebruikt = 1;
-                context.DwarskrachtWeerstandStaal = 0.001 * (context.AswToegepast / 1000) * context.Z * context.Beton.BetonStaal.Fywd * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
+                returnVal = 0.001 * (context.AswToegepast / 1000) * context.Z * context.Beton.BetonStaal.Fywd * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
             }
-            return art;
+            return (returnVal, art);
 
             //context.DwarskrachtWeerstandStaal = 
         }
 
-        public static string SetAswMin(this DwarskrachtWapContext context)
+        public static (double value, string art) SetAswMin(this DwarskrachtWapContext context)
         {
-            context.AswMin = DwarskrachtHelpers.GetAsMin(context.RhoWMin, context.Profiel.BreedteDwarskracht, out string art);
-            return art;
+            double returnVal = DwarskrachtHelpers.GetAsMin(context.RhoWMin, context.Profiel.BreedteDwarskracht, out string art);
+            return (returnVal, art);
         }
 
-        public static string SetAswBerekend(this DwarskrachtWapContext context)
+        public static (double value, string art) SetAswBerekend(this DwarskrachtWapContext context)
         {
-            context.AswBerekend = DwarskrachtHelpers.GetAswBerekend(context.Ved, context.Z, context.Beton.BetonStaal.Fywd, context.CotTheta, out string art);
-            return art;
+            double returnVal = DwarskrachtHelpers.GetAswBerekend(Math.Abs(context.Ved), context.Z, context.Beton.BetonStaal.Fywd, context.CotTheta, out string art);
+            return (returnVal, art);
         }
 
 

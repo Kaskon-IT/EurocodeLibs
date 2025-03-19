@@ -134,7 +134,30 @@ namespace Eurocode.BetonConstructies
         public double Fywk { get; set; } // 
         public double Fywd { get; set; } // OPMERKING Indien vergelijking (6.10) gebruikt behoort de waarde van fywd in vergelijking (6.8) te zijn verminderd tot 0,8fywk;
 
-        public double AswToegepast { get; set; }
+        //public double AswToegepast { get; set; }
+
+        private double? _aswToegepast; // backing-field om gebruikersinvoer te bewaren
+
+        public double AswToegepast
+        {
+            get
+            {
+                // Automatische berekening bij een specifiek BerekeningType
+                if (this.BerekeningType == BerekeningTypeEnum.BepaalBenodigeWapening)
+                {
+                    return Math.Ceiling(this.AswBenPerMeter);
+                }
+                // Gebruik de handmatige invoer als die er is
+                return _aswToegepast ?? 0.0; // Standaardwaarde indien null
+            }
+            set
+            {
+                // Sta gebruikersinvoer toe
+                _aswToegepast = value;
+            }
+        }
+
+
         public double BeugelAfstandMaxLangs { get; set; }
         public double BeugelAfstandMaxDwars { get; set; }
         public double SpanningDwarskrachtWapening
@@ -172,42 +195,35 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn("k", StringFormat = "0.##")]
-        public double FactorKDwarskrachtWeerstandBeton { get; set; }
+        public double FactorKDwarskrachtWeerstandBeton { get { return this.SetFactorK(); } }
         [TableColumn("|rho|~1~")]
-        public double Rho1 { get; set; }
+        public double Rho1 { get { return this.SetRho1(); } }
 
 
         [TableColumn("|rho|~min~", StringFormat = "0.##")]
-        public double RhoWMin { get; set; }
+        public double RhoWMin { get { return this.SetRhoWMin(); } }
 
 
 
         [TableColumn("C~rdc~", StringFormat = "0.##")]
-        public double Crdc { get; set; }               // conform art. 6.4.4 (1) PONS
+        public double Crdc { get { return this.SetCrdc(); } }               // conform art. 6.4.4 (1) PONS
 
         [TableColumn("|nu|", StringFormat = "0.##\t-")]
-        public double SterkteReductieFactorBetonGescheurdDoorDwarskracht { get; set; }
+        public double SterkteReductieFactorBetonGescheurdDoorDwarskracht { get { return this.SetSterkteReductieFactorBetonGescheurdDoorDwarskracht(); } }
 
 
         [TableColumn("|nu|~1~", StringFormat = "0.##\t-")]
-        public double SterkteReductieFactorBetonGescheurdDoorDwarskracht1
-        {
-            get; set;
-            //get
-            //{
-            //    return DwarskrachtHelpers.GetSterkteReductieV1(Beton.Fck, SpanningDwarskrachtWapening, Beton.BetonStaal.Fyk);
-            //}
-        }
+        public double SterkteReductieFactorBetonGescheurdDoorDwarskracht1 { get { return this.SetSterkteReductieFactorBetonGescheurdDoorDwarskracht1(); } }
 
 
         [TableColumn("|nu|~Rd,max~", StringFormat = "0.##\tN/mm²")]
         public double SchuifspanningWeerstandMax { get { return DwarskrachtWeerstandMax * 1000 / Breedte / NutHoogte; } }
 
         [TableColumn("|nu|~Rd,c~", StringFormat = "0.##\tN/mm²")]
-        public double SchuifspanningWeerstandBeton { get; set; } // (6.2.a)
+        public double SchuifspanningWeerstandBeton { get { return this.SetSchuifspanningWeerstandZonderDwarskrachtWapening(); } } // (6.2.a)
 
         [TableColumn("|nu|~Rd,s~", StringFormat = "0.##\tN/mm²")]
-        public double SchuifspanningWeerstandStaal { get; set; } // (6.2.b)
+        public double SchuifspanningWeerstandStaal { get { return this.SetSchuifspanningWeerstandZonderWapeningMin(); } } // (6.2.b)
 
 
         /// <summary>
@@ -217,13 +233,13 @@ namespace Eurocode.BetonConstructies
         public double SchuifspanningD { get { return Ved * 1000 / Breedte / NutHoogte; } }
 
         [TableColumn("V~Rd,max~", StringFormat = "0.##\tkN")]
-        public double DwarskrachtWeerstandMax { get; set; }
+        public double DwarskrachtWeerstandMax { get { return this.SetVrdMax().value; } }
 
         [TableColumn("V~Rd,c~", StringFormat = "0.##\tkN")]
         public double DwarskrachtWeerstandBeton { get { return Math.Max(SchuifspanningWeerstandBeton, SchuifspanningWeerstandStaal) * Breedte * NutHoogte / 1000; } } // kN
 
         [TableColumn("V~Rd,s~", StringFormat = "0.##\tkN")]
-        public double DwarskrachtWeerstandStaal { get; set; }
+        public double DwarskrachtWeerstandStaal { get { return this.SetVrds().value; } }
 
         [TableColumn("V~Rd~", StringFormat = "0.##\tkN")]
         public double DwarskrachtWeerstand { get { return Math.Min(DwarskrachtWeerstandStaal, DwarskrachtWeerstandMax); } }
@@ -241,14 +257,17 @@ namespace Eurocode.BetonConstructies
         public double Z { get; set; }
 
         [TableColumn("A~sw,min~", StringFormat = "0.##\tmm²/m")]
-        public double AswMin { get; set; }
+        public double AswMin { get { return this.SetAswMin().value; } }
 
         [TableColumn("A~sw,ber~", StringFormat = "0.##\tmm²/m")]
-        public double AswBerekend { get; set; }
+        public double AswBerekend { get { return this.SetAswBerekend().value; } }
 
         [TableColumn("A~sw,ben~", StringFormat = "0\tmm²/m")]
-        public double AswBenPerMeter { get; set; }
+        public double AswBenPerMeter
+        {
+            get { return Math.Max(AswMin, AswBerekend); }
 
 
+        }
     }
 }

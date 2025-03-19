@@ -5,15 +5,8 @@ using System.Reflection;
 
 namespace ExportFactory.Extensions
 {
-
-
-
-
     public static class ListExtensions
     {
-
-
-
 
         // Extensiemethode om een List<T> om te zetten naar een DataTable, inclusief kolominstellingen zoals header, uitlijning en zichtbaarheid
         public static DataTable ToDataTable<T>(this List<T> list) where T : class
@@ -119,9 +112,6 @@ namespace ExportFactory.Extensions
                 Console.WriteLine($"Algemene fout: {ex.Message} \r\n{ex.InnerException?.Message}");
             }
 
-
-
-
             return dataTable;
         }
 
@@ -179,20 +169,34 @@ namespace ExportFactory.Extensions
                     if (Enum.TryParse(enumType, enumStringValue, out var enumValue))
                     {
                         // Get the field info for the enum value
-                        FieldInfo field = enumType.GetField(enumValue.ToString());
-
-                        if (field == null)
+                        if (enumValue != null)
                         {
-                            description = string.Empty;
-                            return false;
+                            var valueString = enumValue.ToString();
+                            if (valueString != null)
+                            {
+
+                                FieldInfo? field = enumType.GetField(valueString);
+
+                                if (field == null)
+                                {
+                                    description = string.Empty;
+                                    return false;
+                                }
+
+                                // Retrieve the DescriptionAttribute if present
+                                var attribute = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
+                                if (attribute != null)
+                                {
+                                    var descAttribute = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
+
+                                    // Return the description if available, or the enum name if not
+                                    description = descAttribute != null ? descAttribute.Description : valueString;
+                                    return true;
+                                }
+
+                            }
                         }
 
-                        // Retrieve the DescriptionAttribute if present
-                        var attribute = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
-
-                        // Return the description if available, or the enum name if not
-                        description = attribute != null ? attribute.Description : enumValue.ToString();
-                        return true;
                     }
                 }
             }

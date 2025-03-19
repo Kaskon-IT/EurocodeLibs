@@ -104,6 +104,14 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        public double DemoDouble
+        {
+            get
+            {
+                return Fck;
+            }
+        }
+
 
 
 

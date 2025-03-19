@@ -21,8 +21,10 @@ builder.Services.AddFluentUIDemoServerServices();
 //builder.Services.AddScoped<DemoMainLayout>();
 
 builder.Services.AddScoped<ExportFactory.Services.MigraDocCreator>();
+builder.Services.AddSingleton<ExportFactory.Services.DataTableMappingService>();
 
 builder.Services.AddScoped<DataSource>();
+
 
 builder.Services.AddCascadingValue(sp =>
     new SampleProject(new GrondslagenContext()));
