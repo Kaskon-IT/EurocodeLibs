@@ -107,10 +107,11 @@ namespace ExportFactory.Services
             { "BetonStaalKwaliteit", new(sym : "B",desc : "sterkteklasse",norm : "EC2",art : "") },
             { "Betonstuik",         new(sym : "|epsilon|~c~",   desc : "betonstruik",                       norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format: _Promille ) },
             { "BetonstuikGrens",    new(sym : "|epsilon|~cu~",  desc : "grenswaarde betonstruik",           norm : "EC2",   art : "3.1.3",          vgl : "tabel 3.1",      format: _Promille) },
-            
+
             // C
 
             // D
+            { "DekkingToe", new(sym: "c~toe~", desc:"toegepaste dekking") },
             { "DekkingNom", new(sym:"c~nom~",desc: "nominale dekking",norm:"EC2",art: "4.4.1.1") },
             { "DekkingMin", new(sym: "c~min~", desc : "minimale dekking",norm:"EC2", art: "4.4.1.2") },
             { "DekkingMinAanhechting", new(sym : "c~min,b~", desc : "minimale dekking aanhechting", norm : "EC2", art : "4.4.1.2 (3)", vgl:"tabel 4.2") },

@@ -40,11 +40,15 @@
 
     private Dictionary<string, bool> ReadOnlyFields { get; set; } = new()
     {
-        {nameof(OpleggingContext.RekenwaardeOplegmateriaal), true},
-        {nameof(OpleggingContext.OplegReactieRekenwaarde), true},
-        {nameof(OpleggingContext.OplegBreedteNetto), true},
-        {nameof(OpleggingContext.BetonOndersteundeElement), true},
-        {nameof(OpleggingContext.LengteOndersteundeElement), true},
+
+        {nameof(OpleggingContext.RekenwaardeOplegmateriaal), !true},
+        {nameof(OpleggingContext.OplegReactieRekenwaarde), !true},
+        {nameof(OpleggingContext.OplegBreedteNetto), !true},
+        {nameof(OpleggingContext.BetonOndersteundeElement), !true},
+        {nameof(OpleggingContext.LengteOndersteundeElement), !true},
+        {nameof(OpleggingContext.OpleggingElementType), !true},
+        {nameof(OpleggingContext.OplegType), !true},
+
 
 
     };

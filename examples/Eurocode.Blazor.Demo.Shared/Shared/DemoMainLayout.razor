@@ -48,18 +48,18 @@
 
                             
 
-                                <CascadingValue Value=@OnRefreshTableOfContents>
+                                @* <CascadingValue Value=@OnRefreshTableOfContents> *@
                                     @Body
-                                </CascadingValue>
+                                @* </CascadingValue> *@
 
                     </article>
 
                     @if (NavigationManager.Uri != NavigationManager.BaseUri)
                     {
-                        <aside>
-                            <TableOfContents @ref=_toc />
+                        @* <aside> *@
+                            @* <TableOfContents @ref=_toc /> *@  
                             @* <ConsoleLog /> *@
-                        </aside>
+                        @* </aside> *@
                     }
 
                     <FluentToastProvider MaxToastCount="10" />

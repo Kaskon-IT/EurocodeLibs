@@ -112,6 +112,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        public string DemoString { get; set; } = "DEMO";
 
 
 
@@ -224,14 +225,14 @@ namespace Eurocode.BetonConstructies
         public bool IsOntwerpSituatieBuitenGewoon = false;  // default Blijvend en tijdelijk conform art. 2.4.2.4 (1) Partiële factoren voor materialen 
 
         [TableColumn("|gamma|~c~", HeaderTextPivot = "|gamma|~c~\tpartiële veiligheidsfactor", StringFormat = "0.0", Weergave = WeergaveEnum.DraaiTabel)]
-        public double GammaC
-        {
-            get
-            {
-                if (!IsOntwerpSituatieBuitenGewoon) return 1.5;  // is de partiële veiligheidsfactor voor beton, zie 2.4.2.4
-                else return 1.2;
-            }
-        }
+        public double GammaC { get; set; } = 1.5;
+        //{
+        //    get
+        //    {
+        //        if (!IsOntwerpSituatieBuitenGewoon) return 1.5;  // is de partiële veiligheidsfactor voor beton, zie 2.4.2.4
+        //        else return 1.2;
+        //    }
+        //}
         // conform art. 2.4.2.4 (1) Partiële factoren voor materialen
 
 

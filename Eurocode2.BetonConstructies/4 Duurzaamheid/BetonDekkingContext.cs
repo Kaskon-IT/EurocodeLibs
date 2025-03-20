@@ -34,7 +34,7 @@ namespace Eurocode.BetonConstructies
             GestortTegenBestaandBeton = context.GestortTegenBestaandBeton;
             BetonAfwerkingOppervlak = context.BetonAfwerkingOppervlak;
             BetonStortOndergrond = context.BetonStortOndergrond;
-            Milieuklassen = context.Milieuklassen;
+            SelectedMilieuklassen = context.Milieuklassen;
             GrootsteKorrelDiameter = context.GrootsteKorrelDiameter;
 
         }
@@ -106,9 +106,24 @@ namespace Eurocode.BetonConstructies
         //public IEnumerable<MilieuklasseEnum> Milieuklassen { get; set; } = [MilieuklasseEnum.XC3];
 
 
-        public IEnumerable<MilieuklasseEnum> Milieuklassen = [MilieuklasseEnum.XC1];
+        public IEnumerable<MilieuklasseEnum> Milieuklassen
+        {
 
-        public IEnumerable<Eurocode.BetonConstructies.MilieuklasseEnum> SelectedMilieuklassen = [];
+            get
+            {
+                if (SelectedMilieuklassen != null && SelectedMilieuklassen.Any())
+                {
+                    return SelectedMilieuklassen;
+                }
+                else
+                {
+                    return [MilieuklasseEnum.X0];
+                }
+            }
+
+        }
+
+        public IEnumerable<Eurocode.BetonConstructies.MilieuklasseEnum> SelectedMilieuklassen { get; set; } = [MilieuklasseEnum.X0];
 
         [TableColumn("Milieuklasse", Order = 1)]
         public string MilieuklassenUserFriendlyName

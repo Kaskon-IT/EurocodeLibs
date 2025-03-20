@@ -8,11 +8,11 @@ namespace Eurocode.BetonConstructies
     {
         public static void Update(this OpleggingContext context)
         {
-            context.SetOplegSterkteRekenwaarde();
-            context.SetAfstandA2();
-            context.SetAfstandDeltaA2();
-            context.SetAfstandA3();
-            context.SetOplegLengteNetto();
+            //context.SetOplegSterkteRekenwaarde();
+            //context.SetAfstandA2();
+            //context.SetAfstandDeltaA2();
+            //context.SetAfstandA3();
+            //context.SetOplegLengteNetto();
             context.SetOplegLengteNominaal();
         }
 
@@ -20,10 +20,10 @@ namespace Eurocode.BetonConstructies
 
 
 
-        public static void SetOplegLengteNominaal(this OpleggingContext context)
+        public static double SetOplegLengteNominaal(this OpleggingContext context)
         {
             //throw new NotImplementedException();
-            context.OplegLengteNominaal = context.GetOplegLengteNominmaal();
+            return context.GetOplegLengteNominmaal();
         }
         public static double GetOplegLengteNominmaal(this OpleggingContext context)
         {
@@ -31,10 +31,9 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public static void SetOplegLengteNetto(this OpleggingContext context)
+        public static double SetOplegLengteNetto(this OpleggingContext context)
         {
-            context.OplegLengteNetto = context.GetOplegLengteNetto();
-            return;
+            return context.GetOplegLengteNetto();
         }
 
 
@@ -42,6 +41,7 @@ namespace Eurocode.BetonConstructies
         {
             double a1 = context.OplegReactieRekenwaarde * 1000 / (context.OplegBreedteNetto * context.OplegSterkteRekenwaarde);
             double a1Min = context.GetMinimaleNettoOplegLengte();
+            context.OplegLengteNettoAanwezig = Math.Max(a1Min, a1); // todo controleer hoe we hier mee om moeten gaan, mogelijk bied nieuwe uitgave norm duidelijkheid.
             return Math.Max(a1Min, a1);
         }
 
@@ -96,11 +96,11 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public static void SetAfstandA2(this OpleggingContext context)
+        public static double SetAfstandA2(this OpleggingContext context)
         {
-            context.AfstandA2 = context.GetAfstandA2(out bool vellingkantenNoodzakelijk);
+            double returnVal = context.GetAfstandA2(out bool vellingkantenNoodzakelijk);
             context.VellingkantenNoodzakelijk = vellingkantenNoodzakelijk;
-            return;
+            return returnVal;
         }
 
         public static double GetAfstandA2(this OpleggingContext context, out bool vellingkantNoodzakelijk)
@@ -196,9 +196,9 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public static void SetAfstandDeltaA2(this OpleggingContext context)
+        public static double SetAfstandDeltaA2(this OpleggingContext context)
         {
-            context.AfstandDeltaA2 = context.GetAfstandDeltaA2();
+            return context.GetAfstandDeltaA2();
         }
 
         public static double GetAfstandDeltaA2(this OpleggingContext context)
@@ -222,9 +222,9 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public static void SetAfstandA3(this OpleggingContext context)
+        public static double SetAfstandA3(this OpleggingContext context)
         {
-            context.AfstandA3 = context.GetAfstandA3();
+            return context.GetAfstandA3();
         }
 
         /// <summary>
@@ -252,10 +252,9 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public static void SetOplegSterkteRekenwaarde(this OpleggingContext context)
+        public static double SetOplegSterkteRekenwaarde(this OpleggingContext context)
         {
-            context.OplegSterkteRekenwaarde = context.GetOplegSterkteRekenwaarde();
-            return;
+            return context.GetOplegSterkteRekenwaarde();
         }
 
 
@@ -334,13 +333,13 @@ namespace Eurocode.BetonConstructies
         /// a of a~nom~
         /// </summary>
         [TableColumn("a~nom~", "nominale opleglengte")]
-        public double OplegLengteNominaal { get; set; }
+        public double OplegLengteNominaal { get { return this.SetOplegLengteNominaal(); } }
 
         /// <summary>
         /// a~1~
         /// </summary>
         [TableColumn("a~1~", "netto opleglengte")]
-        public double OplegLengteNetto { get; set; }
+        public double OplegLengteNetto { get { return this.SetOplegLengteNetto(); } }
 
         /// <summary>
         /// a~aanw~
@@ -366,19 +365,19 @@ namespace Eurocode.BetonConstructies
         /// f~Rd~
         /// </summary>
         [TableColumn("f~Rd~", "rekenwaarde oplegsterkte")]
-        public double OplegSterkteRekenwaarde { get; set; }
+        public double OplegSterkteRekenwaarde { get { return this.SetOplegSterkteRekenwaarde(); } }
 
 
         [TableColumn("a~2~", "randafstand dragende element")]
-        public double AfstandA2 { get; set; }
+        public double AfstandA2 { get { return this.SetAfstandA2(); } }
 
         [TableColumn("a~3~", "randafstand ondersteunde element")]
 
-        public double AfstandA3 { get; set; }
+        public double AfstandA3 { get { return this.SetAfstandA3(); } }
 
         [TableColumn("|Delta|a~2~", "tolerantie afstand tussen dragende elementen")]
 
-        public double AfstandDeltaA2 { get; set; }
+        public double AfstandDeltaA2 { get { return this.SetAfstandDeltaA2(); } }
 
         [TableColumn("|Delta|a~3~", "tolerantie lengteafwijkingen ondersteunde element")]
 
@@ -463,7 +462,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn("|sigma|~Ed~", "oplegspanning")]
         public double OplegSpanningRekenwaarde
         {
-            get { return OplegReactieRekenwaarde * 1000 / (OplegBreedteNetto * OplegLengteNetto); }
+            get { return OplegReactieRekenwaarde * 1000 / (OplegBreedteNetto * OplegLengteNettoAanwezig); }
         }
 
 

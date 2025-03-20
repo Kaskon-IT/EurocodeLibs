@@ -1,7 +1,7 @@
 ﻿@using System.Text.RegularExpressions
 @using System.Globalization
 @inject ExportFactory.Services.DataTableMappingService MappingService
-@typeparam T where T : new()
+@typeparam T where T : notnull
 
 <div class="@GetContainerClass()">
 
@@ -112,8 +112,8 @@
     /* flex-direction:row; */
     /* align-items: start; */
     margin-right: 5px;
-    margin-bottom: 2px;
-    margin-top: 2px;
+    margin-bottom: 3px !important;
+    margin-top: 3px !important;
     width: 100%;
     }
 
@@ -349,6 +349,10 @@
         }
         else
         {
+            // mogelijk is de min of max gewijzigd (door aanpassen andere parameter)
+            Console.WriteLine($"{Key} min ={MinValue} | max = {MaxValue} gaan we valideren.");
+            ValidateMinMax(new ChangeEventArgs { Value = InputValue });
+            //ForceValidation();
             //ForceValidation(); // Check opnieuw bij elke parameterwijziging
 
             //InputValue = FormatValue(Value); // waarom stond dit uit?
@@ -407,14 +411,15 @@
     private string GetMinValueString => MinValue > double.MinValue ? MinValue.ToString("0.##") : string.Empty;
     private string GetMaxValueString => MaxValue < double.MaxValue ? MaxValue.ToString("0.##") : string.Empty;
 
- 
+
 
     private void ValidateMinMax(ChangeEventArgs e)
     {
         if (e.Value is string value)
         {
+            var normalizedInput = InputValue.Replace(",", ".");
             // Probeer te casten naar double voor validatie
-            if (value is IConvertible convertible)
+            if (normalizedInput is IConvertible convertible)
             {
                 var doubleValue = convertible.ToDouble(CultureInfo.InvariantCulture);
 
@@ -433,6 +438,10 @@
                     {
                         ErrorMessage = $"⚠️ Maximum waarde {GetLabel()} is {GetMaxValueString} {Unit}.";
                     }
+                }
+                else
+                {
+                    ErrorMessage = null;
                 }
             }
         }
@@ -549,7 +558,7 @@
     public MarkupString? GetLabel(bool withDescription = false)
     {
         string markup = $"{Key}";
-        if (Mapping != null && Mapping.Symbol != null)
+        if (Mapping != null)
         {
             markup = $"{Mapping.Symbol}";
             if (withDescription)

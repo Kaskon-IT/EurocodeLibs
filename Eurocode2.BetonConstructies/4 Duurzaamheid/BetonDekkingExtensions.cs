@@ -25,12 +25,17 @@ namespace Eurocode.BetonConstructies
             double returnval = 0;
             int row = dekking.Constructieklasse.Klasse - 1;
 
-            foreach (MilieuklasseEnum mk in dekking.Milieuklassen)
+            if (dekking.Milieuklassen.Any())
             {
-                var cMinDur = _tabelCminDur[row, mk.GetCminDurColumnIndex()];
-                if (cMinDur > returnval)
-                    returnval = cMinDur;
+                foreach (MilieuklasseEnum mk in dekking.Milieuklassen)
+                {
+                    var cMinDur = _tabelCminDur[row, mk.GetCminDurColumnIndex()];
+                    if (cMinDur > returnval)
+                        returnval = cMinDur;
+                }
             }
+
+
 
             return returnval;
         }

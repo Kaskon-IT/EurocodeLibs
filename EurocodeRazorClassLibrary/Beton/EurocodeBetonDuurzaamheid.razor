@@ -6,40 +6,58 @@
 
 
 
-<p>Ontwerplevensduur: @Model.Grondslagen.OntwerpLevensduur.GetOntwerplevensduurTekst()</p>
-<p>Betonsterkteklasse: @Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
-<p>Constructieklasse: @Model.Constructieklasse.UserFriendlyName</p>
+<p>
+    <i>ontwerplevensduur</i> : <b> @Model.Grondslagen.OntwerpLevensduur.GetOntwerplevensduurTekst()</b>, 
+    <i>betonsterkteklasse</i> : <b>@Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</b>,
+    <i>constructieklasse</i> : <b>@Model.Constructieklasse.UserFriendlyName</b>
+</p>
 
-<EurocodeInputNumber ReadOnly=true Key="OntwerpLevensduur" Value="Model.Grondslagen.OntwerpLevensduur"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Key="BetonSterkteKlasseGebruiksvriendelijkeNaam" Value="Model.Beton.DemoDouble"></EurocodeInputNumber>
+
+@* <EurocodeInputNumber ReadOnly=true Key="OntwerpLevensduur" Value="Model.Grondslagen.OntwerpLevensduur"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Key="DekkingToe" Value="Model.Beton.DemoString"></EurocodeInputNumber> *@
 
 
 <FluentCheckbox @bind-Value="Model.IsKwaliteitsBeheersing">Kwaliteitsbeheersing</FluentCheckbox>
 <FluentCheckbox @bind-Value="Model.IsPlaatGeometrie">Plaatgeometrie</FluentCheckbox>
 
 <FluentAutocomplete 
-    
-    TOption="Eurocode.BetonConstructies.MilieuklasseEnum"
-    AutoComplete="off"
-    Width="300px"
-    MaxAutoHeight="200px"
-    Label="Milieuklasse(n)"
-    Placeholder="zoek"
-    OnOptionsSearch="@OnSearchEnum"
 
-    MaximumSelectedOptions="5"
-    OptionText="@(item => item.ToString())"
-    @bind-SelectedOptions="@Model.Milieuklassen">
-    </FluentAutocomplete>
+TOption="Eurocode.BetonConstructies.MilieuklasseEnum"
+AutoComplete="off"
+Width="300px"
+MaxAutoHeight="200px"
+Placeholder="kies milieuklasse(n)"
+OnOptionsSearch="@OnSearchEnum"
+MaximumSelectedOptions="5"
+OptionText="@(item => item.ToString())"
+@bind-SelectedOptions="@Model.SelectedMilieuklassen">
+    <MaximumSelectedOptionsMessage>
+        <p>Maximaal aantal milieuklassen = @MaximumNumberOfItems</p>
+    </MaximumSelectedOptionsMessage>
+
+</FluentAutocomplete>
+
+<p>
+    <i>milieuklassen</i> : <b>@(String.Join(", ", Model.Milieuklassen.OrderBy(i=> i).Select(i => i.ToString())))</b>
+</p>
 
 
 
 
+<EurocodeInputNumber Key="DekkingNom" ReadOnly="true" Value="Model.DekkingNom" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber Key="DekkingToe" @bind-Value="Model.DekkingToe" MinValue="Model.DekkingNom" MaxValue=100 Unit="mm"></EurocodeInputNumber>
+
+
+<EurocodeInputNumber Key="GrootsteKorrelDiameter" @bind-Value="Model.GrootsteKorrelDiameter" MinValue=0 MaxValue=63 Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber Key="WapeningDiameterGelijkwaardig" @bind-Value="Model.WapeningDiameterGelijkwaardig" MinValue=6 MaxValue=69.3 Unit="mm"></EurocodeInputNumber>
+
+
+<EurocodeInputNumber Key="DekkingMin" ReadOnly="true" Value="Model.DekkingMin" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber Key="DekkingMinDuurzaamheid" ReadOnly="true" Value="Model.DekkingMinDuurzaamheid" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber Key="DekkingMinAanhechting" ReadOnly="true" Value="Model.DekkingMinAanhechting" Unit="mm"></EurocodeInputNumber>
 
 
 
-<EurocodeInputNumber Key="DekkingToe" @bind-Value="Model.DekkingToe" MinValue="Model.DekkingNom" MaxValue=70 Unit="mm"></EurocodeInputNumber>
-<EurocodeInputNumber Key="DekkingNom" Value="Model.DekkingNom" Unit="mm"></EurocodeInputNumber>
 
 @* 
 <FluentNumberField 
@@ -70,15 +88,22 @@ Step = "5"
     [Parameter]
     public EventCallback<Eurocode.BetonConstructies.BetonDekkingContext> ModelChanged { get; set; }
 
+    private int MaximumNumberOfItems { get; set; } = 5;
+
+
     async Task UpdateModel()
     {
         await ModelChanged.InvokeAsync(Model);
     }
 
+    private MilieuklasseEnum _standaardMilieuklasse = MilieuklasseEnum.X0; // er moet altijd een milieuklasse zijn.
+
     private MilieuklasseEnum[] _milieuklasseEnumItems = Enum
     .GetValues(typeof(MilieuklasseEnum))
     .Cast<MilieuklasseEnum>()
     .ToArray();
+
+
 
 
     FluentAutocomplete<Eurocode.BetonConstructies.MilieuklasseEnum> MkList = default!;
@@ -89,7 +114,34 @@ Step = "5"
     private void OnSearchEnum(OptionsSearchEventArgs<Eurocode.BetonConstructies.MilieuklasseEnum> e)
     {
         // de keuzelijst bijwerken
-        e.Items = _milieuklasseEnumItems.Where(i => i.ToString().Contains(e.Text, StringComparison.OrdinalIgnoreCase)).OrderBy(i => i);
+        var allItems = Enum
+            .GetValues(typeof(MilieuklasseEnum))
+            .Cast<MilieuklasseEnum>()
+            .ToArray();
+
+        e.Items = allItems
+            .Where(i => i.ToString().Contains(e.Text, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(i => i)
+            .ToList();
+
+
+
+
+
+
+        // var gefilterdeItems = _milieuklasseEnumItems
+        //     .Where(i => i.ToString().Contains(e.Text, StringComparison.OrdinalIgnoreCase))
+        //     .OrderBy(i => i)
+        //     .ToList();
+
+        // // Als er geen resultaten zijn, val terug op het standaard item
+        // if (gefilterdeItems.Count == 0)
+        // {
+        //     gefilterdeItems.Add(_standaardMilieuklasse);
+        // }
+
+        // e.Items = gefilterdeItems;
+        
                 
 
 
