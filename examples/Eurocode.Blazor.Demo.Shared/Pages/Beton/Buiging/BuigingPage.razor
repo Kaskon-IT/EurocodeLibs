@@ -2,6 +2,11 @@
 @using Eurocode.Blazor.Demo.Shared.Pages.Beton.Buiging.Examples
 
 <h3>Buiging basis</h3>
+<p>Gebruikte materialen voor de componenten op deze pagina</p>
+<EurocodeBetonMaterialen Model="SampleProject?.BendingResults.Beton" 
+                         ShowUserFriendly=true></EurocodeBetonMaterialen>
+
+<EurocodeBetonMaterialen @bind-Model="@SampleProject.BendingResults.Beton"></EurocodeBetonMaterialen>
 
 <h2>Voorbeelden</h2>
 <DemoSection Title="Basic" Component="typeof(BuigingBasisDefault)"/>
@@ -11,5 +16,7 @@
 
 
 @code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
 
 }

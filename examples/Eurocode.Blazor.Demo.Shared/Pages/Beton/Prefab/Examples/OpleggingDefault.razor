@@ -1,28 +1,12 @@
 ﻿@if (SampleProject != null)
 {
-    <FluentSelectEnum Label="label positie"
-    @bind-EnumSelectedValue="labelPosition"
-    TEnum="LabelPosition">
-    </FluentSelectEnum>
-   
-    <FluentSelectEnum Label="label type"
-                      @bind-EnumSelectedValue="labelType"
-                      TEnum="LabelType">
-    </FluentSelectEnum>
-
+    
     <EurocodeBetonOpleggingComponent @bind-Model=@SampleProject.OpleggingDemo
                                      ReadOnlyFields="ReadOnlyFields"
                                      LabelPosition="@labelPosition.GetValueOrDefault()"
                                      LabelType="@labelType.GetValueOrDefault()">
 
     </EurocodeBetonOpleggingComponent>
-
-    <FluentButton OnClick="Export">Export HTML</FluentButton>
-
-    @if (!string.IsNullOrEmpty(html))
-    {
-        <div>@((MarkupString)html)</div>
-    }
 
 
 
@@ -33,43 +17,16 @@
     [CascadingParameter]
     public SampleProject? SampleProject { get; set; }
 
-    private string html;
-
     private LabelPosition? labelPosition { get; set; } = LabelPosition.Left;
     private LabelType? labelType { get; set; } = LabelType.SymbolAndDescription;
 
     private Dictionary<string, bool> ReadOnlyFields { get; set; } = new()
     {
 
-        {nameof(OpleggingContext.RekenwaardeOplegmateriaal), !true},
-        {nameof(OpleggingContext.OplegReactieRekenwaarde), !true},
-        {nameof(OpleggingContext.OplegBreedteNetto), !true},
-        {nameof(OpleggingContext.BetonOndersteundeElement), !true},
-        {nameof(OpleggingContext.LengteOndersteundeElement), !true},
-        {nameof(OpleggingContext.OpleggingElementType), !true},
-        {nameof(OpleggingContext.OplegType), !true},
-
-
-
+       
     };
 
 
-
-    private void Export()
-    {
-        if (SampleProject == null) return;
-
-
-        SampleProject.OpleggingDemo.Update();
-        StateHasChanged();
-
-        List<Eurocode.BetonConstructies.OpleggingContext> list = [SampleProject.OpleggingDemo];
-        var dataTable = list.ToDataTable();
-        var table = dataTable.ToMigraDocTable(typeof(OpleggingContext));
-        MigraDoc.DocumentObjectModel.Document document = new();
-        document.AddSection().Add(table);
-        html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(document);
-    }
 
 
 }

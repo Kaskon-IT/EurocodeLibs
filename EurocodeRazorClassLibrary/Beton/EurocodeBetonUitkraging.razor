@@ -1,0 +1,88 @@
+﻿@using Eurocode.BetonConstructies
+@using ExportFactory.Services
+@using K = ExportFactory.Services.MappingKeys;
+
+<FluentGrid Spacing="0">
+
+
+    <EurocodeInputNumber @bind-Value="@Model.Lengte" Key="L" Unit="mm"
+    LabelPosition="@LabelPosition" LabelType="@LabelType" 
+    ReadOnly="IsFieldReadOnly(nameof(Model.Lengte))"  />
+
+    <EurocodeInputNumber @bind-Value="@Model.NuttigeHoogte" Key="@K.NuttigeHoogte" Unit="mm"
+    LabelPosition="@LabelPosition" LabelType="@LabelType"
+    ReadOnly="IsFieldReadOnly(nameof(Model.NuttigeHoogte))" />
+
+    <EurocodeInputNumber @bind-Value="@Model.Reactiekracht" Key="ReactieRekenwaarde" Unit="kN"
+                         LabelPosition="@LabelPosition" LabelType="@LabelType"
+                         ReadOnly="IsFieldReadOnly(nameof(Model.Reactiekracht))" />
+
+    <EurocodeInputNumber Value="@Model.Arm" Key="Arm" Unit="mm"
+                         LabelPosition="@LabelPosition" LabelType="@LabelType"
+                         ReadOnly=true />
+
+    <EurocodeInputNumber Value="@Model.Moment" Key="@K.MomentRekenwaarde" Unit="kNm"
+                         LabelPosition="@LabelPosition" LabelType="@LabelType"
+                         ReadOnly=true />
+
+
+
+</FluentGrid>
+
+
+
+
+@code {
+    /// <summary>
+    /// Het model
+    /// </summary>
+    [Parameter, EditorRequired]
+    public required UitkragingContext Model { get; set; }
+
+
+    /// <summary>
+    /// Callback is nodig voor @bind-Model
+    /// </summary>
+    [Parameter]
+    public EventCallback<UitkragingContext> ModelChanged { get; set; }
+
+
+
+    [Parameter]
+    public LabelType LabelType { get; set; } = LabelType.SymbolAndDescription;
+
+    [Parameter]
+    public LabelPosition LabelPosition { get; set; } = LabelPosition.Left;
+
+    [Parameter]
+    public Dictionary<string, bool> ReadOnlyFields { get; set; } = new();
+
+
+    private bool IsFieldReadOnly(string fieldName) =>
+        ReadOnlyFields.TryGetValue($"{fieldName}", out var isReadOnly) && isReadOnly;
+
+
+    
+
+
+    protected override void OnInitialized()
+    {
+        //Model = new(Beton, Profiel, 100);
+        //Model = new();
+        //Model.Update();
+
+    }
+
+    protected override void OnParametersSet()
+    {
+        Model.Bereken();
+        //Console.WriteLine($"Model R={Model?.OplegReactieRekenwaarde.ToString()}");
+        //Model.Update(); // niet doen
+    }
+
+
+
+
+
+
+}

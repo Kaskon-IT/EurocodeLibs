@@ -86,7 +86,7 @@ public class DemoNavProvider
                             new NavLink(href: "/beton/buiging",icon: new Icons.Regular.Size20.ArrowTurnLeftDown(),title: "Buiging"),
                             new NavLink(href: "/beton/dwarskracht",icon: new Icons.Regular.Size20.ClipboardMathFormula(),title: "Dwarskracht"),
                             new NavLink(href: "/beton/prefab/oplegging", icon: new Icons.Regular.Size20.Pin(), title: "Oplegging"),
-
+                            new NavLink(href: "/beton/prefab/uitkraging", icon: new Icons.Regular.Size20.Calculator(), title: "Uitkraging (TEST)"),
 
                         ]
                     ),

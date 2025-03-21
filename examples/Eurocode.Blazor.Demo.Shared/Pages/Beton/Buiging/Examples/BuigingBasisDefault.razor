@@ -1,6 +1,8 @@
 ﻿@using Plotly.Blazor.LayoutLib
 @using Plotly.Blazor.LayoutLib.ShapeLib
 @using Plotly.Blazor.Traces.ScatterLib
+
+
 <h3>BuigingBasisDefault</h3>
 
 @if (SampleProject !=null)
@@ -10,7 +12,7 @@
 
 
 
-    <FluentButton OnClick="UpdateChart">Update</FluentButton>
+    @* <FluentButton OnClick="UpdateChart">Update</FluentButton> *@
     <PlotlyChart @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart"/>
 
 

@@ -29,6 +29,11 @@ builder.Services.AddScoped<DataSource>();
 builder.Services.AddCascadingValue(sp =>
     new SampleProject(new GrondslagenContext()));
 
+//builder.Services.AddCascadingValue(sp =>
+//{
+//    var sampleProject = new SampleProject(new GrondslagenContext());
+//    return new CascadingModel<SampleProject>(sampleProject);
+//});
 
 
 //builder.WebHost.UseStaticWebAssets(); // < -- nodig voor wwwroot?

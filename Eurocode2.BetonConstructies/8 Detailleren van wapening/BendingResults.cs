@@ -1,4 +1,5 @@
-﻿using ExportFactory.Shared;
+﻿using Eurocode.BetonConstructies._6_Uiterste_grenstoestanden__UGT_;
+using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
@@ -50,6 +51,23 @@ namespace Eurocode.BetonConstructies
             get
             {
                 return (D - Math.Pow(D * D - 4.0 * Beton.GetBeta() * Math.Abs(M) * 1000000.0 / (Beton.GetAlpha() * B * Beton.Fcd), 0.5)) / (2.0 * Beton.GetBeta());
+            }
+        }
+
+        public double XuMax
+        {
+            get
+            {
+                double betonDsnOpp = B * H;
+                return BuigingContext.GetMaximaleHoogteDrukzoneZonderVoorspanning(Beton, D, betonDsnOpp);
+            }
+        }
+
+        public double XuDMax
+        {
+            get
+            {
+                return XuMax / D;
             }
         }
 

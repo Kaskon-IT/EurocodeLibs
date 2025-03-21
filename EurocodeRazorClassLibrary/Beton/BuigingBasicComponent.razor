@@ -1,6 +1,11 @@
 ﻿@using Eurocode.BetonConstructies
 
 
+<p>@Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
+
+<EurocodeBetonMaterialen @bind-Model=Model.Beton></EurocodeBetonMaterialen>
+
+
 <EurocodeInputNumber @bind-Value=Model.M Key="MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
 <EurocodeInputNumber @bind-Value=Model.B Key="ProfielBreedte" Unit="mm"></EurocodeInputNumber>
 <EurocodeInputNumber @bind-Value=Model.H Key="ProfielHoogte" Unit="mm"></EurocodeInputNumber>
@@ -8,8 +13,8 @@
 
 <EurocodeInputNumber @bind-Value=Model.ZRef Key="ReferentieAfstandVoorNuttigeHoogte" Unit="mm"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.D Key="NuttigeHoogte" Unit="mm"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value=Model.Xu Key="Xu" Unit="mm"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value=Model.XuD Key="XuD" Unit="-"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.Xu Key="Xu" Unit="mm" MaxValue="Model.XuMax"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.XuD Key="XuD" Unit="-" MaxValue="Model.XuDMax"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.Z Key="Z" Unit="mm"></EurocodeInputNumber>
 
 <EurocodeInputNumber ReadOnly=true Value=Model.SigmaS Key="Staalspanning" Unit="MPa"></EurocodeInputNumber>

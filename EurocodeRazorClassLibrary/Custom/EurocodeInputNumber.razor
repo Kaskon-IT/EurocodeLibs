@@ -345,6 +345,7 @@
         if (ValueChanged.HasDelegate == false && Value is not null)
         {
             InputValue = FormatValue(Value);
+            ValidateMinMax(new ChangeEventArgs { Value = InputValue });
             //ForceValidation(); // Check opnieuw bij elke parameterwijziging
         }
         else

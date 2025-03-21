@@ -7,6 +7,9 @@ namespace Eurocode.Blazor.Demo.Shared;
 
 public partial class DemoMainLayout
 {
+
+
+
     private const string JAVASCRIPT_FILE = "./_content/Eurocode.Blazor.Demo.Shared/Shared/DemoMainLayout.razor.js";
     private string? _version;
     private bool _mobile;

@@ -1,4 +1,5 @@
-﻿using ExportFactory.Shared;
+﻿using Eurocode.BetonConstructies.Aanvullende_regels_prefab;
+using ExportFactory.Shared;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
@@ -292,6 +293,31 @@ namespace Eurocode.BetonConstructies
 
     }
 
+    public class UitkragingContext
+    {
+        internal double AsBen;
+
+        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new(1000, 100);
+
+        public BetonContext Beton { get; set; } = new();
+
+        public double Lengte { get; set; } = 100;
+        public double NuttigeHoogte { get; set; } = 100 - 20 - 4;
+        public double Reactiekracht { get; set; } = 8;
+
+
+        public TandMetHals Tand { get; set; } = new();
+        public double Arm { get; internal set; }
+        public double Moment { get; internal set; }
+
+        public void Bereken()
+        {
+            Tand.BerekeningNeus(this);
+        }
+
+    }
+
+
     public class OpleggingContext
     {
         // 10 aanvullende regels prefab elementen
@@ -387,7 +413,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("|Delta|~elem.type~")]
+        [TableColumn("|Delta|~e~")]
         public double AfstandDeltaElementType
         {
             get

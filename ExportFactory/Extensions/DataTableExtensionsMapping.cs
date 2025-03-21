@@ -1,14 +1,15 @@
 ﻿using ExportFactory.Shared;
+using K = ExportFactory.Services.MappingKeys;
 
 namespace ExportFactory.Services
 {
-
 
 
     public class DataTableMappingService
     {
 
         public Dictionary<string, AttributesMapping> Data { get; } = new();
+
 
         public DataTableMappingService()
         {
@@ -34,12 +35,15 @@ namespace ExportFactory.Services
         // ALGEMEEN
         private readonly Dictionary<string, AttributesMapping> _algemeen = new()
         {
-            { "Moment.Rekenwaarde", new(sym: "M~Ed~", desc: "rekenwaarde moment") },
-            { "Staalspanning", new(sym: "|sigma|~s~", desc: "staalspanning") },
+            { K.MomentRekenwaarde, new(sym: "M~Ed~", desc: "rekenwaarde moment") },
+            { K.Staalspanning, new(sym: "|sigma|~s~", desc: "staalspanning") },
 
-            { "BetonDoorsnedeOppervlak", new(sym: "A~c~", desc:"betondoorsnedeoppervlak") },
-            { "ProfielBreedte", new(sym: "b", desc:"breedte") },
-            { "ProfielHoogte", new(sym: "h", desc:"hoogte") },
+
+
+
+            { K.BetonDoorsnedeOppervlak, new(sym: "A~c~", desc:"betondoorsnedeoppervlak") },
+            { K.ProfielBreedte, new(sym: "b", desc:"breedte profiel") },
+            { K.ProfielHoogte, new(sym: "h", desc:"hoogte profiel") },
             { "B1", new(sym: "b~1~", desc:"afstand") },
             { "B2", new(sym: "b~2~", desc:"afstand") },
             { "H1", new(sym: "h~1~", desc:"afstand") },
@@ -253,7 +257,7 @@ namespace ExportFactory.Services
 
 
             // Oplegging
-            { "OplegLengteNominaal", new(sym: "a", desc: "nominale opleglengte a = a~1~ + a~2~ + a~3~ + √(|Delta|a~2~^2^ + |Delta|a~3~^2^) + |Delta|~elementtype~", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
+            { "OplegLengteNominaal", new(sym: "a", desc: "nominale opleglengte a = a~1~ + a~2~ + a~3~ + √(|Delta|a~2~^2^ + |Delta|a~3~^2^) + |Delta|~e~", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
             { "OplegLengteNetto", new(sym: "a~1~", desc: "netto-opleglengte mbt oplegspanning a1 = F~Ed~ / (b~1~ f~Rd~), maar mag niet kleiner zijn dan de minimumwaarde in tabel 10.2", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
             { "OplegLengteAanwezig", new(sym: "a~aanw~", desc: "aanwezige opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
             { "OplegReactieRekenwaarde", new(sym: "F~Ed~", desc: "rekenwaarde oplegreactie", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _kN  )  },
@@ -264,7 +268,7 @@ namespace ExportFactory.Services
             { "AfstandA3", new(sym: "a~3~", desc: "randafstand ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandDeltaA2", new(sym: "|Delta|a~2~", desc: "tolerantie afstand tussen dragende elementen", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandDeltaA3", new(sym: "|Delta|a~3~", desc: "tolerantie lengte element Δ~a3~ = l~n~/2500", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
-            { "AfstandDeltaElementType", new(sym: "|Delta|~elem.type~", desc: "indien afzonderlijke elementen nominale lengte 20 mm groter dan doorgaande elementen.", norm:"EC2", art: "10.9.5.3", vgl: "", format: _mm  )  },
+            { "AfstandDeltaElementType", new(sym: "|Delta|~e~", desc: "indien afzonderlijke elementen nominale lengte 20 mm groter dan doorgaande elementen.", norm:"EC2", art: "10.9.5.3", vgl: "", format: _mm  )  },
 
             { "LengteOndersteundeElement", new(sym: "l~n~", desc: "lengte ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
 
