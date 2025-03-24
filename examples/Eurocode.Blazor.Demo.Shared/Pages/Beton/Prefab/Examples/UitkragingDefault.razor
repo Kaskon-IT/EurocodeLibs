@@ -1,8 +1,8 @@
-﻿@if (Model != null)
+﻿@if (SampleProject != null)
 {
 
 
-    <EurocodeBetonUitkraging @bind-Model=@Model
+    <EurocodeBetonUitkraging @bind-Model=@SampleProject.UitkragingDemo
     ReadOnlyFields="ReadOnlyFields"
     LabelPosition="@labelPosition.GetValueOrDefault()"
     LabelType="@labelType.GetValueOrDefault()">
@@ -22,8 +22,11 @@
 }
 
 @code {
+
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
    
-    public UitkragingContext Model { get; set; } = new();
+    //public UitkragingContext Model { get; set; } = new();
 
     //private string html;
 
@@ -33,9 +36,18 @@
     private Dictionary<string, bool> ReadOnlyFields { get; set; } = new()
     {
 
-        {nameof(UitkragingContext.Reactiekracht), !true},
-        {nameof(UitkragingContext.Lengte), !true},
-        {nameof(UitkragingContext.NuttigeHoogte), !true},
+        {nameof(UitkragingContext.Reactiekracht), true},
+        {nameof(UitkragingContext.TandLengte), true},
+        {nameof(UitkragingContext.TandNuttigeHoogte), true},
+        {nameof(UitkragingContext.ArmReactieVerticaal), true},
+        {nameof(UitkragingContext.TandHoogte), true},
+
+        {nameof(UitkragingContext.TandShear.Ved), true},
+        {nameof(UitkragingContext.TandShear.Breedte), true},
+
+
+
+
 
 
 

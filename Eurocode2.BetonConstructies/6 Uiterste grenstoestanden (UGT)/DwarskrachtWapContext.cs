@@ -52,7 +52,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         [TableColumn("|theta|", StringFormat = "0.##\t°")]
 
-        public double Theta { get; set; }
+        public double Theta { get; set; } = 21.8;
 
         /// <summary>
         /// hoek drukdiagonaal in radialen
@@ -72,7 +72,16 @@ namespace Eurocode.BetonConstructies
         /// 
         [TableColumn("cot |theta|", StringFormat = "0.##")]
 
-        public double CotTheta { get { return 1 / TanTheta; } }
+        public double CotTheta
+        {
+            get
+            {
+                if (TanTheta != 0)
+                    return 1 / TanTheta;
+                else
+                    return 0;
+            }
+        }
 
         /// <summary>
         /// is de hoek tussen de dwarskrachtwapening en de as van de ligger loodrecht op de dwarskracht (positief gemeten zoals getoond in figuur 6.5) in graden;
@@ -110,7 +119,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         [TableColumn("d")]
 
-        public double NutHoogte { get; set; }
+        public double NutHoogte { get; set; } = 90;
 
 
 
@@ -254,7 +263,7 @@ namespace Eurocode.BetonConstructies
         /// zonder normaalkracht mag in het algemeen de benaderende waarde z = 0,9d zijn gebruikt.
         /// </summary>
         [TableColumn("z", StringFormat = "0.##\tmm")]
-        public double Z { get; set; }
+        public double Z { get; set; } = 0.9 * 90;
 
         [TableColumn("A~sw,min~", StringFormat = "0.##\tmm²/m")]
         public double AswMin { get { return this.SetAswMin().value; } }

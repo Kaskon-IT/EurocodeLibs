@@ -35,9 +35,18 @@ namespace ExportFactory.Services
         // ALGEMEEN
         private readonly Dictionary<string, AttributesMapping> _algemeen = new()
         {
+
+
+
+            { K.MomentArm, new(sym: "a", desc:"arm voor moment") },
             { K.MomentRekenwaarde, new(sym: "M~Ed~", desc: "rekenwaarde moment") },
             { K.Staalspanning, new(sym: "|sigma|~s~", desc: "staalspanning") },
 
+            { K.TandHoogte, new(sym: "h~tand~", desc:"hoogte van de tand")},
+            { K.TandLengte, new(sym: "L~tand~", desc:"lengte van de tand")},
+            { K.TandNuttigeHoogte, new(sym: "d~tand~", desc:"nuttige hoogte van de tand") },
+
+            { K.ReactieRekenwaarde, new(sym: "F~Ed~", desc:"rekenwaarde oplegreactie") },
 
 
 

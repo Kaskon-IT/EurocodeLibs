@@ -3,6 +3,8 @@
     public static class MappingKeys
     {
         public const string MomentRekenwaarde = "Moment.Rekenwaarde";
+        public const string MomentArm = "Moment.Arm";
+
         public const string Staalspanning = "Staalspanning";
 
         public const string BetonDoorsnedeOppervlak = "Beton.DoorsnedeOppervlak";
@@ -20,6 +22,17 @@
 
         public const string Wy = "Profiel.Wy";
         public const string Wz = "Profiel.Wz";
+
+        public const string ReactieRekenwaarde = "Reactie.Rekenwaarde";
+
+        public const string TandLengte = "Tand.Lengte";
+        public const string TandHoogte = "Tand.Hoogte";
+        public const string TandNuttigeHoogte = "Tand.NuttigeHoogte";
+
+
+        public const string HalsHoogte = "Hals.Hoogte";
+
+
 
         public const string ReferentieAfstandVoorNuttigeHoogte = "ReferentieAfstandVoorNuttigeHoogte";
         public const string XuD = "XuD";

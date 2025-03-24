@@ -20,8 +20,9 @@ builder.Services.AddFluentUIDemoServerServices();
 
 //builder.Services.AddScoped<DemoMainLayout>();
 
-builder.Services.AddScoped<ExportFactory.Services.MigraDocCreator>();
-builder.Services.AddSingleton<ExportFactory.Services.DataTableMappingService>();
+builder.Services.AddScoped<ExportFactory.Services.MigraDocCreator>(); // 
+builder.Services.AddSingleton<ExportFactory.Services.DataTableMappingService>(); // service voor uitlezen meta-data / mappings 
+builder.Services.AddSingleton<EurocodeRazorClassLibrary.Services.ReadOnlyService>(); // service voor instellen read-only op eurocode componenten
 
 builder.Services.AddScoped<DataSource>();
 

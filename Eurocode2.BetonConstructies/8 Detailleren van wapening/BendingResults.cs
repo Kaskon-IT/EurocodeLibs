@@ -3,6 +3,14 @@ using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
+    public class BuigingGedrongen
+    {
+        public double M { get; set; }
+        //public double 
+    }
+
+
+
     public class BendingResults
     {
         public BendingResults()

@@ -1,18 +1,19 @@
 ﻿@using Eurocode.BetonConstructies
 @using Eurocode.BetonConstructies.SpecifiekeRegels
 
+@inject Services.ReadOnlyService ReadOnlyService
 
 
 
 <FluentGrid Spacing="4">
     <FluentGridItem xs="12">
-        <EurocodeInputNumber @bind-Value="Model.Ved" Key="Ved" Unit="kN" MinValue=-Model.DwarskrachtWeerstandMax MaxValue="@Model.DwarskrachtWeerstandMax"></EurocodeInputNumber>
-        <EurocodeInputNumber @bind-Value="Model.Profiel.Breedte" Key="Breedte" MinValue=60 Unit="mm"></EurocodeInputNumber>
-        <EurocodeInputNumber @bind-Value="Model.NutHoogte" Key="NutHoogte" MinValue=60 Unit="mm"></EurocodeInputNumber>
-        <EurocodeInputNumber @bind-Value="Model.Z" Key="Z" MinValue=30 Unit ="mm"></EurocodeInputNumber>
-        <EurocodeInputNumber @bind-Value="Model.AsLangs" MinValue=0 Key="AsLangs" MaxValue="@Balken.GetAsMax(Model.Profiel)" Unit="mm²"></EurocodeInputNumber>
-        <EurocodeInputNumber @bind-Value="Model.Theta" Key="Theta" Unit="°" MinValue=21.8 MaxValue=45></EurocodeInputNumber>
-        <EurocodeInputNumber @bind-Value="Model.Alpha" Key="Alpha" Unit="°" MinValue=@Balken.GetGrenswaardeHoekDwarskrachtWapening().min MaxValue=@Balken.GetGrenswaardeHoekDwarskrachtWapening().max></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Ved)) @bind-Value="Model.Ved" Key="Ved" Unit="kN" MinValue=-Model.DwarskrachtWeerstandMax MaxValue="@Model.DwarskrachtWeerstandMax"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Profiel.Breedte)) @bind-Value="Model.Profiel.Breedte" Key="Breedte" MinValue=60 Unit="mm"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.NutHoogte)) @bind-Value="Model.NutHoogte" Key="NutHoogte" MinValue=60 Unit="mm"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Z)) @bind-Value="Model.Z" Key="Z" MinValue=30 Unit="mm"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.AsLangs)) @bind-Value="Model.AsLangs" MinValue=0 Key="AsLangs" MaxValue="@Balken.GetAsMax(Model.Profiel)" Unit="mm²"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Theta)) @bind-Value="Model.Theta" Key="Theta" Unit="°" MinValue=21.8 MaxValue=45></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Alpha)) @bind-Value="Model.Alpha" Key="Alpha" Unit="°" MinValue=@Balken.GetGrenswaardeHoekDwarskrachtWapening().min MaxValue=@Balken.GetGrenswaardeHoekDwarskrachtWapening().max></EurocodeInputNumber>
     </FluentGridItem>
 
     <FluentGridItem xs="12">
@@ -56,6 +57,13 @@
     [Parameter]
     public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
 
+
+    [Parameter]
+    public Dictionary<string, bool> ReadOnlyFields { get; set; } = new();
+
+
+
+
     /// <summary>
     /// Callback is nodig voor @bind-Model
     /// </summary>
@@ -64,13 +72,14 @@
 
     protected override void OnInitialized()
     {
+        ReadOnlyService.SetReadOnlyFields(this.ReadOnlyFields);
         //Model = new(Beton, Profiel, 100);
-        Model = DwarskrachtWap.GetDwarskrachtWapContext(Beton, Profiel, 21.8, 350, 0.9 * 350, 100, 2, 8, [100.0, 200.0, 300.0]);
+        //Model = DwarskrachtWap.GetDwarskrachtWapContext(Beton, Profiel, 21.8, 350, 0.9 * 350, 100, 2, 8, [100.0, 200.0, 300.0]);
 
     }
 
-    string symVed = ExportFactory.Services.HtmlCreator.MarkdownToHtml("V~Ed~");
-    string symTheta = ExportFactory.Services.HtmlCreator.MarkdownToHtml("|theta|");
+    //string symVed = ExportFactory.Services.HtmlCreator.MarkdownToHtml("V~Ed~");
+    //string symTheta = ExportFactory.Services.HtmlCreator.MarkdownToHtml("|theta|");
 
 
 

@@ -97,8 +97,8 @@ namespace Eurocode.BetonConstructies.Aanvullende_regels_prefab
             //beton.NominaleOplegLengte_a = a;
 
             // 
-            var ab = context.Lengte / 2;
-            var a_voor_berekening_z = BuigingContext.GetLengteArmInBerekeningUitkraging(ab, context.Lengte, context.Profiel.Hoogte);
+            var ab = context.TandLengte / 2;
+            var a_voor_berekening_z = BuigingContext.GetLengteArmInBerekeningUitkraging(ab, context.TandLengte, context.Profiel.Hoogte);
             // z
             //double arm = 100;
             //double hoogte = 200;
@@ -109,18 +109,18 @@ namespace Eurocode.BetonConstructies.Aanvullende_regels_prefab
             // moment
             var dekking = 20.0;
             var staafDiameter = 8;
-            var armMoment = context.Lengte / 2 + dekking + staafDiameter / 2;
-            context.Arm = armMoment;
+            //var armMoment = context.Lengte / 2 + dekking + staafDiameter / 2;
+            //context.Arm = armMoment;
 
-            var moment = armMoment * context.Reactiekracht;
-            context.Moment = moment;
+            //var moment = armMoment * 1e-3 * context.Reactiekracht;
+            //context.Moment = moment;
 
 
             var zGedrongen = BuigingContext.GetInwendigeHefboomArmGedrongenLigger(a_voor_berekening_z, context.Profiel.Hoogte, statischBepaald: true, isUitkraging: true);
-            var wapAsBen = BuigingContext.GetAsBenodigdGedrongenLigger(moment, zGedrongen, context.Beton);
+            var wapAsBen = BuigingContext.GetAsBenodigdGedrongenLigger(context.Moment, zGedrongen, context.Beton);
 
             // reken ook altijd slank uit. Als dit een lagere weerstand geeft dan is dit maatgevend!
-            var buiging = new BuigingBasic() { Beton = context.Beton, D = context.NuttigeHoogte, M = moment };
+            var buiging = new BuigingBasic() { Beton = context.Beton, D = context.TandNuttigeHoogte, M = context.Moment };
 
             // controleer of niet lager
             if (buiging.As > wapAsBen)

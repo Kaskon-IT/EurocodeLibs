@@ -339,6 +339,9 @@ namespace Eurocode.BetonConstructies
 
         public static (double value, string art) SetAswBerekend(this DwarskrachtWapContext context)
         {
+            if (context.Z == 0)
+                context.Z = 0.9 * context.NutHoogte;
+
             double returnVal = DwarskrachtHelpers.GetAswBerekend(Math.Abs(context.Ved), context.Z, context.Beton.BetonStaal.Fywd, context.CotTheta, out string art);
             return (returnVal, art);
         }

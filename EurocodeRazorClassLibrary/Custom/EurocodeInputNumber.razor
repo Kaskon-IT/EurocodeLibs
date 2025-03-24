@@ -304,6 +304,15 @@
     private string? ErrorMessage { get; set; }
     private bool IsFocused { get; set; } = false;
 
+    private bool IsOneindigDebugTest
+    { 
+        get
+        { 
+            return (!String.IsNullOrEmpty(InputValue) && InputValue == "∞"); 
+        } 
+    }
+
+
 
     private string? GetTooltipId() =>
         LabelPosition switch
@@ -326,6 +335,8 @@
     {
         base.OnInitialized();
         if (Value == null) return;
+
+        
 
         InputValue = FormatValue(Value);
 
