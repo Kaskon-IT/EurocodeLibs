@@ -266,7 +266,7 @@ kbd {
 }
 
     .blazor-error-boundary::before {
-        content: "An error has occurred: "
+        content: "Er is een fout opgetreden: "
     }
 
 /* Animate the blazor FluentUI during the loading */

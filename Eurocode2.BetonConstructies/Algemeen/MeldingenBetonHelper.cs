@@ -24,7 +24,7 @@ namespace Eurocode.BetonConstructies.Algemeen
 
         public static Melding GetMelding(int code)
         {
-            return MeldingenBeton.TryGetValue(code, out var melding) ? melding : new Melding(MeldingType.Foutmelding, bericht: "Onbekende melding");
+            return MeldingenBeton.TryGetValue(code, out var melding) ? melding : new Melding(MeldingType.Waarschuwing, bericht: "Onbekende melding");
         }
 
 

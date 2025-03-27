@@ -161,6 +161,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
+
         public static double GetDekkingNominaal(this BetonDekkingContext dekking)
         {
 
@@ -181,6 +182,15 @@ namespace Eurocode.BetonConstructies
                     values.Add(cNom + 5);
                     break;
             }
+
+
+            double returnVal = values.Max();
+
+
+
+
+
+
             return values.Max();
         }
 

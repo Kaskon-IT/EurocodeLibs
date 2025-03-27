@@ -11,8 +11,8 @@
 
     public static partial class DataTableExtensions
     {
-        private static Services.DataTableMappingService _mappingService = new();
-        private static Dictionary<string, AttributesMapping> _mappingDict = _mappingService.GetEurocodeMapping();
+        private static Services.DataTableMappingService _mappingService { get; } = new();
+        private static Dictionary<string, AttributesMapping> _mappingDict { get; } = _mappingService.Data;
 
 
         public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false)
@@ -105,11 +105,26 @@
 
                     string? format = null;
 
+                    AttributesMapping? mapping = null;
+
+                    // als de property.attribute.key is gegeveven de mapping ophalen
+                    if (propertyWithAttribute.Attribute.Key != null)
+                    {
+                        _mappingDict.TryGetValue(propertyWithAttribute.Attribute.Key, out mapping);
+                    }
+                    else
+                    {
+                        // geen specifieke key opgegeven, controleer of de name in het woordenboek staat
+                        _mappingDict.TryGetValue(propertyWithAttribute.Property.Name, out mapping);
+                    }
+
+
+
 
                     // mapping
-                    if (_mappingDict.ContainsKey(propertyWithAttribute.Property.Name))
+                    if (mapping != null)
                     {
-                        var mapping = _mappingDict[propertyWithAttribute.Property.Name];
+
 
                         if (mapping.Symbol != null)
                         {

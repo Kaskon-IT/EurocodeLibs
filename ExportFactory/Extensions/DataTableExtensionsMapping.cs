@@ -1,5 +1,7 @@
 ﻿using ExportFactory.Shared;
-using K = ExportFactory.Services.MappingKeys;
+using K = CommonLibrary.EurocodeKeys;
+
+
 
 namespace ExportFactory.Services
 {
@@ -17,7 +19,10 @@ namespace ExportFactory.Services
                 .Concat(_ec0)
                 .Concat(_ec1)
                 .Concat(_ec2)
-                .ToDictionary();
+                .GroupBy(x => x.Key) // groepeer op de key (controle dubbele keys)
+                .ToDictionary(g => g.Key, g => g.Last().Value); // behoud de laaste key indien dubbele gevonden
+
+
         }
 
         const string? _MPa = "0.##\tN/mm²";
@@ -35,7 +40,9 @@ namespace ExportFactory.Services
         // ALGEMEEN
         private readonly Dictionary<string, AttributesMapping> _algemeen = new()
         {
-
+            { K.TrapOptredeMaat, new(sym:"a~optrede~", desc:"optrede maat")},
+            { K.TrapAantredeMaat, new(sym:"a~aantrede~", desc:"aantrede maat")},
+            { K.TrapOptredeAantal, new(sym:"n", desc:"aantal optreden")},
 
 
             { K.MomentArm, new(sym: "a", desc:"arm voor moment") },
@@ -47,6 +54,7 @@ namespace ExportFactory.Services
             { K.TandNuttigeHoogte, new(sym: "d~tand~", desc:"nuttige hoogte van de tand") },
 
             { K.ReactieRekenwaarde, new(sym: "F~Ed~", desc:"rekenwaarde oplegreactie") },
+            { K.BelastingAfwerking, new(sym: "G~k,afw~", desc:"belasting uit afwerking") },
 
 
 
@@ -173,6 +181,8 @@ namespace ExportFactory.Services
 
 
             // 6.2 Dwarskracht
+            { K.DwarskrachtRekenwaarde, new(sym : "V~Ed~",desc : "rekenwaarde dwarskracht", norm : "", art:"" ,vgl: "", format : _kN) },
+
             { "Ved", new(sym : "V~Ed~",desc : "rekenwaarde dwarskracht", norm : "", art:"" ,vgl: "", format : _kN) },
             { "DwarskrachtWeerstandBeton", new(sym : "V~Rd,c~", desc : "rekenwaarde dwarskracht opneembaar zonder dwarskrachtwapening", norm: "EC2" ,art : "6.2.1 (1)P\r\n6.2.2 (1)\r\n6.2.2 (2)", vgl: "(6.2)\r\n(6.4)", format : _kN) },
             { "DwarskrachtWeerstandStaal", new(sym : "V~Rd,s~", desc : "rekenwaarde dwarskracht opneembaar door dwarskrachtwapening",norm : "EC2", art :  "6.2.1 (1)P\r\n6.2.3 (3)" , vgl : "(6.8)"  , format : _kN) },
@@ -225,16 +235,16 @@ namespace ExportFactory.Services
             // 7.3.4 Scheurwijdte
             // 
             { "SrMax", new(sym: "s~r,max~",desc: "maximale scheurafstand", norm:"EC2", art: "7.3.4", vgl: "(7.11)\r\n(7.14)\r\n(7.15)",format: "0.##" )},
-            { "Mcr", new("M~cr~", "scheurmoment", "", _kNm, "") },
-            { "MomentFrequent", new(sym: "M~E,freq~", desc : "moment frequente combinatie", norm: "", art : "", format: _kNm) },
-            { "MomentRekenwaarde", new(sym: "M~Ed~", desc : "moment rekenwaarde", norm: "", art : "", format: _kNm) },
+            { K.MomentScheurmoment, new("M~cr~", "scheurmoment", "", _kNm, "") },
+            { K.MomentFrequent, new(sym: "M~E,freq~", desc : "moment frequente combinatie", norm: "", art : "", format: _kNm) },
+            //{ K.MomentRekenwaarde, new(sym: "M~Ed~", desc : "moment rekenwaarde", norm: "", art : "", format: _kNm) },
 
             { "EpsSmMinusEpsCm", new(sym:"|epsilon|~sm~ - |epsilon|~cm~", desc:"gemiddelde rek wapening minus gemiddelde betonrek",norm:"EC2",art:"7.3.4 (2)",vgl: "(7.9)", format:"e2")  },
             { "FactorKt", new(sym: "k~t~",desc:  "factor belastingsduur",norm:"EC2",art: "7.3.4 (2)", format: _formatVerhouding) },
             { "StaalspanningOptredend", new(sym: "|sigma|~s~", desc: "spanning trekwapening",norm: "EC2",art: "7.3.4 (2)",format: _MPa)},
             { "RhoPeff", new(sym: "|rho|~p,eff~",desc: "= (A~s~ + |xi|~1~ A~p~')/A~c,eff~", norm: "EC2", art: "7.3.4 (2)" , vgl: "(7.10)", format : _formatVerhouding) },
             { "ScheurwijdteVerhoudingElasticiteitsmodulusStaalBeton", new(sym : "|alpha|~e~", desc : "verhouding E~s~ / E~cm~", norm : "EC2", art : "7.3.4 (2)", format : _formatVerhouding) },
-            { "Wk", new(sym: "w~k~", desc: "berekende scheurwijdte",norm: "EC2", art:"7.3.4 (1)",vgl: "(7.8)",format: _mmExact) },
+            { K.ScheurwijdteBerekend, new(sym: "w~k~", desc: "berekende scheurwijdte",norm: "EC2", art:"7.3.4 (1)",vgl: "(7.8)",format: _mmExact) },
             { "ScheurwijdteMax", new(sym:"w~max~",desc: "grenswaarde scheurwijdte", norm: "EC2", art: "7.3.1 (5)", format: _mmExact) },
             { "ScheurwijdteGrenswaardeFactorKx", new(sym:"k~x~",desc: "factor voor w~max~", norm: "EC2", art: "7.3.1 (5)", vgl:"", format: _formatVerhouding) },
             { "MaximaleScheurAfstandFactorK1", new(sym: "k~1~", desc: "factor aanhechtingseigenschappen", norm:"EC2", art: "7.3.4 (3)", vgl:"", format: _formatVerhouding) },
@@ -277,7 +287,7 @@ namespace ExportFactory.Services
             { "AfstandA3", new(sym: "a~3~", desc: "randafstand ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandDeltaA2", new(sym: "|Delta|a~2~", desc: "tolerantie afstand tussen dragende elementen", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandDeltaA3", new(sym: "|Delta|a~3~", desc: "tolerantie lengte element Δ~a3~ = l~n~/2500", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
-            { "AfstandDeltaElementType", new(sym: "|Delta|~e~", desc: "indien afzonderlijke elementen nominale lengte 20 mm groter dan doorgaande elementen.", norm:"EC2", art: "10.9.5.3", vgl: "", format: _mm  )  },
+            { "AfstandDeltaElementType", new(sym: "|Delta|~e~", desc: "indien afzonderlijk element, nominale lengte +20 mm.", norm:"EC2", art: "10.9.5.3", vgl: "", format: _mm  )  },
 
             { "LengteOndersteundeElement", new(sym: "l~n~", desc: "lengte ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
 
@@ -299,10 +309,10 @@ namespace ExportFactory.Services
         };
 
 
-        public Dictionary<string, AttributesMapping> GetEurocodeMapping()
-        {
-            return _ec0.Concat(_ec2).ToDictionary();
-        }
+        //public Dictionary<string, AttributesMapping> GetEurocodeMapping()
+        //{
+        //    return _ec0.Concat(_ec2).ToDictionary();
+        //}
         //_mappingEurocode0
         //.Concat(_mappingEurcode2)
         //.ToDictionary();

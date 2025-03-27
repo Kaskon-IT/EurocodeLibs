@@ -1,6 +1,7 @@
 ﻿using Eurocode.Grondslagen;
 using ExportFactory.Shared;
 using System.ComponentModel;
+using K = ExportFactory.Services.MappingKeys;
 
 namespace Eurocode.BetonConstructies
 {
@@ -138,7 +139,7 @@ namespace Eurocode.BetonConstructies
         public double EpsSmMinusEpsCm { get; set; }
 
 
-        [TableColumn("w~k~", headerTextPivot: "(7.8) berekende scheurwijdte w~k~ = s~r,max~ (|epsilon|~sm~-|epsilon|~cm~)", StringFormat = "0.## mm")]
+        [TableColumn("w~k~", headerTextPivot: "(7.8) berekende scheurwijdte w~k~ = s~r,max~ (|epsilon|~sm~-|epsilon|~cm~)", StringFormat = "0.## mm", Key = K.ScheurwijdteBerekend)]
         public double Wk { get; internal set; }
 
         [TableColumn("k~x~", headerTextPivot: "k~x~", StringFormat = "0.##")]

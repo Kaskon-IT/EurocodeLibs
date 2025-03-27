@@ -1,9 +1,9 @@
 ﻿using Eurocode.Grondslagen;
 
-namespace Eurocode.BetonConstructies._6_Uiterste_grenstoestanden__UGT_
+namespace Eurocode.BetonConstructies
 {
     /// <summary>
-    /// 6.1
+    /// 6.1 
     /// </summary>
     class BuigingContext
     {
@@ -137,6 +137,7 @@ namespace Eurocode.BetonConstructies._6_Uiterste_grenstoestanden__UGT_
             return doubles.Min();
 
         }
+
 
     }
 }

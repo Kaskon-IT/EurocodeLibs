@@ -1,12 +1,19 @@
-﻿namespace ExportFactory.Services
+﻿namespace CommonLibrary
 {
-    [Obsolete]
-    public static class MappingKeys
+    public static class EurocodeKeys
     {
-        // VERWIJDEREN
+        public const string BelastingAfwerking = "Belasting.Afwerking";
 
 
-        public const string DwarskrachtVed = "Dwarskracht.Ved";
+
+        public const string TrapOptredeMaat = "Trap.OptredeMaat";
+        public const string TrapAantredeMaat = "Trap.AantredeMaat";
+        public const string TrapOptredeAantal = "Trap.OptredeAantal";
+
+
+
+
+        public const string DwarskrachtRekenwaarde = "Dwarskracht.Rekenwaarde";
 
         public const string MomentRekenwaarde = "Moment.Rekenwaarde";
         public const string MomentFrequent = "Moment.Frequent";

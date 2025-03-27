@@ -1,4 +1,4 @@
-﻿using Eurocode.BetonConstructies._6_Uiterste_grenstoestanden__UGT_;
+﻿using CommonLibrary;
 using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
@@ -11,7 +11,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-    public class BendingResults
+    public class BendingResults : BaseEurocodeContext
     {
         public BendingResults()
         {
@@ -179,8 +179,29 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        public override bool IsAkkoord()
+        {
+            if (Xu > XuMax)
+            {
+                AddMeldingWaarschuwing("hoogte drukzone niet akkoord");
+                Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
+                return false;
+            }
 
 
+            return true;
+            throw new NotImplementedException();
+        }
+
+        protected override void Bereken()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

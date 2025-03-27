@@ -83,7 +83,7 @@
 
     public class ProductDemo
     {
-        [TableColumn(headerText: "Productnaam", alignment: ParagraphAlignment.Left, width: 5.0)]
+        [TableColumn(key: "Name",headerText: "Productnaam", alignment: ParagraphAlignment.Left, width: 5.0)]
         public string Name { get; set; } = "";
 
         [TableColumn("Prijs", stringFormat: "C", width: 4, alignment: ParagraphAlignment.Right, order: 2, visible: true)]

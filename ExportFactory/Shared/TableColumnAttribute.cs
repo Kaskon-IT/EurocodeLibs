@@ -124,6 +124,7 @@ namespace ExportFactory.Shared
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
     public class TableColumnAttribute : Attribute
     {
+        public string? Key { get; init; }
         public string? HeaderText { get; set; } = null;
         public string? HeaderTextPivot { get; set; } = null;
         public string? StringFormat { get; set; } = null;
@@ -134,7 +135,10 @@ namespace ExportFactory.Shared
         public int Order { get; set; } = -1;
 
 
-        public TableColumnAttribute() { }
+        public TableColumnAttribute()
+        {
+
+        }
 
         public TableColumnAttribute(
             string? headerText = null,
@@ -144,8 +148,11 @@ namespace ExportFactory.Shared
             bool visible = true,
             WeergaveEnum weergave = WeergaveEnum.AlleTabellen,
             double width = 3.00,
-            int order = -1)
+            int order = -1,
+            string? key = null
+            )
         {
+            Key = key;
             HeaderText = headerText;
             HeaderTextPivot = headerTextPivot;
             StringFormat = stringFormat;

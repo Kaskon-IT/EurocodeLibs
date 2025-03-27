@@ -1,5 +1,6 @@
 ﻿@using Eurocode.BetonConstructies
 @using Eurocode.BetonConstructies.SpecifiekeRegels
+@using K = CommonLibrary.EurocodeKeys
 
 @inject Services.ReadOnlyService ReadOnlyService
 
@@ -7,16 +8,17 @@
 
 <FluentGrid Spacing="4">
     <FluentGridItem xs="12">
-        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Ved)) @bind-Value="Model.Ved" Key="Ved" Unit="kN" MinValue=-Model.DwarskrachtWeerstandMax MaxValue="@Model.DwarskrachtWeerstandMax"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Ved)) @bind-Value="Model.Ved" Key="@K.DwarskrachtRekenwaarde" Unit="kN" MinValue=-Model.DwarskrachtWeerstandMax MaxValue="@Model.DwarskrachtWeerstandMax"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Profiel.Breedte)) @bind-Value="Model.Profiel.Breedte" Key="Breedte" MinValue=60 Unit="mm"></EurocodeInputNumber>
-        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.NutHoogte)) @bind-Value="Model.NutHoogte" Key="NutHoogte" MinValue=60 Unit="mm"></EurocodeInputNumber>
-        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Z)) @bind-Value="Model.Z" Key="Z" MinValue=30 Unit="mm"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.NutHoogte)) @bind-Value="Model.NutHoogte" Key="NutHoogte" MinValue=30 Unit="mm"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.AsLangs)) @bind-Value="Model.AsLangs" MinValue=0 Key="AsLangs" MaxValue="@Balken.GetAsMax(Model.Profiel)" Unit="mm²"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Theta)) @bind-Value="Model.Theta" Key="Theta" Unit="°" MinValue=21.8 MaxValue=45></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Alpha)) @bind-Value="Model.Alpha" Key="Alpha" Unit="°" MinValue=@Balken.GetGrenswaardeHoekDwarskrachtWapening().min MaxValue=@Balken.GetGrenswaardeHoekDwarskrachtWapening().max></EurocodeInputNumber>
     </FluentGridItem>
 
     <FluentGridItem xs="12">
+        <EurocodeInputNumber ReadOnly=true Value="Model.Z" Key="Z" Unit="mm"></EurocodeInputNumber>
+
         <EurocodeInputNumber ReadOnly=true Value="Model.AswBerekend" Key="AswBerekend" Unit="mm²/m¹" StringFormat="0"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=true Value="Model.AswMin" Key="AswMin" Unit="mm²/m¹" StringFormat="0"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=true Value="Model.AswBenPerMeter" Key="AswBenPerMeter" Unit="mm²/m¹" StringFormat="0"></EurocodeInputNumber>
@@ -59,7 +61,10 @@
 
 
     [Parameter]
-    public Dictionary<string, bool> ReadOnlyFields { get; set; } = new();
+    public Dictionary<string, bool> ReadOnlyFields { get; set; } = new()
+    {
+        { "Theta", !true}, {"Alpha", !true}
+    };
 
 
 

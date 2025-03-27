@@ -1,11 +1,12 @@
-﻿using Eurocode.Grondslagen;
+﻿using CommonLibrary;
+using Eurocode.Grondslagen;
 using ExportFactory.Shared;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
 {
 
-    public partial class BetonDekkingContext
+    public partial class BetonDekkingContext : BaseEurocodeContext
     {
         /// <summary>
         /// Referentie naar de context uit de Eurocode1
@@ -16,12 +17,14 @@ namespace Eurocode.BetonConstructies
         {
             Grondslagen = new();
             Beton = new();
+            Constructieklasse = new(this, Beton);
         }
 
         public BetonDekkingContext(GrondslagenContext grondslagen, BetonContext beton)
         {
             Grondslagen = grondslagen;
             Beton = beton;
+            Constructieklasse = new(this, Beton);
         }
 
         public BetonDekkingContext(BetonDekkingContext context)
@@ -36,19 +39,18 @@ namespace Eurocode.BetonConstructies
             BetonStortOndergrond = context.BetonStortOndergrond;
             SelectedMilieuklassen = context.Milieuklassen;
             GrootsteKorrelDiameter = context.GrootsteKorrelDiameter;
+            Constructieklasse = new(this, Beton);
 
         }
 
         // verplaatst naar Grondslagen
         //public NationaleBijlageEnum NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
 
-        public Constructieklasse Constructieklasse
-        {
-            get
-            {
-                return new Constructieklasse(this, this.Beton);
-            }
-        }
+        public Constructieklasse Constructieklasse { get; private set; }
+
+
+
+
 
         [TableColumn("Constructieklasse", Order = 20)]
         public string ConstructieklasseUserFriendlyName
@@ -70,7 +72,18 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// De toegepaste dekking (c,toe) in mm.
         /// </summary>
-        public double DekkingToe { get; set; } = 20;
+
+
+        private double _dekkingToe = 20;
+        public double DekkingToe
+        {
+            get => _dekkingToe;
+            set
+            {
+                _dekkingToe = value;
+                BerekenEnValideer();
+            }
+        }
 
 
         /// <summary>
@@ -91,13 +104,21 @@ namespace Eurocode.BetonConstructies
         /// Indien plaatgeometrie van toepassing dan een vermindering van 1 op de constructieklasse.
         /// </summary>
         [TableColumn("Plaatgeometrie?", Order = 2)]
-        public bool IsPlaatGeometrie { get; set; }
+        public bool IsPlaatGeometrie
+        {
+            get => _isPlaatGeometrie;
+            set { _isPlaatGeometrie = value; BerekenEnValideer(); }
+        }
 
         /// <summary>
         /// Indien specifieke kwaliteitsbeheersing (bijvoorbeeld bij prefab beton) vermindering met 1 op constructieklasse.
         /// </summary>
         [TableColumn("Kwaliteitsbeheersing?", Order = 3)]
-        public bool IsKwaliteitsBeheersing { get; set; }
+        public bool IsKwaliteitsBeheersing
+        {
+            get => _isKwaliteitsBeheersing;
+            set { _isKwaliteitsBeheersing = value; BerekenEnValideer(); }
+        }
 
         /// <summary>
         /// De milieuklasse(n) hebben invloed op de minimale dekking duurzaamheid (c,min,dur)
@@ -106,24 +127,25 @@ namespace Eurocode.BetonConstructies
         //public IEnumerable<MilieuklasseEnum> Milieuklassen { get; set; } = [MilieuklasseEnum.XC3];
 
 
-        public IEnumerable<MilieuklasseEnum> Milieuklassen
+        public IEnumerable<MilieuklasseEnum> Milieuklassen =>
+            SelectedMilieuklassen.Any() ? SelectedMilieuklassen : [MilieuklasseEnum.X0];
+
+
+        public IEnumerable<Eurocode.BetonConstructies.MilieuklasseEnum> SelectedMilieuklassen
         {
-
-            get
+            get => _selectedMilieuklassen;
+            set
             {
-                if (SelectedMilieuklassen != null && SelectedMilieuklassen.Any())
-                {
-                    return SelectedMilieuklassen;
-                }
-                else
-                {
-                    return [MilieuklasseEnum.X0];
-                }
+
+
+                _selectedMilieuklassen = value ?? [MilieuklasseEnum.X0]; // mag niet leeg gelaten worden! 
+
+                //
+                //var mk = this.Milieuklassen;
+                BerekenEnValideer(); // Roep de validatie aan
+
             }
-
         }
-
-        public IEnumerable<Eurocode.BetonConstructies.MilieuklasseEnum> SelectedMilieuklassen { get; set; } = [MilieuklasseEnum.X0];
 
         [TableColumn("Milieuklasse", Order = 1)]
         public string MilieuklassenUserFriendlyName
@@ -152,7 +174,8 @@ namespace Eurocode.BetonConstructies
             Order = 1, StringFormat = "0 mm")]
         public double DekkingNom
         {
-            get { return this.GetDekkingNominaal(); }
+            get => _dekkingNom;
+            private set => _dekkingNom = value;
         }
 
         /// <summary>
@@ -243,6 +266,13 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        private double _wapeningDiameterGelijkwaardig = 10;
+        private double _dekkingNom;
+        private bool _isPlaatGeometrie;
+        private bool _isKwaliteitsBeheersing;
+        private IEnumerable<MilieuklasseEnum> _selectedMilieuklassen = [MilieuklasseEnum.X0];
+        private double _grootsteKorrelDiameter = 31.5;
+
         /// <summary>
         /// De diameter van de staaf of gelijkwaardige diameter van de staafbundel.
         /// </summary>
@@ -250,7 +280,18 @@ namespace Eurocode.BetonConstructies
             headerText: "Ø~eq~",
             headerTextPivot: "Ø~eq~\tgelijkwaardige diameter",
             Order = 24, StringFormat = "Ø0.##")]
-        public double WapeningDiameterGelijkwaardig { get; set; } = 10;
+        public double WapeningDiameterGelijkwaardig
+        {
+            get => _wapeningDiameterGelijkwaardig;
+            set
+            {
+                if (_wapeningDiameterGelijkwaardig != value)
+                {
+                    _wapeningDiameterGelijkwaardig = value;
+                    BerekenEnValideer();
+                }
+            }
+        }
 
         /// <summary>
         /// De grootste korreldiameter. Heeft invloed op de dekking c,min,b 
@@ -259,7 +300,19 @@ namespace Eurocode.BetonConstructies
             headerText: "korrel",
             headerTextPivot: "Grootste korrel",
             Order = 5, StringFormat = "≤ 0 mm")]
-        public double GrootsteKorrelDiameter { get; set; } = 31.5;
+        public double GrootsteKorrelDiameter
+        {
+            get => _grootsteKorrelDiameter;
+            set
+            {
+                if (_grootsteKorrelDiameter != value)
+                {
+                    _grootsteKorrelDiameter = value;
+                    BerekenEnValideer();
+                }
+            }
+        }
+
 
 
         public BetonAfwerkingOppervlakEnum? BetonAfwerkingOppervlak { get; set; } = BetonAfwerkingOppervlakEnum.Glad;
@@ -270,7 +323,7 @@ namespace Eurocode.BetonConstructies
         public BetonStortOndergrondEnum? BetonStortOndergrond { get; set; } = BetonStortOndergrondEnum.GladdeBekistingOfNvt;
 
 
-        #region enums voor betondekking
+
 
         /// <summary>
         /// keuzes voor ondergrond van de betonstort. 
@@ -281,8 +334,42 @@ namespace Eurocode.BetonConstructies
         /// keuze voor afwerking van de oppervlakte
         /// </summary>
         public enum BetonAfwerkingOppervlakEnum { [Description("Glad")] Glad = 1, [Description("Nabewerkt of oneffen")] NabewerktOnEffen = 2 }
-        #endregion
 
+        public override bool IsAkkoord()
+        {
+            return BerekenEnValideer();
+        }
 
+        public override string? ToString()
+        {
+            return base.ToString();
+        }
+
+        protected override void Bereken()
+        {
+            this.Constructieklasse = new Constructieklasse(this, this.Beton);
+            DekkingNom = this.GetDekkingNominaal();
+            //throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+
+            // Waarschuwingen (niet akkoord, aktie vereist)
+            if (DekkingNom > DekkingToe)
+            {
+                AddMeldingWaarschuwing("<b>nominale dekking c<sub>nom</sub> is groter dan toegepaste dekking c<sub>toe</sub></b>");
+                return false;
+            }
+
+            // Neutrale opmerkingen
+            if (WapeningDiameterGelijkwaardig == 0)
+            {
+                AddMeldingOpmerking("voor de nominale dekking c<sub>nom</sub> tenmiste Ø<sub>k</sub> + 5mm aanhouden");
+            }
+
+            return true;
+
+        }
     }
 }

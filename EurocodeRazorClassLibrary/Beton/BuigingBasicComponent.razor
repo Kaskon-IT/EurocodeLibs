@@ -1,5 +1,5 @@
 ﻿@using Eurocode.BetonConstructies
-@using K = ExportFactory.Services.MappingKeys;
+@using K = CommonLibrary.EurocodeKeys;
 
 
 <p>@Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
@@ -7,7 +7,7 @@
 <EurocodeBetonMaterialen @bind-Model=Model.Beton></EurocodeBetonMaterialen>
 
 
-<EurocodeInputNumber @bind-Value=Model.M Key="MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
+<EurocodeInputNumber @bind-Value=Model.M Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
 <EurocodeInputNumber @bind-Value=Model.B Key="@K.ProfielBreedte" Unit="mm"></EurocodeInputNumber>
 <EurocodeInputNumber @bind-Value=Model.H Key="@K.ProfielHoogte" Unit="mm"></EurocodeInputNumber>
 

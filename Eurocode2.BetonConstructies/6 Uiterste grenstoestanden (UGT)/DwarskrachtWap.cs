@@ -12,7 +12,7 @@ namespace Eurocode.BetonConstructies
         #region Berekeningen aan te roepen vanuit interface
 
 
-        public static DwarskrachtWapContext GetDwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, double theta, double d, double z, double dwarskracht,
+        public static DwarskrachtWapContext GetDwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, double theta, double d, double dwarskracht,
             double aantalSnede, double diameter, List<double> hohAfstanden)
         {
 
@@ -24,7 +24,6 @@ namespace Eurocode.BetonConstructies
             {
                 Theta = theta,
                 NutHoogte = d,
-                Z = z,
                 Ved = dwarskracht,
                 LijstBeugelWap = []
             };
@@ -339,8 +338,7 @@ namespace Eurocode.BetonConstructies
 
         public static (double value, string art) SetAswBerekend(this DwarskrachtWapContext context)
         {
-            if (context.Z == 0)
-                context.Z = 0.9 * context.NutHoogte;
+
 
             double returnVal = DwarskrachtHelpers.GetAswBerekend(Math.Abs(context.Ved), context.Z, context.Beton.BetonStaal.Fywd, context.CotTheta, out string art);
             return (returnVal, art);
@@ -563,7 +561,7 @@ namespace Eurocode.BetonConstructies
             //(4) Voor elementen met hellende dwarskrachtwapening
             //VRd,max = αcw bw z ν1 fcd/(cotθ + cotα ) / (1 + cot²θ)	
             art = "6.2.3 (4) (vgl. 6.14)";
-            return alphaCW * bW * z * nu1 * fcd * (cotTheta + cotAlpha) / (1 + Math.Pow(cotTheta, 2));
+            return alphaCW * bW * z * nu1 * fcd * (cotTheta + cotAlpha) / (1 + Math.Pow(cotTheta, 2)) * 1e-3;
         }
     }
 

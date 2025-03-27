@@ -1,10 +1,34 @@
-﻿using Eurocode.Grondslagen;
+﻿using CommonLibrary;
+using Eurocode.Grondslagen;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
 {
-    public class Scheurbeheersing
+    public class Scheurbeheersing : BaseEurocodeContext
     {
+        public override bool IsAkkoord()
+        {
+            if (Meldingen.Any(m => m.Type == MeldingType.Waarschuwing)) return false;
+
+            return true;
+            throw new NotImplementedException();
+        }
+
+        public override string? ToString()
+        {
+            return base.ToString();
+        }
+
+        protected override void Bereken()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+            throw new NotImplementedException();
+        }
+
         // 7.3 Scheurbeheersing
         public enum ElementType
         {

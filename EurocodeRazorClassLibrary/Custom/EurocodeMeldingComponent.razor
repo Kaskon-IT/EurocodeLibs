@@ -1,0 +1,20 @@
+﻿@using CommonLibrary
+@using CommonLibrary.Extensions
+@using System.Collections.ObjectModel
+
+
+@if (Melding != null)
+{
+    <span style=@Melding.Css>
+        @Melding.ToString().ToMarkup()
+    </span>
+    
+
+}
+
+@code {
+    [Parameter]
+    public Melding? Melding { get; set; } 
+    [Parameter] 
+    public EventCallback<Melding> MeldingChanged { get; set; }
+}
