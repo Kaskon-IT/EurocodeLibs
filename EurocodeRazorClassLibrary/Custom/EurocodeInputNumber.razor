@@ -15,20 +15,8 @@
     }
 
 
-    @if(LabelPosition == LabelPosition.Top)
-    {
-        @* <div class="row row-1">
-            <span class="truncate2">@GetLabel(LabelType == LabelType.SymbolAndDescription) </span>
-        </div> *@
-    }
 
 
-    @*    <div class="row row-2">
-        <span>row-2</span>
-        <span>Meer....</span>
-    </div>
-
-    <div>derde div in container column</div> *@
 
     @if(LabelPosition == LabelPosition.Left)
     {
@@ -53,6 +41,7 @@
     else
     {
         <FluentTextField 
+            Class="number-field"
         @bind-Value="InputValue"
         @oninput="ValidateInput"
         @bind-MinValue="MinValue"
@@ -102,9 +91,16 @@
 
 
     fluent-text-field::part(control) {
-    text-align: right;
+    text-align: left;  
     /* Zodat de getallen RECHTS uitgelijnd worden zoals het hoort, Microsoft!!!! knuppels */
     }
+
+    /* Specifiek voor numerieke invoer, rechts uitgelijnd */
+    .number-field::part(control) {
+        text-align: right;
+        /* Omdat getallen RECHTS uitgelijnd horen te zijn */
+    }
+
 
 
     .input-container {
@@ -245,7 +241,7 @@
 
 @if (!string.IsNullOrEmpty(ErrorMessage))
 {
-    <div style="color: red; text-align: center; font-weight:600; background-color:transparent; border-radius: 6px; margin: 8px 8px 8px 8px; padding: 2px; border:1px dotted red">@((MarkupString)ErrorMessage)</div>
+    <div style="width: 100%; color: red; text-align: center; font-weight:600; background-color:transparent; border-radius: 6px; margin: 8px 8px 8px 8px; padding: 2px; border:1px dotted red">@((MarkupString)ErrorMessage)</div>
 }
 
 @code {
@@ -349,10 +345,16 @@
             {
                 // 
                 string foutmelding = "Er gaat iets niet goed";
+                Console.WriteLine("T? is een string");
             }
         }
+        else
+        {
+            InputValue = FormatValue(Value);
+        }
 
-        InputValue = FormatValue(Value);
+        
+      
 
         //MappingService.Data.
         //var mappingService = new ExportFactory.Services.DataTableMappingService();
@@ -467,6 +469,7 @@
         // Probeer te casten naar double voor validatie
         if (normalizedInput is IConvertible convertible)
         {
+
             var doubleValue = convertible.ToDouble(CultureInfo.InvariantCulture);
 
             if (doubleValue < MinValue || doubleValue > MaxValue)

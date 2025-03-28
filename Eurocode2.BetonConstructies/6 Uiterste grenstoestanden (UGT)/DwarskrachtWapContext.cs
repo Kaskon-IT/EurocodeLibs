@@ -11,7 +11,7 @@ namespace Eurocode.BetonConstructies
         ControleerWapening,
     }
 
-    public class DwarskrachtWapContext
+    public class DwarskrachtWapContext : BaseEurocodeContext
     {
         // context voor de dwarskrachtwapening volgens art. 6.2
         // Uitgangspunten voor niet-voorgespannen constructies
@@ -293,6 +293,21 @@ namespace Eurocode.BetonConstructies
             get { return Math.Max(AswMin, AswBerekend); }
 
 
+        }
+
+        public override bool IsAkkoord()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Bereken()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+            throw new NotImplementedException();
         }
     }
 }

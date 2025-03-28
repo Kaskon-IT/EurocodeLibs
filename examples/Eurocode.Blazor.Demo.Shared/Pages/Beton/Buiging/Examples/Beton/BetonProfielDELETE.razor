@@ -1,0 +1,163 @@
+﻿@using BetonProfielen
+@using ParametrischeProfielen
+@using System.ComponentModel
+@using K = CommonLibrary.EurocodeKeys;
+
+<h3>BetonProfiel</h3>
+
+<FluentSelectEnum Label="Vorm"
+                  DisabledEnumItems="DisabledProfielVormen"
+                  @bind-EnumSelectedValue="Model.Profiel.Vorm"
+                  TEnum="ParametrischeProfielen.ParametrischeProfielVormEnum">
+
+
+</FluentSelectEnum>
+<EurocodeInputNumber @bind-Value=Model.Profiel.Breedte Key="@K.ProfielBreedte" MinValue="80" Unit="mm" StringFormat="0"></EurocodeInputNumber>
+<EurocodeInputNumber @bind-Value=Model.Profiel.Hoogte Key="@K.ProfielHoogte" MinValue="80" Unit="mm" StringFormat="0"></EurocodeInputNumber>
+
+
+@* <FluentNumberField Label="Breedte [mm]" @bind-Value="@Model.Profiel.Breedte" Step="50" Min="80"></FluentNumberField> *@
+@* <FluentNumberField Label="Hoogte [mm]" @bind-Value="@Model.Profiel.Hoogte" Step="50" Min="50"></FluentNumberField> *@
+
+
+
+
+
+
+
+
+
+@if (showB1)
+{
+    <FluentNumberField Label="B1 [mm]" @bind-Value="@Model.Profiel.B1" Step="10" Min="10"></FluentNumberField>
+}
+@if (showH1){
+    <FluentNumberField Label="H1 [mm]" @bind-Value="@Model.Profiel.H1" Step="10" Min="10"></FluentNumberField>
+}
+@if (showB2)
+{
+    <FluentNumberField Label="B2 [mm]" @bind-Value="@Model.Profiel.B2" Step="10" Min="10"></FluentNumberField>
+}
+@if (showH2)
+{
+    <FluentNumberField Label="H2 [mm]" @bind-Value="@Model.Profiel.H2" Step="10" Min="10"></FluentNumberField>
+}
+
+
+
+<EurocodeInputNumber ReadOnly=true Value=Model.Profiel.Area Key="@K.BetonDoorsnedeOppervlak" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.Profiel.Wy Key="Wy" Unit="mm³" StringFormat="0"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.Profiel.Iy Key="Iy" Unit="mm³" StringFormat="0"></EurocodeInputNumber>
+
+
+
+
+
+
+@code {
+    [Parameter, EditorRequired]
+    public BetonProfielen.BetonProfiel Model { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<BetonProfielen.BetonProfiel> ModelChanged { get; set; }
+
+    [Parameter]
+    public ParametrischeProfielen.ParametrischeProfielVormEnum[] DisabledProfielVormen{ get; set; } = [
+        ParametrischeProfielVormEnum.Rond,
+        ParametrischeProfielVormEnum.Buis,
+        ParametrischeProfielVormEnum.Koker,
+        ParametrischeProfielVormEnum.U1,
+        ParametrischeProfielVormEnum.U2,
+        ParametrischeProfielVormEnum.U3,
+        ParametrischeProfielVormEnum.U4,
+        ParametrischeProfielVormEnum.L1,
+        ParametrischeProfielVormEnum.L2,
+        ParametrischeProfielVormEnum.L3,
+        ParametrischeProfielVormEnum.L4,
+        ParametrischeProfielVormEnum.Z1,
+        ParametrischeProfielVormEnum.Z2,
+        ParametrischeProfielVormEnum.T1,
+        ParametrischeProfielVormEnum.T2,
+        ParametrischeProfielVormEnum.T3,
+        ParametrischeProfielVormEnum.T4,
+        ParametrischeProfielVormEnum.I,
+        ParametrischeProfielVormEnum.H,
+        ParametrischeProfielVormEnum.EigenProfiel,
+
+
+
+
+
+    ];
+
+
+
+    protected override void OnInitialized()
+    {
+        // Subscribe to property change notifications
+        Model.Profiel.PropertyChanged += Model_PropertyChanged;
+    }
+
+    private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ParametrischeProfielen.ParametrischProfielContext.Vorm))
+        {
+            //lastUpdated = $"Name changed to: {model.Name}";
+
+            UpdateControls(Model.Profiel.Vorm);
+
+            // Trigger re-render
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        // Unsubscribe to avoid memory leaks
+        Model.Profiel.PropertyChanged -= Model_PropertyChanged;
+    }
+
+
+    private bool showB1 = false;
+    private bool showH1 = false;
+    private bool showB2 = false;
+    private bool showH2 = false;
+
+
+    public void UpdateControls(ParametrischeProfielen.ParametrischeProfielVormEnum? vorm)
+    {
+        if (vorm == null) return;
+        switch (vorm)
+        {
+            default:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.Rechthoek:
+                showB1 = showH1 = showB2 = showH2 = false;
+                break;
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.L1:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.L2:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.L3:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.L4:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.U1:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.U2:
+                showB1 = showH1 = true;
+                showB2 = showH2 = false;
+                break;
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.T1:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.T2:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.T3:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.T4:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.I:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.H:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.Z1:
+            case ParametrischeProfielen.ParametrischeProfielVormEnum.Z2:
+                showB1 = showH1 = showB2 = showH2 = true;
+            break;
+
+
+
+        }
+
+    }
+
+
+}

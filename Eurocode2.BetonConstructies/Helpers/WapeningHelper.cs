@@ -1,5 +1,16 @@
 ﻿namespace Eurocode.BetonConstructies
 {
+    public class WapeningContext
+    {
+        public string Tekst { get; set; } = "8-150";
+
+        public double As { get { return WapeningHelper.GetDsnOpp(Tekst); } }
+
+        private List<string>? _wapgroepen { get { return WapeningHelper.GetWapGroepen(Tekst); } }
+
+        public double HohMaat { get { return WapeningHelper.GetKleinsteHohMaat(_wapgroepen); } }
+    }
+
     public class WapeningHelper
     {
         /// <summary>
@@ -13,6 +24,14 @@
             return n * Math.Pow(d, 2) * Math.PI / 4;
         }
 
+
+        public static List<string>? GetWapGroepen(string wapening)
+        {
+            Char[] splitChars = ['+'];
+            return [.. wapening.Split(splitChars)];
+        }
+
+
         /// <summary>
         /// Voor doorsnede oppervlak van 1 of meerdere staafgroepen (As)
         /// </summary>
@@ -20,19 +39,16 @@
         /// <returns>Doorsnede oppervlak (As)</returns>
         public static double GetDsnOpp(string wapening)
         {
-            // splits 
-            // karakters voor Øk
-            List<char> diameterChars = ['Ø', 'R', 'r', 'D', 'd'];
-            Char[] splitChars = ['+'];
-            List<char> hohChars = ['-'];
-
             // stap 1: splits by 
-            var wapgroepen = wapening.Split(splitChars).ToList();
+            var wapgroepen = GetWapGroepen(wapening);
+
 
             double dsnOpp = 0;
+            if (wapgroepen == null) return dsnOpp;
+
             foreach (var wapgroep in wapgroepen)
             {
-                dsnOpp += GetDsnOppWapGroep(wapgroep.Trim());
+                dsnOpp += GetWapDetails(wapgroep.Trim()).dsnOpp;
             }
             return dsnOpp;
 
@@ -40,7 +56,7 @@
             // 
         }
 
-        private static double GetDsnOppWapGroep(string wapgroep)
+        private static (double dsnOpp, double diam, double? hoh, double? n) GetWapDetails(string wapgroep)
         {
             Char[] diamChars = ['Ø', 'R', 'r', 'D', 'd'];
             char hohChar = '-';
@@ -51,7 +67,7 @@
                 var hohGroep = wapgroep.Split(hohChar).ToList();
                 _ = double.TryParse(hohGroep.First(), out double d);
                 _ = double.TryParse(hohGroep.Last(), out double hoh);
-                return _ = GetDsnOpp(d: d, hoh: hoh);
+                return (GetDsnOpp(d: d, hoh: hoh), d, hoh, null);
             }
             else if (IsCharInString(diamChars, wapgroep))
             {
@@ -59,11 +75,35 @@
                 var nGroep = wapgroep.Split(diamChars).ToList();
                 _ = double.TryParse(nGroep.First(), out double n);
                 _ = double.TryParse(nGroep.Last(), out double d);
-                return GetDsnOpp(n: n, d: d);
+
+                if (n == 0)
+                    n = 1;
+
+
+                return (GetDsnOpp(n: n, d: d), d, null, n);
             }
-            else return 0;
+            else return (0, 0, 1000, 0);
         }
 
+
+        public static double GetKleinsteHohMaat(List<string>? wapGroepen)
+        {
+            if (wapGroepen == null) return 1000;
+
+            List<double> hohMaten = [1000];
+
+            foreach (var wapGroep in wapGroepen)
+            {
+                var hohMaat = GetWapDetails(wapGroep).hoh;
+                if (hohMaat.HasValue)
+                    hohMaten.Add(hohMaat.Value);
+            }
+
+
+
+            return hohMaten.Min();
+
+        }
 
         public static bool IsCharInString(char[] chars, string inputString)
         {
@@ -87,7 +127,7 @@
         /// <param name="d"></param>
         /// <param name="hoh"></param>
         /// <returns></returns>
-        public static double GetDsnOpp(double n = 1, double d = 8, double hoh = 150)
+        public static double GetDsnOpp(double n = 1, double d = 8, double hoh = 1000)
         {
             return n * Math.Pow(d, 2) * Math.PI / 4 / hoh * 1000;
         } // van aantal (n), diameter (d) en hart-op-hart (hoh) naar As (bijvoorbeeld: 2Ø8-300 geeft 335 mm², handig voor beugels en vloer/wand-wapening)

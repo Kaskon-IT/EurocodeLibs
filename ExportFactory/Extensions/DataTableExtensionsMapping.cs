@@ -40,9 +40,19 @@ namespace ExportFactory.Services
         // ALGEMEEN
         private readonly Dictionary<string, AttributesMapping> _algemeen = new()
         {
+
+
+            { K.Wapening, new(sym:"",desc:"wapening") },
+            { K.WapeningToegepast, new(sym:"", desc:"wapening toegepast") },
+            { K.WapeningVoorstel, new(sym:"", desc: "voorstel wapening") },
+
+
+
             { K.TrapOptredeMaat, new(sym:"a~optrede~", desc:"optrede maat")},
             { K.TrapAantredeMaat, new(sym:"a~aantrede~", desc:"aantrede maat")},
             { K.TrapOptredeAantal, new(sym:"n", desc:"aantal optreden")},
+            { K.TrapSchilDikte, new(sym:"h~schil~", desc:"schildikte")},
+
 
 
             { K.MomentArm, new(sym: "a", desc:"arm voor moment") },
@@ -184,7 +194,7 @@ namespace ExportFactory.Services
             { K.DwarskrachtRekenwaarde, new(sym : "V~Ed~",desc : "rekenwaarde dwarskracht", norm : "", art:"" ,vgl: "", format : _kN) },
 
             { "Ved", new(sym : "V~Ed~",desc : "rekenwaarde dwarskracht", norm : "", art:"" ,vgl: "", format : _kN) },
-            { "DwarskrachtWeerstandBeton", new(sym : "V~Rd,c~", desc : "rekenwaarde dwarskracht opneembaar zonder dwarskrachtwapening", norm: "EC2" ,art : "6.2.1 (1)P\r\n6.2.2 (1)\r\n6.2.2 (2)", vgl: "(6.2)\r\n(6.4)", format : _kN) },
+            { K.DwarskrachtWeerstandBeton, new(sym : "V~Rd,c~", desc : "rekenwaarde dwarskracht opneembaar zonder dwarskrachtwapening", norm: "EC2" ,art : "6.2.1 (1)P\r\n6.2.2 (1)\r\n6.2.2 (2)", vgl: "(6.2)\r\n(6.4)", format : _kN) },
             { "DwarskrachtWeerstandStaal", new(sym : "V~Rd,s~", desc : "rekenwaarde dwarskracht opneembaar door dwarskrachtwapening",norm : "EC2", art :  "6.2.1 (1)P\r\n6.2.3 (3)" , vgl : "(6.8)"  , format : _kN) },
             { "DwarskrachtWeerstandMax", new(sym : "V~Rd,max~", desc : "rekenwaarde dwarskracht bovengrens bezwijken drukdiagonalen",norm : "EC2", art :  "6.2.1 (1)P", vgl : "(6.9)", format : _kN) },
             { "DwarskrachtWeerstand", new(sym : "V~Rd~",desc : "rekenwaarde opneembare dwarskracht", norm : "EC2", art:"6.2.1 (2)" ,vgl: "(6.1)", format : _kN) },
@@ -245,13 +255,13 @@ namespace ExportFactory.Services
             { "RhoPeff", new(sym: "|rho|~p,eff~",desc: "= (A~s~ + |xi|~1~ A~p~')/A~c,eff~", norm: "EC2", art: "7.3.4 (2)" , vgl: "(7.10)", format : _formatVerhouding) },
             { "ScheurwijdteVerhoudingElasticiteitsmodulusStaalBeton", new(sym : "|alpha|~e~", desc : "verhouding E~s~ / E~cm~", norm : "EC2", art : "7.3.4 (2)", format : _formatVerhouding) },
             { K.ScheurwijdteBerekend, new(sym: "w~k~", desc: "berekende scheurwijdte",norm: "EC2", art:"7.3.4 (1)",vgl: "(7.8)",format: _mmExact) },
-            { "ScheurwijdteMax", new(sym:"w~max~",desc: "grenswaarde scheurwijdte", norm: "EC2", art: "7.3.1 (5)", format: _mmExact) },
-            { "ScheurwijdteGrenswaardeFactorKx", new(sym:"k~x~",desc: "factor voor w~max~", norm: "EC2", art: "7.3.1 (5)", vgl:"", format: _formatVerhouding) },
-            { "MaximaleScheurAfstandFactorK1", new(sym: "k~1~", desc: "factor aanhechtingseigenschappen", norm:"EC2", art: "7.3.4 (3)", vgl:"", format: _formatVerhouding) },
-            { "MaximaleScheurAfstandFactorK2", new(sym : "k~2~", desc : "factor rekverdeling", norm : "EC2", art : "7.3.4 (3)",vgl:"", format: _formatVerhouding) },
-            { "MaximaleScheurAfstandFactorK3", new(sym : "k~3~", desc : "factor zie nationale bijlage", norm : "EC2", art : "7.3.4 (3)", vgl : "(7.11)", format : _formatVerhouding) },
-            { "MaximaleScheurAfstandFactorK4", new(sym : "k~4~", desc : "factor zie nationale bijlage", norm : "EC2", art : "7.3.4 (3)", vgl : "(7.11)", format : _formatVerhouding) },
-            { "ScheurwijdteAsMin", new(sym:"A~s,min~", desc: "minimale wapening",norm:"EC2", art: "7.3.1", vgl: "", format: _mm2) },
+            { K.ScheurwijdteMax, new(sym:"w~max~",desc: "grenswaarde scheurwijdte", norm: "EC2", art: "7.3.1 (5)", format: _mmExact) },
+            { K.ScheurwijdteKx, new(sym:"k~x~",desc: "factor voor w~max~", norm: "EC2", art: "7.3.1 (5)", vgl:"", format: _formatVerhouding) },
+            { K.ScheurwijdteK1, new(sym: "k~1~", desc: "factor aanhechtingseigenschappen", norm:"EC2", art: "7.3.4 (3)", vgl:"", format: _formatVerhouding) },
+            { K.ScheurwijdteK2, new(sym : "k~2~", desc : "factor rekverdeling", norm : "EC2", art : "7.3.4 (3)",vgl:"", format: _formatVerhouding) },
+            { K.ScheurwijdteK3, new(sym : "k~3~", desc : "factor zie nationale bijlage", norm : "EC2", art : "7.3.4 (3)", vgl : "(7.11)", format : _formatVerhouding) },
+            { K.ScheurwijdteK4, new(sym : "k~4~", desc : "factor zie nationale bijlage", norm : "EC2", art : "7.3.4 (3)", vgl : "(7.11)", format : _formatVerhouding) },
+            { K.ScheurwijdteAsMin, new(sym:"A~s,min~", desc: "minimale wapening",norm:"EC2", art: "7.3.1", vgl: "", format: _mm2) },
             { "WapeningToegepastTekst", new(sym:"A~s,toe~", desc: "toegepaste wapening",norm:"", art: "", vgl: "", format: null) },
 
 

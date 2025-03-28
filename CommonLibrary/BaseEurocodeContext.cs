@@ -20,6 +20,13 @@ namespace CommonLibrary
 
         public abstract bool IsAkkoord();
 
+        // ⚠️ Centrale methode om door te geven of de context waarschuwingen bevat
+        public bool HeeftWaarschuwing()
+        {
+            return Meldingen.Any(m => m.Type == MeldingType.Waarschuwing);
+        }
+
+
         // 🔥 Centrale methode die elke context opnieuw berekent en valideert
         public bool BerekenEnValideer()
         {

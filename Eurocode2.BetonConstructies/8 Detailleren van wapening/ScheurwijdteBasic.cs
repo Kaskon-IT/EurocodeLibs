@@ -1,4 +1,5 @@
-﻿using Eurocode.Grondslagen;
+﻿using CommonLibrary;
+using Eurocode.Grondslagen;
 using ExportFactory.Shared;
 using System.ComponentModel;
 using K = ExportFactory.Services.MappingKeys;
@@ -6,7 +7,7 @@ using K = ExportFactory.Services.MappingKeys;
 namespace Eurocode.BetonConstructies
 {
 
-    public class ScheurwijdteContext
+    public class ScheurwijdteContext : BaseEurocodeContext
     {
         public ScheurwijdteContext()
         {
@@ -204,6 +205,9 @@ namespace Eurocode.BetonConstructies
         public double ScheurwijdteAsMin { get; set; }
 
 
+
+        public WapeningContext Wapening { get; set; } = new() { Tekst = "8-100" };
+
         public double AsToe { get; set; }
         public double AsBen { get; set; }
 
@@ -230,6 +234,38 @@ namespace Eurocode.BetonConstructies
         public enum ScheurwijdteTypeEnum
         {
             Buiging, Trek
+        }
+
+        public override bool IsAkkoord()
+        {
+            return Valideer();
+            //throw new NotImplementedException();
+        }
+
+        protected override void Bereken()
+        {
+            this.VerwerkScheurwijdte();
+            //throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+            // foutmeldingen
+            if (Wk < ScheurwijdteMax)
+            {
+                AddMeldingWaarschuwing("overschrijding maximale scheurwijdte");
+                return false;
+            }
+
+
+            // neutrale meldingen
+            if (AsToe < ScheurwijdteAsMin)
+            {
+                AddMeldingOpmerking("toegepaste wapening is kleiner dan minimale wapening scheurwijdte");
+            }
+
+            return true;
+            //throw new NotImplementedException();
         }
     }
 

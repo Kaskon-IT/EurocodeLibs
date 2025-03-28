@@ -1,4 +1,5 @@
-﻿using ExportFactory.Extensions;
+﻿using CommonLibrary;
+using ExportFactory.Extensions;
 using ExportFactory.Shared;
 using System.ComponentModel;
 
@@ -9,7 +10,7 @@ namespace Eurocode.BetonConstructies
     /// 3.1 Beton en 3.2 Betonstaal
     /// Verzameling gegevens voor berekening van betonconstructies.
     /// </summary>
-    public partial class BetonContext
+    public partial class BetonContext : BaseEurocodeContext
     {
         public BetonContext()
         {
@@ -300,6 +301,32 @@ namespace Eurocode.BetonConstructies
             this.Beta = beta;
         }
 
+
+        public override string ToString()
+        {
+            return this.BetonSterkteKlasseGebruiksvriendelijkeNaam;
+        }
+
+        public override bool IsAkkoord()
+        {
+            // nakijken, volgens mij altijd akkoord
+            return true;
+            //throw new NotImplementedException();
+        }
+
+        protected override void Bereken()
+        {
+            // nakijken, volgens mij niet nodig
+            //throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+
+            // nakijken, volgens mij altijd goed
+            return true;
+            //throw new NotImplementedException();
+        }
 
         public double Alpha { get; set; }
 

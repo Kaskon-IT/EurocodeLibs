@@ -4,6 +4,8 @@
 
 <p>@Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
 
+<EurocodeBetonMaterialen @bind-Model=Model.Beton></EurocodeBetonMaterialen>
+
 
 <EurocodeInputNumber @bind-Value=Model.M Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
 <EurocodeInputNumber @bind-Value=Model.B Key="@K.ProfielBreedte" Unit="mm"></EurocodeInputNumber>
@@ -17,16 +19,17 @@
 <EurocodeInputNumber ReadOnly=true Value=Model.Z Key="Z" Unit="mm"></EurocodeInputNumber>
 
 <EurocodeInputNumber ReadOnly=true Value=Model.SigmaS Key="Staalspanning" Unit="MPa"></EurocodeInputNumber>
-
-
-<EurocodeInputContainer Key="@K.WapeningToegepast" Unit="">
-    <ChildContent>
-        <FluentTextField Value="@Model.Wapening.Tekst"></FluentTextField>
-    </ChildContent>
-</EurocodeInputContainer>
+<EurocodeInputNumber ReadOnly=false Value="test" Key="Test">TEST</EurocodeInputNumber>
 
 
 
+@* <BetonProfiel @bind-Model="profielDemo"></BetonProfiel> *@
+
+
+@* <FluentNumberField @bind-Value="Model.B">B [mm]</FluentNumberField> *@
+@* <FluentNumberField @bind-Value="Model.H">H [mm]</FluentNumberField> *@
+@* <FluentNumberField @bind-Value="Model.ZRef">z-ref [mm]</FluentNumberField> *@
+@* <FluentNumberField ReadOnly="true" Value="Model.D">d [mm]</FluentNumberField> *@
 
 <EurocodeInputNumber ReadOnly=true Value=Model.AsMin Key="AsMin" Unit="mm²"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.AsRequired Key="AsBen" Unit="mm²"></EurocodeInputNumber>

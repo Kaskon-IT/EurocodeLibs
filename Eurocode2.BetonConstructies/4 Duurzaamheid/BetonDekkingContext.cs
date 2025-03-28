@@ -130,7 +130,6 @@ namespace Eurocode.BetonConstructies
         public IEnumerable<MilieuklasseEnum> Milieuklassen =>
             SelectedMilieuklassen.Any() ? SelectedMilieuklassen : [MilieuklasseEnum.X0];
 
-
         public IEnumerable<Eurocode.BetonConstructies.MilieuklasseEnum> SelectedMilieuklassen
         {
             get => _selectedMilieuklassen;
@@ -342,7 +341,8 @@ namespace Eurocode.BetonConstructies
 
         public override string? ToString()
         {
-            return base.ToString();
+            return $"nominale dekking={DekkingNom} , ({ConstructieklasseUserFriendlyName}, {MilieuklassenUserFriendlyName}, {Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam})";
+            //return base.ToString();
         }
 
         protected override void Bereken()

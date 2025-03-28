@@ -1,0 +1,375 @@
+﻿@using Plotly.Blazor
+@using Plotly.Blazor.LayoutLib
+@using Plotly.Blazor.Traces
+@using Plotly.Blazor.Traces.ScatterLib
+@using Plotly.Blazor.LayoutLib.ShapeLib
+
+<h3>BetonProfielChart</h3>
+
+<FluentButton OnClick="@(() => UpdateChart())">Update</FluentButton>
+<PlotlyChart @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart"/>
+
+@code {
+    [Parameter, EditorRequired]
+    public ParametrischeProfielen.ParametrischProfielContext Model { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<ParametrischeProfielen.ParametrischProfielContext> ModelChanged{ get; set; }
+
+
+    [Parameter]
+    public bool TekenVanuitZwaartepunt { get; set; } = true;
+
+    private List<object> xValues = [];
+    private List<object> yValues = [];
+
+
+
+    PlotlyChart chart = new();
+    Config config = new Config();
+    Layout layout = new Layout();
+    IList<ITrace> data = new List<ITrace>
+    {
+        new Scatter
+        {
+            Name = "ScatterTrace",
+            Mode = ModeFlag.Lines | ModeFlag.Markers,
+            X = new List<object>{0, 400 ,400, 0},
+            Y = new List<object>{0,0,500,500}
+        }
+    };
+
+
+    protected override async void OnInitialized()
+    {
+        if (Model == null) return;
+
+        var startDate = DateTime.Now;
+
+        config = new Config
+            {
+                //AutoSizable = true,
+                Responsive = true,
+                Editable = !true,
+
+            };
+
+        layout = new Layout
+            {
+                //AutoSize = true,
+                Title = new Title
+                {
+                    Text = "Profiel"
+                },
+                XAxis = new List<XAxis>(){
+                new()
+                {
+                    //AutoRange = Plotly.Blazor.LayoutLib.XAxisLib.AutoRangeEnum.True,
+                    Title = new(){Text = "Breedte [mm]"},
+                    ShowGrid = false,
+                    ShowLine = false,
+                    ZeroLine = false,
+                    Tick0 = 0,
+
+                }
+            },
+                YAxis = new List<YAxis>(){
+                new()
+                {
+                    //AutoRange = Plotly.Blazor.LayoutLib.YAxisLib.AutoRangeEnum.True,
+                    Title = new(){Text = "Hoogte [mm]"},
+                    ScaleAnchor = "x",
+                    ScaleRatio = 1,
+                    ShowGrid = false,
+                    ZeroLine = false,
+                    ShowLine = false,
+                    Tick0 = 0,
+
+                }
+            },
+
+                //PaperBgColor = Theme.PaletteDark.Surface.ToString(),
+                //PlotBgColor = Theme.PaletteDark.Surface.ToString(),
+                Font = new Font
+                {
+                    //Color = Theme.PaletteDark.TextPrimary.ToString()
+                },
+                Shapes = new List<Shape>()
+            {
+                new()
+                {
+                    Name = "Profiel",
+                    Type = TypeEnum.Rect,
+                    X0 = 0,
+                    X1 = Model.Breedte,
+                    Y0 = 0,
+                    Y1 = Model.Hoogte,
+                    XRef = "x",
+                    YRef = "y",
+                    Line = new()
+                    {
+                        Width = 1
+                    },
+                    FillColor = "rgba(84,166,143,1)",
+                    Opacity = 0.3m
+                },
+
+            }
+            };
+
+        data = new List<ITrace>
+        {
+            new Scatter
+            {
+                Name = "ScatterTrace",
+                Mode = ModeFlag.Markers,
+                X = new List<object>{0, Model.Breedte },
+                Y = new List<object>{0, Model.Hoogte }
+            },
+        };
+
+        await UpdateChart(false);
+        base.OnInitialized();
+
+    }
+
+
+
+
+    private async Task UpdateChart(bool redraw=true)
+    {
+        if (Model == null) return;
+
+
+        var punten = Model.PolygonOmZwPnt;
+        if (!TekenVanuitZwaartepunt)
+            punten = Model.Polygon;
+
+        var xMin = punten.Min(p => p.X);
+        var xMax = punten.Max(p => p.X);
+        var yMin = punten.Min(prop => prop.Y);
+        var yMax = punten.Max(prop => prop.Y);
+
+        xValues = punten.Select(prop => (object)prop.X).ToList();
+        yValues = punten.Select(prop => (object)prop.Y).ToList();
+
+        List<object> xTickValues = [(object)xMin, (object)0, (object)xMax];
+        List<object> yTickValues = [(object)yMin, (object)0, (object)yMax];
+
+        //List<object> xTickText = [(object)xMin.ToString(), (object)0, (object)xMax.ToString()];
+        //List<object> yTickText = [(object)yMin.ToString(), (object)0, (object)yMax.ToString()];
+
+
+        data = new List<ITrace>
+        {
+            new Scatter
+            {
+                Name = "Polygon",
+                Mode = ModeFlag.Lines | ModeFlag.Markers,
+                X = xValues,
+                Y = yValues,
+                ShowLegend = false,
+                Fill = FillEnum.ToSelf, 
+
+            },
+
+
+
+
+
+
+            // new Scatter{
+            //     Name = "Breedte",
+            //     Mode = ModeFlag.Markers,
+            //     X = new List<object>(){xMin, xMax},
+            //     Y = new List<object>(){yMin -100, yMin -100},
+            //     Marker = new Marker(){
+            //         Symbol = Plotly.Blazor.Traces.ScatterLib.MarkerLib.SymbolEnum.CircleDot,
+
+            //     },
+            //     ShowLegend = false,
+
+            // },
+
+
+
+
+            // new Scatter{
+            //     Name = "ZwPnt",
+            //     Mode = ModeFlag.Markers,
+            //     Text = "zwpnt",
+            //     X = new List<object>(){(object)Model.Zwaartepunt.X },
+            //     Y = new List<object>(){(object)Model.Zwaartepunt.Y },
+            //     Marker = new Marker(){ Symbol = Plotly.Blazor.Traces.ScatterLib.MarkerLib.SymbolEnum.CircleCrossOpen, Size = 20},
+            // }
+        };
+
+
+        if (TekenVanuitZwaartepunt)
+        {
+            data.Add(new Scatter
+                {
+                    Name = "Y",
+                    Mode = ModeFlag.Lines | ModeFlag.Markers | ModeFlag.Text,
+                    X = new List<object>() { (object)0, (object)(xMax + 100) },
+                    Y = new List<object>() { (object)0, 0 },
+                    Marker = new Marker()
+                    {
+                        Symbol = Plotly.Blazor.Traces.ScatterLib.MarkerLib.SymbolEnum.Arrow,
+                        Color = "green",
+                        Size = 20,
+                        AngleRef = Plotly.Blazor.Traces.ScatterLib.MarkerLib.AngleRefEnum.Previous
+                    },
+                    ShowLegend = false,
+                    TextArray = ["", "Y-as"],
+                    TextPosition = TextPositionEnum.MiddleRight,
+
+                });
+
+            data.Add(new Scatter
+                {
+                    Name = "Z",
+                    Mode = ModeFlag.Lines | ModeFlag.Markers | ModeFlag.Text,
+                    X = new List<object>() { (object)0, 0 },
+                    Y = new List<object>() { (object)0, (object)(yMax + 100) },
+                    Marker = new Marker()
+                    {
+                        Symbol = Plotly.Blazor.Traces.ScatterLib.MarkerLib.SymbolEnum.Arrow,
+                        Color = "blue",
+                        Size = 20,
+                        AngleRef = Plotly.Blazor.Traces.ScatterLib.MarkerLib.AngleRefEnum.Previous
+                    },
+                    ShowLegend = false,
+                    TextArray = ["", "Z-as"],
+                    TextPosition = TextPositionEnum.TopCenter,
+
+
+
+                });
+        }
+
+        layout.AutoSize = true;
+        layout.Height = 500;
+
+        layout.XAxis = new List<XAxis>()
+        {
+            new(){
+                ZeroLine = false,
+                ShowLine = false,
+                ShowGrid = !false,
+                //AutoRange = Plotly.Blazor.LayoutLib.XAxisLib.AutoRangeEnum.Max,
+                //Range = new List<object>{0, SampleProject.BendingResults.B},
+
+                //RangeMode = Plotly.Blazor.LayoutLib.XAxisLib.RangeModeEnum.Normal,
+                //Tick0 = 0,
+                //Ticks = Plotly.Blazor.LayoutLib.XAxisLib.TicksEnum.Outside,
+                TickAngle = -90,
+                //DTick = Model.Breedte,
+
+                TickMode = Plotly.Blazor.LayoutLib.XAxisLib.TickModeEnum.Array,
+                TickVals = xTickValues,
+                //TickText = xTickText,
+
+            }
+        };
+
+        layout.YAxis = new List<YAxis>(){
+            new(){
+                  Title = new(){Text = "Hoogte [mm]"},
+                    ScaleAnchor = "x",
+                    ScaleRatio = 1,
+                ZeroLine = false,
+                ShowLine = false,
+                ShowGrid = !false,
+
+                //RangeMode = Plotly.Blazor.LayoutLib.YAxisLib.RangeModeEnum.Normal,
+                //Ticks = Plotly.Blazor.LayoutLib.YAxisLib.TicksEnum.Outside,
+                //DTick = Model.Hoogte,
+                //Tick0 = 0,
+
+                TickMode = Plotly.Blazor.LayoutLib.YAxisLib.TickModeEnum.Array,
+                TickVals = yTickValues,
+                //TickText = yTickText,
+            }
+        };
+
+
+        
+
+        layout.Annotations = new List<Annotation>()
+        {
+            //  new Annotation{
+            //     X = xMin,
+            //     Y = yMin -100,
+            //     Ax = xMax,
+            //     Ay = yMin - 100,
+            //     XRef = "x",
+            //     YRef = "y",
+            //     AXref = "x",
+            //     AyRef = "y",
+            //     ShowArrow = true,
+            //     ArrowSize = 1.5M,
+            //     Arrowhead = 2,
+            //     ArrowWidth = 2.0M,
+
+
+            // },
+            // new Annotation{
+            //     X = ((xMin + xMax) / 2),
+            //     Y = yMin - 100 + 50,
+            //     Text = (xMax - xMin).ToString("0"),
+                
+            //     ShowArrow = false,
+            //     Font = new Plotly.Blazor.LayoutLib.AnnotationLib.Font(){Family = "Verdana"},
+
+            // }
+        };
+
+        layout.Shapes = new List<Shape>()
+        {
+            // new()
+            // {
+            //     Name = "Profiel",
+            //     Type = TypeEnum.Rect,
+            //     X0 = 0,
+            //     X1 = Model.Breedte,
+            //     Y0 = 0,
+            //     Y1 = Model.Hoogte,
+            //     XRef = "x",
+            //     YRef = "y",
+            //     Line = new()
+            //     {
+            //         Width = 2,
+            //         Color = "rgba(0,0,0,1)",
+            //     },
+            //     //FillColor = "rgba(84,166,143,1)",
+            //     Opacity = 0.5m
+            // },
+
+        };
+
+
+
+
+
+        try{
+
+            if (redraw)
+            {
+                await chart.Update(data, layout); // werkt niet... todo uitzoeken
+                await chart.NewPlot();
+            }
+
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+
+      
+    }
+
+    
+
+}

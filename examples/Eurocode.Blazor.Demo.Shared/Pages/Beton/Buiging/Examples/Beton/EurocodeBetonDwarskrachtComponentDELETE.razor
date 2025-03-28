@@ -2,9 +2,7 @@
 @using Eurocode.BetonConstructies.SpecifiekeRegels
 @using K = CommonLibrary.EurocodeKeys
 
-@inject Services.ReadOnlyService ReadOnlyService
-
-beton:@Model.Beton.ToString();
+@inject EurocodeRazorClassLibrary.Services.ReadOnlyService ReadOnlyService
 
 
 
@@ -55,8 +53,8 @@ beton:@Model.Beton.ToString();
 
 
 
-    //[Parameter]
-    //public BetonContext Beton { get; set; } = new();
+    [Parameter]
+    public BetonContext Beton { get; set; } = new();
 
     [Parameter]
     public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
