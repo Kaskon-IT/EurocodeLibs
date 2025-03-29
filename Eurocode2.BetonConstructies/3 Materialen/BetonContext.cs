@@ -92,8 +92,25 @@ namespace Eurocode.BetonConstructies
         public double FckCubeEigenOpgave { get; set; }
 
 
+
+        private BetonsterkteklasseEnum? _betonsterkteklasse = BetonsterkteklasseEnum.C40_50;
+
         [TableColumn("Betonsterkteklasse", Order = -20)]
-        public BetonsterkteklasseEnum? Betonsterkteklasse { get; set; } = BetonsterkteklasseEnum.C40_50;
+        public BetonsterkteklasseEnum? Betonsterkteklasse
+        {
+            get => _betonsterkteklasse;
+            set
+            {
+                if (_betonsterkteklasse != value)
+                {
+                    _betonsterkteklasse = value;
+                    BerekenEnValideer();
+                }
+            }
+        }
+
+
+
 
         //[TableColumn("Betonsterkteklasse", HeaderTextPivot = "&nbsp;\tbetonsterkteklasse", Order = -10)]
         public string BetonSterkteKlasseGebruiksvriendelijkeNaam

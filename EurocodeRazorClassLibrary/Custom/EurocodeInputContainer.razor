@@ -14,7 +14,7 @@
         </FluentTooltip>
     }
 
-        
+
 
     @if(LabelPosition == LabelPosition.Left)
     {
@@ -198,7 +198,7 @@
 }
 
 @code {
-   
+
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
@@ -211,7 +211,7 @@
     [Parameter]
     public LabelType LabelType { get; set; } = LabelType.SymbolAndDescription;
 
-   
+
 
     [Parameter]
     public bool Disabled { get; set; } = false;
@@ -223,7 +223,7 @@
     [Parameter]
     public RenderFragment? TooltipContent { get; set; }
 
-      
+
 
 
     [Parameter]
@@ -248,7 +248,7 @@
     private string? ErrorMessage { get; set; }
     private bool IsFocused { get; set; } = false;
 
-   
+
 
 
     private string? GetTooltipId() =>
@@ -277,13 +277,13 @@
     // Detecteer wijzigingen in de parent (bij gebruik Value="")
     protected override void OnParametersSet()
     {
-        
+
     }
 
-       
 
-   
-   
+
+
+
 
 
 
@@ -315,6 +315,8 @@
                 markup += $" {Mapping.Description}";
             }
         }
+        if (string.IsNullOrWhiteSpace(markup))
+            return null;
         return GetMarkupString(markup, true);
     }
 
@@ -325,6 +327,8 @@
         {
             markup = $"{Mapping.Description}";
         }
+        if (string.IsNullOrWhiteSpace(markup))
+            return null;
         return GetMarkupString(markup, false);
     }
 

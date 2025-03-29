@@ -5,6 +5,9 @@
 beton:@Model.Beton.ToString()
 dekking:@Model.Dekking.ToString()
 
+<EurocodeInputContainer Key="Wapening">
+    <FluentTextField @bind-Value="Model.Wapening.Tekst"></FluentTextField>
+</EurocodeInputContainer>
 
 <EurocodeInputNumber ReadOnly=true Value=Model.AsToe Key="@K.AsToe" Unit="mm²"></EurocodeInputNumber>
 
@@ -13,6 +16,12 @@ dekking:@Model.Dekking.ToString()
 <EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteMax" Key="@K.ScheurwijdteMax" Unit="mm"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value="Model.Wk" Key="@K.ScheurwijdteBerekend" Unit="mm" MaxValue="Model.ScheurwijdteMax"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value="Model.Mcr" Key="@K.MomentScheurmoment" Unit="kNm"></EurocodeInputNumber>
+
+
+<EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteGrenswaarde.Wmax" Key="@K.ScheurwijdteMax" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteMinimumWapening.AsMin" Key="@K.ScheurwijdteAsMin" Unit="mm²"></EurocodeInputNumber>
+
+
 
 
 

@@ -3,20 +3,32 @@
 
 <h3>Buiging basis</h3>
 <p>Gebruikte materialen voor de componenten op deze pagina</p>
-<EurocodeBetonMaterialen Model="SampleProject?.BendingResults.Beton" 
-                         ShowUserFriendly=true></EurocodeBetonMaterialen>
 
-<EurocodeBetonMaterialen @bind-Model="@SampleProject.BendingResults.Beton"></EurocodeBetonMaterialen>
+@* <EurocodeBetonMaterialen @bind-Model="@SampleProject.BendingResults.Beton" 
+                         ShowUserFriendly=true></EurocodeBetonMaterialen> *@
 
-<h2>Voorbeelden</h2>
-<DemoSection Title="Basic" Component="typeof(BuigingBasisDefault)"/>
+@if (SampleProject != null)
+{
+    <EurocodeBetonMaterialen @bind-Model="@SampleProject.BendingResults.Beton"></EurocodeBetonMaterialen>
+    <FluentButton OnClick="ChangeState">Ververs handmatig</FluentButton>
 
-<ApiDocumentation Component="typeof(BuigingBasic)" />
-<ApiDocumentation Component="typeof(PlotlyChart)" />
+    <BuigingBasicComponent @bind-Model="SampleProject.BendingResults"></BuigingBasicComponent>
+
+}
+
+    <h2>Voorbeelden</h2>
+    <DemoSection Title="Basic" Component="typeof(BuigingBasisDefault)"/>
+
+    <ApiDocumentation Component="typeof(BuigingBasic)" />
+    <ApiDocumentation Component="typeof(PlotlyChart)" />
 
 
 @code {
     [CascadingParameter]
     public SampleProject? SampleProject { get; set; }
 
+    public void ChangeState()
+        {
+        StateHasChanged();
+        }
 }

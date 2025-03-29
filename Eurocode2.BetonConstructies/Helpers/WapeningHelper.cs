@@ -58,7 +58,7 @@
 
         private static (double dsnOpp, double diam, double? hoh, double? n) GetWapDetails(string wapgroep)
         {
-            Char[] diamChars = ['Ø', 'R', 'r', 'D', 'd'];
+            Char[] diamChars = ['Ø', 'R', 'r', 'D', 'd', 'x', 'X', 'ø', '®', '×', '*'];
             char hohChar = '-';
             // 8-150
             if (wapgroep.Contains(hohChar))

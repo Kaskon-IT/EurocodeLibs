@@ -11,7 +11,18 @@ namespace Eurocode.BetonConstructies
     {
         public ScheurwijdteContext()
         {
+            // default constructor, let op geen referentie naar dekking, beton en NB
+            // maar dit kan later gedaan worden.
+            BetonContext beton = new();
+            BetonDekkingContext dekking = new();
+            NationaleBijlageEnum nationaleBijlage = NationaleBijlageEnum.NL;
 
+            Beton = beton;
+            Dekking = dekking;
+
+            ScheurwijdteGrenswaarde = new(dekking, nationaleBijlage);
+            ScheurwijdteMinimumWapening = new() { Beton = beton };
+            NationaleBijlage = nationaleBijlage;
         }
 
         public ScheurwijdteContext(double momBGT, double momUGT, BetonContext beton, BetonDekkingContext dekking, NationaleBijlageEnum nationaleBijlage)
@@ -21,9 +32,27 @@ namespace Eurocode.BetonConstructies
             Beton = beton;
             Dekking = dekking;
             ScheurwijdteGrenswaarde = new(dekking, nationaleBijlage);
+            ScheurwijdteMinimumWapening = new() { Beton = beton };
             NationaleBijlage = nationaleBijlage;
 
             //ScheurwijdteExtensions.VerwerkScheurwijdte(this);
+        }
+
+        public void SetBeton(BetonContext beton)
+        {
+            this.Beton = beton;
+            this.Dekking.Beton = beton;
+            this.ScheurwijdteMinimumWapening.Beton = beton;
+        }
+        public void SetDekking(BetonDekkingContext dekking)
+        {
+            this.Dekking = dekking;
+            this.ScheurwijdteGrenswaarde.DekkingEnDuurzaamheid = dekking;
+        }
+        public void SetNationaleBijlage(NationaleBijlageEnum nationaleBijlage)
+        {
+            this.NationaleBijlage = nationaleBijlage;
+            this.ScheurwijdteGrenswaarde.NationaleBijlage = nationaleBijlage;
         }
 
         // input
@@ -208,7 +237,10 @@ namespace Eurocode.BetonConstructies
 
         public WapeningContext Wapening { get; set; } = new() { Tekst = "8-100" };
 
-        public double AsToe { get; set; }
+        public double AsToe
+        {
+            get { return Wapening.As; }
+        }
         public double AsBen { get; set; }
 
 
@@ -289,7 +321,8 @@ namespace Eurocode.BetonConstructies
             sw.Staalspanning = sw.GetStaalspanning();
             sw.Act = sw.GetAct();
             sw.ScheurwijdteAsMin = sw.GetAsMin();
-            sw.AsToe = WapeningHelper.GetDsnOpp(sw.WapeningToegepastTekst);
+
+            //sw.AsToe = WapeningHelper.GetDsnOpp(sw.WapeningToegepastTekst);
 
             sw.StaalspanningOptredend = sw.GetStaalspanningOptredend();
             sw.Rho = sw.GetRho();

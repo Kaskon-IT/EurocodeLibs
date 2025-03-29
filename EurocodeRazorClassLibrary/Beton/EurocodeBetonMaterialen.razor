@@ -70,6 +70,12 @@ else
     [Parameter]
     public EventCallback<BetonContext> ModelChanged { get; set; }
 
+    protected override void OnInitialized()
+    {
+        Model.OnUpdated += StateHasChanged;
+    }
+
+
     protected override void OnParametersSet()
     {
         // React op modelwijzigingen

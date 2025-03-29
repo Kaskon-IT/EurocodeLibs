@@ -33,6 +33,7 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
 
         public OpleggingContext OpleggingDemo { get; set; } = new();
         public UitkragingContext UitkragingDemo { get; set; } = new();
+        public ScheurwijdteContext ScheurwijdteDemo { get; set; } = new();
 
 
         public SampleProject(GrondslagenContext grondslagen)
@@ -45,6 +46,8 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
             //DwarskrachtDemo = new(Beton, new ParametrischeProfielen.ParametrischProfielContext(), 100);
             DwarskrachtDemo = DwarskrachtWap.GetDwarskrachtWapContext(Beton, new ParametrischeProfielen.ParametrischProfielContext(), 21.8, 350, 102, 2, 8, [75, 150, 300]);
             UitkragingDemo = new() { Beton = Beton };
+            ScheurwijdteDemo = new(75, 100, Beton, Dekking, Grondslagen.NationaleBijlage ?? NationaleBijlageEnum.NL);
+
 
         }
 

@@ -16,6 +16,11 @@ namespace CommonLibrary
 
         public event Action? OnUpdated; // 🔥 Event voor automatische UI-updates
 
+        protected BaseEurocodeContext()
+        {
+            OnUpdated += () => Console.WriteLine($"{GetType().Name} bijgewerkt!");
+        }
+
         public bool IsValidated { get; private set; }
 
         public abstract bool IsAkkoord();

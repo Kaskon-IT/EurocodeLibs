@@ -105,14 +105,14 @@ namespace Eurocode.BetonConstructies
             // constructores
             public ScheurwijdteGrenswaarde(BetonDekkingContext duurzaamheid, NationaleBijlageEnum nationaleBijlage)
             {
-                Duurzaamheid = duurzaamheid;
+                DekkingEnDuurzaamheid = duurzaamheid;
                 NationaleBijlage = nationaleBijlage;
                 Initialiseer();
             }
 
 
 
-            public BetonDekkingContext Duurzaamheid { get; set; } = new();
+            public BetonDekkingContext DekkingEnDuurzaamheid { get; set; } = new();
             public NationaleBijlageEnum NationaleBijlage { get; set; } = NationaleBijlageEnum.EU;
             public ElementType ElementType { get; set; } = ElementType.Standaard;
 
@@ -156,7 +156,7 @@ namespace Eurocode.BetonConstructies
                         _factorKx = 1.0;
                         break;
                     case Grondslagen.NationaleBijlageEnum.NL:
-                        _factorKx = Math.Min(2, Duurzaamheid.DekkingToe / Duurzaamheid.DekkingNom); // niet groter dan 2, dus math.min()
+                        _factorKx = Math.Min(2, DekkingEnDuurzaamheid.DekkingToe / DekkingEnDuurzaamheid.DekkingNom); // niet groter dan 2, dus math.min()
                         break;
                 }
             }
@@ -164,7 +164,7 @@ namespace Eurocode.BetonConstructies
             public void SetScheurwijdteMax()
             {
                 _wMax = 0.40;
-                foreach (MilieuklasseEnum mk in Duurzaamheid.Milieuklassen)
+                foreach (MilieuklasseEnum mk in DekkingEnDuurzaamheid.Milieuklassen)
                 {
                     var wmax = GetScheurwijdteMax(mk, ElementType, NationaleBijlage);
                     if (wmax < _wMax)

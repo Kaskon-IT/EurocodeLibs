@@ -110,7 +110,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public WapeningContext Wapening { get; set; }
+        public WapeningContext Wapening { get; set; } = new WapeningContext();
 
 
         public double SigmaS

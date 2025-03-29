@@ -41,7 +41,7 @@
     else
     {
         <FluentTextField 
-            Class="number-field"
+        Class="number-field"
         @bind-Value="InputValue"
         @oninput="ValidateInput"
         @bind-MinValue="MinValue"
@@ -97,8 +97,8 @@
 
     /* Specifiek voor numerieke invoer, rechts uitgelijnd */
     .number-field::part(control) {
-        text-align: right;
-        /* Omdat getallen RECHTS uitgelijnd horen te zijn */
+    text-align: right;
+    /* Omdat getallen RECHTS uitgelijnd horen te zijn */
     }
 
 
@@ -353,8 +353,8 @@
             InputValue = FormatValue(Value);
         }
 
-        
-      
+
+
 
         //MappingService.Data.
         //var mappingService = new ExportFactory.Services.DataTableMappingService();
@@ -500,7 +500,7 @@
     {
         if (e.Value is string value)
         {
-      
+
 
             ValidateMinMax(value);
 
@@ -572,7 +572,7 @@
     value is not null && double.TryParse(value.ToString(), out var number)
         ? FormatNumber(number)
         : string.Empty;
-    
+
     // Hulpmethode om getallen te formatteren
     private string FormatNumber(double number)
     {
@@ -630,6 +630,7 @@
                 markup += $" {Mapping.Description}";
             }
         }
+        if (string.IsNullOrWhiteSpace(markup)) return null;
         return GetMarkupString(markup, true);
     }
 
