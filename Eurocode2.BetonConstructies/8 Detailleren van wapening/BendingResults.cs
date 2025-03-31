@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using ExportFactory.Shared;
+using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
 {
@@ -14,11 +15,15 @@ namespace Eurocode.BetonConstructies
     public class BendingResults : BaseEurocodeContext
     {
         private double _asApplied;
-        private BerekeningTypeEnum? _berekeningType = BerekeningTypeEnum.BepaalBenodigeWapening;
+        private BerekeningTypeEnum? _berekeningType = BerekeningTypeEnum.ControleerWapening;
+        private Schematisering.ConstructiefModelEnum? _constructiefModel = Schematisering.ConstructiefModelEnum.Balk;
+
 
         public BendingResults()
         {
             Beton = new();
+            Wapening = new();
+            Wapening.PropertyChanged += OnWapeningChanged;
         }
 
         public BendingResults(BetonContext beton, double b, double h, double zRef, double m)
@@ -28,9 +33,22 @@ namespace Eurocode.BetonConstructies
             H = h;
             ZRef = zRef;
             M = m;
+            Wapening = new();
+            Wapening.PropertyChanged += OnWapeningChanged;
             BerekenEnValideer();
         }
 
+        private void OnWapeningChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // Roep de berekening aan bij wijzigingen binnen de WapeningContext
+            if (e.PropertyName == nameof(WapeningContext.Tekst))
+            {
+                BerekenEnValideer();
+            }
+
+            Console.WriteLine($"Wapening (context) gewijzigd: {e.PropertyName}");
+            // Hier kun je aanvullende acties uitvoeren, zoals andere properties bijwerken.
+        }
 
 
 
@@ -48,10 +66,24 @@ namespace Eurocode.BetonConstructies
 
         }
 
-
+        public Schematisering.ConstructiefModelEnum? ConstructiefModel
+        {
+            get => _constructiefModel;
+            set
+            {
+                if (_constructiefModel != value)
+                {
+                    _constructiefModel = value;
+                    BerekenEnValideer();
+                }
+            }
+        }
 
 
         public BetonContext Beton { get; set; }
+        public ParametrischeProfielen.ParametrischProfielContext? Profiel { get; set; } // als geen profiel, dan rechthoek BxH
+
+
 
         [TableColumn("Positie", order: 0)]
         public string Name { get; set; } = "";
@@ -152,8 +184,37 @@ namespace Eurocode.BetonConstructies
 
         }
 
+        private WapeningContext _wapening = new WapeningContext();
+        public WapeningContext Wapening
+        {
 
-        public WapeningContext Wapening { get; set; } = new WapeningContext();
+            get => _wapening;
+            set
+            {
+                if (_wapening != value)
+                {
+                    // Koppel oude event los
+                    if (_wapening != null)
+                    {
+                        _wapening.PropertyChanged -= OnWapeningChanged;
+                    }
+
+                    _wapening = value;
+
+                    // Koppel nieuwe event
+                    if (_wapening != null)
+                    {
+                        _wapening.PropertyChanged += OnWapeningChanged;
+                    }
+
+                    BerekenEnValideer();
+                }
+            }
+        }
+
+
+
+
 
 
         public double SigmaS
@@ -192,6 +253,17 @@ namespace Eurocode.BetonConstructies
                 return Math.Min(AsMin1, AsMin2);
             }
         }
+
+        public double AsMax
+        {
+            get
+            {
+                return Schematisering.GetAsMax(ConstructiefModel, this.Profiel?.Area ?? (this.B * this.H));
+                //return 0.04 * this.Profiel?.Area ?? (this.B * this.H);
+                //return ConstructiefModel?.GetAsMax(this.Profiel?.Area ?? (this.B * this.H));
+            }
+        }
+
 
         public double AsBerekend
         {
@@ -247,13 +319,17 @@ namespace Eurocode.BetonConstructies
                 //Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
                 return false;
             }
-            if (_asApplied < AsRequired)
+            if (AsApplied < AsRequired)
             {
                 AddMeldingWaarschuwing("onvoldoende wapening");
                 //Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
                 return false;
             }
-            if (_asApplied > SpecifiekeRegels.Balken.GetAsMax(B, H))
+
+
+
+
+            if (AsApplied > this.AsMax)
             {
                 AddMeldingWaarschuwing("overschrijding maximale wapening (voor balk)");
                 return false;

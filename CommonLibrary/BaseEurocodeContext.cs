@@ -38,36 +38,31 @@ namespace CommonLibrary
             ClearMeldingen(); // 🧹 Oude meldingen wissen
             Bereken(); // 🚀 Context-specifieke berekeningen uitvoeren
             IsValidated = Valideer(); // ✅ Validaties uitvoeren
-
             OnUpdated?.Invoke(); // 🔥 UI wordt automatisch geüpdatet
             return IsValidated;
         }
 
-        protected abstract void Bereken(); // Implementatie per context
-        protected abstract bool Valideer(); // Implementatie per context
+
+        protected abstract void Bereken();
+        protected abstract bool Valideer();
 
         public void AddMelding(Melding melding)
         {
             Meldingen.Add(melding);
-            //OnMeldingenChanged?.Invoke();
         }
 
 
         public void ClearMeldingen()
         {
             Meldingen.Clear();
-            //OnMeldingenChanged?.Invoke();
         }
 
         public void AddMeldingWaarschuwing(string tekst)
         {
             Meldingen.Add(new(MeldingType.Waarschuwing, tekst));
-            //OnMeldingenChanged?.Invoke();
         }
 
         public void AddMeldingOpmerking(string tekst) => Meldingen.Add(new(MeldingType.Opmerking, tekst));
-
-
 
 
         public void ControleerMeldingen()
@@ -76,16 +71,6 @@ namespace CommonLibrary
             IsAkkoord(); // Voer validatie uit in de child-class
         }
 
-        // Hulpmethode om bij wijziging automatisch te valideren
-        protected T SetAndValidate<T>(ref T field, T value)
-        {
-            if (!EqualityComparer<T>.Default.Equals(field, value))
-            {
-                field = value;
-                ControleerMeldingen(); // Automatisch valideren bij wijziging
-            }
-            return value;
-        }
 
     }
 }

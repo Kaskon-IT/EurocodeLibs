@@ -1,13 +1,21 @@
 ﻿@using Eurocode.BetonConstructies
+@using Eurocode.BetonConstructies.SpecifiekeRegels
 @using K = CommonLibrary.EurocodeKeys;
 
 
 <p>@Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
 
+<EurocodeMeldingenComponent Meldingen="Model.Meldingen"></EurocodeMeldingenComponent>
+
 
 <FluentSelectEnum Label="type berekening"
 TEnum="BerekeningTypeEnum"
 @bind-EnumSelectedValue="@Model.BerekeningType"/>
+
+<FluentSelectEnum Label="schematisering"
+                  TEnum="@Schematisering.ConstructiefModelEnum"
+                  @bind-EnumSelectedValue="@Model.ConstructiefModel" />
+
 
 <EurocodeInputNumber @bind-Value=Model.M Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
 <EurocodeInputNumber @bind-Value=Model.B Key="@K.ProfielBreedte" Unit="mm"></EurocodeInputNumber>
@@ -29,6 +37,14 @@ TEnum="BerekeningTypeEnum"
             <FluentTextField @bind-Value="@Model.Wapening.Tekst"></FluentTextField>
         </ChildContent>
     </EurocodeInputContainer>
+
+
+    <p>As: @Model.Wapening.As.ToString()</p>
+    <p>HohMaat: @Model.Wapening.HohMaat.ToString()</p>
+    <p></p>
+
+
+
 }
 
 
@@ -37,7 +53,7 @@ TEnum="BerekeningTypeEnum"
 
 <EurocodeInputNumber ReadOnly=true Value=Model.AsMin Key="AsMin" Unit="mm²"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.AsRequired Key="AsBen" Unit="mm²"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value=Model.AsApplied Key="AsToe" Unit="mm²"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.AsApplied Key="AsToe" Unit="mm²" MinValue="Model.AsRequired" MaxValue="Model.AsMax"></EurocodeInputNumber>
 
 
 
@@ -73,7 +89,9 @@ TEnum="BerekeningTypeEnum"
     protected override void OnInitialized()
     {
         Model.OnUpdated += StateHasChanged;
+        Model.Wapening.PropertyChanged += (s, e) => StateHasChanged();
     }
+
 
 
 

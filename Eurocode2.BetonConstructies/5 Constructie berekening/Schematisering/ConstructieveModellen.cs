@@ -2,6 +2,29 @@
 {
     public static class Schematisering
     {
+
+        public enum ConstructiefModelEnum
+        {
+            Balk, Plaat, Kolom
+        }
+
+
+        public static double GetAsMax(this ConstructiefModelEnum? constructiefModel, double betonDoorsnedeOppervlak)
+        {
+
+            switch (constructiefModel)
+            {
+                default:
+                case ConstructiefModelEnum.Balk:
+                case ConstructiefModelEnum.Plaat:
+                    return SpecifiekeRegels.Balken.GetAsMax(betonDoorsnedeOppervlak);
+                case ConstructiefModelEnum.Kolom:
+                    return SpecifiekeRegels.Kolommen.GetAsMax(betonDoorsnedeOppervlak);
+
+
+            }
+        }
+
         /// <summary>
         /// 5.3.1 (3) Een balk is een element waarvan de overspanning niet kleiner is dan driemaal te totale hoogte van de doorsnede. 
         /// In andere gevallen als gedrongen ligger beschouwen. 

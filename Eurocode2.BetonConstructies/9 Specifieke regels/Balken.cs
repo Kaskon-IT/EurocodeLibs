@@ -1,5 +1,40 @@
-﻿namespace Eurocode.BetonConstructies.SpecifiekeRegels
+﻿using System.ComponentModel;
+
+namespace Eurocode.BetonConstructies.SpecifiekeRegels
 {
+    [Flags]
+    public enum ElementTypeEnum
+    {
+        [Description("9.2 Balken")]
+        Balk = 1,
+
+        [Description("9.3 Massieve platen")]
+
+        MassievePlaat = 2,
+        [Description("9.4 Vlakke plaatvloeren")]
+
+        VlakkePlaatvloer = 4,
+        [Description("9.5 Kolommen")]
+
+        Kolom = 8,
+        [Description("9.6 Wanden")]
+        Wand = 16,
+
+        [Description("9.7 Gedrongen liggers")]
+        GedrongenLigger = 32,
+
+        [Description("9.8 Funderingen ")]
+        Fundering = 64,
+
+        [Description("9.9 Gebieden met discontinuïteit in geometrie of belasting")]
+        GebiedenDiscontinue = 128,
+
+        [Description("9.10 Trekbanden")]
+        Trekband = 256,
+
+    }
+
+
     public class Balken
     {
 
@@ -89,6 +124,10 @@
     class Kolommen
     {
 
+        public static double GetAsMax(double betonOppervlakAc)
+        {
+            return 0.08 * betonOppervlakAc;
+        }
     }
 
 

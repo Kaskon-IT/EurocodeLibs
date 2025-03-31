@@ -80,7 +80,7 @@
         {
             if (wapGroepen == null) return 1000;
 
-            List<double> hohMaten = [1000];
+            List<double> hohMaten = [9999];
 
             foreach (var wapGroep in wapGroepen)
             {
