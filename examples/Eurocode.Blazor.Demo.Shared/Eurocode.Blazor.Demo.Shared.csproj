@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Pages\Beton\Buiging\Examples\Beton\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 

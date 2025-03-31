@@ -13,6 +13,9 @@ namespace Eurocode.BetonConstructies
 
     public class BendingResults : BaseEurocodeContext
     {
+        private double _asApplied;
+        private BerekeningTypeEnum? _berekeningType = BerekeningTypeEnum.BepaalBenodigeWapening;
+
         public BendingResults()
         {
             Beton = new();
@@ -25,6 +28,23 @@ namespace Eurocode.BetonConstructies
             H = h;
             ZRef = zRef;
             M = m;
+            BerekenEnValideer();
+        }
+
+
+
+
+        public BerekeningTypeEnum? BerekeningType
+        {
+            get => _berekeningType;
+            set
+            {
+                if (_berekeningType != value)
+                {
+                    _berekeningType = value;
+                    BerekenEnValideer();
+                }
+            }
 
         }
 
@@ -106,7 +126,30 @@ namespace Eurocode.BetonConstructies
         [TableColumn("A~s,toe~", Order = 41, StringFormat = "0 mm²")]
         public double AsApplied
         {
-            get { return Math.Ceiling(AsRequired); }
+            get => _asApplied;
+            set
+            {
+                if (_asApplied != value)
+                {
+                    _asApplied = value;
+                    BerekenEnValideer();
+                }
+            }
+
+
+
+        }
+
+
+
+        public void VerwerkAsApplied()
+        {
+            _asApplied = BerekeningType switch
+            {
+                BerekeningTypeEnum.ControleerWapening => Wapening.As,
+                _ => Math.Ceiling(AsRequired),
+            };
+
         }
 
 
@@ -183,26 +226,42 @@ namespace Eurocode.BetonConstructies
 
         public override bool IsAkkoord()
         {
+            return Valideer();
+
+
+        }
+
+        protected override void Bereken()
+        {
+            VerwerkAsApplied();
+
+            // volgens mij gaat dit volledig automatisch...
+        }
+
+        protected override bool Valideer()
+        {
+
             if (Xu > XuMax)
             {
                 AddMeldingWaarschuwing("hoogte drukzone niet akkoord");
-                Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
+                //Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
+                return false;
+            }
+            if (_asApplied < AsRequired)
+            {
+                AddMeldingWaarschuwing("onvoldoende wapening");
+                //Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
+                return false;
+            }
+            if (_asApplied > SpecifiekeRegels.Balken.GetAsMax(B, H))
+            {
+                AddMeldingWaarschuwing("overschrijding maximale wapening (voor balk)");
                 return false;
             }
 
 
             return true;
-            throw new NotImplementedException();
-        }
 
-        protected override void Bereken()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override bool Valideer()
-        {
-            throw new NotImplementedException();
         }
     }
 

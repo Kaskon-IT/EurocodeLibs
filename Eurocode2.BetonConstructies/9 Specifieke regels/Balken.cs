@@ -2,10 +2,23 @@
 {
     public class Balken
     {
+
         public static double GetAsMax(ParametrischeProfielen.ParametrischProfielContext parametrischProfiel)
         {
             return GetAsMax(parametrischProfiel.Area);
         }
+
+        /// <summary>
+        /// Maximale wapening voor een balk (rechthoekige doorsnede)
+        /// </summary>
+        /// <param name="breedte">breedte</param>
+        /// <param name="hoogte">hoogte</param>
+        /// <returns></returns>
+        public static double GetAsMax(double breedte, double hoogte)
+        {
+            return GetAsMax(breedte * hoogte);
+        }
+
 
         /// <summary>
         /// 9.2.1.1 Minimum- en maximumwapeningsdoorsneden

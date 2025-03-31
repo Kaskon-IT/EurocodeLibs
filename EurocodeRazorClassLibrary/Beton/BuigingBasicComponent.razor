@@ -5,6 +5,10 @@
 <p>@Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</p>
 
 
+<FluentSelectEnum Label="type berekening"
+TEnum="BerekeningTypeEnum"
+@bind-EnumSelectedValue="@Model.BerekeningType"/>
+
 <EurocodeInputNumber @bind-Value=Model.M Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
 <EurocodeInputNumber @bind-Value=Model.B Key="@K.ProfielBreedte" Unit="mm"></EurocodeInputNumber>
 <EurocodeInputNumber @bind-Value=Model.H Key="@K.ProfielHoogte" Unit="mm"></EurocodeInputNumber>
@@ -18,11 +22,11 @@
 
 <EurocodeInputNumber ReadOnly=true Value=Model.SigmaS Key="Staalspanning" Unit="MPa"></EurocodeInputNumber>
 
-@if (Model.Wapening != null)
+@if (Model.Wapening != null && Model.BerekeningType == BerekeningTypeEnum.ControleerWapening)
 {
     <EurocodeInputContainer Key="@K.WapeningToegepast" Unit="">
         <ChildContent>
-            <FluentTextField Value="@Model.Wapening.Tekst"></FluentTextField>
+            <FluentTextField @bind-Value="@Model.Wapening.Tekst"></FluentTextField>
         </ChildContent>
     </EurocodeInputContainer>
 }
@@ -38,21 +42,6 @@
 
 
 
-
-
-@* 
-<FluentTextField Value="@Model.AsMin1.ToString("0 mm²")">As;min</FluentTextField>
-<FluentTextField Value="@Model.AsMin1.ToString("0 mm²")">As;min1</FluentTextField>
-<FluentTextField Value="@Model.AsMin2.ToString("0 mm²")">As;min2</FluentTextField>
- *@
-
-@* <FluentTextField Value="@Model.Beton.FactorN.ToString("0.00")">N</FluentTextField>
-<FluentTextField Value="@Model.Beton.GetAlpha().ToString("0.000")">Alpha</FluentTextField>
-<FluentTextField Value="@Model.Beton.GetBeta().ToString("0.000")">Beta</FluentTextField>
- *@
-
-
-@* <EurocodeBetonTabel Model="@Model.Beton" /> *@
 
 
 
@@ -77,12 +66,17 @@
 
     public BetonProfielen.BetonProfiel profielDemo { get; set; } = new();
 
-    //private string test = "8-150";
+
+    [Parameter]
+    public BerekeningTypeEnum BerekeningType { get; set; } = BerekeningTypeEnum.BepaalBenodigeWapening;
 
     protected override void OnInitialized()
     {
         Model.OnUpdated += StateHasChanged;
     }
+
+
+
 
 
 }

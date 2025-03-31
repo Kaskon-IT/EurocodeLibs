@@ -130,7 +130,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        public string DemoString { get; set; } = "DEMO";
+
 
 
 
