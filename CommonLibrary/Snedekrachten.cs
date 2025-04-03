@@ -26,9 +26,11 @@ namespace CommonLibrary
         {
             var result = "";
             if (My != 0) result += $"M~y~ = {My.ToString(format)} kNm, ";
+            if (Vz != 0) result += $"V~z~ = {Vz.ToString(format)} kN, ";
+
             if (Mz != 0) result += $"M~z~ = {Mz.ToString(format)} kNm, ";
             if (Vy != 0) result += $"V~y~ = {Vy.ToString(format)} kN, ";
-            if (Vz != 0) result += $"V~z~ = {Vz.ToString(format)} kN, ";
+
             if (Nx != 0) result += $"N~x~ = {Nx.ToString(format)} kN, ";
             if (Tx != 0) result += $"T~x~ = {Tx.ToString(format)} kNm, ";
             return result.TrimEnd(',', ' ');

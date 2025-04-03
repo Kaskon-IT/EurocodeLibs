@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Components;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 
 namespace CommonLibrary
@@ -12,11 +13,16 @@ namespace CommonLibrary
     /// (bijvoorbeeld "Waarschuwing - Overschrijding hoogte drukzone" of
     /// neutrale melding "Minimale wapening toegepast conform artikel 80.80")
     /// </summary>
-    public abstract class BaseEurocodeContext : IEurocodeContext, IMarkupConvertible
+    public abstract class BaseEurocodeContext : IEurocodeContext, IMarkupConvertible, INotifyPropertyChanged
     {
         public ObservableCollection<Melding> Meldingen { get; private set; } = [];
 
         public event Action? OnUpdated; // 🔥 Event voor automatische UI-updates
+        public event PropertyChangedEventHandler? PropertyChanged; // Welke moeten we nu gebruiken?.. 
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         protected BaseEurocodeContext()
         {

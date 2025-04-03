@@ -4,6 +4,26 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Eurocode.BetonConstructies</RootNamespace>
+	
+	<!-- NuGet-package instellingen -->
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageId>Kaskon.Eurocode2.BetonConstructies</PackageId>
+	<Version>1.0.0</Version>
+	<Authors>Bart van der Linden</Authors>
+	<Company>Kaskon</Company>
+	<Description>Eurocode 2 Betonconstructies</Description>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<RepositoryUrl>https://github.com/YourRepo</RepositoryUrl>
+	<PackageProjectUrl>https://www.yourprojectsite.com</PackageProjectUrl>
+
+	<!-- Lokale map voor .nupkg -->
+	<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
+	<Copyright>Copyright © 2025 Kaskon</Copyright>
+	<PackageTags>Kaskon;Blazor;FluentUI;Eurocode;EC2;Betonconstructies;Beton</PackageTags>
+	<IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  
+	  
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />

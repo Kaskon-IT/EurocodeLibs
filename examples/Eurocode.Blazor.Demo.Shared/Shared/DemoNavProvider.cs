@@ -136,7 +136,11 @@ public class DemoNavProvider
                 gap: "10px",
                 children:
                 [
-
+                     new NavLink(
+                        href: "/lab/snedekrachten",
+                        icon: new Icons.Regular.Size20.Class(),
+                        title: "Snedekrachten"
+                    ),
 
                     new NavLink(
                         href: "/lab/datagrid-test-lab",

@@ -4,6 +4,26 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Eurocode.Belastingen</RootNamespace>
+
+	<!-- NuGet-package instellingen -->
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageId>Kaskon.Eurocode1.Belastingen</PackageId>
+	<Version>1.0.0</Version>
+	<Authors>Bart van der Linden</Authors>
+	<Company>Kaskon</Company>
+	<Description>Eurocode 1 Belastingen</Description>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<RepositoryUrl>https://github.com/YourRepo</RepositoryUrl>
+	<PackageProjectUrl>https://www.yourprojectsite.com</PackageProjectUrl>
+
+	<!-- Lokale map voor .nupkg -->
+	<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
+	<Copyright>Copyright © 2025 Kaskon</Copyright>
+	<PackageTags>Kaskon;Blazor;FluentUI;Eurocode;Belastingen;EC1</PackageTags>
+	<IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  
+	  
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="6 Gebruiksbelastingen\" />

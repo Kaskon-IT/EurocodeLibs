@@ -1,46 +1,83 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 
+		<!-- NuGet-package instellingen -->
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>Kaskon.EurocodeComponenten</PackageId>
+		<Version>1.0.1</Version>
+		<Authors>Bart van der Linden</Authors>
+		<Company>Kaskon</Company>
+		<Description>Blazor component library voor berekeningen conform de Eurocode.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/YourRepo</RepositoryUrl>
+		<PackageProjectUrl>https://www.yourprojectsite.com</PackageProjectUrl>
+		
+		<!-- Lokale map voor .nupkg -->
+		<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
+		<Copyright>Copyright © 2025 Kaskon</Copyright>
+		<PackageTags>Kaskon;Blazor;FluentUI;Eurocode;Beton;Constructies</PackageTags>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		
+		<!-- OPTIE: Pictogram -->
+		<PackageIcon>wwwroot/icons/kaskon.png</PackageIcon>
+  
+	</PropertyGroup>
 
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-  </ItemGroup>
+	<ItemGroup>
+		<!-- Voeg het pictogram toe aan de NuGet package -->
+		<None Include="wwwroot/icons/kaskon.png" Pack="true" PackagePath="wwwroot/icons/" />
+	</ItemGroup>
+	
+	
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
 
 	
 	
 	
-  <ItemGroup>
-    <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
-    <PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
-    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
-    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.2" />
-    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.2" />
-    <PackageReference Include="Plotly.Blazor" Version="5.4.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<!-- NuGet afhankelijkheden -->
+		<PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
+		<PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
+		<PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
 
-  <ItemGroup>
-    <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
-    <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
-    <ProjectReference Include="..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />
-    <ProjectReference Include="..\Eurocode2.BetonConstructies\Eurocode2.BetonConstructies.csproj" />
-    <ProjectReference Include="..\Eurocode3.StaalConstructies\Eurocode3.StaalConstructies.csproj" />
-    <ProjectReference Include="..\Eurocode4.StaalBetonConstructies\Eurocode4.StaalBetonConstructies.csproj" />
-    <ProjectReference Include="..\Eurocode5.HoutConstructies\Eurocode5.HoutConstructies.csproj" />
-    <ProjectReference Include="..\Eurocode6.Metselwerk\Eurocode6.Metselwerk.csproj" />
-    <ProjectReference Include="..\Eurocode7.Geotechniek\Eurocode7.Geotechniek.csproj" />
-    <ProjectReference Include="..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />
-    <ProjectReference Include="..\ExportFactory\ExportFactory.csproj" />
-  </ItemGroup>
+		<PackageReference Include="Kaskon.Eurocode0.Grondslagen" Version="1.0.0" />
+		<PackageReference Include="Kaskon.Eurocode1.Belastingen" Version="1.0.0" />
+		<PackageReference Include="Kaskon.Eurocode2.BetonConstructies" Version="1.0.0" />
+		
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.2" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.2" />
+		<PackageReference Include="Plotly.Blazor" Version="5.4.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\js\downloadFile.js" />
-    <None Include="wwwroot\js\downloadFileFromStream.js" />
-  </ItemGroup>
+	<ItemGroup>
+		<!-- Projectreferenties -->
+		<ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
+		<!--<ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />-->
+		<!--<ProjectReference Include="..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />-->
+		<!--<ProjectReference Include="..\Eurocode2.BetonConstructies\Eurocode2.BetonConstructies.csproj" />-->
+		<!--<ProjectReference Include="..\Eurocode3.StaalConstructies\Eurocode3.StaalConstructies.csproj" />-->
+		<!--<ProjectReference Include="..\Eurocode4.StaalBetonConstructies\Eurocode4.StaalBetonConstructies.csproj" />-->
+		<!--<ProjectReference Include="..\Eurocode5.HoutConstructies\Eurocode5.HoutConstructies.csproj" />-->
+		<!--<ProjectReference Include="..\Eurocode6.Metselwerk\Eurocode6.Metselwerk.csproj" />-->
+		<!--<ProjectReference Include="..\Eurocode7.Geotechniek\Eurocode7.Geotechniek.csproj" />-->
+		<!--<ProjectReference Include="..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />-->
+		<ProjectReference Include="..\ExportFactory\ExportFactory.csproj" />
+	</ItemGroup>
+
+    <ItemGroup>
+        <None Include="wwwroot\js\downloadFile.js" />
+        <None Include="wwwroot\js\downloadFileFromStream.js" />
+    </ItemGroup>
+	
+
+
 
 </Project>

@@ -75,7 +75,7 @@ public partial class DemoSection : ComponentBase
     /// Hides all but the 'Example' tab
     /// </summary>
     [Parameter]
-    public bool HideAllButExample { get; set; } = false;
+    public bool HideAllButExample { get; set; } = !false;
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }

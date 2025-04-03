@@ -9,13 +9,15 @@ namespace Eurocode.BetonConstructies
 
     public class BendingResults : BaseEurocodeContext
     {
+
+
         private double _asApplied;
         private BerekeningTypeEnum? _berekeningType = BerekeningTypeEnum.ControleerWapening;
         private Schematisering.ConstructiefModelEnum? _constructiefModel = Schematisering.ConstructiefModelEnum.Balk;
         private double _breedte = 300;
         private double _hoogte = 400;
         private double _moment = 80.80;
-
+        private Snedekrachten? _snedekrachten;
 
         public override string ToString()
         {
@@ -110,7 +112,24 @@ namespace Eurocode.BetonConstructies
 
         public BetonContext Beton { get; set; }
         public ParametrischeProfielen.ParametrischProfielContext? Profiel { get; set; } // als geen profiel, dan rechthoek BxH
-        public Snedekrachten? Snedekrachten { get; set; } // als er geen snedekrachten opgegeven dan Moment opgave.
+        public Snedekrachten? Snedekrachten
+        {
+            get => _snedekrachten;
+            set
+            {
+                if (_snedekrachten != value)
+                {
+                    _snedekrachten = value;
+                    OnPropertyChanged(nameof(Snedekrachten));
+
+                    // Automatisch Moment bijwerken als Snedekrachten verandert
+                    if (_snedekrachten != null)
+                    {
+                        Moment = _snedekrachten.My;
+                    }
+                }
+            }
+        } // als er geen snedekrachten opgegeven dan Moment opgave.
 
 
         [TableColumn("Positie", order: 0)]
@@ -121,7 +140,19 @@ namespace Eurocode.BetonConstructies
         public double Moment
         {
             get => Snedekrachten != null ? Snedekrachten.My : _moment;
-            set => _moment = value;
+            set
+            {
+                if (Snedekrachten != null)
+                {
+                    // Als Snedekrachten niet null is, zet _moment gelijk aan Snedekrachten.My
+                    _moment = Snedekrachten.My;
+                }
+                else
+                {
+                    // Als Snedekrachten null is, gebruik de gegeven waarde
+                    _moment = value;
+                }
+            }
         }
 
 

@@ -1,0 +1,27 @@
+@page "/lab/snedekrachten"
+
+@using EurocodeRazorClassLibrary.Shared
+
+
+
+@if(SampleProject != null && SampleProject.Snedekrachten != null)
+{
+    <SnedekrachtenComponent @bind-Model="SampleProject.Snedekrachten"></SnedekrachtenComponent>
+}
+else
+{
+    <p>Niks gevonden.</p>
+}
+
+
+
+
+@code{
+    [CascadingParameter]
+    SampleProject? SampleProject { get; set; }
+
+
+
+
+
+}

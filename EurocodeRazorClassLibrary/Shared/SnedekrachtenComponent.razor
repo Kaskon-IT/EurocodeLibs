@@ -3,17 +3,32 @@
 
 <h3>SnedekrachtenComponent</h3>
 
-
-<EurocodeInputNumber Key="My" @bind-Value="@Model.My" StringFormat="0.##"/>
-<EurocodeInputNumber Key="Vz" @bind-Value="@Model.Vz" StringFormat="0.##" />
-
-
-<EurocodeInputNumber Key="Mz" @bind-Value="@Model.Mz" StringFormat="0.##" />
-<EurocodeInputNumber Key="Vy" @bind-Value="@Model.Vz" StringFormat="0.##" />
+@if (toonHoofdRichting)
+{
+    <EurocodeInputNumber Key="My" @bind-Value="@Model.My" StringFormat="0.##" />
+    <EurocodeInputNumber Key="Vz" @bind-Value="@Model.Vz" StringFormat="0.##" />
+}
 
 
-<EurocodeInputNumber Key="Tx" @bind-Value="@Model.Tx" StringFormat="0.##" />
-<EurocodeInputNumber Key="Nx" @bind-Value="@Model.Nx" StringFormat="0.##" />
+@if (ToonSecundaireRichting)
+{
+    <EurocodeInputNumber Key="Mz" @bind-Value="@Model.Mz" StringFormat="0.##" />
+    <EurocodeInputNumber Key="Vy" @bind-Value="@Model.Vy" StringFormat="0.##" />
+}
+
+
+@if (ToonNormaalkracht)
+{
+    <EurocodeInputNumber Key="Nx" @bind-Value="@Model.Nx" StringFormat="0.##" />
+
+}
+
+@if (ToonTorsie)
+{
+    <EurocodeInputNumber Key="Tx" @bind-Value="@Model.Tx" StringFormat="0.##" />
+
+}
+
 
 
 <p>@Model.ToMarkupString()</p>
@@ -26,5 +41,11 @@
 
     [Parameter]
     public EventCallback<Snedekrachten> ModelChanged{ get; set; }
+
+    private bool toonHoofdRichting = true;
+    [Parameter] public bool ToonSecundaireRichting { get; set; } = true;
+    [Parameter] public bool ToonNormaalkracht { get; set; } = true;
+    [Parameter] public bool ToonTorsie { get; set; } = true;
+
 
 }
