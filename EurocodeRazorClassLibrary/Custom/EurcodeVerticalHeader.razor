@@ -1,0 +1,15 @@
+﻿<div class="vertical-text">@Tekst</div>
+
+@code {
+    [Parameter] public string Tekst { get; set; } = string.Empty;
+}
+
+<style>
+    .vertical-text {
+        writing-mode: vertical-rl; /* Verticale tekst van links naar rechts */
+        transform: rotate(180deg);
+        white-space: nowrap; /* Voorkomt afbreken van tekst */
+        display: inline-block; /* Blokweergave voor styling */
+        vertical-align: top; /* Uitlijning aan de bovenzijde */
+    }
+</style>

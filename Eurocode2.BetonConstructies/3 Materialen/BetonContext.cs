@@ -1,4 +1,7 @@
-﻿using ExportFactory.Shared;
+﻿using CommonLibrary;
+using ExportFactory.Extensions;
+using ExportFactory.Shared;
+using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
 {
@@ -7,7 +10,7 @@ namespace Eurocode.BetonConstructies
     /// 3.1 Beton en 3.2 Betonstaal
     /// Verzameling gegevens voor berekening van betonconstructies.
     /// </summary>
-    public partial class BetonContext
+    public partial class BetonContext : BaseEurocodeContext
     {
         public BetonContext()
         {
@@ -44,8 +47,15 @@ namespace Eurocode.BetonConstructies
         //public bool IsParabolischSpanningsRekDiagram { get; set; } = !true;
 
 
+        [TableColumn("Diagram", Order = 1, HeaderTextPivot = "\tspanning-rekdiagram")]
         public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.BiLineair;
-        public enum SpanningRekDiagramType { Parabolisch, BiLineair }
+        public enum SpanningRekDiagramType
+        {
+            [Description("Parabolisch")]
+            Parabolisch,
+            [Description("Bi-Lineair")]
+            BiLineair
+        }
 
 
 
@@ -53,8 +63,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// 3.1.2 (6) Het soort cement.
         /// </summary>
-        [TableColumn("Cement")]
-        public CementklasseEnum? CementKlasse { get; set; }
+        [TableColumn("Cement", Order = 21, HeaderTextPivot = "\tcement klasse")]
+        public CementklasseEnum? CementKlasse { get; set; } = CementklasseEnum.N;
 
         public double CoefficientCementKlasse
         {
@@ -83,9 +93,26 @@ namespace Eurocode.BetonConstructies
 
 
 
-        public BetonsterkteklasseEnum? Betonsterkteklasse { get; set; } = BetonsterkteklasseEnum.C40_50;
+        private BetonsterkteklasseEnum? _betonsterkteklasse = BetonsterkteklasseEnum.C40_50;
 
-        [TableColumn("Sterkteklasse")]
+        [TableColumn("Betonsterkteklasse", Order = -20)]
+        public BetonsterkteklasseEnum? Betonsterkteklasse
+        {
+            get => _betonsterkteklasse;
+            set
+            {
+                if (_betonsterkteklasse != value)
+                {
+                    _betonsterkteklasse = value;
+                    BerekenEnValideer();
+                }
+            }
+        }
+
+
+
+
+        //[TableColumn("Betonsterkteklasse", HeaderTextPivot = "&nbsp;\tbetonsterkteklasse", Order = -10)]
         public string BetonSterkteKlasseGebruiksvriendelijkeNaam
         {
             get
@@ -95,10 +122,22 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        public double DemoDouble
+        {
+            get
+            {
+                return Fck;
+            }
+        }
+
+
+
+
 
         /// <summary>
         /// De representieve cilinder druksterkte in N/mm²
         /// </summary>
+        [TableColumn("f~ck~", HeaderTextPivot = "f~ck~\tkarakteristieke cilinderdruksterkte van beton na 28 dagen", StringFormat = "0.## \tN/mm²")]
         public double Fck
         {
             get
@@ -127,6 +166,7 @@ namespace Eurocode.BetonConstructies
 
 
         //(MPa)
+        [TableColumn("f~ck,cube~", HeaderTextPivot = "f~ck,cube~\tkarakteristieke kubusdruksterkte van beton na 28 dagen", StringFormat = "0.## \tN/mm²")]
         public double FckCube
         {
             get
@@ -156,11 +196,14 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// gemiddelde waarde van de cilinderdruksterkte van beton 
         /// </summary>
+        [TableColumn("f~cm~", HeaderTextPivot = "f~cm~\tgemiddelde cilinderdruksterkte", StringFormat = "0.## \tN/mm²", Weergave = WeergaveEnum.DraaiTabel)]
         public double Fcm { get { return Fck + 8; } }
 
         /// <summary>
         /// gemiddelde waarde van de axiale treksterkte van beton 
         /// </summary>
+        [TableColumn("f~ctm~", HeaderTextPivot = "f~ctm~\tgemiddelde axiale treksterkte", StringFormat = "0.00 \tN/mm²", Weergave = WeergaveEnum.DraaiTabel)]
+
         public double Fctm
         {
             get
@@ -178,26 +221,43 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        public int Tijdstip { get; set; } = 28;
 
+        ///// <summary>
+        ///// (3.4)
+        ///// </summary>
+        //public double FctmT
+        //{
+        //    get
+        //    {
+        //        return 
+        //    }
+        //}
+
+        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
         public double FctkVijfProcent { get { return 0.7 * Fctm; } }    // 5% fractiel
 
-        public double FcktVijfEnNegentigProcent { get { return 1.3 * Fctm; } } // 95% fractiel
+        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
+        public double FctkVijfEnNegentigProcent { get { return 1.3 * Fctm; } } // 95% fractiel
 
         public bool IsOntwerpSituatieBuitenGewoon = false;  // default Blijvend en tijdelijk conform art. 2.4.2.4 (1) Partiële factoren voor materialen 
 
-
-        public double GammaC
-        {
-            get
-            {
-                if (!IsOntwerpSituatieBuitenGewoon) return 1.5;  // is de partiële veiligheidsfactor voor beton, zie 2.4.2.4
-                else return 1.2;
-            }
-        }
+        [TableColumn("|gamma|~c~", HeaderTextPivot = "|gamma|~c~\tpartiële veiligheidsfactor", StringFormat = "0.0", Weergave = WeergaveEnum.DraaiTabel)]
+        public double GammaC { get; set; } = 1.5;
+        //{
+        //    get
+        //    {
+        //        if (!IsOntwerpSituatieBuitenGewoon) return 1.5;  // is de partiële veiligheidsfactor voor beton, zie 2.4.2.4
+        //        else return 1.2;
+        //    }
+        //}
         // conform art. 2.4.2.4 (1) Partiële factoren voor materialen
 
+
+        [TableColumn("f~cd~", weergave: WeergaveEnum.DraaiTabel, StringFormat = "0.##\tN/mm²")]
         public double Fcd { get { return AlphaCC * Fck / GammaC; } }
 
+        [TableColumn("f~ctd~", weergave: WeergaveEnum.DraaiTabel, StringFormat = "0.##\tN/mm²")]
         public double Fctd { get { return AlphaCT * FctkVijfProcent / GammaC; } }
 
         public const double AlphaCT = 1; // 3.1.6 Dit is de coëfficiënt die rekening houdt met langeduureffecten op de treksterkte en met ongunstige effecten als gevolg van de manier waarop de belasting aangrijpt.
@@ -222,13 +282,13 @@ namespace Eurocode.BetonConstructies
 
         public double GetBeta()
         {
-            SetAlphaBeta(this.EpsilonC);
+            SetAlphaBeta(this.EpsilonCu);
             return this.Beta;
         }
 
         public double GetAlpha()
         {
-            SetAlphaBeta(this.EpsilonC);
+            SetAlphaBeta(this.EpsilonCu);
             return this.Alpha;
 
             //if (IsParabolischSpanningsRekDiagram)
@@ -259,6 +319,32 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        public override string ToString()
+        {
+            return this.BetonSterkteKlasseGebruiksvriendelijkeNaam;
+        }
+
+        public override bool IsAkkoord()
+        {
+            // nakijken, volgens mij altijd akkoord
+            return true;
+            //throw new NotImplementedException();
+        }
+
+        protected override void Bereken()
+        {
+            // nakijken, volgens mij niet nodig
+            //throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+
+            // nakijken, volgens mij altijd goed
+            return true;
+            //throw new NotImplementedException();
+        }
+
         public double Alpha { get; set; }
 
 
@@ -266,10 +352,42 @@ namespace Eurocode.BetonConstructies
 
         public double Rho1Max { get { return this.GetRho1Max(); } }
 
+        [TableColumn("E~cm~", HeaderTextPivot = "E~cm~\tsecans-elasticiteitsmodulus van beton", StringFormat = "0.## \tGPa")]
         public double Ecm { get { return this.GetEcm(); } }
 
+        [TableColumn("Poisson", "\tpoisson factor")]
+        public double PoissonFactor { get; set; } = 0.2;
 
+
+        [TableColumn(weergave: WeergaveEnum.DraaiTabel)]
+        public string Betonstuik
+        {
+            get { return EpsilonC.GetFormattedStringPromille(); }
+        }
+
+        [TableColumn(weergave: WeergaveEnum.DraaiTabel)]
+        public string BetonstuikGrens
+        {
+            get { return EpsilonCu.GetFormattedStringPromille(); }
+        }
+
+
+        [TableColumn("|epsilon|~c~", weergave: WeergaveEnum.DraaiTabel, StringFormat = "0.## \t‰")]
         public double EpsilonC
+        {
+            get
+            {
+                return SpanningRekDiagram switch
+                {
+                    SpanningRekDiagramType.Parabolisch => EpsilonC2,
+                    SpanningRekDiagramType.BiLineair => EpsilonC3,
+                    _ => EpsilonC2
+                };
+            }
+        }
+
+        [TableColumn("|epsilon|~cu~", weergave: WeergaveEnum.DraaiTabel, StringFormat = "e2")]
+        public double EpsilonCu
         {
             get
             {
@@ -281,16 +399,21 @@ namespace Eurocode.BetonConstructies
                 };
             }
         }
+
         public double SigmaCd { get; set; }
         public double SigmaCk { get; set; }
 
+        [Obsolete("Deze grafiek wordt niet gebruikt.")]
         public double EpsilonC1 { get { return this.GetEpsilonC1(); } }
-
+        [Obsolete("Deze grafiek wordt niet gebruikt.")]
         public double EpsilonCu1 { get { return this.GetEpsilonCu1(); } }
 
         public double EpsilonC2 { get { return this.GetEpsilonC2(); } }
         public double EpsilonCu2 { get { return this.GetEpsilonCu2(); } }
 
+        /// <summary>
+        /// Alleen van toepassing bij parabool.
+        /// </summary>
         public double FactorN { get { return this.GetFactorN(); } }
 
         public double EpsilonC3 { get { return this.GetEpsilonC3(); } }

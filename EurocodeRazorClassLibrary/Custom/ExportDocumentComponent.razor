@@ -1,0 +1,72 @@
+﻿@using ExportFactory.Services
+@using MigraDoc.Rendering
+@using MigraDoc.RtfRendering
+@inject IJSRuntime JSRuntime
+
+@* Exporteer een MigraDoc.Document naar gewenst formaat en download dit bestand. *@
+
+
+
+<FluentMenuButton @ref=menuButton ButtonAppearance="@Appearance.Outline" Text="@Text" Items="@items" OnMenuChanged="HandleOnMenuChanged"></FluentMenuButton>
+
+@code {
+    [Parameter, EditorRequired]
+    public MigraDoc.DocumentObjectModel.Document Document { get; set; } = new();
+
+    [Parameter] 
+    public EventCallback OnGenerateNewDocument { get; set; }
+
+    private void HandleGenerateNewDocument()
+    {
+        // Notify the parent to regenerate the document
+        OnGenerateNewDocument.InvokeAsync();
+    }
+
+
+    [Parameter]
+    public string Text { get; set; } = "Download";
+
+    private FluentMenuButton menuButton = new();
+    private Dictionary<string, string> items = new Dictionary<string, string>() 
+    {
+        {"PDF", "PDF"}, {"RTF", "RTF"},
+    };
+
+    private async Task HandleOnMenuChanged(MenuChangeEventArgs args)
+    {
+        // first ask for update from parent
+        HandleGenerateNewDocument();
+
+        await ExportData($"{args.Id}");
+    }
+
+    private async Task ExportData(string exportType){
+
+        string filename = "demo";
+        var stream = new MemoryStream();
+        switch (exportType)
+        {
+            case "PDF":
+                filename += ".pdf";
+                PdfDocumentRenderer pdfRenderer = new(true);
+                pdfRenderer.Document = Document;
+                pdfRenderer.RenderDocument();
+                pdfRenderer.PdfDocument.Save(stream);
+                await DownloadFile(stream, filename, "application/pdf");
+                break;
+            case "RTF":
+                filename += ".rtf";
+                RtfDocumentRenderer rtfRenderer = new();
+                rtfRenderer.Render(Document, stream, null);
+                await DownloadFile(stream, filename, "application/rtf");
+                break;
+        }
+    }
+
+    private async Task DownloadFile(MemoryStream stream, string fileName, string contentType)
+    {
+        // file content (any stream)
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", stream.ToArray(), fileName, contentType);
+    }
+
+}

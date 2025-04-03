@@ -1,0 +1,32 @@
+﻿@if (SampleProject != null)
+{
+    
+    <EurocodeBetonOpleggingComponent @bind-Model=@SampleProject.OpleggingDemo
+                                     ReadOnlyFields="ReadOnlyFields"
+                                     LabelPosition="@labelPosition.GetValueOrDefault()"
+                                     LabelType="@labelType.GetValueOrDefault()">
+
+    </EurocodeBetonOpleggingComponent>
+
+
+
+
+}
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+    private LabelPosition? labelPosition { get; set; } = LabelPosition.Left;
+    private LabelType? labelType { get; set; } = LabelType.SymbolAndDescription;
+
+    private Dictionary<string, bool> ReadOnlyFields { get; set; } = new()
+    {
+
+       
+    };
+
+
+
+
+}

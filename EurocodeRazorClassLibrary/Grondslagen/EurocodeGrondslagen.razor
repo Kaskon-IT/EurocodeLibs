@@ -12,15 +12,7 @@
     <FluentGridItem xs="0">
         <FluentSelectEnum Label="Nationale bijlage" Placeholder="Selecteer..." TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
         ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
-        @* <p> *@
-        @*    Selectie: @Model.NationaleBijlage.ToString()&nbsp; *@
-
-        @* @if (Model != null && Model.NationaleBijlage != null) *@
-        @* { *@
-
-        @* <img style="width:40px;" src="Flags/@(Model.NationaleBijlage.ToString().ToLower()).svg" alt="Land vlag" /> *@
-        @* } *@
-        @* </p> *@
+      
     </FluentGridItem>
 
     <FluentGridItem xs="0">
@@ -93,10 +85,26 @@
 
     [Parameter]
     public EventCallback<GrondslagenContext> ModelChanged { get; set; }
+    
+
+
+
+
+
+    private async Task OnInputChanged()
+    {
+        // Trigger the event to notify the parent of the model change
+        await ModelChanged.InvokeAsync(Model);
+    }
+
+
+
 
     async Task UpdateModel()
     {
+        // so we can use @bind-Model
         await ModelChanged.InvokeAsync(Model);
+        
     }
 
     //private string csvContent { get; set; } = "";

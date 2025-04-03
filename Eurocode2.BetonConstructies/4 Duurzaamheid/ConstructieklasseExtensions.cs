@@ -23,7 +23,7 @@
 
 
 
-            List<int> correctiesBeton = new List<int>();
+            List<int> correctiesBeton = [-1];
             foreach (var mk in dekking.Milieuklassen)
             {
                 switch (mk)

@@ -4,9 +4,51 @@
     using MigraDoc.DocumentObjectModel.Fields;
     using MigraDoc.DocumentObjectModel.Tables;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     public class HtmlCreator
     {
+
+        public static string MarkdownToHtml(string? markdown)
+        {
+            string html = "";
+
+            if (!string.IsNullOrEmpty(markdown))
+            {
+                // |greek| 
+                markdown = MigraDocCreator.ReplaceGreekLetters(markdown);
+
+                // Subscript: ~sub~ -> <sub>sub</sub> 
+                markdown = Regex.Replace(markdown, @"~(.*?)~", "<sub>$1</sub>");
+
+                // Superscript: ^super^ -> <sup><text</sup>
+                markdown = Regex.Replace(markdown, @"\^(.*?)\^", "<sup>$1</sup>");
+
+                // Bold: **text** -> <strong>text</strong>
+                markdown = Regex.Replace(markdown, @"\*\*(.*?)\*\*", "<strong>$1</strong>");
+
+                // Italic: *text* -> <em>text</em>
+                markdown = Regex.Replace(markdown, @"\*(.*?)\*", "<em>$1</em>");
+
+                // Underline: __text__ -> <u>text</u>
+                markdown = Regex.Replace(markdown, @"__(.*?)__", "<u>$1</u>");
+
+                // Strikethrough: ~~text~~ -> <s>text</s>
+                markdown = Regex.Replace(markdown, @"~~(.*?)~~", "<s>$1</s>");
+
+                // Line breaks: dubbele nieuwe regel -> <br/>
+                markdown = Regex.Replace(markdown, @"\n\s*\n", "<br/>");
+
+
+                html = markdown;
+
+            }
+
+
+            return html;
+        }
+
+
         // Methode om HTML te genereren van een MigraDoc Document
         public static string GenerateHtmlFromDocument(Document document, bool centered = !true)
         {
@@ -23,37 +65,13 @@
             htmlBuilder.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
 
             // Voeg een stijl toe aan de pagina (CSS)
-            htmlBuilder.AppendLine("<style>");
-            //htmlBuilder.AppendLine($"body {{ font-family: {fontFamily}, sans-serif; line-height: 1.6; }}");
-            //htmlBuilder.AppendLine("h1 { font-size: 2.5em; background-color:var(--fluent-color-background); }");
-            //htmlBuilder.AppendLine("h2 { font-size: 2em;  }");
-            //htmlBuilder.AppendLine("h3 { font-size: 1.75em; }");
-            //htmlBuilder.AppendLine("h4 { font-size: 1.5em;  }");
-            //htmlBuilder.AppendLine("hr { border: 1px solid; width: 100%; margin: 10px auto; }");
-            //htmlBuilder.AppendLine(".document-title { font-size: 4em; font-weight: bold; margin-top: 20px; margin-bottom: 20px; line-height: initial;}");
-            //htmlBuilder.AppendLine(".document-subtitle { font-size: 1.75em; font-style: italic;}");
-            //htmlBuilder.AppendLine(".to-toc-btn { position: fixed; bottom: 15px; right: 45px; z-index: 1000; padding: 15px 15px;cursor:pointer;}");
-
-
-
-            //htmlBuilder.AppendLine($"p {{ margin: 10px 0; font-size: 1.1em; font-family:{fontFamily}; line-height: 1.6; }}");
-            //htmlBuilder.AppendLine("b { font-weight: bold; }");
-            //htmlBuilder.AppendLine("i { font-style: italic; }");
-            //htmlBuilder.AppendLine("sub { font-size: 0.8em; vertical-align: sub; }");
-            //htmlBuilder.AppendLine("sup { font-size: 0.8em; vertical-align: super; }");
-            //htmlBuilder.AppendLine("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
-
-            // //htmlBuilder.AppendLine("table, th, td { border: 1px solid #ddd; }");
-            //htmlBuilder.AppendLine("th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f4f4f4; }");
-            //htmlBuilder.AppendLine("th { background-color: #f4f4f4; font-weight: bold; }");
-            // htmlBuilder.AppendLine("img { max-width: 100%; height: auto; display: block; margin: 20px 0; }");
-
-
-
-
-            htmlBuilder.AppendLine("</style>");
+            //htmlBuilder.AppendLine("<style>");
+            //htmlBuilder.AppendLine("</style>");
             htmlBuilder.AppendLine("</head>");
             htmlBuilder.AppendLine("<script>function scrollToToc() { document.getElementById('toc-embvg01f').scrollIntoView({ behavior: 'smooth' });  }</script>");
+
+            //htmlBuilder.AppendLine("<script>\r\n    // Selecteer alle knoppen met de klasse \"accordion\"\r\n    var acc = document.getElementsByClassName(\"ec-accordion\");\r\n\r\n    // Voeg een klik-gebeurtenis toe aan elke knop\r\n    for (var i = 0; i < acc.length; i++) {\r\n        acc[i].addEventListener(\"click\", function() {\r\n            // Toon of verberg de inhoud\r\n            this.classList.toggle(\"active\");\r\n            var panel = this.nextElementSibling;\r\n            if (panel.style.display === \"block\") {\r\n                panel.style.display = \"none\";\r\n            } else {\r\n                panel.style.display = \"block\";\r\n            }\r\n        });\r\n    }\r\n</script>");
+
             htmlBuilder.AppendLine("<body>");
 
 
@@ -71,8 +89,27 @@
 
             // Loop door de secties en paragrafen in het document
             bool inhoudsopgaveIsVerwerkt = false;
+            bool accordionIsOpen = false;
             foreach (Section section in document.Sections)
             {
+                // onderzoek: maak section inklapbaar (accordion)
+                // <button class="accordion">Hoofdstuk 1</button>
+                // <div class="panel">
+                // <p>Dit is de inhoud van hoofdstuk 1. Hier kun je tekst plaatsen die je wilt inklappen.</p>
+                //</div>
+                accordionIsOpen = false;
+                if (section.Tag != null)
+                {
+                    accordionIsOpen = true;
+                    var guid = Guid.NewGuid();
+                    htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{section.Tag}</button>");
+                    htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+
+                }
+
+
+
+
                 foreach (var element in section.Elements)
                 {
                     string bookmarkId = "";
@@ -94,11 +131,6 @@
                             case "Heading1":
                             case "Heading 1":
                             case "Kop 1":
-
-
-
-
-
                                 if (!inhoudsopgaveIsVerwerkt &&
                                     paragraph.Elements.First != null &&
                                     paragraph.Elements.First is Text text)
@@ -120,7 +152,28 @@
                                 else
                                 {
                                     //htmlBuilder.AppendLine("<hr />");
+
+
+
+                                    if (accordionIsOpen)
+                                    {
+                                        // sluit
+                                        htmlBuilder.AppendLine("</div>");
+                                    }
+
+                                    // start nieuwe
+                                    accordionIsOpen = true;
+                                    var guid = Guid.NewGuid();
+                                    htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{ProcessParagraph(paragraph)}</button>");
+                                    htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
                                     htmlBuilder.AppendLine($"<h1 {bookmarkId} class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
+
+
+
+
+
+
+
                                 }
 
                                 break;
@@ -131,9 +184,20 @@
                             case "Heading2":
                             case "Heading 2":
                             case "Kop 2":
-
-
                                 htmlBuilder.AppendLine($"<h2 {bookmarkId} class='kop2'>" + ProcessParagraph(paragraph) + "</h2>");
+                                break;
+
+                            case "Kop 3":
+                            case "Heading3":
+                                htmlBuilder.AppendLine($"<h3>{ProcessParagraph(paragraph)}</h3>");
+                                break;
+
+                            case "TableHeading":
+
+                                // maak een button voor inklapbaar
+                                //htmlBuilder.AppendLine
+
+                                htmlBuilder.AppendLine($"<h6 class='ec-table-heading'>{ProcessParagraph(paragraph)}</h6>");
                                 break;
 
                             default:
@@ -146,19 +210,41 @@
                     // Als het een tabel is
                     else if (element is Table table)
                     {
-                        htmlBuilder.AppendLine("<table class='ec-table fluent-data-gridXX gridXX'>");
+                        bool isPivotTable = table.Tag != null && table.Tag.ToString() == "pivot";
+
+                        string cssTable = "ec-table";
+                        if (isPivotTable)
+                            cssTable += "-pivot";
+
+                        htmlBuilder.AppendLine($"<table class='{cssTable}'>");
                         var index = 0;
                         foreach (Row row in table.Rows)
                         {
+                            var cellIndex = 0;
                             if (index == 0)
                             {
-                                htmlBuilder.AppendLine("<thead class='ec-table-head'>");
+                                if (isPivotTable)
+                                {
+                                    htmlBuilder.AppendLine("<tbody>");
+                                }
+                                else
+                                {
+                                    htmlBuilder.AppendLine("<thead class='ec-table-head'>");
+                                }
                             }
 
-                            htmlBuilder.AppendLine("<tr class='ec-table-row fluent-data-grid-rowXX'>");
+                            if (isPivotTable)
+                            {
+                                htmlBuilder.AppendLine("<tr class='ec-table-row ec-table-row-pivot'>");
+                            }
+                            else
+                            {
+                                htmlBuilder.AppendLine("<tr class='ec-table-row'>");
+                            }
+
                             foreach (Cell cell in row.Cells)
                             {
-                                Paragraph cellPar = null;
+                                Paragraph? cellPar = null;
 
                                 // Manually iterate through the elements to find the first Paragraph
                                 foreach (var documentElement in cell.Elements)
@@ -171,16 +257,42 @@
                                 }
 
                                 var htmlTag = "td"; // <td> by default;
-                                if (index == 0)
-                                {
-                                    htmlTag = "th"; // <th> first row;
-                                }
 
-                                htmlBuilder.AppendLine($"<{htmlTag}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
+
+                                var htmlClass = "ec-td";
+
+
+
+                                if (isPivotTable)
+                                    htmlClass = "ec-td-pivot"; // 'add-colon' plaatst een : voor de tekst
+                                // check for th
+                                if ((index == 0 && !isPivotTable) || (isPivotTable && cellIndex <= 2))
+                                {
+                                    htmlTag = "th"; // <th> first row (normal) of first column (pivot)
+                                    htmlClass = "ec-th";
+                                    if (isPivotTable)
+                                    {
+                                        htmlClass = "ec-th-pivot";
+                                    }
+
+                                    if (cellPar != null && cellPar.Tag != null)
+                                    {
+                                        switch (cellPar.Tag)
+                                        {
+                                            case "symbol": htmlClass += " ec-symbol"; break;
+                                            case "description": htmlClass += " ec-description"; break;
+                                            case "article": htmlClass += " ec-article"; break;
+                                        }
+                                    }
+
+                                }
+                                htmlBuilder.AppendLine($"<{htmlTag} class='{htmlClass}'>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
+                                cellIndex++;
                             }
                             htmlBuilder.AppendLine("</tr>");
 
-                            if (index == 0)
+
+                            if (index == 0 && !isPivotTable)
                             {
                                 htmlBuilder.AppendLine("</thead>");
                             }
@@ -191,9 +303,22 @@
 
 
                         }
+
+                        if (isPivotTable)
+                        {
+                            htmlBuilder.AppendLine("</tbody>");
+                        }
                         htmlBuilder.AppendLine("</table>");
                     }
                 }
+
+                // Close the accordion div
+                if (accordionIsOpen)
+                {
+                    htmlBuilder.Append("</div>");
+                }
+
+
             }
 
             // Close the container div
@@ -305,23 +430,17 @@
             StringBuilder sb = new StringBuilder();
 
             // test <svg>
-            if (paragraph.Tag != null)
+            if (paragraph.Tag != null &&
+                paragraph.Tag.ToString().StartsWith("<svg"))
             {
-                string? svgTag = paragraph.Tag.ToString();
-                if (svgTag != null)
-                {
-
-                    // bingo
-                    if (svgTag.StartsWith("<svg"))
-                    {
-                        sb.AppendLine(svgTag);
-                    }
-
-
-                }
+                sb.AppendLine(paragraph.Tag.ToString());
             }
             else
             {
+                // aanvulling splits elementen by tabs (indien aanwezig)
+                string currentText = string.Empty;
+
+
                 foreach (var inline in paragraph.Elements)
                 {
                     if (inline is FormattedText ft)
@@ -348,21 +467,49 @@
                         if (ft.Superscript)
                             content = "<sup>" + content + "</sup>";
 
-                        sb.Append(content);
-                    }
-                    else if (inline is Text text)
-                    {
-                        sb.Append(text.Content);
-                    }
-                    else if (inline is Character character)
-                    {
-                        if (character.Char == '\0')
-                        {
-                            sb.Append("<br/>");
-                        }
+                        //sb.Append(content);
+                        currentText += content;
 
                     }
+                    if (inline is Text text)
+                    {
+                        //sb.Append(text.Content);
+                        currentText += text.Content;
+                    }
+                    if (inline is Character character)
+                    {
+                        if (character.SymbolName == SymbolName.Tab)
+                        {
+                            // Als het een tab is, voeg de huidige verzamelde tekst toe en voeg een <span> voor de tab toe
+                            if (!string.IsNullOrEmpty(currentText))
+                            {
+                                sb.Append($"<span class=\"tab-simulated\">{currentText}</span>");
+                                currentText = string.Empty; // Reset de tekst na een tab
+                            }
+
+
+                        }
+
+
+                        if (character.Char == '\0')
+                        {
+                            //sb.Append("<br/>");
+                            //sb.Append("___");
+                        }
+
+
+
+
+                    }
+
+
+
+
                 }
+                // en de rest
+                if (!string.IsNullOrEmpty(currentText))
+                    sb.Append(currentText);
+
 
             }
 

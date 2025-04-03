@@ -20,13 +20,21 @@ builder.Services.AddFluentUIDemoServerServices();
 
 //builder.Services.AddScoped<DemoMainLayout>();
 
-builder.Services.AddScoped<ExportFactory.Services.MigraDocCreator>();
+builder.Services.AddScoped<ExportFactory.Services.MigraDocCreator>(); // 
+builder.Services.AddSingleton<ExportFactory.Services.DataTableMappingService>(); // service voor uitlezen meta-data / mappings 
+builder.Services.AddSingleton<EurocodeRazorClassLibrary.Services.ReadOnlyService>(); // service voor instellen read-only op eurocode componenten
 
 builder.Services.AddScoped<DataSource>();
+
 
 builder.Services.AddCascadingValue(sp =>
     new SampleProject(new GrondslagenContext()));
 
+//builder.Services.AddCascadingValue(sp =>
+//{
+//    var sampleProject = new SampleProject(new GrondslagenContext());
+//    return new CascadingModel<SampleProject>(sampleProject);
+//});
 
 
 //builder.WebHost.UseStaticWebAssets(); // < -- nodig voor wwwroot?

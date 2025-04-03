@@ -1,0 +1,16 @@
+﻿@if (SampleProject != null)
+{
+
+    <EurocodeBetonScheurwijdteComponent Model="@SampleProject.ScheurwijdteDemo"></EurocodeBetonScheurwijdteComponent>
+
+   
+}
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+    
+
+
+}

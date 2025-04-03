@@ -1,11 +1,12 @@
-﻿using Eurocode.Grondslagen;
+﻿using CommonLibrary;
+using Eurocode.Grondslagen;
 using ExportFactory.Shared;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
 {
 
-    public partial class BetonDekkingContext
+    public partial class BetonDekkingContext : BaseEurocodeContext
     {
         /// <summary>
         /// Referentie naar de context uit de Eurocode1
@@ -16,12 +17,14 @@ namespace Eurocode.BetonConstructies
         {
             Grondslagen = new();
             Beton = new();
+            Constructieklasse = new(this, Beton);
         }
 
         public BetonDekkingContext(GrondslagenContext grondslagen, BetonContext beton)
         {
             Grondslagen = grondslagen;
             Beton = beton;
+            Constructieklasse = new(this, Beton);
         }
 
         public BetonDekkingContext(BetonDekkingContext context)
@@ -34,19 +37,27 @@ namespace Eurocode.BetonConstructies
             GestortTegenBestaandBeton = context.GestortTegenBestaandBeton;
             BetonAfwerkingOppervlak = context.BetonAfwerkingOppervlak;
             BetonStortOndergrond = context.BetonStortOndergrond;
-            Milieuklassen = context.Milieuklassen;
-            Korreldiameter = context.Korreldiameter;
+            SelectedMilieuklassen = context.Milieuklassen;
+            GrootsteKorrelDiameter = context.GrootsteKorrelDiameter;
+            Constructieklasse = new(this, Beton);
 
         }
 
         // verplaatst naar Grondslagen
         //public NationaleBijlageEnum NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
 
-        public Constructieklasse Constructieklasse
+        public Constructieklasse Constructieklasse { get; private set; }
+
+
+
+
+
+        [TableColumn("Constructieklasse", Order = 20)]
+        public string ConstructieklasseUserFriendlyName
         {
             get
             {
-                return new Constructieklasse(this, this.Beton);
+                return Constructieklasse.UserFriendlyName;
             }
         }
 
@@ -54,14 +65,25 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Naam van de betondekking context, bijvoorbeeld 'bovenzijde' of 'onderzijde' 
         /// </summary>
-        [TableColumn("Positie", order: -2)]
-        public string Naam { get; set; } = "Mijn dekkingscontext";
+        [TableColumn("Dekking (positie)", order: 0)]
+        public string Naam { get; set; } = "Bovenzijde";
 
 
         /// <summary>
         /// De toegepaste dekking (c,toe) in mm.
         /// </summary>
-        public double Betondekking { get; set; } = 20;
+
+
+        private double _dekkingToe = 20;
+        public double DekkingToe
+        {
+            get => _dekkingToe;
+            set
+            {
+                _dekkingToe = value;
+                BerekenEnValideer();
+            }
+        }
 
 
         /// <summary>
@@ -81,14 +103,22 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien plaatgeometrie van toepassing dan een vermindering van 1 op de constructieklasse.
         /// </summary>
-        [TableColumn("Plaatgeometrie?")]
-        public bool IsPlaatGeometrie { get; set; }
+        [TableColumn("Plaatgeometrie?", Order = 2)]
+        public bool IsPlaatGeometrie
+        {
+            get => _isPlaatGeometrie;
+            set { _isPlaatGeometrie = value; BerekenEnValideer(); }
+        }
 
         /// <summary>
         /// Indien specifieke kwaliteitsbeheersing (bijvoorbeeld bij prefab beton) vermindering met 1 op constructieklasse.
         /// </summary>
-        [TableColumn("Kwaliteitsbeheersing?")]
-        public bool IsKwaliteitsBeheersing { get; set; }
+        [TableColumn("Kwaliteitsbeheersing?", Order = 3)]
+        public bool IsKwaliteitsBeheersing
+        {
+            get => _isKwaliteitsBeheersing;
+            set { _isKwaliteitsBeheersing = value; BerekenEnValideer(); }
+        }
 
         /// <summary>
         /// De milieuklasse(n) hebben invloed op de minimale dekking duurzaamheid (c,min,dur)
@@ -97,11 +127,26 @@ namespace Eurocode.BetonConstructies
         //public IEnumerable<MilieuklasseEnum> Milieuklassen { get; set; } = [MilieuklasseEnum.XC3];
 
 
-        public IEnumerable<MilieuklasseEnum> Milieuklassen = [MilieuklasseEnum.XC1];
+        public IEnumerable<MilieuklasseEnum> Milieuklassen =>
+            SelectedMilieuklassen.Any() ? SelectedMilieuklassen : [MilieuklasseEnum.X0];
 
-        public IEnumerable<Eurocode.BetonConstructies.MilieuklasseEnum> SelectedMilieuklassen = [];
+        public IEnumerable<Eurocode.BetonConstructies.MilieuklasseEnum> SelectedMilieuklassen
+        {
+            get => _selectedMilieuklassen;
+            set
+            {
 
-        [TableColumn("Milieuklasse")]
+
+                _selectedMilieuklassen = value ?? [MilieuklasseEnum.X0]; // mag niet leeg gelaten worden! 
+
+                //
+                //var mk = this.Milieuklassen;
+                BerekenEnValideer(); // Roep de validatie aan
+
+            }
+        }
+
+        [TableColumn("Milieuklasse", Order = 1)]
         public string MilieuklassenUserFriendlyName
         {
             get
@@ -122,16 +167,24 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// De nominale betondekking (c,nom) is de minimale betondekking inclusief uitvoeringstoleranties (Δc,dev)
         /// </summary>
-        [TableColumn("c~nom~")]
-        public double BetondekkingNominaal
+        [TableColumn(
+            headerText: "c~nom~ ",
+            HeaderTextPivot = "c~nom~\tnominale dekking art. 4.4.1.1",
+            Order = 1, StringFormat = "0 mm")]
+        public double DekkingNom
         {
-            get { return this.GetDekkingNominaal(); }
+            get => _dekkingNom;
+            private set => _dekkingNom = value;
         }
 
         /// <summary>
         /// Is de minimumdekking op basis van de milieu-omstandigheden, zie 4.4.1.2 (5)
         /// </summary>
-        public double BetondekkingMinDuurzaamheid
+        [TableColumn(
+            headerText: "c~min,dur~",
+            headerTextPivot: "c~min,dur~\tminimumdekking duurzaamheid art. 4.4.1.2 (5)",
+            order: 41, StringFormat = "0 mm")]
+        public double DekkingMinDuurzaamheid
         {
             get { return this.GetCminDur(); }
         }
@@ -143,8 +196,11 @@ namespace Eurocode.BetonConstructies
         /// - voldoende brandwerendheid (zie EN 1992-1-2)
         /// zie 4.4.1.2
         /// </summary>
-        [TableColumn("c~min~")]
-        public double BetondekkingMin
+        [TableColumn(
+            headerText: "c~min~",
+            headerTextPivot: "c~min~\tminimale dekking art.4.4.1.2",
+            order: 39, StringFormat = "0 mm")]
+        public double DekkingMin
         {
             get { return this.GetMinimaleBetondekking(); }
         }
@@ -153,7 +209,11 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Minimale dekking tbv aanhechting betonstaal
         /// </summary>
-        public double BetondekkingMinBetonstaal
+        [TableColumn(
+            headerText: "c~min,b~",
+            headerTextPivot: "c~min,b~\tminimumdekking aanhechting art. 4.4.1.2 (3)",
+            order: 40, StringFormat = "0 mm")]
+        public double DekkingMinAanhechting
         {
             get
             {
@@ -167,8 +227,10 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Verhoging van de dekking tbv uitvoeringstoleranties (Δc,dev) volgens 4.4.1.3 (1)
         /// </summary>
-        [TableColumn("|delta|c~dev~")]
-        public double BetondekkingMinUitvoeringsToleranties { get { return this.Grondslagen.NationaleBijlage.GetUitvoeringstoleraties(); } }
+        [TableColumn(
+            headerText: "|Delta|c~dev~",
+            headerTextPivot: "|Delta|c~dev~\t toeslag uitvoeringstoleranties art. 4.4.1.3(1)", order: 50, StringFormat = "0 mm")]
+        public double DekkingToeslagUitvoeringsToleranties { get { return this.Grondslagen.NationaleBijlage.GetUitvoeringstoleraties(); } }
 
         /// <summary>
         /// Is een reductie van de minimumdekking bij gebruik van aanvullende bescherming, zie 4.4.1.2 (8)
@@ -203,15 +265,53 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        private double _wapeningDiameterGelijkwaardig = 10;
+        private double _dekkingNom;
+        private bool _isPlaatGeometrie;
+        private bool _isKwaliteitsBeheersing;
+        private IEnumerable<MilieuklasseEnum> _selectedMilieuklassen = [MilieuklasseEnum.X0];
+        private double _grootsteKorrelDiameter = 31.5;
+
         /// <summary>
         /// De diameter van de staaf of gelijkwaardige diameter van de staafbundel.
         /// </summary>
-        public double WapeningDiameterGelijkwaardig { get; set; } = 10;
+        [TableColumn(
+            headerText: "Ø~eq~",
+            headerTextPivot: "Ø~eq~\tgelijkwaardige diameter",
+            Order = 24, StringFormat = "Ø0.##")]
+        public double WapeningDiameterGelijkwaardig
+        {
+            get => _wapeningDiameterGelijkwaardig;
+            set
+            {
+                if (_wapeningDiameterGelijkwaardig != value)
+                {
+                    _wapeningDiameterGelijkwaardig = value;
+                    BerekenEnValideer();
+                }
+            }
+        }
 
         /// <summary>
         /// De grootste korreldiameter. Heeft invloed op de dekking c,min,b 
         /// </summary>
-        public double Korreldiameter { get; set; } = 31.5;
+        [TableColumn(
+            headerText: "korrel",
+            headerTextPivot: "Grootste korrel",
+            Order = 5, StringFormat = "≤ 0 mm")]
+        public double GrootsteKorrelDiameter
+        {
+            get => _grootsteKorrelDiameter;
+            set
+            {
+                if (_grootsteKorrelDiameter != value)
+                {
+                    _grootsteKorrelDiameter = value;
+                    BerekenEnValideer();
+                }
+            }
+        }
+
 
 
         public BetonAfwerkingOppervlakEnum? BetonAfwerkingOppervlak { get; set; } = BetonAfwerkingOppervlakEnum.Glad;
@@ -222,7 +322,7 @@ namespace Eurocode.BetonConstructies
         public BetonStortOndergrondEnum? BetonStortOndergrond { get; set; } = BetonStortOndergrondEnum.GladdeBekistingOfNvt;
 
 
-        #region enums voor betondekking
+
 
         /// <summary>
         /// keuzes voor ondergrond van de betonstort. 
@@ -233,8 +333,47 @@ namespace Eurocode.BetonConstructies
         /// keuze voor afwerking van de oppervlakte
         /// </summary>
         public enum BetonAfwerkingOppervlakEnum { [Description("Glad")] Glad = 1, [Description("Nabewerkt of oneffen")] NabewerktOnEffen = 2 }
-        #endregion
 
+        public override bool IsAkkoord()
+        {
+            return BerekenEnValideer();
+        }
 
+        public override string? ToString()
+        {
+            return $"c~nom~ = {DekkingNom}mm, " +
+                $"({ConstructieklasseUserFriendlyName}, " +
+                $"{MilieuklassenUserFriendlyName}, " +
+                $"{(IsKwaliteitsBeheersing ? "kwaliteitsbeheersting" : "")}, " +
+                $"{(IsPlaatGeometrie ? "plaatgeometrie" : "")})";
+            //return base.ToString();
+        }
+
+        protected override void Bereken()
+        {
+            this.Constructieklasse = new Constructieklasse(this, this.Beton);
+            DekkingNom = this.GetDekkingNominaal();
+            //throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+
+            // Waarschuwingen (niet akkoord, aktie vereist)
+            if (DekkingNom > DekkingToe)
+            {
+                AddMeldingWaarschuwing("<b>nominale dekking c<sub>nom</sub> is groter dan toegepaste dekking c<sub>toe</sub></b>");
+                return false;
+            }
+
+            // Neutrale opmerkingen
+            if (WapeningDiameterGelijkwaardig == 0)
+            {
+                AddMeldingOpmerking("voor de nominale dekking c<sub>nom</sub> tenmiste Ø<sub>k</sub> + 5mm aanhouden");
+            }
+
+            return true;
+
+        }
     }
 }

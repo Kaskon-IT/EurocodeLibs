@@ -4,7 +4,7 @@
         Disabled = "@Disabled"
         @bind-Model="@SampleProject.Beton"></EurocodeBetonMaterialen>
 
-    <ExportTableComponent T="Eurocode.BetonConstructies.BetonContext" Item="@SampleProject.Beton"></ExportTableComponent>
+    @* <ExportTableComponent T="Eurocode.BetonConstructies.BetonContext" Item="@SampleProject.Beton"></ExportTableComponent> *@
 }
 
 @code {
@@ -13,6 +13,8 @@
 
     [Parameter]
     public bool Disabled { get; set; }  
+
+
 
 
 }

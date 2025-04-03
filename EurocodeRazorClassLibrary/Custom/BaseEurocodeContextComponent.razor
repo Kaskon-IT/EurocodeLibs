@@ -1,0 +1,14 @@
+﻿@using CommonLibrary
+@using Eurocode.Grondslagen
+
+<p>
+    @Model.ToString();
+</p>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public GrondslagenContext Model { get; set; }
+
+   
+}

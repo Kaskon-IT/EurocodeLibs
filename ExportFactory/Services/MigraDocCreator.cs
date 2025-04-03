@@ -2,8 +2,11 @@
 using ExportFactory.MigraDocContentModels;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
+using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using MigraDoc.DocumentObjectModel.Tables;
 using System.Reflection;
+
+
 //using System.Reflection.Metadata;
 
 //
@@ -61,7 +64,7 @@ namespace ExportFactory.Services
             document.AddSection();
 
             // Add sections (iterate through all contents)
-            foreach (var sectionContent in content.Sections)
+            foreach (var sectionContent in content.Sections.OrderBy(sc => sc.Order))
             {
                 AddSection(document, sectionContent, bookmarks);
             }
@@ -211,6 +214,13 @@ namespace ExportFactory.Services
         {
             var section = document.LastSection;
 
+            // If a Title is provided, een titel toevoegen aan deze sectie
+            if (sectionContent.Title != null)
+            {
+                section.AddParagraph(sectionContent.Title, sectionContent.TitleStyle);
+            }
+
+
             // Sort elements by order
             var sortedElements = sectionContent.Elements.OrderBy(e => e.Order);
 
@@ -247,8 +257,39 @@ namespace ExportFactory.Services
                             AddTable(target, tableContent);
                             break;
 
+                        case MigraDocTable table:
+                            document.LastSection.Add(table.Table);
+                            break;
 
+                        case MigraDocElement migraDocElement:
+                            if (migraDocElement.DocumentObject != null)
+                            {
+                                target = document.LastSection;
 
+                                if (migraDocElement.DocumentObject is MigraDoc.DocumentObjectModel.Tables.Table table)
+                                {
+                                    target.Add(table);
+                                }
+                                else if (migraDocElement.DocumentObject is Paragraph paragraph)
+                                {
+                                    target.Add(paragraph);
+                                }
+                                else if (migraDocElement.DocumentObject is Chart chart)
+                                {
+                                    target.Add(chart);
+                                }
+                                else if (migraDocElement.DocumentObject is TextFrame textFrame)
+                                {
+                                    target.Add(textFrame);
+                                }
+                                else if (migraDocElement.DocumentObject is Image image)
+                                {
+                                    target.Add(image);
+                                }
+
+                            }
+
+                            break;
 
                         // Handle other types if necessary
                         default:
@@ -1065,7 +1106,7 @@ namespace ExportFactory.Services
 
 
         // Helper function to replace Greek letters in Markdown
-        private static string ReplaceGreekLetters(string markdown)
+        public static string ReplaceGreekLetters(string markdown)
         {
             foreach (var (key, value) in GreekLetters)
             {
@@ -1114,6 +1155,7 @@ namespace ExportFactory.Services
         private static void AddCoverPage(Document document, CoverPageContent coverPage)
         {
             var section = document.AddSection();
+            section.Tag = "Voorblad";
 
             //document.Styles.
             //section.PageSetup.BackgroundColor = coverPage.BackgroundColor;
@@ -1128,8 +1170,8 @@ namespace ExportFactory.Services
                 logo.LockAspectRatio = true;
             }
 
-            section.AddParagraph(coverPage.Title, "Title");
-            section.AddParagraph(coverPage.Subtitle, "Subtitle");
+            section.AddParagraph(coverPage.Title ?? "", "Title");
+            section.AddParagraph(coverPage.Subtitle ?? "", "Subtitle");
             section.AddParagraph($"Project Number: {coverPage.ProjectNumber}", "Normal").Format.Alignment = ParagraphAlignment.Center;
             section.AddParagraph(coverPage.CompanyName, "Normal").Format.Alignment = ParagraphAlignment.Center;
         }
@@ -1190,6 +1232,8 @@ namespace ExportFactory.Services
                 }
             }
         }
+
+
 
 
         private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown)

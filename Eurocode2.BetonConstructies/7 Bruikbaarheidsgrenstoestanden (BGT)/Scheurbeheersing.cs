@@ -1,0 +1,247 @@
+﻿using CommonLibrary;
+using Eurocode.Grondslagen;
+using System.ComponentModel;
+
+namespace Eurocode.BetonConstructies
+{
+    public class Scheurbeheersing : BaseEurocodeContext
+    {
+        public override bool IsAkkoord()
+        {
+            if (Meldingen.Any(m => m.Type == MeldingType.Waarschuwing)) return false;
+
+            return true;
+            throw new NotImplementedException();
+        }
+
+        public override string? ToString()
+        {
+            return base.ToString();
+        }
+
+        protected override void Bereken()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+            throw new NotImplementedException();
+        }
+
+        // 7.3 Scheurbeheersing
+        public enum ElementType
+        {
+            [Description("Elementen met betonstaal en/of voorspanstaal **zonder** aanhechting")]
+            Standaard = 1,
+            [Description("Elementen met een combinatie van betonstaal en voorspanstaal MET aanhechting")]
+            ElementenMetEenCombinatieVanBetonstaalEnVoorspanstaalMetAanhechting = 4,
+            [Description("Elementen met uitsluitend voorspanstaal MET aanhechting")]
+            ElementenMetUitsluitendVoorspanstaalMetAanhechting = 8,
+        }
+
+        public enum BelastingduurEnum { kortdurend = 1, langdurend = 2 };
+
+        /// <summary>
+        /// 7.3.2 Oppervlakte van de minimumwapening
+        /// </summary>
+        public class ScheurwijdteMinimumWapening
+        {
+            public double AsMin { get; set; }
+            public double Act { get; set; }
+            public double SigmaS { get; set; }
+            public double FctEff { get; set; }
+            public double FactorK { get; set; }
+            public double FactorKc { get; set; }
+            public required BetonContext Beton { get; set; }
+
+
+
+
+
+            public double GetFactorK(double lijfHoogteOfFlensBreedte)
+
+            {
+                // stap1: als h kleiner of gelijk is aan 300, dan geldt k = 1,0 
+                // stap2: als h groter of gelijk is dan 800 dan geldt k = 0,65
+                // stap3: hiertussen kunnen we lekker interpoleren. (rechtlijnige grafiek dus!!)
+                // Methode met if, if else, else (ondergrens, bovengrens, interpolatie)
+                if (lijfHoogteOfFlensBreedte <= 300)
+                {
+                    return 1.0;
+                }
+                else if (lijfHoogteOfFlensBreedte >= 800)
+                {
+                    return 0.65;
+                }
+                else
+                {
+                    return (lijfHoogteOfFlensBreedte - 300) / 500 * 0.35 + 0.65;
+                }
+            }   // factor k in berekening scheurwijdte
+
+            public double GetFctEff(BetonContext beton)
+            {
+                if (beton.Tijdstip < 28)
+                {
+                    throw new NotImplementedException("tijdstip kleiner dan 28 dagen niet geimplementeerd.");
+                }
+                else
+                {
+                    return beton.Fctm;
+                }
+            }
+
+
+
+        }
+
+        public class ScheurwijdteGrenswaarde
+        {
+            // 7.3      Scheurbeheersing
+            // 7.3.1    Algemene beschouwingen
+            // 7.3.1(5) Grenswaarde w,max 
+
+            // constructores
+            public ScheurwijdteGrenswaarde(BetonDekkingContext duurzaamheid, NationaleBijlageEnum nationaleBijlage)
+            {
+                DekkingEnDuurzaamheid = duurzaamheid;
+                NationaleBijlage = nationaleBijlage;
+                Initialiseer();
+            }
+
+
+
+            public BetonDekkingContext DekkingEnDuurzaamheid { get; set; } = new();
+            public NationaleBijlageEnum NationaleBijlage { get; set; } = NationaleBijlageEnum.EU;
+            public ElementType ElementType { get; set; } = ElementType.Standaard;
+
+
+
+            private double _factorKx = 1.0;
+            public double FactorKx
+            {
+                get { return _factorKx; }
+            }
+
+
+            private double _wMax = 0.10;
+            public double Wmax
+            {
+                get
+                {
+                    return _wMax;
+                }
+            }
+
+
+
+            public void Initialiseer()
+            {
+                SetFactorKx();
+                SetScheurwijdteMax();
+
+            }
+
+
+
+
+
+            public void SetFactorKx()
+            {
+                switch (NationaleBijlage)
+                {
+                    default:
+                    case Grondslagen.NationaleBijlageEnum.EU:
+                        _factorKx = 1.0;
+                        break;
+                    case Grondslagen.NationaleBijlageEnum.NL:
+                        _factorKx = Math.Min(2, DekkingEnDuurzaamheid.DekkingToe / DekkingEnDuurzaamheid.DekkingNom); // niet groter dan 2, dus math.min()
+                        break;
+                }
+            }
+
+            public void SetScheurwijdteMax()
+            {
+                _wMax = 0.40;
+                foreach (MilieuklasseEnum mk in DekkingEnDuurzaamheid.Milieuklassen)
+                {
+                    var wmax = GetScheurwijdteMax(mk, ElementType, NationaleBijlage);
+                    if (wmax < _wMax)
+                    {
+                        _wMax = wmax;
+                    }
+                }
+                _wMax *= FactorKx;
+            }
+
+
+            public static double GetScheurwijdteMax(MilieuklasseEnum milieuklasse, ElementType elementType, NationaleBijlageEnum nationaleBijlage)
+            {
+                double returnVal = 0.40;
+                switch (milieuklasse)
+                {
+                    default:
+                    case MilieuklasseEnum.X0:
+                    case MilieuklasseEnum.XC1:
+                        switch (nationaleBijlage)
+                        {
+                            default:
+                            case NationaleBijlageEnum.EU:
+                                switch (elementType)
+                                {
+                                    case ElementType.Standaard: returnVal = 0.40; break;
+                                    case ElementType.ElementenMetEenCombinatieVanBetonstaalEnVoorspanstaalMetAanhechting: returnVal = 0.20; break;
+                                }
+                                break;
+                            case NationaleBijlageEnum.NL:
+                                switch (elementType)
+                                {
+                                    case ElementType.Standaard: returnVal = 0.40; break;
+                                    case ElementType.ElementenMetEenCombinatieVanBetonstaalEnVoorspanstaalMetAanhechting: returnVal = 0.30; break;
+                                }
+                                break;
+
+
+                        }
+                        break;
+                    case MilieuklasseEnum.XC2:
+                    case MilieuklasseEnum.XC3:
+                    case MilieuklasseEnum.XC4:
+                        switch (nationaleBijlage)
+                        {
+                            default:
+                                switch (elementType)
+                                {
+                                    case ElementType.Standaard: returnVal = 0.30; break;
+                                    case ElementType.ElementenMetEenCombinatieVanBetonstaalEnVoorspanstaalMetAanhechting: returnVal = 0.20; break;
+                                }
+                                break;
+                        }
+                        break;
+                    case MilieuklasseEnum.XD1:
+                    case MilieuklasseEnum.XD2:
+                    case MilieuklasseEnum.XD3:
+                    case MilieuklasseEnum.XS1:
+                    case MilieuklasseEnum.XS2:
+                    case MilieuklasseEnum.XS3:
+                        switch (nationaleBijlage)
+                        {
+                            default:
+                                switch (elementType)
+                                {
+                                    case ElementType.Standaard: returnVal = 0.20; break;
+                                    case ElementType.ElementenMetEenCombinatieVanBetonstaalEnVoorspanstaalMetAanhechting: returnVal = 0.10; break;
+                                }
+                                break;
+                        }
+                        break;
+
+                }
+
+                return returnVal;
+            }
+
+        }
+    }
+}

@@ -92,7 +92,7 @@ namespace Eurocode.BetonConstructies
         //}
         public static double GetFactorAlpha(this BetonContext beton)
         {
-            if (beton.EpsilonC == 0)
+            if (beton.EpsilonCu == 0)
                 return 0.75; //?
 
             return beton.SpanningRekDiagram switch
@@ -105,21 +105,21 @@ namespace Eurocode.BetonConstructies
 
         public static double GetAlphaBiLineair(this BetonContext beton)
         {
-            double sigma = beton.GetSigmaCd(beton.EpsilonC);
-            double oppDriehoek = (Math.Min(beton.EpsilonC, beton.EpsilonC3) * sigma) * 0.5;
+            double sigma = beton.GetSigmaCd(beton.EpsilonCu);
+            double oppDriehoek = (Math.Min(beton.EpsilonCu, beton.EpsilonC3) * sigma) * 0.5;
 
             double oppRechthoek = 0;
-            if (beton.EpsilonC < beton.EpsilonC3) oppRechthoek = 0; // geen rechthoek
-            if (beton.EpsilonC >= beton.EpsilonC3) oppRechthoek = sigma * (beton.EpsilonC - beton.EpsilonC3); // rechthoek 
+            if (beton.EpsilonCu < beton.EpsilonC3) oppRechthoek = 0; // geen rechthoek
+            if (beton.EpsilonCu >= beton.EpsilonC3) oppRechthoek = sigma * (beton.EpsilonCu - beton.EpsilonC3); // rechthoek 
 
             double oppTotaal = oppRechthoek + oppDriehoek;
-            return (oppDriehoek + oppRechthoek) / (sigma * beton.EpsilonC);
+            return (oppDriehoek + oppRechthoek) / (sigma * beton.EpsilonCu);
         }
 
         public static double GetAlphaParaboolRechthoek(this BetonContext beton)
         {
-            double sigma = beton.GetSigmaCd(beton.EpsilonC);
-            double epsilonHulp = Math.Min(beton.EpsilonC, beton.EpsilonC2);
+            double sigma = beton.GetSigmaCd(beton.EpsilonCu);
+            double epsilonHulp = Math.Min(beton.EpsilonCu, beton.EpsilonC2);
 
             // eerste hele parabool (sorry ik kwam er niet helemaal uit) door 
             double oppParaboolTotaal = beton.Fcd * (beton.EpsilonC2 - 1.0 / (beton.FactorN + 1) * Math.Pow(beton.EpsilonC2, beton.FactorN + 1) / Math.Pow(beton.EpsilonC2, beton.FactorN));
@@ -131,11 +131,11 @@ namespace Eurocode.BetonConstructies
             double oppParabool = oppParaboolTotaal - oppParaboolEraf;
 
             double oppRechthoek = 0;
-            if (beton.EpsilonC < beton.EpsilonC2) oppRechthoek = 0; // geen rechthoek
-            if (beton.EpsilonC >= beton.EpsilonC2) oppRechthoek = sigma * (beton.EpsilonC - beton.EpsilonC2); // rechthoek 
+            if (beton.EpsilonCu < beton.EpsilonC2) oppRechthoek = 0; // geen rechthoek
+            if (beton.EpsilonCu >= beton.EpsilonC2) oppRechthoek = sigma * (beton.EpsilonCu - beton.EpsilonC2); // rechthoek 
 
             //double oppTotaal = oppRechthoek + oppParabool;
-            return (oppParabool + oppRechthoek) / (sigma * beton.EpsilonC);
+            return (oppParabool + oppRechthoek) / (sigma * beton.EpsilonCu);
         }
 
 
@@ -152,8 +152,8 @@ namespace Eurocode.BetonConstructies
         public static double GetBetaParabool(this BetonContext beton)
         {
             double h = beton.Fcd;
-            double y1 = (beton.EpsilonC2 - beton.EpsilonC) * 1000;
-            if (beton.EpsilonC > beton.EpsilonC2) y1 = 0.000;   // grafiek stopt bij EpsC2!
+            double y1 = (beton.EpsilonC2 - beton.EpsilonCu) * 1000;
+            if (beton.EpsilonCu > beton.EpsilonC2) y1 = 0.000;   // grafiek stopt bij EpsC2!
             double y2 = beton.EpsilonC2 * 1000;
             double dy = y2 - y1; // is ook afstand xu
             if (dy == 0) dy = 0.0000000000001;
@@ -177,16 +177,16 @@ namespace Eurocode.BetonConstructies
             switch (beton.SpanningRekDiagram)
             {
                 case SpanningRekDiagramType.Parabolisch:
-                    if (beton.EpsilonC < beton.EpsilonC2) // niet volledige parabool
+                    if (beton.EpsilonCu < beton.EpsilonC2) // niet volledige parabool
                         return GetBetaParabool(beton);
                     else
-                        return GetFactorBeta(beton, beton.EpsilonC2, beton.EpsilonC);
+                        return GetFactorBeta(beton, beton.EpsilonC2, beton.EpsilonCu);
                 default:
                 case SpanningRekDiagramType.BiLineair:
-                    if (beton.EpsilonC < beton.EpsilonC3)
+                    if (beton.EpsilonCu < beton.EpsilonC3)
                         return 1.00 / 3.00; // driehoek
                     else
-                        return GetFactorBeta(beton, beton.EpsilonC3, beton.EpsilonC); // driehoek+rechthoek
+                        return GetFactorBeta(beton, beton.EpsilonC3, beton.EpsilonCu); // driehoek+rechthoek
             }
         }
 
@@ -197,9 +197,9 @@ namespace Eurocode.BetonConstructies
             if (beton.SpanningRekDiagram == SpanningRekDiagramType.BiLineair) return 0.5;
             else
             {
-                double sigma = beton.GetSigmaCd(beton.EpsilonC);
-                double oppTot = sigma * beton.EpsilonC;
-                double oppA = beton.Fcd * (beton.EpsilonC - 1.0 / (beton.FactorN + 1) * Math.Pow(beton.EpsilonC, beton.FactorN + 1) / Math.Pow(beton.EpsilonC2, beton.FactorN));
+                double sigma = beton.GetSigmaCd(beton.EpsilonCu);
+                double oppTot = sigma * beton.EpsilonCu;
+                double oppA = beton.Fcd * (beton.EpsilonCu - 1.0 / (beton.FactorN + 1) * Math.Pow(beton.EpsilonCu, beton.FactorN + 1) / Math.Pow(beton.EpsilonC2, beton.FactorN));
                 return oppA / oppTot;
             }
         }
@@ -269,6 +269,9 @@ namespace Eurocode.BetonConstructies
             else returnVal = 3.5 / 1000;
             return returnVal;
         }
+
+
+
 
 
         public static (double alpha, double beta) GetAlphaBeta(this BetonContext beton, double optredendeBetonrek)

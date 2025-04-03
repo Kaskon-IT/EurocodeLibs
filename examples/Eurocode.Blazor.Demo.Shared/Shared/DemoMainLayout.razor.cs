@@ -1,4 +1,3 @@
-using Eurocode.Blazor.Demo.Shared.Components;
 using Eurocode.Blazor.Demo.Shared.Infrastructure;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
@@ -8,11 +7,14 @@ namespace Eurocode.Blazor.Demo.Shared;
 
 public partial class DemoMainLayout
 {
+
+
+
     private const string JAVASCRIPT_FILE = "./_content/Eurocode.Blazor.Demo.Shared/Shared/DemoMainLayout.razor.js";
     private string? _version;
     private bool _mobile;
     private string? _prevUri;
-    private TableOfContents? _toc;
+    //private TableOfContents? _toc;
     private bool _menuChecked = true;
 
     [Inject]
@@ -42,12 +44,12 @@ public partial class DemoMainLayout
         }
     }
 
-    public EventCallback OnRefreshTableOfContents => EventCallback.Factory.Create(this, RefreshTableOfContentsAsync);
+    //public EventCallback OnRefreshTableOfContents => EventCallback.Factory.Create(this, RefreshTableOfContentsAsync);
 
-    private async Task RefreshTableOfContentsAsync()
-    {
-        await _toc!.Refresh();
-    }
+    // private async Task RefreshTableOfContentsAsync()
+    // {
+    //     await _toc!.Refresh();
+    // }
 
     private void HandleChecked()
     {

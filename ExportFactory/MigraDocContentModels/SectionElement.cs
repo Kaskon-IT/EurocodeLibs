@@ -1,4 +1,6 @@
-﻿namespace ExportFactory.MigraDocContentModels
+﻿using MigraDoc.DocumentObjectModel;
+
+namespace ExportFactory.MigraDocContentModels
 {
     public abstract class SectionElement
     {
@@ -8,6 +10,15 @@
     public class HeadingContent : SectionElement
     {
         public HeadingContent() { }
+
+
+        public HeadingContent(string text, string style)
+        {
+            Text = text;
+            Style = style;
+
+        }
+
 
         public HeadingContent(string text, int level)
         {
@@ -44,6 +55,11 @@
             Markdown = markdown;
         }
 
+        public ParagraphContent(string markdown, string style)
+        {
+            Markdown = markdown;
+            Style = style;
+        }
         public string Markdown { get; set; } = ""; // Markdown string for formatting
         public string Style { get; set; } = "Normal"; // Default style
     }
@@ -58,7 +74,32 @@
         public List<List<TableCellContent>> Rows { get; set; } = new List<List<TableCellContent>>();
     }
 
+    /// <summary>
+    /// Gebruik dit om direct een MigraDoc.Table in de documentContent te plaatsen.
+    /// </summary>
+    public class MigraDocTable : SectionElement
+    {
+        public MigraDoc.DocumentObjectModel.Tables.Table Table { get; set; } = new();
+    }
 
+    /// <summary>
+    /// Universele class voor Paragraph, Chart, Image, Table of TextFrame van MigraDoc rechtstreeks te plaatsen in de document bouwstenen.
+    /// </summary>
+    public class MigraDocElement : SectionElement
+    {
+        public MigraDoc.DocumentObjectModel.DocumentObject? DocumentObject { get; set; }
+
+        public MigraDocElement()
+        {
+
+        }
+
+        public MigraDocElement(DocumentObject documentObject)
+        {
+            DocumentObject = documentObject;
+        }
+
+    }
 
     //public class TableContent<T> : SectionElement
     //{

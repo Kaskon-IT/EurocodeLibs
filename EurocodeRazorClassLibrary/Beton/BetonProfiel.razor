@@ -1,18 +1,27 @@
-﻿@using BetonProfielen;
+﻿@using BetonProfielen
+@using ParametrischeProfielen
 @using System.ComponentModel
+@using K = CommonLibrary.EurocodeKeys;
+
 <h3>BetonProfiel</h3>
 
-
-<FluentNumberField Label="Breedte [mm]" @bind-Value="@Model.Profiel.Breedte" Step="50" Min="80"></FluentNumberField>
-<FluentNumberField Label="Hoogte [mm]" @bind-Value="@Model.Profiel.Hoogte" Step="50" Min="50"></FluentNumberField>
-
-<FluentSelectEnum 
-Label="Vorm"
-@bind-EnumSelectedValue="Model.Profiel.Vorm"
-TEnum="ParametrischeProfielen.ParametrischeProfielVormEnum">
+<FluentSelectEnum Label="Vorm"
+                  DisabledEnumItems="DisabledProfielVormen"
+                  @bind-EnumSelectedValue="Model.Profiel.Vorm"
+                  TEnum="ParametrischeProfielen.ParametrischeProfielVormEnum">
 
 
 </FluentSelectEnum>
+<EurocodeInputNumber @bind-Value=Model.Profiel.Breedte Key="@K.ProfielBreedte" MinValue="80" Unit="mm" StringFormat="0"></EurocodeInputNumber>
+<EurocodeInputNumber @bind-Value=Model.Profiel.Hoogte Key="@K.ProfielHoogte" MinValue="80" Unit="mm" StringFormat="0"></EurocodeInputNumber>
+
+
+@* <FluentNumberField Label="Breedte [mm]" @bind-Value="@Model.Profiel.Breedte" Step="50" Min="80"></FluentNumberField> *@
+@* <FluentNumberField Label="Hoogte [mm]" @bind-Value="@Model.Profiel.Hoogte" Step="50" Min="50"></FluentNumberField> *@
+
+
+
+
 
 
 
@@ -35,7 +44,11 @@ TEnum="ParametrischeProfielen.ParametrischeProfielVormEnum">
 }
 
 
-<FluentTextField Label="Area" Value="@Model.Profiel.Area.ToString("e5")"></FluentTextField>
+
+<EurocodeInputNumber ReadOnly=true Value=Model.Profiel.Area Key="@K.BetonDoorsnedeOppervlak" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.Profiel.Wy Key="Wy" Unit="mm³" StringFormat="0"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.Profiel.Iy Key="Iy" Unit="mm³" StringFormat="0"></EurocodeInputNumber>
+
 
 
 
@@ -47,6 +60,37 @@ TEnum="ParametrischeProfielen.ParametrischeProfielVormEnum">
 
     [Parameter]
     public EventCallback<BetonProfielen.BetonProfiel> ModelChanged { get; set; }
+
+    [Parameter]
+    public ParametrischeProfielen.ParametrischeProfielVormEnum[] DisabledProfielVormen{ get; set; } = [
+        ParametrischeProfielVormEnum.Rond,
+        ParametrischeProfielVormEnum.Buis,
+        ParametrischeProfielVormEnum.Koker,
+        ParametrischeProfielVormEnum.U1,
+        ParametrischeProfielVormEnum.U2,
+        ParametrischeProfielVormEnum.U3,
+        ParametrischeProfielVormEnum.U4,
+        ParametrischeProfielVormEnum.L1,
+        ParametrischeProfielVormEnum.L2,
+        ParametrischeProfielVormEnum.L3,
+        ParametrischeProfielVormEnum.L4,
+        ParametrischeProfielVormEnum.Z1,
+        ParametrischeProfielVormEnum.Z2,
+        ParametrischeProfielVormEnum.T1,
+        ParametrischeProfielVormEnum.T2,
+        ParametrischeProfielVormEnum.T3,
+        ParametrischeProfielVormEnum.T4,
+        ParametrischeProfielVormEnum.I,
+        ParametrischeProfielVormEnum.H,
+        ParametrischeProfielVormEnum.EigenProfiel,
+
+
+
+
+
+    ];
+
+
 
     protected override void OnInitialized()
     {

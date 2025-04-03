@@ -5,28 +5,167 @@
 }
 
 
+
+
+
+
+.ec-accordion {
+    background-color: #f1f1f1;
+    color: #444;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    font-size: 18px;
+}
+
+    .ec-accordion:hover {
+        background-color: #ddd;
+    }
+
+
+    .ec-accordion::before {
+        content: "✒️ "; 
+        white-space: pre;
+    }
+
+
+
+    .ec-accordion.active + .ec-panel {
+        display: block; /* Toon de inhoud als de accordion actief is */
+    }
+
+
+    .ec-accordion:not(.active):after {
+        content: "🔽"; /* + */
+        font-size: 20px;
+        padding-left: 10px;
+        float: right;
+    }
+
+    .ec-accordion.active:after {
+        content: "🔼"; /* Unicode voor een pijl naar boven */
+        font-size: 20px;
+        float: right;
+    }
+
+
+
+.ec-panel {
+    padding: 0 18px;
+    display: none; /* in de basis verborgen*/
+    overflow: hidden; 
+    background-color: #f9f9f9;
+}
+
+
 .ec-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin-bottom: 10px;
+    /*border:solid 1px gray;*/
+}
+
+.ec-table-pivot{
+    border-collapse: collapse;
+    border: none;
+
 }
 
 .ec-table-borderless{
 
 }
 
+.tab-simulated {
+    display: inline-block;
+    min-width: 75px; /* De breedte van de "tab" */
+}
+
+.ec-th-right {
+    text-align: right;
+    padding: 0.5em;
+    border-right: solid 1px gray;
+    width: 50%;
+    font-weight: normal;
+    font-style: italic;
+}
+
+.ec-th-pivot {
+    text-align: left;
+    padding: 0.5em;
+    /*border-right: solid 1px gray;*/
+    /*width: 40%;*/
+    font-weight: normal;
+    /*font-style: italic;*/
+}
+
+.ec-td {
+    padding: 0.5em;
+}
+
+.ec-th {
+    font-weight: normal;
+    font-style: italic;
+    padding: 0.5em;
+}
+
+
 .ec-table-head {
     padding: 8px 12px;
     text-align: left;
     border-bottom: 1px solid #f4f4f4;
+    
+}
+
+.ec-table-heading{
+    font-weight: 500;
+    font-size: 1.1em;
+    margin-bottom: 0.5em;
+    padding-left: 0.5em;
+    padding-bottom: 0.25em;
+    border-left: 5px solid green;
+    /*border-bottom: 1px solid green;*/
+
+    /*text-align: center;*/
+}
+
+.add-colon::before {
+    content: "🔹 "; /* Voeg ": " vóór de tekst toe */
+    color: #333; /* Optioneel: pas de kleur aan */
+    white-space: pre;
 }
 
 .ec-table-row {
     padding: 8px 12px;
     text-align: left;
-    border-bottom: 1px solid #f4f4f4;
+    border-bottom: 1px solid #929292;
 }
 
+
+.ec-table-row-pivot{
+    border-bottom: none; /* geen horizontale lijntjes */
+    /*border-right: 1px solid #929292;*/
+}
+
+
+.ec-symbol{
+    font-style: italic;
+}
+
+.ec-description{
+    font-weight: 100;
+}
+
+.ec-article{
+    color: gray;
+    font-size: smaller;
+}
+
+.ec-par{
+
+}
 
 
 
@@ -72,16 +211,3 @@
 
 
 
-/*
-
-htmlBuilder.AppendLine($"p {{ margin: 10px 0; font-size: 1.1em; font-family:{fontFamily}; line-height: 1.6; }}");
-htmlBuilder.AppendLine("b { font-weight: bold; }");
-htmlBuilder.AppendLine("i { font-style: italic; }");
-htmlBuilder.AppendLine("sub { font-size: 0.8em; vertical-align: sub; }");
-htmlBuilder.AppendLine("sup { font-size: 0.8em; vertical-align: super; }");
-htmlBuilder.AppendLine("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
-//htmlBuilder.AppendLine("table, th, td { border: 1px solid #ddd; }");
-htmlBuilder.AppendLine("th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f4f4f4; }");
-//htmlBuilder.AppendLine("th { background-color: #f4f4f4; font-weight: bold; }");
-htmlBuilder.AppendLine("img { max-width: 100%; height: auto; display: block; margin: 20px 0; }");
-*/

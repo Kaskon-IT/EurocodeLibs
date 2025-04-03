@@ -178,14 +178,14 @@ namespace ExportFactory.MigraDocContentModels
             pdfGenerator.CreateTable(section, tableModel);
 
             // Export the document to a PDF
-            string filename = "TableExample.pdf";
+            string filename = "wwwroot/demo/TableExample.pdf";
             PdfDocumentRenderer pdfRenderer = new(true);
             pdfRenderer.Document = doc;
             pdfRenderer.RenderDocument();
             pdfRenderer.PdfDocument.Save(filename);
             Console.WriteLine($"Document saved to {filename}");
 
-            filename = "TableExample.rtf";
+            filename = "wwwroot/demo/TableExample.rtf";
             RtfDocumentRenderer rtfRenderer = new();
             rtfRenderer.Render(doc, filename, null);
 

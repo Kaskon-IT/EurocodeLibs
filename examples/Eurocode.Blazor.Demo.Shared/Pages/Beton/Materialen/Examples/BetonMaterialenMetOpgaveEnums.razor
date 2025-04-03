@@ -3,20 +3,21 @@
 @if (SampleProject != null)
 {
 
-    <FluentSwitch @bind-Value="_disabled">Disabled</FluentSwitch>
+    @* <FluentSwitch @bind-Value="_disabled">Disabled</FluentSwitch> *@
 
     <EurocodeBetonMaterialen 
     @bind-Model="@SampleProject.Beton" 
     BetonStaalKwaliteitEnumItems="@_betonstaalEnumItems"
     BetonSterkteklasseEnumItems="@_betonsterkteklasseEnumItems"
     Disabled ="@_disabled"
-    ToonBetonSpanningRekDiagram="false" 
-    ToonBetonStaalSpanningRekDiagram="false"></EurocodeBetonMaterialen>
+    ToonBetonstaal="true"
+    ToonBetonSpanningRekDiagram="true" 
+    ToonBetonStaalSpanningRekDiagram="true"></EurocodeBetonMaterialen>
 }
 
 @code {
     [Parameter]
-    public SampleProject? SampleProject { get; set; } = new();
+    public SampleProject? SampleProject { get; set; } 
 
 
     private bool _disabled { get; set; } = false;

@@ -1,0 +1,18 @@
+﻿@page "/beton/dwarskracht"
+@using Eurocode.Blazor.Demo.Shared.Pages.Beton.Dwarskracht.Examples
+
+<PageTitle>@App.PageTitle("Beton Dwarskracht")</PageTitle>
+
+<h2>Voorbeelden</h2>
+<DemoSection 
+    Title="Dwarskracht (default)" 
+   
+    Component="@typeof(DwarskrachtDefault)"></DemoSection>
+
+
+<ApiDocumentation Component="typeof(EurocodeBetonDwarskrachtComponent)" />
+
+@code{
+    
+}
+

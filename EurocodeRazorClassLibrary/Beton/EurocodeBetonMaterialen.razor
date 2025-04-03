@@ -1,40 +1,53 @@
 ﻿@using Eurocode.BetonConstructies
 
+@if (ShowUserFriendly)
+{
+    <p>
+        <i>betonsterkteklasse</i> : <b> @Model.BetonSterkteKlasseGebruiksvriendelijkeNaam</b> (@Model.SpanningRekDiagram)
+        <i>staalkwaliteit</i> : <b> @Model.BetonStaal.BetonStaalKwaliteit</b> (@Model.BetonStaal.SpanningRekDiagram)
 
-<FluentSelectEnum 
-    Label="Betonsterkteklasse"
+    </p>
+}
+else
+{
+    <FluentSelectEnum Label="@LabelBetonsterkteklasse"
     TEnum="BetonsterkteklasseEnum"
     ExcludeEnumItems="@_betonSterkteklasseExcludedItems"
     @bind-EnumSelectedValue="@Model.Betonsterkteklasse"
-    Disabled="@Disabled" />
+    ReadOnly="@ReadOnly"
+    Disabled="@ReadOnly" />
 
-@if(ToonBetonSpanningRekDiagram)
-{
-    <FluentSelectEnum 
-    Label="Spanning-rek diagram" 
-    TEnum="BetonContext.SpanningRekDiagramType"
-    @bind-EnumSelectedValue="@Model.SpanningRekDiagram"
-    Disabled="@Disabled" />
+
+
+
+    @if (ToonBetonSpanningRekDiagram)
+    {
+        <FluentSelectEnum Label="spanning-rek diagram (beton)"
+        TEnum="BetonContext.SpanningRekDiagramType"
+        @bind-EnumSelectedValue="@Model.SpanningRekDiagram"
+        Disabled="@Disabled" />
+    }
+
+    @if (ToonBetonstaal)
+    {
+        <FluentSelectEnum Label="betonstaalkwaliteit"
+        TEnum="BetonStaalKwaliteitEnum"
+        ExcludeEnumItems="@_betonStaalKwaliteitExcludedItems"
+        @bind-EnumSelectedValue="@Model.BetonStaal.BetonStaalKwaliteit"
+        Disabled="@Disabled" />
+    }
+
+    @if (ToonBetonStaalSpanningRekDiagram)
+    {
+        <FluentSelectEnum Label="spanning-rek diagram (betonstaal)"
+        TEnum="BetonStaalContext.SpanningRekDiagramType"
+        @bind-EnumSelectedValue="@Model.BetonStaal.SpanningRekDiagram"
+        Disabled="@Disabled" />
+    }
 }
 
-@if (ToonBetonstaal)
-{
-    <FluentSelectEnum
-    Label="Betonstaal"
-    TEnum="BetonStaalKwaliteitEnum"
-    ExcludeEnumItems="@_betonStaalKwaliteitExcludedItems"
-    @bind-EnumSelectedValue="@Model.BetonStaal.BetonStaalKwaliteit" 
-    Disabled ="@Disabled"/>
-}
 
-@if (ToonBetonStaalSpanningRekDiagram)
-{
-    <FluentSelectEnum 
-    Label="Spanning-rek diagram"
-    TEnum="BetonStaalContext.SpanningRekDiagramType"
-    @bind-EnumSelectedValue="@Model.BetonStaal.SpanningRekDiagram"
-    Disabled ="@Disabled"/>
-}
+
 
 
 
@@ -57,27 +70,47 @@
     [Parameter]
     public EventCallback<BetonContext> ModelChanged { get; set; }
 
+    protected override void OnInitialized()
+    {
+        Model.OnUpdated += StateHasChanged;
+    }
+
+
+    protected override void OnParametersSet()
+    {
+        // React op modelwijzigingen
+        Console.WriteLine($"Model gewijzigd: {Model?.BetonSterkteKlasseGebruiksvriendelijkeNaam}");
+    }
+
+    [Parameter]
+    public bool ShowUserFriendly { get; set; } = false;
+
+    [Parameter]
+    public bool ReadOnly{ get; set; }
+
+    [Parameter]
+    public string LabelBetonsterkteklasse { get; set; } = "betonsterkteklasse";
 
     /// <summary>
     /// Optie om keuze betonstaal wel/niet te tonen.
     /// Standaard true.
     /// </summary>
     [Parameter]
-    public bool ToonBetonstaal { get; set; } = true;
+    public bool ToonBetonstaal { get; set; } = !true;
 
     /// <summary>
     /// Optie om de keuze voor spanning-rek-diagram van beton wel/niet te tonen.
     /// Standaard true.
     /// </summary>
     [Parameter]
-    public bool ToonBetonSpanningRekDiagram { get; set; } = true;
+    public bool ToonBetonSpanningRekDiagram { get; set; } = !true;
 
     /// <summary>
     /// Optie om de keuze voor spanning-rek-diagram van het betonstaal wel/niet te tonen.
     /// Standaard true.
     /// </summary>
     [Parameter]
-    public bool ToonBetonStaalSpanningRekDiagram { get; set; } = true;
+    public bool ToonBetonStaalSpanningRekDiagram { get; set; } = !true;
 
     /// <summary>
     /// Optie voor keuze mogelijkheid te blokkeren

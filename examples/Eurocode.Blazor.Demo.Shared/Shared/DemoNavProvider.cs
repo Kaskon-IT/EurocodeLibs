@@ -28,20 +28,7 @@ public class DemoNavProvider
                 title: "Home"
             ),
 
-            new NavGroup(
-                icon: new Icons.Regular.Size20.PersonRunning(),
-                title: "Getting Started",
-                expanded: !true,
-                gap: Gap,
-                children:
-                [
-                    new NavLink(
-                        href: "/WhatsNew",
-                        icon: new Icons.Regular.Size20.Info(),
-                        title: "What's new"
-                    ),
-                ]
-            ),
+
 
 
 
@@ -64,11 +51,7 @@ public class DemoNavProvider
                                 icon: new Icons.Regular.Size20.Badge(),
                                 title: "Grondslagen"
                             ),
-                            new NavLink(
-                                href: "/button",
-                                icon: new Icons.Regular.Size20.Button(),
-                                title: "Button"
-                            ),
+
                         ]
                     ),
                     new NavGroup(
@@ -97,28 +80,14 @@ public class DemoNavProvider
                         icon: new Icons.Regular.Size20.NumberCircle2(),
                         children:
                         [
-                            new NavLink(
-                                href: "/beton/materialen",
-                                icon: new Icons.Regular.Size20.Diamond(),
-                                title: "Materialen"
-                            ),
-                            new NavLink(
-                                href: "/beton/duurzaamheid",
-                                icon: new Icons.Regular.Size20.WeatherBlowingSnow(),
-                                title: "Duurzaamheid"
-                            ),
-                            new NavLink(
-                                href: "/beton/profiel",
-                                icon: new Icons.Regular.Size20.NotebookSection(),
-                                title: "Profiel"
-                                ),
-
-
-                             new NavLink(
-                                href: "/beton/buiging",
-                                icon: new Icons.Regular.Size20.ArrowTurnLeftDown(),
-                                title: "Buiging"
-                            ),
+                            new NavLink(href: "/beton/materialen",icon: new Icons.Regular.Size20.Diamond(),title: "Materialen"),
+                            new NavLink(href: "/beton/duurzaamheid",icon: new Icons.Regular.Size20.WeatherBlowingSnow(),title: "Duurzaamheid"),
+                            new NavLink(href: "/beton/profiel",icon: new Icons.Regular.Size20.NotebookSection(),title: "Profiel"),
+                            new NavLink(href: "/beton/buiging",icon: new Icons.Regular.Size20.ArrowTurnLeftDown(),title: "Buiging"),
+                            new NavLink(href: "/beton/scheurwijdte", icon: new Icons.Regular.Size20.Check(), title: "Scheurwijdte"),
+                            new NavLink(href: "/beton/dwarskracht",icon: new Icons.Regular.Size20.ClipboardMathFormula(),title: "Dwarskracht"),
+                            new NavLink(href: "/beton/prefab/oplegging", icon: new Icons.Regular.Size20.Pin(), title: "Oplegging"),
+                            new NavLink(href: "/beton/prefab/uitkraging", icon: new Icons.Regular.Size20.Calculator(), title: "Uitkraging (TEST)"),
 
                         ]
                     ),
@@ -162,33 +131,25 @@ public class DemoNavProvider
 
             new NavGroup(
                 icon: new Icons.Regular.Size20.Beaker(),
-                title: "Incubation lab",
+                title: "Test lab",
                 expanded: false,
                 gap: "10px",
                 children:
                 [
-                    new NavLink(
-                        href: "/Lab/Overview",
-                        icon: new Icons.Regular.Size20.Beaker(),
-                        title: "Overview"
-                    ),
+
 
                     new NavLink(
-                        href: "/Lab/MarkdownSection",
+                        href: "/lab/datagrid-test-lab",
                         icon: new Icons.Regular.Size20.ArrowSortDown(),
-                        title: "MarkdownSection"
+                        title: "DataGrid"
                     ),
 
                     new NavLink(
-                        href: "/Lab/TableOfContents",
-                        icon: new Icons.Regular.Size20.DocumentTextLink(),
-                        title: "TableOfContents"
+                        href: "/lab/eurocode-symbolen",
+                        icon: new Icons.Regular.Size20.Symbols(),
+                        title: "Symbolen (TEST)"
                     ),
-                    new NavLink(
-                        href: "/issue-tester",
-                        icon: new Icons.Regular.Size20.WrenchScrewdriver(),
-                        title: "Issue Tester"
-                    ),
+
                 ]
             )
         ];

@@ -6,9 +6,16 @@
     <RootNamespace>Eurocode.BetonConstructies</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
+    <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
+    <PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
+    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Algemeen\" />
+    <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
   </ItemGroup>
+
+
+	
+	
+	
 </Project>

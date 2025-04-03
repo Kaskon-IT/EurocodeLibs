@@ -1,0 +1,114 @@
+﻿@using Eurocode.BetonConstructies
+@using Eurocode.BetonConstructies.SpecifiekeRegels
+@using CommonLibrary
+@using K = CommonLibrary.EurocodeKeys;
+
+
+
+
+@if(Model.Snedekrachten != null)
+{
+    @* <p>moment : @Model.Snedekrachten.My.ToString("0.##") kNm</p> *@
+}
+
+<EurocodeMeldingenComponent Meldingen="Model.Meldingen"></EurocodeMeldingenComponent>
+
+<p>@Model.ToMarkupString()</p>
+
+
+<FluentSelectEnum Label="type berekening"
+TEnum="BerekeningTypeEnum"
+@bind-EnumSelectedValue="@Model.BerekeningType"/>
+
+<FluentSelectEnum Label="schematisering"
+TEnum="@Schematisering.ConstructiefModelEnum"
+@bind-EnumSelectedValue="@Model.ConstructiefModel" />
+
+
+
+
+@if(Model.Snedekrachten == null)
+{
+    <EurocodeInputNumber @bind-Value=Model.Moment Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
+}
+else
+{
+    <EurocodeInputNumber ReadOnly=true @bind-Value=Model.Snedekrachten.My Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
+}
+
+@if(Model.Profiel == null)
+{
+    <EurocodeInputNumber @bind-Value=Model.Breedte Key="@K.ProfielBreedte" Unit="mm"></EurocodeInputNumber>
+    <EurocodeInputNumber @bind-Value=Model.Hoogte Key="@K.ProfielHoogte" Unit="mm"></EurocodeInputNumber>
+}
+else
+{
+    <p>Profiel: @Model.Profiel?.ToString()</p>
+}
+
+
+<EurocodeInputNumber @bind-Value=Model.ZRef Key="ReferentieAfstandVoorNuttigeHoogte" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.D Key="NuttigeHoogte" Unit="mm"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.Xu Key="Xu" Unit="mm" MaxValue="Model.XuMax"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.XuD Key="XuD" Unit="-" MaxValue="Model.XuDMax"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.Z Key="Z" Unit="mm"></EurocodeInputNumber>
+
+<EurocodeInputNumber ReadOnly=true Value=Model.SigmaS Key="Staalspanning" Unit="MPa"></EurocodeInputNumber>
+
+@if (Model.Wapening != null && Model.BerekeningType == BerekeningTypeEnum.ControleerWapening)
+{
+    <EurocodeInputContainer Key="@K.WapeningToegepast" Unit="">
+        <ChildContent>
+            <FluentTextField @bind-Value="@Model.Wapening.Tekst"></FluentTextField>
+        </ChildContent>
+    </EurocodeInputContainer>
+
+
+    <p>Wapening voorstel: @WapeningHelper.GetWapeningVoorstel(Model.AsRequired, 150)</p>
+
+}
+
+
+
+<EurocodeInputNumber ReadOnly=true Value=Model.AsMin Key="AsMin" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.AsRequired Key="AsBen" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.AsApplied Key="AsToe" Unit="mm²" MinValue="Model.AsRequired" MaxValue="Model.AsMax" StringFormat="0"></EurocodeInputNumber>
+
+
+@if (Model.MinimaleWapeningToegepast)
+{
+    <p>Minimale wapening maatgevend</p>
+}
+
+
+@code {
+    [Parameter, EditorRequired]
+    public required BendingResults Model{ get; set; }
+
+
+
+    [Parameter]
+    public EventCallback<Eurocode.BetonConstructies.BendingResults> ModelChanged { get; set; }
+
+    //public BetonProfielen.BetonProfiel profielDemo { get; set; } = new();
+
+
+    [Parameter]
+    public BerekeningTypeEnum BerekeningType { get; set; } = BerekeningTypeEnum.BepaalBenodigeWapening;
+
+    protected override void OnInitialized()
+    {
+        Model.OnUpdated += StateHasChanged;
+        Model.Wapening.PropertyChanged += (s, e) => StateHasChanged();
+
+       
+
+    }
+
+    
+
+
+
+
+
+}

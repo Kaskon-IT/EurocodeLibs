@@ -2,14 +2,26 @@
 @using Eurocode.Blazor.Demo.Shared.Pages.Beton.Buiging.Examples
 
 <h3>Buiging basis</h3>
+<p>Gebruikte materialen voor de componenten op deze pagina</p>
 
-<h2>Voorbeelden</h2>
-<DemoSection Title="Basic" Component="typeof(BuigingBasisDefault)"/>
+@* <EurocodeBetonMaterialen @bind-Model="@SampleProject.BendingResults.Beton" 
+                         ShowUserFriendly=true></EurocodeBetonMaterialen> *@
 
-<ApiDocumentation Component="typeof(BuigingBasic)" />
-<ApiDocumentation Component="typeof(PlotlyChart)" />
+
+
+    <h2>Voorbeelden</h2>
+    <DemoSection Title="Basic" Component="typeof(BuigingBasisDefault)"/>
+
+    <ApiDocumentation Component="typeof(BuigingBasic)" />
+    <ApiDocumentation Component="typeof(PlotlyChart)" />
 
 
 @code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
 
+    public void ChangeState()
+        {
+        StateHasChanged();
+        }
 }

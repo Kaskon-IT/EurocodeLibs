@@ -1,0 +1,38 @@
+﻿@using ExportFactory.Shared
+@using ExportFactory.Extensions
+
+<h3>EurocodeSymbolen</h3>
+
+<HtmlPreview HtmlContent="@html"></HtmlPreview>
+
+
+
+@code {
+    [Parameter, EditorRequired]
+    public Dictionary<string, AttributesMapping> Mappings { get; set; } = new();
+    private List<KeyValueMappingModel> keyValues = new();
+
+    //private System.Data.DataTable dataTable = new();
+    private MigraDoc.DocumentObjectModel.Document document = new();
+    private string html { get; set; } = "";
+
+    protected override void OnInitialized()
+    {
+        keyValues = Mappings.Select(kv => new KeyValueMappingModel
+        {
+            Key = kv.Key,
+            Mapping = kv.Value
+        })
+        .OrderBy(x => x.Key )
+        .ToList();
+
+        //dataTable = keyValues.ToDataTable();
+        document = keyValues.ToMigraDocDocument(typeof(KeyValueMappingModel), isPivotTable: false);
+        html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(document);
+
+
+    }
+
+
+
+}

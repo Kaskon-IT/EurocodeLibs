@@ -1,0 +1,22 @@
+﻿@using CommonLibrary
+@using CommonLibrary.Extensions
+@using System.Collections.ObjectModel
+
+
+@if (Meldingen.Any())
+{
+    @foreach (var melding in Meldingen)
+    {
+        <div>
+            <EurocodeMeldingComponent Melding=melding />
+        </div>
+    }
+   
+}
+
+@code {
+    [Parameter] 
+    public ObservableCollection<Melding> Meldingen { get; set; } = [];
+    [Parameter] 
+    public EventCallback<ObservableCollection<Melding>> MeldingenChanged { get; set; }
+}

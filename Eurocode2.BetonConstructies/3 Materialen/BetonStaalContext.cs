@@ -1,4 +1,6 @@
-﻿namespace Eurocode.BetonConstructies
+﻿using ExportFactory.Shared;
+
+namespace Eurocode.BetonConstructies
 {
 
     /// <summary>
@@ -43,6 +45,7 @@
         /// </summary>
         //public bool IsHellendeTakDiagram { get; set; }
 
+        [TableColumn("Diagram", Order = 2)]
         public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.HorizontaleTak;
         public enum SpanningRekDiagramType { HellendeTak, HorizontaleTak }
 
@@ -55,12 +58,14 @@
         /// <summary>
         /// De betonstaalkwaliteit volgens tabel C.1 
         /// </summary>
+        [TableColumn("Betonstaalkwaliteit", Order = 0)]
         public BetonStaalKwaliteitEnum? BetonStaalKwaliteit { get; set; }
 
 
         /// <summary>
         /// karakteristieke vloeigrens van betonstaal 
         /// </summary>
+        [TableColumn("f~yk~", StringFormat = "0 N/mm²")]
         public double Fyk
         {
             get
@@ -76,6 +81,7 @@
             }
         }
 
+        public double Fywk { get { return Fyk; } }
 
 
 
@@ -85,6 +91,7 @@
         /// <summary>
         /// conform art. 2.4.2.4 Partiële factoren voor materialen
         /// </summary>
+        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
         public double GammaS
         {
             get
@@ -98,13 +105,15 @@
         /// <summary>
         /// 3.2.7 (2) rekenwaarde van de vloeigrens van betonstaal
         /// </summary>
+        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
         public double Fyd { get { return Fyk / GammaS; } }  // 3.2.7 (2)
 
 
         /// <summary>
         /// 6.2 rekenwaarde van de vloeigrens van dwarskrachtwapening
         /// </summary>
-        public double Fywd { get { return Fyk / GammaS; } }	// conform art. 6.2
+        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
+        public double Fywd { get { return Fywk / GammaS; } }	// conform art. 6.2
 
 
 
@@ -117,6 +126,7 @@
         /// <summary>
         /// karakteristieke rek van betonstaal of voorspanstaal bij maximale belasting
         /// </summary>
+        [TableColumn("|epsilon|~uk~", Order = 2, StringFormat = "0.00 ‰")]
         public double EpsilonUk
         {
             get
@@ -201,7 +211,18 @@
         /// <summary>
         /// 3.2.7 (4) Voor de rekenwaarde van de elasticiteitsmodulus Es mag 200 GPa zijn aangenomen.
         /// </summary>
+
         public const double Es = 200000;
+
+        [TableColumn("E~s~", StringFormat = "0 N/mm²")]
+        public double ElasticiteitsModulus
+        {
+            get
+            {
+                return Es;
+            }
+        }
+
 
         /// <summary>
         /// Fyd / Es is de rek op het punt waarop de vloeigrens bereiks wordt;

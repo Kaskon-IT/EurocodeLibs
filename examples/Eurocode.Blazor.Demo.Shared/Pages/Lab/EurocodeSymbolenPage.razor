@@ -1,0 +1,376 @@
+﻿@using ExportFactory.Shared
+@using Eurocode.Blazor.Demo.Shared.Helpers
+@inject ExportFactory.Services.DataTableMappingService MappingService
+@page "/lab/eurocode-symbolen"
+
+<h3>EurocodeSymbolen</h3>
+
+<EurocodeRazorClassLibrary.Shared.EurocodeSymbolen Mappings="MappingService.Data"></EurocodeRazorClassLibrary.Shared.EurocodeSymbolen>
+
+
+<!-- GRID DEMO -->
+<FluentDataGrid 
+Items="@FilteredItems" 
+MultiLine="true" 
+AutoFit="true"
+HeaderCellAsButtonWithMenu="true"
+Style="white-space: pre-wrap;">
+    <PropertyColumn Sortable="true" SortBy="sortByKey" Property="x => x.Key" Title="Key" Filtered="!string.IsNullOrEmpty(keyFilter)">
+        <ColumnOptions>
+            <div class="search-box">
+                <FluentSearch Autofocus=true @bind-Value=keyFilter @oninput="HandleKeyFilter" @bind-Value:after="HandleClearFilter" Placeholder="filter..." Style="width: 100%;" Label="Filter" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    @if (symVisible)
+    {
+        <PropertyColumn Sortable="true" Property="x => x.Symbool" Title="Symbol" />
+
+    }
+
+    <TemplateColumn Sortable="true" SortBy="@sortBySymbol" Title="Symbol" >
+        @{
+            var symbolHtml = (context as KeyValueMappingModel)?.SymboolHtml ?? string.Empty;
+            var html = (MarkupString)symbolHtml; // Cast naar MarkupString
+        }
+        <div>@html</div>
+    </TemplateColumn>
+
+    <TemplateColumn Sortable="true" SortBy="@sortByDescription" Title="Omschrijving" >
+        @{
+            var omschrijvingHtml = (context as KeyValueMappingModel)?.OmschrijvingHtml ?? string.Empty;
+            var html = (MarkupString)omschrijvingHtml;
+        }
+        <div>@html</div>
+    </TemplateColumn>
+
+    @if (descVisible)
+    {
+        <PropertyColumn Sortable="true" Property="x => x.Omschrijving" Title="Description" Filtered="!string.IsNullOrEmpty(omschrijvingFilter)">
+            <ColumnOptions>
+                <div class="search-box">
+                    <FluentSearch Autofocus=true @bind-Value=omschrijvingFilter @oninput="HandleOmschrijvingFilter" @bind-Value:after="HandleClearFilter" Placeholder="filter..." Style="width: 100%;" Label="Filter" />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+    }
+
+
+    <PropertyColumn Sortable="true" Property="x => x.Norm" Title="Norm" Filtered="!string.IsNullOrWhiteSpace(normFilter)" >
+        <ColumnOptions>
+            <div class="search-box">
+                <FluentSearch Autofocus=true @bind-Value=normFilter @oninput="HandleNormFilter" @bind-Value:after="HandleClearFilter" Placeholder="filter..." Style="width: 100%;" Label="Filter" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    <PropertyColumn Sortable="true" Property="x => x.Artikel" Title="Art." Filtered="!string.IsNullOrEmpty(artikelFilter)">
+        <ColumnOptions>
+            <div class="search-box">
+                <FluentSearch Autofocus=true @bind-Value=artikelFilter @oninput="HandleArtikelFilter" @bind-Value:after="HandleClearFilter" Placeholder="filter..." Style="width: 100%;" Label="Filter" />
+            </div>
+        </ColumnOptions>
+
+    </PropertyColumn>
+
+    <PropertyColumn Sortable="true" SortBy="sortByVergelijking" Property="x => x.Vergelijking" Title="Vgl." Filtered="!string.IsNullOrEmpty(vergelijkingFilter)" >
+        <ColumnOptions>
+            <div class="search-box">
+                <FluentSearch Autofocus=true @bind-Value=vergelijkingFilter @oninput="HandleVergelijkingFilter" @bind-Value:after="HandleClearFilter" Placeholder="filter..." Style="width: 100%;" Label="Filter" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    <PropertyColumn Sortable="true" Property="x => x.Formaat" Title="Format" >
+
+    </PropertyColumn>
+
+</FluentDataGrid>
+
+
+
+
+
+
+@* <p>Keep numbers always sorted ascending inside the group when sorting by group</p>
+<FluentDataGrid Items="@_gridData" ResizableColumns=true GridTemplateColumns="0.5fr 0.5fr">
+
+    <PropertyColumn Sortable="true" Property="x => x.Number" Title="Rank" />
+    <PropertyColumn Property="x => x.Group" SortBy="groupRankNumberAlwaysAscending" Title="Group" />
+
+</FluentDataGrid> *@
+
+
+
+
+
+
+
+
+@code {
+    
+    //private Dictionary<string, AttributesMapping> eurocodeDictionary = MappingService.GetEurocodeMapping(); ExportFactory.Extensions.DataTableExtensions.EurocodeMapping;
+
+    //private DictGetionary<string, AttributesMapping> eurocodeDictionary = ExportFactory.Extensions.DataTableExtensions._propertieMap;
+    private IQueryable<KeyValueMappingModel> items;
+    //private IQueryable<KeyValueMappingModel> filteredMappedAttributes;
+    private List<ExportFactory.Shared.KeyValueMappingModel> keyValueMappings;
+    private bool symVisible = false;
+    private bool descVisible = false;
+
+
+    //private string omschrijving = "omschrijving";
+
+
+
+    protected override void OnInitialized()
+    {
+        // Converteer Dictionary naar een List van KeyValuePair voor binding
+
+        keyValueMappings = MappingService.Data.Select(kv => new KeyValueMappingModel
+            {
+                Key = kv.Key,
+                Mapping = kv.Value
+            })
+            .Where(x => 
+                !string.IsNullOrEmpty(x.Omschrijving) ||
+                !string.IsNullOrEmpty(x.Symbool))
+           .OrderBy(x => x.Key)
+           .ToList();
+
+
+        items = keyValueMappings.AsQueryable();
+
+        //filteredMappedAttributes = items;
+    }
+
+    //string filterText = string.Empty;
+    string keyFilter = string.Empty;
+    string normFilter = string.Empty;
+    string omschrijvingFilter = string.Empty;
+    string vergelijkingFilter = string.Empty;
+    string artikelFilter = string.Empty;
+    string symboolFilter = string.Empty;
+
+    //public static StringComparer comparer = StringComparer.Create(System.Globalization.CultureInfo.CurrentCulture, System.Globalization.CompareOptions.Num);
+
+
+
+
+    GridSort<KeyValueMappingModel> sortBySymbol = GridSort<KeyValueMappingModel>
+        .ByAscending(p => p.Symbool);
+
+    GridSort<KeyValueMappingModel> sortByDescription = GridSort<KeyValueMappingModel>
+        .ByAscending(prop => prop.Omschrijving);
+
+    GridSort<KeyValueMappingModel> sortByVergelijking = GridSort<KeyValueMappingModel>
+        .ByAscending(prop => prop.Vergelijking, new NaturalStringComparer());
+
+    GridSort<KeyValueMappingModel> sortByKey = GridSort<KeyValueMappingModel>
+        .ByAscending(prop => prop.Key, new NaturalStringComparer());
+
+
+    IQueryable<KeyValueMappingModel>? FilteredItems
+    {
+        get
+        {
+            var result = items;
+
+            if (result is not null && !string.IsNullOrEmpty(keyFilter))
+            {
+                result = result.Where(c => c.Key.Contains(keyFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            if (result is not null && !string.IsNullOrEmpty(symboolFilter))
+            {
+                result = result.Where(c => c.Symbool != null && c.Symbool.Contains(symboolFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            if (result is not null && !string.IsNullOrEmpty(omschrijvingFilter))
+            {
+                result = result.Where(c => c.Omschrijving != null && c.Omschrijving.Contains(omschrijvingFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            if (result is not null && !string.IsNullOrEmpty(normFilter))
+            {
+                result = result.Where(c => c.Norm != null && c.Norm.Contains(normFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            if (result is not null && !string.IsNullOrEmpty(artikelFilter))
+            {
+                result = result.Where(c => c.Artikel != null && c.Artikel.Contains(artikelFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+
+
+            return result;
+        }
+    }
+
+
+
+
+    // private void GetFilteredItems(string propertyName)
+    // {
+    //     switch (propertyName.Trim().ToLower())
+    //     {
+    //         case "norm":
+    //             normFilter
+    //         break; 
+    //     }
+
+    //     return; 
+
+
+    //     var result = items;
+    //     switch (propertyName.Trim().ToLower())
+    //     {
+    //         case "norm": 
+    //             result = items?.Where(ch => ch.Norm == normFilter);    
+    //             break;
+    //         case "omschrijving":
+    //             result = items?.Where(ch => 
+    //                 ch.Omschrijving != null && 
+    //                 ch.Omschrijving.Contains(omschrijvingFilter));
+    //             break;
+    //         case "symbool":
+    //             result = items?.Where(x => x.Symbool == symboolFilter);
+    //             break;
+    //         case "key":
+    //             result = items?.Where(x => 
+    //                 x.Key != null &&
+    //                 x.Key.Contains(keyFilter));
+    //             break;
+    //         case "vergelijking":
+    //             result = items?.Where(x => x.Vergelijking == vergelijkingFilter);
+    //             break;
+    //         case "artikel":
+    //             result = items?.Where(x => 
+    //                 x.Artikel != null &&
+    //                 x.Artikel.Contains(artikelFilter)); 
+    //             break;
+
+    //     }
+
+
+
+    //     filteredMappedAttributes = result;
+    // }
+
+
+
+    private void HandleKeyFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            keyFilter = value;
+        }
+    }
+
+    private void HandleOmschrijvingFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            omschrijvingFilter = value;
+        }
+    }
+
+    private void HandleArtikelFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            artikelFilter = value;
+        }
+    }
+
+    private void HandleNormFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            normFilter = value;
+        }
+    }
+
+    private void HandleVergelijkingFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            vergelijkingFilter = value;
+        }
+    }
+
+
+    // private void HandleFilter(ChangeEventArgs args)
+    // {
+    //     if (args.Value is string value)
+    //     {
+    //         switch (propertyName.Trim().ToLower())
+    //         {
+    //             case "norm": normFilter = value; break;
+    //             case "key": keyFilter = value; break;
+    //             case "vergelijking": vergelijkingFilter = value; break;
+    //             case "symbool": symboolFilter = value; break;
+    //             case "artikel": artikelFilter = value; break;
+    //             case "omschrijving": omschrijvingFilter = value; break;
+    //         }
+    //         //
+    //         //GetFilteredItems(propertyName);
+    //     }
+    // }
+
+
+
+
+    private void HandleClearFilter()
+    {
+        if (string.IsNullOrWhiteSpace(keyFilter))
+        {
+            keyFilter = string.Empty;
+
+
+        }
+        if (string.IsNullOrEmpty(normFilter)){
+            normFilter = string.Empty;
+        }
+}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    GridSort<GridRow> groupRank = GridSort<GridRow>
+               .ByAscending(x => x.Group)
+               .ThenAscending(x => x.Number);
+
+    GridSort<GridRow> groupRankNumberAlwaysAscending = GridSort<GridRow>
+        .ByAscending(x => x.Group)
+        .ThenAlwaysAscending(x => x.Number);
+
+    private static readonly IQueryable<GridRow> _gridData = new GridRow[] {
+        new(2, "B"),
+        new(1, "A"),
+        new(4, "B"),
+        new(3, "A")
+    }.AsQueryable();
+
+    public class GridRow(int number, string group)
+    {
+        public int Number { get; } = number;
+        public string Group { get; } = group;
+    }
+
+
+    //private static IQueryable<GridRow> gridRows = ExportFactory.Extensions.DataTableExtensions._propertieMap.AsQueryable();
+
+}
+
