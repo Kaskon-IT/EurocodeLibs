@@ -12,12 +12,19 @@
     <Content Remove="wwwroot\js\downloadFileFromStream.js" />
   </ItemGroup>
 
+
+	
+	
+	
   <ItemGroup>
     <Content Include="App.razor.BAK" />
     <Content Include="Routes.razor.BAK" />
   </ItemGroup>
 
   <ItemGroup>
+	  <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
+	  <PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
+	  <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
 	  <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.*-* " />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
     <PackageReference Include="Plotly.Blazor" Version="5.4.0" />
@@ -47,17 +54,5 @@
     <ProjectReference Include="..\..\EurocodeRazorClassLibrary\EurocodeRazorClassLibrary.csproj" />
     <ProjectReference Include="..\..\ExportFactory\ExportFactory.csproj" />
     <ProjectReference Include="..\Eurocode.Blazor.Demo.Generators\Generators\Generators.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="BetonProfielen">
-      <HintPath>..\..\..\Profielen\BetonProfielen\bin\Debug\net9.0\BetonProfielen.dll</HintPath>
-    </Reference>
-    <Reference Include="Kaskon_it.Algemeen">
-      <HintPath>..\..\..\Profielen\BetonProfielen\bin\Debug\net9.0\Kaskon_it.Algemeen.dll</HintPath>
-    </Reference>
-    <Reference Include="ParametrischeProfielen">
-      <HintPath>..\..\..\Profielen\BetonProfielen\bin\Debug\net9.0\ParametrischeProfielen.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

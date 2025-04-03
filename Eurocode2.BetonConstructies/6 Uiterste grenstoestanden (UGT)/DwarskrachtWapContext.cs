@@ -7,7 +7,9 @@ namespace Eurocode.BetonConstructies
 {
     public enum BerekeningTypeEnum
     {
+        [Description("Ontwerpberekening")]
         BepaalBenodigeWapening,
+        [Description("Controleberekening")]
         ControleerWapening,
     }
 
@@ -19,7 +21,16 @@ namespace Eurocode.BetonConstructies
         //private List<int> _meldingen { get; set; } = [];
         //private Dictionary<int, Melding> _betonMeldingen = new MeldingenBeton().Meldingen;
 
-        public List<Melding> Meldingen { get; set; } = [];
+        //public List<Melding> Meldingen { get; set; } = [];
+
+        public override string ToString()
+        {
+            return $"V~Ed~ = {Ved:0.#} kN, V~Rd,c~ = {DwarskrachtWeerstandBeton:0.#} kN, V~Rd~ = {DwarskrachtWeerstand:0.#} kN";
+        }
+
+
+
+
         public List<string> Artikelen { get; set; } = [];
 
         public BerekeningTypeEnum BerekeningType { get; set; } = BerekeningTypeEnum.BepaalBenodigeWapening;
@@ -297,17 +308,37 @@ namespace Eurocode.BetonConstructies
 
         public override bool IsAkkoord()
         {
-            throw new NotImplementedException();
+            return Valideer();
         }
 
         protected override void Bereken()
         {
-            throw new NotImplementedException();
+            // nalopen
+
         }
 
         protected override bool Valideer()
         {
-            throw new NotImplementedException();
+            if (Ved < DwarskrachtWeerstandBeton)
+            {
+                // AddMeldingOpmerking("dwarskracht kleiner dan ");
+            }
+
+            if (Ved > DwarskrachtWeerstand)
+            {
+                AddMeldingWaarschuwing($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd</sub>) {(Ved / DwarskrachtWeerstand):0.##}");
+                return false;
+            }
+
+            if (Ved > DwarskrachtWeerstandMax)
+            {
+                AddMeldingWaarschuwing($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd,max</sub>) {(Ved / DwarskrachtWeerstandMax):0.##}");
+                return false;
+            }
+
+
+
+            return true;
         }
     }
 }

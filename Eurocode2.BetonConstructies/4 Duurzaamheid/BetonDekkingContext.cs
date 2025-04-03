@@ -341,7 +341,11 @@ namespace Eurocode.BetonConstructies
 
         public override string? ToString()
         {
-            return $"nominale dekking={DekkingNom} , ({ConstructieklasseUserFriendlyName}, {MilieuklassenUserFriendlyName}, {Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam})";
+            return $"c~nom~ = {DekkingNom}mm, " +
+                $"({ConstructieklasseUserFriendlyName}, " +
+                $"{MilieuklassenUserFriendlyName}, " +
+                $"{(IsKwaliteitsBeheersing ? "kwaliteitsbeheersting" : "")}, " +
+                $"{(IsPlaatGeometrie ? "plaatgeometrie" : "")})";
             //return base.ToString();
         }
 

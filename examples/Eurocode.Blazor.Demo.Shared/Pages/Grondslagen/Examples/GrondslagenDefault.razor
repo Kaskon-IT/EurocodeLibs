@@ -1,16 +1,11 @@
 ﻿@using ExportFactory.Extensions;
 @using ExportFactory.Services;
+@using CommonLibrary
 
 @if(SampleProject != null)
 {
     @* Component *@
     <EurocodeGrondslagen @bind-Model="@SampleProject.Grondslagen"  />
-
-    @* Export demo *@
-    <EurocodeRazorClassLibrary.Custom.ExportDemoSectie 
-    Document="@SetDocument()" 
-    OnGenerateNewDocument="GenerateNewDocument"/> 
-
 }
 
 

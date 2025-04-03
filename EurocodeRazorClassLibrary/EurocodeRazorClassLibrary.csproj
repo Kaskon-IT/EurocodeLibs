@@ -11,7 +11,13 @@
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
+	
+	
+	
   <ItemGroup>
+    <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
+    <PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
+    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.2" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.2" />
@@ -19,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
     <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
     <ProjectReference Include="..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />
     <ProjectReference Include="..\Eurocode2.BetonConstructies\Eurocode2.BetonConstructies.csproj" />
@@ -34,18 +41,6 @@
   <ItemGroup>
     <None Include="wwwroot\js\downloadFile.js" />
     <None Include="wwwroot\js\downloadFileFromStream.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="BetonProfielen">
-      <HintPath>..\examples\Eurocode.Blazor.Demo.Shared\wwwroot\libs\BetonProfielen.dll</HintPath>
-    </Reference>
-    <Reference Include="Kaskon_it.Algemeen">
-      <HintPath>..\examples\Eurocode.Blazor.Demo.Shared\wwwroot\libs\Kaskon_it.Algemeen.dll</HintPath>
-    </Reference>
-    <Reference Include="ParametrischeProfielen">
-      <HintPath>..\examples\Eurocode.Blazor.Demo.Shared\wwwroot\libs\ParametrischeProfielen.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

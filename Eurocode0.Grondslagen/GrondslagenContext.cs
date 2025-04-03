@@ -3,13 +3,22 @@
 //using CsvFactory.Interfaces;
 
 ///using CsvFactory;
+using CommonLibrary.Interfaces;
 using ExportFactory.Shared;
+using Microsoft.AspNetCore.Components;
 using MigraDoc.DocumentObjectModel;
+using System.ComponentModel;
 
 namespace Eurocode.Grondslagen
 {
-    public class GrondslagenContext
+    public class GrondslagenContext : IMarkupConvertible, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         /// <summary>
         /// Synchronous CSV Export 
         /// </summary>
@@ -62,7 +71,10 @@ namespace Eurocode.Grondslagen
 
         //}
 
-
+        public override string ToString()
+        {
+            return $"{Betrouwbaarheidsklasse} | {Gevolgklasse} | {OntwerpLevensduur.GetOntwerplevensduurTekst()} | norm: {NationaleBijlage} | ξ: {Xi:0.###}";
+        }
 
         //[TableColumn("Eurocode")]
         public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
@@ -119,8 +131,19 @@ namespace Eurocode.Grondslagen
         /// </summary>
         /// 
         [TableColumn("Gevolgklasse (Consequence Class)", order: 1, width: 4)]
-        public GevolgklasseEnum? Gevolgklasse { get; set; } = GevolgklasseEnum.CC2;
-
+        public GevolgklasseEnum? Gevolgklasse
+        {
+            get => _gevolgklasse;
+            set
+            {
+                if (_gevolgklasse != value)
+                {
+                    _gevolgklasse = value;
+                    OnPropertyChanged(nameof(Gevolgklasse));
+                }
+            }
+        }
+        private GevolgklasseEnum? _gevolgklasse = GevolgklasseEnum.CC2;
 
 
 
@@ -176,6 +199,13 @@ namespace Eurocode.Grondslagen
             //  voeg een tabel toe aan een secties.
 
             throw new NotImplementedException();
+        }
+
+        public MarkupString ToMarkupString()
+        {
+            return CommonLibrary.Helpers.MarkupHelper.ToMarkupString(this.ToString());
+
+            //throw new NotImplementedException();
         }
 
         //public string CreateCsv()

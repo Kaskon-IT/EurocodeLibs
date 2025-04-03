@@ -53,14 +53,32 @@
             // 8-150
             if (wapgroep.Contains(hohChar))
             {
-                // r8-150
+                // r8-150 (n = 1 met hoh-maat)
                 var hohGroep = wapgroep.Split(hohChar).ToList();
                 _ = double.TryParse(hohGroep.First(), out double d);
                 _ = double.TryParse(hohGroep.Last(), out double hoh);
-                return (GetDsnOpp(d: d, hoh: hoh), d, hoh, null);
+
+                // 2r8-100 (n > 1 met hoh-maat)
+                if (IsCharInString(diamChars, hohGroep.First()))
+                {
+                    var nGroep = hohGroep.First().Split(diamChars).ToList();
+                    double.TryParse(nGroep.First(), out double n);
+                    double.TryParse(nGroep.Last(), out d);
+
+                    if (n == 0) n = 1;
+
+                    return (GetDsnOpp(n, d, hoh), d, hoh, n);
+                }
+                else
+                {
+                    return (GetDsnOpp(d: d, hoh: hoh), d, hoh, null);
+
+                }
+
             }
             else if (IsCharInString(diamChars, wapgroep))
             {
+                // zonder hoh-maat dus
                 // 3x16, 3Ø16 etcetera
                 var nGroep = wapgroep.Split(diamChars).ToList();
                 _ = double.TryParse(nGroep.First(), out double n);
@@ -158,6 +176,56 @@
                 }
             }
             return returnVal;
+        }
+
+
+        public static string GetWapeningVoorstel(double asBen, int hohMax)
+        {
+            // doe een voorstel met n staven Øk
+            // de hoh-afstand mag niet kleiner dan 50 zijn.
+            double min1 = 50;
+            // de tussenruimte mag niet kleiner dan 1,5 Øk zijn, zodat hoh-maat gelijk aan 2,5 Øk is.
+            double factorMin2 = 2.5;
+
+            List<double> staafDiameters = [6, 8, 10, 12, 16, 20, 32, 40];
+            List<string> voorstellen = [];
+
+            foreach (var diameter in staafDiameters)
+            {
+                double min2 = factorMin2 * diameter;
+                double hohMin = Math.Max(min1, min2);
+
+                double nBen = (asBen / GetDsnOpp(1, diameter));
+                int hohBen = (int)(1000.00 / nBen);
+                int hohToe = 10;
+                if (hohBen >= hohMin)
+                {
+                    hohToe = Math.Min(hohBen, hohMax);
+                    voorstellen.Add($"Ø{diameter}-{hohToe}");
+                }
+
+                // stop wanneer hohMax bereikt is
+                if (hohToe == hohMax && diameter > 6)
+                {
+                    break;
+                }
+
+
+            }
+
+            if (voorstellen.Any())
+            {
+                return string.Join(", ", voorstellen);
+            }
+            else
+            {
+                return "niet gevonden";
+            }
+
+
+
+
+
         }
 
 

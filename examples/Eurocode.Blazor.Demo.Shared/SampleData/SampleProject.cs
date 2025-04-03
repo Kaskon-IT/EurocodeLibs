@@ -1,4 +1,5 @@
-﻿using Eurocode.Belastingen;
+﻿using CommonLibrary;
+using Eurocode.Belastingen;
 using Eurocode.BetonConstructies;
 using Eurocode.Grondslagen;
 
@@ -34,7 +35,8 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
         public OpleggingContext OpleggingDemo { get; set; } = new();
         public UitkragingContext UitkragingDemo { get; set; } = new();
         public ScheurwijdteContext ScheurwijdteDemo { get; set; } = new();
-
+        public WapeningContext WapeningContext { get; set; } = new();
+        public Snedekrachten Snedekrachten { get; set; } = new() { My = 80.808, Vz = 88.88 };
 
         public SampleProject(GrondslagenContext grondslagen)
         {
@@ -42,7 +44,7 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
             Belastingen = new BelastingenContext(Grondslagen);
             Beton = new();
             Dekking = new BetonDekkingContext(Grondslagen, Beton);
-            BendingResults = new(Beton, 400, 500, 35, 48.3);
+            BendingResults = new(Beton, BetonProfiel.Profiel, WapeningContext, Snedekrachten);
             //DwarskrachtDemo = new(Beton, new ParametrischeProfielen.ParametrischProfielContext(), 100);
             DwarskrachtDemo = DwarskrachtWap.GetDwarskrachtWapContext(Beton, new ParametrischeProfielen.ParametrischProfielContext(), 21.8, 350, 102, 2, 8, [75, 150, 300]);
             UitkragingDemo = new() { Beton = Beton };

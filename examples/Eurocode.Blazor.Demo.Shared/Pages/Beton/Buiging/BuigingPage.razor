@@ -7,14 +7,7 @@
 @* <EurocodeBetonMaterialen @bind-Model="@SampleProject.BendingResults.Beton" 
                          ShowUserFriendly=true></EurocodeBetonMaterialen> *@
 
-@if (SampleProject != null)
-{
-    <EurocodeBetonMaterialen @bind-Model="@SampleProject.BendingResults.Beton"></EurocodeBetonMaterialen>
-    <FluentButton OnClick="ChangeState">Ververs handmatig</FluentButton>
 
-    <BuigingBasicComponent @bind-Model="SampleProject.BendingResults"></BuigingBasicComponent>
-
-}
 
     <h2>Voorbeelden</h2>
     <DemoSection Title="Basic" Component="typeof(BuigingBasisDefault)"/>

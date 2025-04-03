@@ -1,4 +1,6 @@
 ﻿using CommonLibrary.Interfaces;
+
+using Microsoft.AspNetCore.Components;
 using System.Collections.ObjectModel;
 
 
@@ -10,7 +12,7 @@ namespace CommonLibrary
     /// (bijvoorbeeld "Waarschuwing - Overschrijding hoogte drukzone" of
     /// neutrale melding "Minimale wapening toegepast conform artikel 80.80")
     /// </summary>
-    public abstract class BaseEurocodeContext : IEurocodeContext
+    public abstract class BaseEurocodeContext : IEurocodeContext, IMarkupConvertible
     {
         public ObservableCollection<Melding> Meldingen { get; private set; } = [];
 
@@ -71,6 +73,9 @@ namespace CommonLibrary
             IsAkkoord(); // Voer validatie uit in de child-class
         }
 
-
+        public MarkupString ToMarkupString()
+        {
+            return Helpers.MarkupHelper.ToMarkupString(this.ToString());
+        }
     }
 }

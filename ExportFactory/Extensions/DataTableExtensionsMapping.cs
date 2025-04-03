@@ -40,6 +40,14 @@ namespace ExportFactory.Services
         // ALGEMEEN
         private readonly Dictionary<string, AttributesMapping> _algemeen = new()
         {
+            { K.My, new(sym: "M~y~", desc:"Moment om Y-as") },
+            { K.Mz, new(sym: "M~z~", desc:"Moment om Z-as") },
+
+            { K.Vy, new(sym: "V~y~", desc:"Dwarskracht in Y-richting") },
+            { K.Vz, new(sym: "V~z~", desc:"Dwarskracht in Z-richting") },
+
+            { K.Tx, new(sym: "T~x~", desc:"Torsie om X-as") },
+            { K.Nx, new(sym: "N~x~", desc:"Normaalkracht in X-as") },
 
 
             { K.Wapening, new(sym:"",desc:"wapening") },

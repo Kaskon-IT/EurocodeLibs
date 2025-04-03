@@ -5,6 +5,15 @@
         public const string BelastingAfwerking = "Belasting.Afwerking";
 
 
+        public const string My = "My";
+        public const string Mz = "Mz";
+
+        public const string Vz = "Vz";
+        public const string Vy = "Vy";
+
+        public const string Tx = "Tx";
+        public const string Nx = "Nx";
+
 
         public const string TrapOptredeMaat = "Trap.OptredeMaat";
         public const string TrapAantredeMaat = "Trap.AantredeMaat";

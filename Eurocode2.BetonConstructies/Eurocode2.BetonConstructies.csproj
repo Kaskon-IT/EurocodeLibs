@@ -6,17 +6,16 @@
     <RootNamespace>Eurocode.BetonConstructies</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
+    <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
+    <PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
+    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="BetonProfielen">
-      <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\BetonProfielen.dll</HintPath>
-    </Reference>
-    <Reference Include="Kaskon_it.Algemeen">
-      <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\Kaskon_it.Algemeen.dll</HintPath>
-    </Reference>
-    <Reference Include="ParametrischeProfielen">
-      <HintPath>..\..\Profielen\BetonProfielen\bin\Debug\net9.0\ParametrischeProfielen.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
   </ItemGroup>
+
+
+	
+	
+	
 </Project>

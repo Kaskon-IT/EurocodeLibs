@@ -1,0 +1,30 @@
+﻿@using CommonLibrary
+@using K = CommonLibrary.EurocodeKeys
+
+<h3>SnedekrachtenComponent</h3>
+
+
+<EurocodeInputNumber Key="My" @bind-Value="@Model.My" StringFormat="0.##"/>
+<EurocodeInputNumber Key="Vz" @bind-Value="@Model.Vz" StringFormat="0.##" />
+
+
+<EurocodeInputNumber Key="Mz" @bind-Value="@Model.Mz" StringFormat="0.##" />
+<EurocodeInputNumber Key="Vy" @bind-Value="@Model.Vz" StringFormat="0.##" />
+
+
+<EurocodeInputNumber Key="Tx" @bind-Value="@Model.Tx" StringFormat="0.##" />
+<EurocodeInputNumber Key="Nx" @bind-Value="@Model.Nx" StringFormat="0.##" />
+
+
+<p>@Model.ToMarkupString()</p>
+
+
+
+@code {
+    [Parameter, EditorRequired]
+    public CommonLibrary.Snedekrachten Model { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<Snedekrachten> ModelChanged{ get; set; }
+
+}

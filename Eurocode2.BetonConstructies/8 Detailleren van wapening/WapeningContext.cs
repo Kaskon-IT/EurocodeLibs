@@ -33,6 +33,12 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        public override string ToString()
+        {
+            return $"{Tekst} | ({As:0} mm²)";
+        }
+
+
         public double As { get { return WapeningHelper.GetDsnOpp(Tekst); } }
 
         private List<string>? _wapgroepen;
