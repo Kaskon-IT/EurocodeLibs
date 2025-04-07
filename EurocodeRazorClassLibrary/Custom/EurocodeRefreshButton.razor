@@ -1,0 +1,36 @@
+﻿@using CommonLibrary
+@typeparam TModel where TModel : BaseEurocodeContext
+
+@if (Model is not null)
+{
+    <FluentButton Appearance="Appearance.Accent" @onclick="OnUpdateClicked" Disabled="@IsUpdating">
+        @if (IsUpdating)
+        {
+            <FluentProgressRing Class="update-spinner" />
+        }
+        else
+        {
+            <span>🔄 Update</span>
+        }
+    </FluentButton>
+}
+
+@code {
+    [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
+    [Parameter] public EventCallback OnUpdated { get; set; }
+
+    private bool IsUpdating { get; set; } = false;
+
+    private async Task OnUpdateClicked()
+    {
+        IsUpdating = true;
+        StateHasChanged(); // UI direct bijwerken
+
+        await Task.Run(() => Model.BerekenEnValideer());
+
+        IsUpdating = false;
+        await OnUpdated.InvokeAsync();
+        StateHasChanged();
+    }
+}
+

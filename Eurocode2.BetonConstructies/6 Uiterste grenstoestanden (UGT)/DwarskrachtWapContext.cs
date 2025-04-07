@@ -25,7 +25,22 @@ namespace Eurocode.BetonConstructies
 
         public override string ToString()
         {
-            return $"V~Ed~ = {Ved:0.#} kN, V~Rd,c~ = {DwarskrachtWeerstandBeton:0.#} kN, V~Rd~ = {DwarskrachtWeerstand:0.#} kN";
+            if (Ved <= DwarskrachtWeerstandBeton)
+            {
+                return $"V~Ed~ = {Ved:0.# kN}, V~Rd,c~ = {DwarskrachtWeerstandBeton:0.# kN}";
+            }
+            else
+            {
+                return $"V~Ed~ = {Ved:0.# kN}, " +
+                    $"V~Rd,c~ = {DwarskrachtWeerstandBeton:0.# kN}, " +
+                    $"V~Rd~ = {DwarskrachtWeerstand:0.# kN}, " +
+                    $"V~Rd,max~ = {DwarskrachtWeerstandMax:0 kN}, " +
+                    $"A~sw,ben~ = {AswBenPerMeter: 0 mm²/m¹}, " +
+                    $"A~sw,toe~ = {AswToegepast: 0 mm²/m¹}, " +
+                    $"(UC = {Math.Max(Ved / DwarskrachtWeerstand, Ved / DwarskrachtWeerstandMax):0.00})";
+            }
+
+
         }
 
 

@@ -45,11 +45,10 @@
 		<!-- NuGet afhankelijkheden -->
 		<PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
 		<PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
-		<PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
+		<PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
 
 		<PackageReference Include="Kaskon.Eurocode0.Grondslagen" Version="1.0.0" />
 		<PackageReference Include="Kaskon.Eurocode1.Belastingen" Version="1.0.0" />
-		<PackageReference Include="Kaskon.Eurocode2.BetonConstructies" Version="1.0.0" />
 		
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.2" />
@@ -60,6 +59,7 @@
 	<ItemGroup>
 		<!-- Projectreferenties -->
 		<ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
+		<ProjectReference Include="..\Eurocode2.BetonConstructies\Eurocode2.BetonConstructies.csproj" />
 		<!--<ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />-->
 		<!--<ProjectReference Include="..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />-->
 		<!--<ProjectReference Include="..\Eurocode2.BetonConstructies\Eurocode2.BetonConstructies.csproj" />-->

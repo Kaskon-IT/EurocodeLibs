@@ -28,7 +28,7 @@
   <ItemGroup>
     <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
     <PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
-    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
+    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />

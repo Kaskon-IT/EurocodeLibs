@@ -3,35 +3,64 @@
 
 <h3>SnedekrachtenComponent</h3>
 
+<p>@Model.ToMarkupString()</p>
 @if (toonHoofdRichting)
 {
-    <EurocodeInputNumber Key="My" @bind-Value="@Model.My" StringFormat="0.##" />
-    <EurocodeInputNumber Key="Vz" @bind-Value="@Model.Vz" StringFormat="0.##" />
+    <EurocodeInputNumber Key="@K.My" @bind-Value="@Model.My.Ed" StringFormat="0.##" Unit="kNm" />
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="My~BGT~" @bind-Value="@Model.My.Kar" StringFormat="0.##" Unit="kNm" />
+
+    }
+
+    <EurocodeInputNumber Key="Vz" @bind-Value="@Model.Vz.Ed" StringFormat="0.##" Unit="kN" />
+
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="Vz~BGT~" @bind-Value="@Model.Vz.Kar" StringFormat="0.##" Unit="kN" />
+    }
 }
 
 
 @if (ToonSecundaireRichting)
 {
-    <EurocodeInputNumber Key="Mz" @bind-Value="@Model.Mz" StringFormat="0.##" />
-    <EurocodeInputNumber Key="Vy" @bind-Value="@Model.Vy" StringFormat="0.##" />
+    <EurocodeInputNumber Key="Mz" @bind-Value="@Model.Mz.Ed" StringFormat="0.##" Unit="kNm" />
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="Mz~BGT~" @bind-Value="@Model.Mz.Kar" StringFormat="0.##" Unit="kNm" />
+    }
+
+    <EurocodeInputNumber Key="Vy" @bind-Value="@Model.Vy.Ed" StringFormat="0.##" Unit="kN" />
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="Vy~BGT~" @bind-Value="@Model.Vy.Kar" StringFormat="0.##" Unit="kN" />
+    }
 }
 
 
 @if (ToonNormaalkracht)
 {
-    <EurocodeInputNumber Key="Nx" @bind-Value="@Model.Nx" StringFormat="0.##" />
+    <EurocodeInputNumber Key="Nx" @bind-Value="@Model.Nx.Ed" StringFormat="0.##" Unit="kN" />
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="Nx~BGT~" @bind-Value="@Model.Nx.Kar" StringFormat="0.##" Unit="kN" />
+    }
 
 }
 
 @if (ToonTorsie)
 {
-    <EurocodeInputNumber Key="Tx" @bind-Value="@Model.Tx" StringFormat="0.##" />
+    <EurocodeInputNumber Key="Tx" @bind-Value="@Model.Tx.Ed" StringFormat="0.##" Unit="kNm" />
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="Tx~BGT~" @bind-Value="@Model.Tx.Kar" StringFormat="0.##" Unit="kNm" />
+    }
 
 }
 
 
 
-<p>@Model.ToMarkupString()</p>
+
 
 
 
@@ -43,9 +72,10 @@
     public EventCallback<Snedekrachten> ModelChanged{ get; set; }
 
     private bool toonHoofdRichting = true;
-    [Parameter] public bool ToonSecundaireRichting { get; set; } = true;
-    [Parameter] public bool ToonNormaalkracht { get; set; } = true;
-    [Parameter] public bool ToonTorsie { get; set; } = true;
+    [Parameter] public bool ToonSecundaireRichting { get; set; } = !true;
+    [Parameter] public bool ToonNormaalkracht { get; set; } = !true;
+    [Parameter] public bool ToonTorsie { get; set; } = !true;
+    [Parameter] public bool ToonWaardeBruiksbaarheidsGrensToestand { get; set; } = true;
 
 
 }

@@ -1,11 +1,13 @@
 ﻿@using Eurocode.BetonConstructies
 
+@* <p>@Model.ToMarkupString()</p> *@
+
 <FluentGrid Spacing="0">
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <EurocodeInputNumber @bind-Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN"
+        <EurocodeInputNumber Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN"
         LabelPosition="@LabelPosition" LabelType="@LabelType" 
-        ReadOnly="IsFieldReadOnly(nameof(Model.OplegReactieRekenwaarde))"  />
+        ReadOnly=true  />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
@@ -33,9 +35,9 @@
 
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <EurocodeInputNumber @bind-Value="@Model.LengteOndersteundeElement" Key="LengteOndersteundeElement" Unit="mm"
+        <EurocodeInputNumber Value="@Model.LengteOndersteundeElement" Key="LengteOndersteundeElement" Unit="mm"
         LabelPosition="@LabelPosition" LabelType="@LabelType"
-        ReadOnly=IsFieldReadOnly(nameof(Model.LengteOndersteundeElement)) />
+        ReadOnly=true />
     </FluentGridItem>
 
 </FluentGrid>

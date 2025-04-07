@@ -8,6 +8,9 @@ namespace Eurocode.BetonConstructies
 
     public partial class BetonDekkingContext : BaseEurocodeContext
     {
+
+
+
         /// <summary>
         /// Referentie naar de context uit de Eurocode1
         /// </summary>
@@ -25,6 +28,7 @@ namespace Eurocode.BetonConstructies
             Grondslagen = grondslagen;
             Beton = beton;
             Constructieklasse = new(this, Beton);
+            BerekenEnValideer();
         }
 
         public BetonDekkingContext(BetonDekkingContext context)
@@ -80,8 +84,14 @@ namespace Eurocode.BetonConstructies
             get => _dekkingToe;
             set
             {
-                _dekkingToe = value;
-                BerekenEnValideer();
+                if (_dekkingToe != value)
+                {
+                    _dekkingToe = value;
+                    OnPropertyChanged(nameof(DekkingToe));
+                    BerekenEnValideer();
+                }
+
+
             }
         }
 
@@ -341,12 +351,23 @@ namespace Eurocode.BetonConstructies
 
         public override string? ToString()
         {
-            return $"c~nom~ = {DekkingNom}mm, " +
-                $"({ConstructieklasseUserFriendlyName}, " +
-                $"{MilieuklassenUserFriendlyName}, " +
-                $"{(IsKwaliteitsBeheersing ? "kwaliteitsbeheersting" : "")}, " +
-                $"{(IsPlaatGeometrie ? "plaatgeometrie" : "")})";
-            //return base.ToString();
+            List<string> results = [];
+
+            results.Add($"c~nom~ = c~min~ + Δ~c,dev~ = {DekkingMin} + {DekkingToeslagUitvoeringsToleranties} = {DekkingNom: 0 mm}");
+            results.Add($"{ConstructieklasseUserFriendlyName}");
+            results.Add($"{MilieuklassenUserFriendlyName}");
+            if (IsKwaliteitsBeheersing) results.Add($"kwaliteitsbeheersing");
+            if (IsPlaatGeometrie) results.Add($"plaatgeometrie");
+            if (GrootsteKorrelDiameter <= 32)
+                results.Add("korrel ≤ 32mm");
+            else
+                results.Add("korrel > 32mm");
+            results.Add($"c~toe~ = {DekkingToe: 0 mm}");
+
+
+            return string.Join(", ", results);
+
+
         }
 
         protected override void Bereken()

@@ -241,7 +241,7 @@
 
 @if (!string.IsNullOrEmpty(ErrorMessage))
 {
-    <div style="width: 100%; color: red; text-align: center; font-weight:600; background-color:transparent; border-radius: 6px; margin: 8px 8px 8px 8px; padding: 2px; border:1px dotted red">@((MarkupString)ErrorMessage)</div>
+    <div style="width: 100%; color: var(--warning); text-align: center; font-weight:600; background-color:transparent; border-radius: 6px; margin: 8px 8px 8px 8px; padding: 2px; border:1px dotted red">@((MarkupString)ErrorMessage)</div>
 }
 
 @code {

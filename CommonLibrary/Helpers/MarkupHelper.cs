@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace CommonLibrary.Helpers
 {
     public static class MarkupHelper
     {
-        public static MarkupString ToMarkupString(string? input)
+        public static MarkupString ToMarkupString(string? input, bool withUnityCheck = true)
         {
 
             if (input == null || string.IsNullOrEmpty(input))
@@ -32,8 +33,37 @@ namespace CommonLibrary.Helpers
             // Line breaks: dubbele nieuwe regel -> <br/>
             input = Regex.Replace(input, @"\n\s*\n", "<br/>");
 
+            if (withUnityCheck)
+            {
+                return ToMarkupStringWithUcCheck(input);
+            }
+
 
             return new MarkupString(input);
         }
+
+        public static MarkupString ToMarkupStringWithUcCheck(string? input)
+        {
+            if (input == null) return new MarkupString(string.Empty);
+            var regex = new Regex(@"\(UC\s*=\s*(\d+[.,]?\d*)\)", RegexOptions.IgnoreCase);
+
+            return new MarkupString(regex.Replace(input, match =>
+            {
+                var rawValue = match.Groups[1].Value.Replace(",", ".");
+                if (double.TryParse(rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out double uc) && uc > 1.0)
+                {
+
+                    return $"<span style=\"color: var(--warning);0\"><b>{match.Value}</b></span>";
+                }
+                else if (uc <= 1.0)
+                {
+                    return $"<span style=\"color: var(--succes);\"><b>{match.Value}</b></span>";
+
+                }
+
+                return match.Value;
+            }));
+        }
+
     }
 }

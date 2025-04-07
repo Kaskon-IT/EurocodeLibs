@@ -46,6 +46,54 @@
             // 
         }
 
+        public static double GetGemiddeldeDiameter(string wapening)
+        {
+
+            var wapgroepen = GetWapGroepen(wapening);
+            if (wapgroepen == null) return 0;
+
+            return BerekenGemiddeldeDiameter(wapgroepen);
+        }
+
+        public static double BerekenGemiddeldeDiameter(List<string> wapgroepen)
+        {
+            var teller = 0.0;
+            var noemer = 0.0;
+
+            var oppTotaal = 0.0;
+            var nTotaal = 0.0;
+
+            foreach (var wapgroep in wapgroepen)
+            {
+
+                var details = GetWapDetails(wapgroep);
+                //var n = details.n.HasValue ? details.n.Value : 1.0;
+                oppTotaal += details.dsnOpp;
+                nTotaal += details.n.HasValue ? details.n.Value : 1.0;
+            }
+
+            // Gemiddeld oppervlak per staaf
+            double gemiddeldOppervlak = oppTotaal / nTotaal;
+
+            // Equivalent gemiddelde diameter
+            double gemiddeldeDiameter = Math.Sqrt((4 * gemiddeldOppervlak) / Math.PI);
+
+            return Math.Round(gemiddeldeDiameter, 3);
+
+            //return noemer > 0 ? teller / noemer : 0.0;
+        }
+
+        public double BerekenGemiddeldeDiamter(List<(double a, double d, double? hoh, double? n)> groepen)
+        {
+
+            double teller = groepen.Sum(g => g.n.Value * g.d);
+            double noemer = groepen.Sum(g => g.n.Value);
+
+            return noemer > 0 ? teller / noemer : 0.0;
+        }
+
+
+
         private static (double dsnOpp, double diam, double? hoh, double? n) GetWapDetails(string wapgroep)
         {
             Char[] diamChars = ['Ø', 'R', 'r', 'D', 'd', 'x', 'X', 'ø', '®', '×', '*'];
@@ -71,7 +119,7 @@
                 }
                 else
                 {
-                    return (GetDsnOpp(d: d, hoh: hoh), d, hoh, null);
+                    return (GetDsnOpp(d: d, hoh: hoh), d, hoh, 1000 / hoh);
 
                 }
 
@@ -181,6 +229,20 @@
 
         public static string GetWapeningVoorstel(double asBen, int hohMax)
         {
+            var voorstellen = GetWapeningVoorstellen(asBen, hohMax);
+            if (voorstellen.Any())
+            {
+                return string.Join(", ", voorstellen);
+            }
+            else
+            {
+                return "error";
+            }
+
+        }
+
+        public static List<string> GetWapeningVoorstellen(double asBen, int hohMax)
+        {
             // doe een voorstel met n staven Øk
             // de hoh-afstand mag niet kleiner dan 50 zijn.
             double min1 = 50;
@@ -213,14 +275,10 @@
 
             }
 
-            if (voorstellen.Any())
-            {
-                return string.Join(", ", voorstellen);
-            }
-            else
-            {
-                return "niet gevonden";
-            }
+
+
+            return voorstellen;
+
 
 
 

@@ -24,7 +24,7 @@
   <ItemGroup>
 	  <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
 	  <PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
-	  <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
+	  <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
 	  <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.*-* " />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
     <PackageReference Include="Plotly.Blazor" Version="5.4.0" />

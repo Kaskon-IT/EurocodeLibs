@@ -1,7 +1,9 @@
 ﻿@using Eurocode.BetonConstructies
 @using Eurocode.BetonConstructies.SpecifiekeRegels
+
 @using CommonLibrary
 @using K = CommonLibrary.EurocodeKeys;
+@using System.ComponentModel
 
 
 
@@ -14,6 +16,14 @@
 <EurocodeMeldingenComponent Meldingen="Model.Meldingen"></EurocodeMeldingenComponent>
 
 <p>@Model.ToMarkupString()</p>
+
+@if (Model.Wapening != null)
+{
+    @if (Model.Wapening.Dekking != null)
+    {
+        <p>@Model.Wapening.Dekking.ToMarkupString()</p>
+    }
+}
 
 
 <FluentSelectEnum Label="type berekening"
@@ -33,22 +43,24 @@ TEnum="@Schematisering.ConstructiefModelEnum"
 }
 else
 {
-   
-    <EurocodeInputNumber ReadOnly=true @bind-Value=Model.Snedekrachten.My Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true @bind-Value=Model.Snedekrachten.My.Ed Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
 }
 
 @if(Model.Profiel == null)
 {
     <EurocodeInputNumber @bind-Value=Model.Breedte Key="@K.ProfielBreedte" Unit="mm"></EurocodeInputNumber>
     <EurocodeInputNumber @bind-Value=Model.Hoogte Key="@K.ProfielHoogte" Unit="mm"></EurocodeInputNumber>
+    <EurocodeInputNumber Readonly=true Value=Model.ZRef Key="ReferentieAfstandVoorNuttigeHoogte" Unit="mm"></EurocodeInputNumber>
 }
 else
 {
-    <p>Profiel: @Model.Profiel?.ToString()</p>
+    <EurocodeInputNumber @bind-Value=Model.Profiel.Breedte Key="@K.ProfielBreedte" Unit="mm"></EurocodeInputNumber>
+    @* <EurocodeInputNumber @bind-Value=Model.Profiel.Hoogte Key="@K.ProfielHoogte" Unit="mm"></EurocodeInputNumber> *@
+    <FluentNumberField @bind-Value=Model.Profiel.Hoogte></FluentNumberField>
 }
 
 
-<EurocodeInputNumber @bind-Value=Model.ZRef Key="ReferentieAfstandVoorNuttigeHoogte" Unit="mm"></EurocodeInputNumber>
+
 <EurocodeInputNumber ReadOnly=true Value=Model.D Key="NuttigeHoogte" Unit="mm"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.Xu Key="Xu" Unit="mm" MaxValue="Model.XuMax"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.XuD Key="XuD" Unit="-" MaxValue="Model.XuDMax"></EurocodeInputNumber>
@@ -58,6 +70,8 @@ else
 
 @if (Model.Wapening != null && Model.BerekeningType == BerekeningTypeEnum.ControleerWapening)
 {
+    <p>Wapeningsvoorstel: @WapeningHelper.GetWapeningVoorstel(Model.AsRequired, 150)</p>
+
     <EurocodeInputContainer Key="@K.WapeningToegepast" Unit="">
         <ChildContent>
             <FluentTextField @bind-Value="@Model.Wapening.Tekst"></FluentTextField>
@@ -65,8 +79,7 @@ else
     </EurocodeInputContainer>
 
 
-    <p>Wapening voorstel: @WapeningHelper.GetWapeningVoorstel(Model.AsRequired, 150)</p>
-
+    @* <FluentButton OnClick="GebruikWapeningsVoorstel"></FluentButton> *@
 }
 
 
@@ -97,16 +110,47 @@ else
     [Parameter]
     public BerekeningTypeEnum BerekeningType { get; set; } = BerekeningTypeEnum.BepaalBenodigeWapening;
 
+    // protected override void OnInitialized()
+    // {
+    //     Model.OnUpdated += StateHasChanged;
+    //     Model.Wapening.PropertyChanged += (s, e) => StateHasChanged();
+
+
+
+    // }
+
+
     protected override void OnInitialized()
     {
-        Model.OnUpdated += StateHasChanged;
-        Model.Wapening.PropertyChanged += (s, e) => StateHasChanged();
-
-       
-
+        // Subscribe op wijzigingen binnen Wapening
+        if (Model.Wapening is INotifyPropertyChanged observable)
+        {
+            observable.PropertyChanged += WapeningPropertyChanged;
+        }
+        
+        Model.BerekenEnValideer();
     }
 
-    
+
+
+    private void WapeningPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // Bij elke wijziging binnen Wapening:
+       
+        Model.BerekenEnValideer();
+
+
+        StateHasChanged(); // Als je UI wilt hertekenen
+        ModelChanged.InvokeAsync(Model); // Als je twee-weg binding gebruikt
+    }
+
+
+    private int indexWapeningVoorstel = 0;
+    public void GebruikWapeningsVoorstel()
+    {
+       var voorstellen = WapeningHelper.GetWapeningVoorstellen(Model.AsRequired, 150);
+        
+    }
 
 
 

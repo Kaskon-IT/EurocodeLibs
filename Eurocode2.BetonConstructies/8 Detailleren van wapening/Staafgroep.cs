@@ -1,4 +1,4 @@
-﻿namespace Eurocode.BetonConstructies._8_Detailleren_van_wapening
+﻿namespace Eurocode.BetonConstructies
 {
 
     public class BaseWapeningStaaf

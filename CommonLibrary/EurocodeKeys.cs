@@ -6,6 +6,10 @@
 
 
         public const string My = "My";
+        public const string MyEd = "MyEd";
+        public const string MyKar = "MyKar";
+        public const string MyFreq = "MyFreq";
+
         public const string Mz = "Mz";
 
         public const string Vz = "Vz";
@@ -13,6 +17,8 @@
 
         public const string Tx = "Tx";
         public const string Nx = "Nx";
+
+
 
 
         public const string TrapOptredeMaat = "Trap.OptredeMaat";

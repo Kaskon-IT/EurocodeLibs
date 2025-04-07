@@ -33,7 +33,7 @@
                 {
                     case MeldingType.Opmerking: return "font-style: italic;";
                     default:
-                    case MeldingType.Waarschuwing: return "color: red;";
+                    case MeldingType.Waarschuwing: return "color: var(--warning);";
                 }
             }
         }

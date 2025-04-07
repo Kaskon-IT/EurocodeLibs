@@ -44,7 +44,7 @@
 
 @if (!string.IsNullOrEmpty(ErrorMessage))
 {
-    <div style="color: red;">@ErrorMessage</div>
+    <div style="color: var(--warning);">@ErrorMessage</div>
 }
 
 @code {

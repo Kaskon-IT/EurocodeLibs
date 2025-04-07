@@ -29,7 +29,7 @@ namespace Eurocode.BetonConstructies
             result += $"A~s,toe~ = {AsApplied: 0} mm², ";
 
             if (MinimaleWapeningToegepast) result += $"minimale wapening van toepassing, ";
-            if (BerekeningType == BerekeningTypeEnum.ControleerWapening) result += $"(UC = {(AsRequired / AsApplied):0.##}), ";
+            if (BerekeningType == BerekeningTypeEnum.ControleerWapening) result += $"(UC = {(AsRequired / AsApplied):0.00}), ";
 
 
 
@@ -56,17 +56,7 @@ namespace Eurocode.BetonConstructies
             BerekenEnValideer();
         }
 
-        public BendingResults(BetonContext beton, double b, double h, double zRef, double m)
-        {
-            Beton = beton;
-            Breedte = b;
-            Hoogte = h;
-            ZRef = zRef;
-            Moment = m;
-            Wapening = new();
-            Wapening.PropertyChanged += OnWapeningChanged;
-            BerekenEnValideer();
-        }
+
 
         private void OnWapeningChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -75,6 +65,14 @@ namespace Eurocode.BetonConstructies
             {
                 BerekenEnValideer();
             }
+            if (e.PropertyName == nameof(WapeningContext.Dekking))
+            {
+                // ? 
+
+                BerekenEnValideer();
+            }
+
+
 
             Console.WriteLine($"Wapening (context) gewijzigd: {e.PropertyName}");
             // Hier kun je aanvullende acties uitvoeren, zoals andere properties bijwerken.
@@ -125,7 +123,7 @@ namespace Eurocode.BetonConstructies
                     // Automatisch Moment bijwerken als Snedekrachten verandert
                     if (_snedekrachten != null)
                     {
-                        Moment = _snedekrachten.My;
+                        Moment = _snedekrachten.My.Ed;
                     }
                 }
             }
@@ -139,13 +137,13 @@ namespace Eurocode.BetonConstructies
         [TableColumn("M~Ed~", StringFormat = "0.0 kNm", Order = 1)]
         public double Moment
         {
-            get => Snedekrachten != null ? Snedekrachten.My : _moment;
+            get => Snedekrachten != null ? Snedekrachten.My.Ed : _moment;
             set
             {
                 if (Snedekrachten != null)
                 {
                     // Als Snedekrachten niet null is, zet _moment gelijk aan Snedekrachten.My
-                    _moment = Snedekrachten.My;
+                    _moment = Snedekrachten.My.Ed;
                 }
                 else
                 {
@@ -170,8 +168,18 @@ namespace Eurocode.BetonConstructies
             set => _hoogte = value;
         }
 
-        public double ZRef { get; set; } = 50;
+        public double ZRef
+        {
+            get
+            {
+                if (Wapening == null) return 50;
+                else
+                {
 
+                    return Wapening.ZRef;
+                }
+            }
+        }
         [TableColumn("d", order: 4, StringFormat = "0 mm")]
         public double D { get { return Hoogte - ZRef; } }
 
@@ -252,6 +260,8 @@ namespace Eurocode.BetonConstructies
                 BerekeningTypeEnum.ControleerWapening => Wapening.As,
                 _ => Math.Ceiling(AsRequired),
             };
+
+
 
         }
 
@@ -376,6 +386,10 @@ namespace Eurocode.BetonConstructies
 
         protected override void Bereken()
         {
+
+            Wapening.SetZRef();
+
+
             VerwerkAsApplied();
 
             // volgens mij gaat dit volledig automatisch...

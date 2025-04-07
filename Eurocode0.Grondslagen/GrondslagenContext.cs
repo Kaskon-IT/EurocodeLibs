@@ -73,7 +73,7 @@ namespace Eurocode.Grondslagen
 
         public override string ToString()
         {
-            return $"{Betrouwbaarheidsklasse}, {Gevolgklasse}, {OntwerpLevensduur.GetOntwerplevensduurTekst()}, norm: {NationaleBijlage}, ξ: {Xi:0.##}";
+            return $"{Gevolgklasse} → {Betrouwbaarheidsklasse}, ontwerplevensduur {OntwerpLevensduur.GetOntwerplevensduurTekst()}, norm: {NationaleBijlage} → ξ = {Xi:0.##}";
         }
 
         //[TableColumn("Eurocode")]
