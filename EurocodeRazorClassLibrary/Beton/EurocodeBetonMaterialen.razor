@@ -1,5 +1,9 @@
 ﻿@using Eurocode.BetonConstructies
 
+
+<BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent>
+
+
 @if (ShowUserFriendly)
 {
     <p>
@@ -133,11 +137,11 @@ else
         {
             if (BetonSterkteklasseEnumItems.Length == 0)
             {
-                return [BetonsterkteklasseEnum.Eigen_Opgave];
+                return [];
             }
             else
             {
-                List<BetonsterkteklasseEnum> excludeEnums = [BetonsterkteklasseEnum.Eigen_Opgave];
+                List<BetonsterkteklasseEnum> excludeEnums = [];
 
                 excludeEnums.AddRange(Enum
                 .GetValues(typeof(BetonsterkteklasseEnum))

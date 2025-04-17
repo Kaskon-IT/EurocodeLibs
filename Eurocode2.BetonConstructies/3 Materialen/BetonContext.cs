@@ -2,6 +2,7 @@
 using ExportFactory.Extensions;
 using ExportFactory.Shared;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Eurocode.BetonConstructies
 {
@@ -27,8 +28,8 @@ namespace Eurocode.BetonConstructies
             CementKlasse = vorige.CementKlasse;
             Alpha = vorige.Alpha;
             Beta = vorige.Beta;
-            FckEigenOpgave = vorige.FckEigenOpgave;
-            FckCubeEigenOpgave = vorige.FckCubeEigenOpgave;
+            //FckEigenOpgave = vorige.FckEigenOpgave;
+            //FckCubeEigenOpgave = vorige.FckCubeEigenOpgave;
             BetonStaal = new BetonStaalContext(vorige.BetonStaal);
         }
 
@@ -84,12 +85,15 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Eigen opgave cilinder druksterkte
         /// </summary>
+        [Obsolete("Gebruik alleen nog maar standaard uit de tabellen")]
         public double FckEigenOpgave { get; set; }
 
         /// <summary>
         /// Eigen opgave kubus druksterkte 
         /// </summary>
+        [Obsolete("Gebruik alleen nog maar standaard uit de tabellen")]
         public double FckCubeEigenOpgave { get; set; }
+
 
 
 
@@ -158,7 +162,7 @@ namespace Eurocode.BetonConstructies
                     BetonsterkteklasseEnum.C70_85 => 70,
                     BetonsterkteklasseEnum.C80_95 => 80,
                     BetonsterkteklasseEnum.C90_105 => 90,
-                    BetonsterkteklasseEnum.Eigen_Opgave => FckEigenOpgave,
+                    //BetonsterkteklasseEnum.Eigen_Opgave => FckEigenOpgave,
                     _ => 40,
                 };
             }
@@ -187,7 +191,7 @@ namespace Eurocode.BetonConstructies
                     BetonsterkteklasseEnum.C70_85 => 85,
                     BetonsterkteklasseEnum.C80_95 => 95,
                     BetonsterkteklasseEnum.C90_105 => 105,
-                    BetonsterkteklasseEnum.Eigen_Opgave => FckCubeEigenOpgave,
+                    //BetonsterkteklasseEnum.Eigen_Opgave => FckCubeEigenOpgave,
                     _ => 50,
                 };
             }
@@ -242,6 +246,7 @@ namespace Eurocode.BetonConstructies
 
         public bool IsOntwerpSituatieBuitenGewoon = false;  // default Blijvend en tijdelijk conform art. 2.4.2.4 (1) Partiële factoren voor materialen 
 
+        [JsonIgnore]
         [TableColumn("|gamma|~c~", HeaderTextPivot = "|gamma|~c~\tpartiële veiligheidsfactor", StringFormat = "0.0", Weergave = WeergaveEnum.DraaiTabel)]
         public double GammaC { get; set; } = 1.5;
         //{
@@ -274,7 +279,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        //public double Beta { get { return GetFactorBeta(BetonSterkteKlasse, Fck, IsParabolischSpanningsRekDiagram); } } 
+        [JsonIgnore]
         public double Beta { get; set; }
 
 
@@ -345,6 +350,7 @@ namespace Eurocode.BetonConstructies
             //throw new NotImplementedException();
         }
 
+        [JsonIgnore]
         public double Alpha { get; set; }
 
 
@@ -355,6 +361,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn("E~cm~", HeaderTextPivot = "E~cm~\tsecans-elasticiteitsmodulus van beton", StringFormat = "0.## \tGPa")]
         public double Ecm { get { return this.GetEcm(); } }
 
+        [JsonIgnore]
         [TableColumn("Poisson", "\tpoisson factor")]
         public double PoissonFactor { get; set; } = 0.2;
 
@@ -400,7 +407,9 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        [Obsolete("Mag verwijderd worden?")]
         public double SigmaCd { get; set; }
+        [Obsolete("Mag verwijderd worden?")]
         public double SigmaCk { get; set; }
 
         [Obsolete("Deze grafiek wordt niet gebruikt.")]

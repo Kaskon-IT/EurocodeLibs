@@ -32,6 +32,7 @@ namespace Eurocode.BetonConstructies
         public static double SetOplegLengteNetto(this OpleggingContext context)
         {
             return context.GetOplegLengteNetto();
+
         }
 
 

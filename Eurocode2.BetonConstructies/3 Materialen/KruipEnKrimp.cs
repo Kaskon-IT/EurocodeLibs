@@ -1,4 +1,6 @@
-﻿namespace Eurocode.BetonConstructies
+﻿using System.Text.Json.Serialization;
+
+namespace Eurocode.BetonConstructies
 {
     public partial class BetonContext
     {
@@ -21,6 +23,7 @@
 
 
         //public string KruipEigenWaarde { get; set; } = "";
+
         public double? KruipEigenWaarde { get; set; } = null;
 
 
@@ -158,8 +161,9 @@
 
 
 
-
+        [JsonIgnore]
         public int OuderdomBeton_t { get; set; } = 18250;
+
 
         public int OuderdomBetonOpMomentVanBelasten_t0 { get; set; } = 30;
 
@@ -175,7 +179,7 @@
 
         public int OuderdomBetonBeginUitdrogingsKrimpOfZwelling_ts { get; set; } = 1;
 
-
+        [JsonIgnore] // wordt ingelezen // todo controleer of goed gaat
         public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new(500, 700);
 
 
@@ -199,13 +203,15 @@
         /// de oppervalkte van de dwarsdoorsnede.
         /// VERVALLEN --> ProfielContext Profiel
         /// </summary>
-        public double OppervlakteDwarsdoorsnedeBeton_Ac { get; set; } = 500 * 700;
+        //[Obsolete("Vervallen, gebruik Profiel.Area")]
+        //public double OppervlakteDwarsdoorsnedeBeton_Ac { get; set; } = 500 * 700;
 
         /// <summary>
         /// de omtrek van het element dat in aanraking komt met de buitenlucht.
         /// VERVALLEN --> ProfielContext Profiel
         /// </summary>
-        public double OmtrekDeelDwarsdoorsnedeBlootgesteldAanUitdroging_u { get; set; } = 2 * (500 + 700);
+        //[Obsolete("Vervallen, gebruik Profiel.Perimeter")]
+        //public double OmtrekDeelDwarsdoorsnedeBlootgesteldAanUitdroging_u { get; set; } = 2 * (500 + 700);
 
         /// <summary>
         /// (B.6)

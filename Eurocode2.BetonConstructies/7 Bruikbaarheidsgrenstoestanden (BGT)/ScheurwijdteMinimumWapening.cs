@@ -7,23 +7,32 @@
         /// </summary>
         public class ScheurwijdteMinimumWapening
         {
-            public double AsMin { get
+            public ScheurwijdteMinimumWapening()
+            {
+
+            }
+
+
+            public double AsMin
+            {
+                get
                 {
                     return this.FactorKc * this.FactorK * this.FctEff * this.Act / this.SigmaS;
-                } }
+                }
+            }
             public double Act { get; set; }
             public double SigmaS { get { return Beton.BetonStaal.SigmaSd; } } // todo: check
             public double FctEff { get; set; }
             public double FactorK { get; set; }
             public double FactorKc { get; set; }
             public required BetonContext Beton { get; set; }
-            
+
 
             public void Update()
             {
-                
+
             }
-            
+
 
 
             public double GetFactorK(double lijfHoogteOfFlensBreedte)

@@ -1,6 +1,7 @@
 ﻿using CommonLibrary;
 using ExportFactory.Shared;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Eurocode.BetonConstructies
 {
@@ -15,7 +16,9 @@ namespace Eurocode.BetonConstructies
 
 
         // Deze delegate wordt vanuit de parent ingesteld
+        [JsonIgnore]
         public Func<double>? BerekenOplegReactieRekenwaarde { get; set; }
+        [JsonIgnore]
         public Func<double>? BerekenLengteOndersteundeElement { get; set; }
 
 
@@ -67,7 +70,14 @@ namespace Eurocode.BetonConstructies
         /// a~1~
         /// </summary>
         [TableColumn("a~1~", "netto opleglengte")]
-        public double OplegLengteNetto { get { return this.SetOplegLengteNetto(); } }
+        public double OplegLengteNetto
+        {
+            get
+            {
+                BerekenEnValideer();
+                return this.SetOplegLengteNetto();
+            }
+        }
 
         /// <summary>
         /// a~aanw~

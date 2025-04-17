@@ -1,16 +1,30 @@
-﻿using ExportFactory.Shared;
+﻿using CommonLibrary.Extensions;
+using CommonLibrary.Helpers;
+using CommonLibrary.Interfaces;
+using ExportFactory.Shared;
+using Microsoft.AspNetCore.Components;
 
 namespace Eurocode.Belastingen
 {
-    public class BelastingCombinatie(int nr, BelastingCombinatieTypeEnum type)
+    public class BelastingCombinatie(int nr, BelastingCombinatieTypeEnum type) : IMarkupConvertible
     {
-        [TableColumn("Type", order: 11)]
+        public override string ToString()
+        {
+            return $"{Naam,-8} {Type.GetDisplayName()} {UserFriendlyTextInclusiefMomentaanFactoren}";
+        }
+
+        public MarkupString ToMarkupString()
+        {
+            return new MarkupString(ToString());
+        }
+
+        [TableColumn("type", order: 11)]
         public BelastingCombinatieTypeEnum Type { get; set; } = type;
 
         public int Nr { get; set; } = nr;
 
-        [TableColumn("Naam", order: -2)]
-        public string Naam { get { return "BC" + Nr; } }
+        [TableColumn("naam", order: -2)]
+        public string Naam { get { return "BC" + Nr.ToString("D1"); } }
 
 
         public List<BelastingCombinatieItem> Items { get; set; } = [];
@@ -29,7 +43,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("Combinatie", order: 21)]
+        [TableColumn("combinatie factoren", order: 21)]
         public string UserFriendlyTextInclusiefMomentaanFactoren
         {
             get
@@ -39,7 +53,7 @@ namespace Eurocode.Belastingen
                 {
                     if (item.MomentFactor.HasValue)
                     {
-                        strItems.Add(item.FactorQ.ToString("0.00#") + " × " + item.MomentaanTekst + " (=" + item.MomentFactor.Value.ToString("0.0") + ")" + " BG" + item.Geval.Nr);
+                        strItems.Add(item.FactorQ.ToString("0.00#") + " BG" + item.Geval.Nr + " × " + MarkupHelper.ToMarkupString(ExportFactory.Services.HtmlCreator.MarkdownToHtml(item.MomentaanTekst)) + " (=" + item.MomentFactor.Value.ToString("0.0") + ")");
                     }
                     else
                     {

@@ -1,4 +1,5 @@
 ﻿using Eurocode.Grondslagen;
+using System.Text.Json.Serialization;
 
 namespace Eurocode.BetonConstructies
 {
@@ -11,9 +12,10 @@ namespace Eurocode.BetonConstructies
             // 7.3.1(5) Grenswaarde w,max 
 
             // constructores
-            public ScheurwijdteGrenswaarde(BetonDekkingContext duurzaamheid, NationaleBijlageEnum nationaleBijlage)
+            [JsonConstructor]
+            public ScheurwijdteGrenswaarde(BetonDekkingContext dekkingEnduurzaamheid, NationaleBijlageEnum nationaleBijlage)
             {
-                DekkingEnDuurzaamheid = duurzaamheid;
+                DekkingEnDuurzaamheid = dekkingEnduurzaamheid;
                 NationaleBijlage = nationaleBijlage;
                 Initialiseer();
             }

@@ -21,7 +21,7 @@ namespace Eurocode.BetonConstructies
         [Description("C70/85")] C70_85 = 70,
         [Description("C80/95")] C80_95 = 80,
         [Description("C90/105")] C90_105 = 90,
-        [Description("Eigen opgave")] Eigen_Opgave = 99,
+        //[Description("Eigen opgave")] Eigen_Opgave = 99,
 
     }
 

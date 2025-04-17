@@ -9,13 +9,13 @@
 @if (SampleProject !=null)
 {
 
-   
+    <FluentButton OnClick="StateHasChanged">StateHasChanged</FluentButton>
 
+    <BetonProfiel @bind-Model="SampleProject.BetonProfiel" OnStateChanged="StateHasChanged"></BetonProfiel>
 
-    <BuigingBasicComponent @bind-Model="SampleProject.BendingResults"
-                           ></BuigingBasicComponent>
+    <BuigingBasicComponent @bind-Model="SampleProject.BendingResults" OnStateChanged="StateHasChanged"></BuigingBasicComponent>
 
-    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" />
+    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" />
 
 
 

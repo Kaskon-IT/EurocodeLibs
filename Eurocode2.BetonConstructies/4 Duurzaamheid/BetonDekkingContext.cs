@@ -366,9 +366,67 @@ namespace Eurocode.BetonConstructies
 
 
             return string.Join(", ", results);
-
-
         }
+
+
+
+        [Flags]
+        public enum ToStringTypeEnum
+        {
+            [Description("c~nom~ = c~min~ + Δ~c,dev~ = {DekkingMin} + {DekkingToeslagUitvoeringsToleranties} = {DekkingNom: 0 mm}")]
+            Cnom = 1,
+            [Description("c~min~ = {DekkingMin}")]
+            Cmin = 2,
+            [Description("c~toe~ = {DekkingToe: 0 mm}")]
+            Ctoe = 4,
+            [Description("kwaliteitsbeheersing")]
+            Kwaliteitsbeheersing = 8,
+            [Description("plaatgeometrie")]
+            Plaatgeometrie = 16,
+            [Description("korrel ≤ 32mm")]
+            Korrel32 = 32,
+            [Description("milieuklasse")]
+            Milieuklasse = 64,
+            [Description("constructieklasse")]
+            Constructieklasse = 128,
+        }
+
+        public List<string>? ToStrings(ToStringTypeEnum stringType)
+        {
+            List<string> results = [];
+            if (stringType.HasFlag(ToStringTypeEnum.Cnom))
+                results.Add($"c~nom~ = c~min~ + Δ~c,dev~ = {DekkingMin} + {DekkingToeslagUitvoeringsToleranties} = {DekkingNom: 0 mm}");
+            if (stringType.HasFlag(ToStringTypeEnum.Cmin))
+                results.Add($"c~min~ = {DekkingMin}");
+            if (stringType.HasFlag(ToStringTypeEnum.Ctoe))
+                results.Add($"c~toe~ = {DekkingToe: 0 mm}");
+            if (stringType.HasFlag(ToStringTypeEnum.Kwaliteitsbeheersing))
+            {
+                if (IsKwaliteitsBeheersing)
+                    results.Add($"✔️ kwaliteitsbeheersing");
+
+            }
+            if (stringType.HasFlag(ToStringTypeEnum.Plaatgeometrie))
+            {
+                if (IsPlaatGeometrie)
+                    results.Add($"✔️ plaatgeometrie");
+
+            }
+            if (stringType.HasFlag(ToStringTypeEnum.Korrel32))
+            {
+                if (GrootsteKorrelDiameter <= 32)
+                    results.Add($"✔️ korrel ≤ 32mm");
+                else
+                    results.Add($"korrel > 32mm");
+            }
+            if (stringType.HasFlag(ToStringTypeEnum.Milieuklasse))
+                results.Add($"milieuklasse: {MilieuklassenUserFriendlyName}");
+            if (stringType.HasFlag(ToStringTypeEnum.Constructieklasse))
+                results.Add($"constructieklasse: {ConstructieklasseUserFriendlyName}");
+
+            return results;
+        }
+
 
         protected override void Bereken()
         {

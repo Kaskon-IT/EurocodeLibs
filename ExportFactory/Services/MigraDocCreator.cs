@@ -4,6 +4,7 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using MigraDoc.DocumentObjectModel.Tables;
+using PdfSharp.Fonts;
 using System.Reflection;
 
 
@@ -28,6 +29,14 @@ namespace ExportFactory.Services
         /// <returns>A Migradoc Document</returns>
         public static Document GenerateDocument(DocumentContent content)
         {
+            // Font resolver mag maar 1x gedaan worden!
+            if (GlobalFontSettings.FontResolver is not CustomFontResolver)
+            {
+                GlobalFontSettings.FontResolver = new CustomFontResolver();
+            }
+            //GlobalFontSettings.FontResolver ??= new CustomFontResolver();
+
+
             var document = new Document();
             SetDocumentInfo(document, content);
             DefineStyles(document, content);
@@ -1177,14 +1186,15 @@ namespace ExportFactory.Services
         }
 
 
-        public static void AddMarkdownToParagraph(Paragraph paragraph, string? markdown)
+        public static void AddMarkdownToParagraph(Paragraph paragraph, string? markdown, bool trim = false)
         {
             if (markdown == null) return;
             if (string.IsNullOrWhiteSpace(markdown))
                 return;
 
             // Trim whitespace
-            markdown = markdown.Trim();
+            if (trim)
+                markdown = markdown.Trim();
 
             // Determine if the markdown is a heading
             if (markdown.StartsWith("# "))

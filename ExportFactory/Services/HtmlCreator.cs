@@ -200,6 +200,10 @@
                                 htmlBuilder.AppendLine($"<h6 class='ec-table-heading'>{ProcessParagraph(paragraph)}</h6>");
                                 break;
 
+                            case "Mono":
+                                htmlBuilder.AppendLine("<p class='ec-par mono'>" + ProcessParagraph(paragraph) + "</p>");
+                                break;
+
                             default:
                                 htmlBuilder.AppendLine("<p class='ec-par'>" + ProcessParagraph(paragraph) + "</p>");
                                 break;
@@ -210,28 +214,43 @@
                     // Als het een tabel is
                     else if (element is Table table)
                     {
-                        bool isPivotTable = table.Tag != null && table.Tag.ToString() == "pivot";
+                        string? tableTag = "";
+                        if (table.Tag != null)
+                            tableTag = table.Tag.ToString();
+
+                        bool isPivotTable = tableTag != null && tableTag.Contains("pivot");
+                        bool hideHeader = tableTag != null && tableTag.Contains("hideheader");
+
 
                         string cssTable = "ec-table";
                         if (isPivotTable)
                             cssTable += "-pivot";
 
+
+
+                        // start <table>
                         htmlBuilder.AppendLine($"<table class='{cssTable}'>");
+                        if (isPivotTable)
+                        {
+                            htmlBuilder.AppendLine("<tbody>");
+                        }
+                        else
+                        {
+                            htmlBuilder.AppendLine("<thead class='ec-table-head'>");
+                        }
+
                         var index = 0;
+
+                        // Check if first row is 'empty'
+                        if (table.Tag is string tag)
+                        {
+                            //if (tag.Contains(""))
+                        }
+
+
                         foreach (Row row in table.Rows)
                         {
                             var cellIndex = 0;
-                            if (index == 0)
-                            {
-                                if (isPivotTable)
-                                {
-                                    htmlBuilder.AppendLine("<tbody>");
-                                }
-                                else
-                                {
-                                    htmlBuilder.AppendLine("<thead class='ec-table-head'>");
-                                }
-                            }
 
                             if (isPivotTable)
                             {
@@ -241,6 +260,8 @@
                             {
                                 htmlBuilder.AppendLine("<tr class='ec-table-row'>");
                             }
+
+
 
                             foreach (Cell cell in row.Cells)
                             {
@@ -268,12 +289,18 @@
                                 // check for th
                                 if ((index == 0 && !isPivotTable) || (isPivotTable && cellIndex <= 2))
                                 {
-                                    htmlTag = "th"; // <th> first row (normal) of first column (pivot)
+                                    htmlTag = "th"; // <th> first row (normal) or first column (pivot)
                                     htmlClass = "ec-th";
                                     if (isPivotTable)
                                     {
                                         htmlClass = "ec-th-pivot";
                                     }
+
+                                    if (hideHeader)
+                                    {
+                                        htmlClass += " hidden";
+                                    }
+
 
                                     if (cellPar != null && cellPar.Tag != null)
                                     {
@@ -304,6 +331,7 @@
 
                         }
 
+                        // apply closing tags  
                         if (isPivotTable)
                         {
                             htmlBuilder.AppendLine("</tbody>");

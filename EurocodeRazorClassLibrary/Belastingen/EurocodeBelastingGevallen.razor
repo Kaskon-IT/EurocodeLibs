@@ -6,9 +6,9 @@
 <FluentDataGrid Items="@Model.BelastingGevallen.AsQueryable()"
                 TGridItem="BelastingGeval">
 
-    <PropertyColumn Property="@(c => c.Naam)" Title="Geval" Width ="70px"/>
-    <PropertyColumn Property="@(c => c.Type)" Title="Type" Width ="140px"/>
-    <PropertyColumn Property="@(c => c.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? c.Gebruiksklasse.ToString(): "")" Title="Gebruiksklasse" />
+    <PropertyColumn Property="@(c => c.Naam)" Title="naam" Width ="70px"/>
+    <PropertyColumn Property="@(c => c.Type)" Title="type" Width ="140px"/>
+    <PropertyColumn Property="@(c => c.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? c.Gebruiksklasse.ToString(): "")" Title="gebruiksklasse" />
 
     @*  <TemplateColumn 
         Style="overflow:visible" 

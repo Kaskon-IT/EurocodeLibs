@@ -15,10 +15,10 @@
         private static Dictionary<string, AttributesMapping> _mappingDict { get; } = _mappingService.Data;
 
 
-        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false)
+        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false, bool hideHeader = false)
         {
             MigraDoc.DocumentObjectModel.Document document = new();
-            var table = dataTable.ToMigraDocTable(objectType, isPivotTable);
+            var table = dataTable.ToMigraDocTable(objectType, isPivotTable, hideHeader);
 
             if (table != null)
             {
@@ -28,7 +28,7 @@
             return document;
         }
 
-        public static Table? ToMigraDocTable(this DataTable dataTable, Type objectType, bool isPivotTable = true)
+        public static Table? ToMigraDocTable(this DataTable dataTable, Type objectType, bool isPivotTable = true, bool hideHeader = false)
         {
             Table migraDocTable = new();
             migraDocTable.Borders.Width = 0.25;
@@ -84,6 +84,7 @@
             {
                 // gebruik Tag om aan te geven dat het een gedraaide tabel is
                 migraDocTable.Tag = "pivot";
+
                 // Add description colum + data columns
                 int colIndex = 0;
                 Column descriptionColumn = migraDocTable.AddColumn();
@@ -269,6 +270,13 @@
             }
             else if (!isPivotTable)
             {
+
+                // header zichtbaar
+                if (hideHeader)
+                {
+                    migraDocTable.Tag = "hideheader";
+                }
+
                 // Add columns to the MigraDoc table based on the property attributes
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
                 {

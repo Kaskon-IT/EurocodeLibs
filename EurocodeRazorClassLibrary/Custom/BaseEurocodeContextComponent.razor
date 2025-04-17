@@ -1,14 +1,58 @@
 ﻿@using CommonLibrary
-@using Eurocode.Grondslagen
+@using Microsoft.Extensions.Hosting
+@inject IHostEnvironment Env
+
+@if (Env.IsDevelopment())
+{
+    <FluentCard>
+
+        <table>
+            <tr>
+                <td><strong>type:</strong></td>
+                <td>@Model.GetType().ToString()</td>
+            </tr>
+            <tr>
+                <td><strong>tekst:</strong></td>
+                <td>@Model.ToMarkupString()</td>
+            </tr>
+            <tr>
+                <td><strong>Id:</strong></td>
+                <td>@Model.Id.ToString()</td>
+            </tr>
+            <tr>
+                <td><strong>aangemaakt op:</strong></td>
+                <td>@Model.AangemaaktOp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
+            </tr>
+
+            @if ((Model.GewijzigdOp - Model.AangemaaktOp).TotalSeconds > 1)
+            {
+                <tr>
+                    <td><strong>gewijzigd op:</strong></td>
+                    <td>@Model.GewijzigdOp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
+                </tr>
+            }
+        </table>
+
+        
+    </FluentCard>
+    
+}
 
 <p>
-    @Model.ToString();
+    
+</p>
+
+<p>
+
+   
+
 </p>
 
 
 @code {
     [Parameter, EditorRequired]
-    public GrondslagenContext Model { get; set; }
+    public BaseEurocodeContext Model { get; set; }
+    public EventCallback<BaseEurocodeContext> ModelChanged{ get; set; }
 
    
 }

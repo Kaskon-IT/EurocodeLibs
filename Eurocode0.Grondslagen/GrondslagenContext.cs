@@ -73,8 +73,19 @@ namespace Eurocode.Grondslagen
 
         public override string ToString()
         {
-            return $"{Gevolgklasse} → {Betrouwbaarheidsklasse}, ontwerplevensduur {OntwerpLevensduur.GetOntwerplevensduurTekst()}, norm: {NationaleBijlage} → ξ = {Xi:0.##}";
+            return ToString(false);
         }
+
+        public string ToString(bool alleenFactoren)
+        {
+            if (alleenFactoren)
+                return $"{Betrouwbaarheidsklasse} → K<sub>FI</sub> = {Kfi:0.##}, {NationaleBijlage} → ξ = {Xi:0.##}";
+
+            else
+                return $"{Gevolgklasse} → {Betrouwbaarheidsklasse} → K<sub>FI</sub> = {Kfi:0.##}, ontwerplevensduur {OntwerpLevensduur.GetOntwerplevensduurTekst()}, norm: {NationaleBijlage} → ξ = {Xi:0.##}";
+        }
+
+
 
         //[TableColumn("Eurocode")]
         public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
@@ -201,12 +212,20 @@ namespace Eurocode.Grondslagen
             throw new NotImplementedException();
         }
 
+
         public MarkupString ToMarkupString()
         {
-            return CommonLibrary.Helpers.MarkupHelper.ToMarkupString(this.ToString());
+            return ToMarkupString(false);
+        }
+
+        public MarkupString ToMarkupString(bool alleenFactoren)
+        {
+            return CommonLibrary.Helpers.MarkupHelper.ToMarkupString(this.ToString(alleenFactoren));
 
             //throw new NotImplementedException();
         }
+
+
 
         //public string CreateCsv()
         //{

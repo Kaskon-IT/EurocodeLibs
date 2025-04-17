@@ -42,7 +42,49 @@ namespace CommonLibrary.Helpers
             return new MarkupString(input);
         }
 
+
         public static MarkupString ToMarkupStringWithUcCheck(string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return new MarkupString(string.Empty);
+
+            var regex = new Regex(@"\(UC\s*=\s*(\d+[.,]?\d*)\)", RegexOptions.IgnoreCase);
+
+            // Zoek eerst of er een UC > 1.0 in zit
+            bool hasWarningUc = regex.Matches(input)
+                .Select(m => m.Groups[1].Value.Replace(",", "."))
+                .Any(val => double.TryParse(val, NumberStyles.Any, CultureInfo.InvariantCulture, out double uc) && uc > 1.0);
+
+            // Voer daarna de vervangingen uit
+            var replaced = regex.Replace(input, match =>
+            {
+                var rawValue = match.Groups[1].Value.Replace(",", ".");
+                if (double.TryParse(rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out double uc))
+                {
+                    if (uc > 1.0)
+                    {
+                        return $"<b>⚠️{match.Value}</b>";
+                    }
+                    else
+                    {
+                        return $"<b>✅{match.Value}</b>";
+                    }
+                }
+
+                return match.Value;
+            });
+
+            // Voeg de kleur toe aan de hele string indien nodig
+            if (hasWarningUc)
+            {
+                return new MarkupString($"<span style=\"color: var(--warning);\">{replaced}</span>");
+            }
+
+            return new MarkupString(replaced);
+        }
+
+
+        public static MarkupString ToMarkupStringWithUcCheckBAK(string? input)
         {
             if (input == null) return new MarkupString(string.Empty);
             var regex = new Regex(@"\(UC\s*=\s*(\d+[.,]?\d*)\)", RegexOptions.IgnoreCase);
@@ -53,11 +95,11 @@ namespace CommonLibrary.Helpers
                 if (double.TryParse(rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out double uc) && uc > 1.0)
                 {
 
-                    return $"<span style=\"color: var(--warning);0\"><b>{match.Value}</b></span>";
+                    return $"<span style=\"color: var(--warning);0\"><b>⚠️{match.Value}</b></span>";
                 }
                 else if (uc <= 1.0)
                 {
-                    return $"<span style=\"color: var(--succes);\"><b>{match.Value}</b></span>";
+                    return $"<span style=\"color: var(--succes);0\"><b>✅{match.Value}</b></span>";
 
                 }
 

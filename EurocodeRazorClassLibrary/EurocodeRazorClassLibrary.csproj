@@ -8,14 +8,12 @@
 		<!-- NuGet-package instellingen -->
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Kaskon.EurocodeComponenten</PackageId>
-		<Version>1.0.1</Version>
+		<Version>1.0.14</Version>
 		<Authors>Bart van der Linden</Authors>
 		<Company>Kaskon</Company>
 		<Description>Blazor component library voor berekeningen conform de Eurocode.</Description>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<RepositoryUrl>https://github.com/YourRepo</RepositoryUrl>
-		<PackageProjectUrl>https://www.yourprojectsite.com</PackageProjectUrl>
-		
+		<PackageLicenseFile>license.md</PackageLicenseFile>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<!-- Lokale map voor .nupkg -->
 		<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
 		<Copyright>Copyright © 2025 Kaskon</Copyright>
@@ -24,13 +22,16 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		
 		<!-- OPTIE: Pictogram -->
-		<PackageIcon>wwwroot/icons/kaskon.png</PackageIcon>
+		<PackageIcon>kaskon.png</PackageIcon>
+		
   
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- Voeg het pictogram toe aan de NuGet package -->
-		<None Include="wwwroot/icons/kaskon.png" Pack="true" PackagePath="wwwroot/icons/" />
+		<None Include="wwwroot/icons/kaskon.png" Pack="true" PackagePath="/" />
+		<None  Include="wwwroot/docs/license.md" Pack="true" PackagePath="/" />
+		<None Include="wwwroot/docs/readme.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
 	
 	
@@ -46,9 +47,6 @@
 		<PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
 		<PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
 		<PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
-
-		<PackageReference Include="Kaskon.Eurocode0.Grondslagen" Version="1.0.0" />
-		<PackageReference Include="Kaskon.Eurocode1.Belastingen" Version="1.0.0" />
 		
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.2" />
@@ -59,6 +57,8 @@
 	<ItemGroup>
 		<!-- Projectreferenties -->
 		<ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
+		<ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
+		<ProjectReference Include="..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />
 		<ProjectReference Include="..\Eurocode2.BetonConstructies\Eurocode2.BetonConstructies.csproj" />
 		<!--<ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />-->
 		<!--<ProjectReference Include="..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />-->

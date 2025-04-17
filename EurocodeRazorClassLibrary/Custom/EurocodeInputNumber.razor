@@ -1,6 +1,7 @@
 ﻿@using System.Text.RegularExpressions
 @using System.Globalization
 @inject ExportFactory.Services.DataTableMappingService MappingService
+@inherits Custom.EurocodeComponentBase
 @typeparam T where T : notnull
 
 <div class="@GetContainerClass()">
@@ -40,35 +41,27 @@
     }
     else
     {
-        <FluentTextField 
-        Class="number-field"
-        @bind-Value="InputValue"
-        @oninput="ValidateInput"
-        @bind-MinValue="MinValue"
-        @bind-MaxValue="MaxValue"
-        Id="@Id"
-        Disabled=@Disabled
-        ReadOnly=@ReadOnly
-        Placeholder="Voer een getal in"
-        Size=12
-        Style="@style"
-        Appearance=@appearance
-        TextFieldType=TextFieldType.Text>
-            @* Style="min-width: 80px; max-width:110px; text-align:end;"> *@
+        <div @onblur="OnBlurred">
+            <FluentTextField Class="number-field"
+            @bind-Value="InputValue"
+            @oninput="ValidateInput"
+            @bind-MinValue="MinValue"
+            @bind-MaxValue="MaxValue"
+            Id="@Id"
+            Disabled=@Disabled
+            ReadOnly=@ReadOnly
+            Placeholder="Voer een getal in"
+            Size=12
+            Style="@style"
+            Appearance=@appearance
+            TextFieldType=TextFieldType.Text>
+                @if (LabelPosition == LabelPosition.Top)
+                {
+                    <span class="truncate-1">@GetLabel(LabelType == LabelType.SymbolAndDescription) </span>
+                }
+            </FluentTextField>
+        </div>
 
-
-            @if (LabelPosition == LabelPosition.Top)
-            {
-                <span class="truncate-1">@GetLabel(LabelType == LabelType.SymbolAndDescription) </span>
-                @*  @if (LabelType == LabelType.SymbolAndDescription)
-            {
-                <span class="label-left truncate2">@GetDescription()</span>
-                <span>TEST</span>
-            } *@
-
-            }
-
-        </FluentTextField>
     }
 
 
@@ -245,62 +238,25 @@
 }
 
 @code {
-    [Parameter, EditorRequired]
-    public T? Value { get; set; } // Kan int, double of decimal zijn
+    [Parameter, EditorRequired] public T? Value { get; set; } // Kan int, double of decimal zijn
+    [Parameter, EditorRequired] public string Key { get; set; } = string.Empty;
+    [Parameter] public LabelPosition LabelPosition { get; set; } = LabelPosition.Left;
+    [Parameter] public LabelType LabelType { get; set; } = LabelType.SymbolAndDescription;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public bool ReadOnly { get; set; } = false;
+    [Parameter] public RenderFragment? TooltipContent { get; set; }
+    [Parameter] public EventCallback<T?> ValueChanged { get; set; } // Terugkoppeling van waarde
+    [Parameter] public double MinValue { get; set; } = double.MinValue;
+    [Parameter] public double MaxValue { get; set; } = double.MaxValue;
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Unit { get; set; } = string.Empty;
+    [Parameter] public string? Id { get; set; } = Guid.NewGuid().ToString(); // Standaard unieke Id
 
-
-
-    [Parameter, EditorRequired]
-    public string Key { get; set; } = string.Empty;
-
-    [Parameter]
-    public LabelPosition LabelPosition { get; set; } = LabelPosition.Left;
-
-    [Parameter]
-    public LabelType LabelType { get; set; } = LabelType.SymbolAndDescription;
-
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
-
-
-    [Parameter]
-    public bool Disabled { get; set; } = false;
-
-    [Parameter]
-    public bool ReadOnly { get; set; } = false;
-
-
-    [Parameter]
-    public RenderFragment? TooltipContent { get; set; }
-
-
-    [Parameter]
-    public EventCallback<T?> ValueChanged { get; set; } // Terugkoppeling van waarde
-
-    [Parameter]
-    public double MinValue { get; set; } = double.MinValue;
-
-    [Parameter]
-    public double MaxValue { get; set; } = double.MaxValue;
-
-    [Parameter]
-    public string Label { get; set; } = string.Empty;
-
-    [Parameter]
-    public string Unit { get; set; } = string.Empty;
-
-    [Parameter]
-    public string? Id { get; set; } = Guid.NewGuid().ToString(); // Standaard unieke Id
 
     private string? TooltipId { get; set; } = Guid.NewGuid().ToString();
-
     private FluentInputAppearance appearance => ReadOnly ? FluentInputAppearance.Filled : FluentInputAppearance.Outline;
-
     private string style => (  LabelPosition == LabelPosition.Top && LabelType == LabelType.SymbolAndDescription) ? "width:calc(100% - 100px);" : "max-width:100px;";
-
-    //[Parameter]
-    //public string Tooltip { get; set; } = string.Empty;
-
     private string InputValue { get; set; } = string.Empty;
     private string? ErrorMessage { get; set; }
     private bool IsFocused { get; set; } = false;
@@ -313,6 +269,11 @@
         } 
     }
 
+    private async Task OnBlurred(FocusEventArgs e)
+    {
+        Console.WriteLine($"TextField is verlaten (@onblur) ({Label})");
+        await NotifyParentAsync();
+    }
 
 
 
@@ -400,22 +361,19 @@
             //ForceValidation();
             //ForceValidation(); // Check opnieuw bij elke parameterwijziging
 
-            //InputValue = FormatValue(Value); // waarom stond dit uit?
+            if (Value is not null)
+                InputValue = FormatValue(Value); // waarom stond dit uit?
+            // Dit staat uit omdat anders de input niet meer goed werkt (backspace en dergelijke)!;
+            // zoek uit welke input dit is!
         }
-
-
-
     }
 
-    // Detecteer wijzigingen in de parent
-
-
-    //private string FormatValue(T value) => $"{value} {Unit}".Trim();
 
     private async Task ForceValidation()
     {
         ValidateMinMax(new ChangeEventArgs { Value = InputValue});
         //await ValidateInput(new ChangeEventArgs { Value = InputValue });
+
     }
 
     private async Task ValidateInput(ChangeEventArgs e)
@@ -428,9 +386,6 @@
         if (!isValid)
         {
             ErrorMessage = "⚠️ Ongeldige invoer: gebruik een getal of wetenschappelijke notatie.";
-
-
-
             return;
         }
 
@@ -440,7 +395,14 @@
         {
             if (TryParseValue(normalizedInput, out T? newValue))
             {
-                await SetValueAsync(newValue);
+                if (!normalizedInput.EndsWith('.'))
+                {
+                    await SetValueAsync(newValue);
+                    Console.WriteLine("Gaat hier nu iets gebeuren");
+                    await NotifyParentAsync();
+                }
+
+               
             }
             else
             {
@@ -464,12 +426,10 @@
             return;
         }
 
-
         var normalizedInput = InputValue.Replace(",", ".");
         // Probeer te casten naar double voor validatie
         if (normalizedInput is IConvertible convertible)
         {
-
             var doubleValue = convertible.ToDouble(CultureInfo.InvariantCulture);
 
             if (doubleValue < MinValue || doubleValue > MaxValue)
@@ -477,7 +437,6 @@
                 if (!string.IsNullOrEmpty(GetMinValueString) && !string.IsNullOrEmpty(GetMaxValueString))
                 {
                     ErrorMessage = $"⚠️ Waarde {GetDescription()} {GetLabel()} moet tussen {GetMinValueString} en {GetMaxValueString} {Unit} liggen.";
-
                 }
                 else if (!string.IsNullOrEmpty(GetMinValueString))
                 {
@@ -500,10 +459,7 @@
     {
         if (e.Value is string value)
         {
-
-
             ValidateMinMax(value);
-
         }
     }
 
@@ -566,12 +522,9 @@
         return false;
     }
 
-    [Parameter]
-    public string StringFormat { get; set; } = "0.##";
-    private string FormatValue(T value) =>
-    value is not null && double.TryParse(value.ToString(), out var number)
-        ? FormatNumber(number)
-        : string.Empty;
+    [Parameter]  public string StringFormat { get; set; } = "0.##";
+
+    private string FormatValue(T value) => value is not null && double.TryParse(value.ToString(), out var number) ? FormatNumber(number) : string.Empty;
 
     // Hulpmethode om getallen te formatteren
     private string FormatNumber(double number)
@@ -579,11 +532,11 @@
         // Als het getal buiten het bereik ligt, gebruik wetenschappelijke notatie
         if (number != 0 && (Math.Abs(number) >= 1000000 || Math.Abs(number) < 0.001))
         {
-            return number.ToString("0.#####E+0"); // Wetenschappelijke notatie met max 5 significante cijfers
+            return number.ToString("0.#####E+0", CultureInfo.InvariantCulture); // Wetenschappelijke notatie met max 5 significante cijfers
         }
 
         // Anders gebruik het standaardformaat
-        return number.ToString(StringFormat);
+        return number.ToString(StringFormat, CultureInfo.InvariantCulture);
     }
 
 

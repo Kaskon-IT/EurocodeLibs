@@ -3,21 +3,35 @@
 
 
 
+<p>@Model.Grondslagen.ToMarkupString(true)</p>
 
 
 <FluentDataGrid Items="@Model.BelastingCombinaties.AsQueryable()"
 TGridItem="BelastingCombinatie">
 
-    <PropertyColumn Property="@(c => c.Naam)" Title="Combi" Width="70px" />
-    <PropertyColumn Property="@(c => c.Type)" Title="Type" Width="140px" />
+    <PropertyColumn Property="@(c => c.Naam)" Title="naam"  />
+    <PropertyColumn Property="@(c => c.Type)" Title="type"  />
+    <TemplateColumn Title="factoren">
+        @if (ShowMomentaanFactoren)
+        {
+            @((MarkupString)context.UserFriendlyTextInclusiefMomentaanFactoren)
+        }
+        else
+        {
+            @((MarkupString)context.UserFriendlyText)
+        }
 
-    @if (ShowMomentaanFactoren)
+
+    </TemplateColumn>
+    @* @if (ShowMomentaanFactoren)
     {
-        <PropertyColumn Property="@(c => c.UserFriendlyTextInclusiefMomentaanFactoren)" title="Factor(en)" />
+       
+
+        <PropertyColumn Property="@(c => (MarkupString)c.UserFriendlyTextInclusiefMomentaanFactoren)" title="Factor(en)" />
     }
     else{
-        <PropertyColumn Property="@(c => c.UserFriendlyText)" title="Factor(en)" />
-    }
+        <PropertyColumn Property="@(c => (MarkupString)c.UserFriendlyText)" title="Factor(en)" />
+    } *@
     
 
 

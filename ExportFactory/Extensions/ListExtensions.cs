@@ -116,23 +116,23 @@ namespace ExportFactory.Extensions
         }
 
 
-        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument<T>(this List<T> list, Type type, bool isPivotTable = true) where T : class
+        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument<T>(this List<T> list, Type type, bool isPivotTable = true, bool hideHeader = false) where T : class
         {
             // step 1: make a datatable
             var dataTable = list.ToDataTable();
 
             // step 2: make a migradoc table
-            return dataTable.ToMigraDocDocument(type, isPivotTable);
+            return dataTable.ToMigraDocDocument(type, isPivotTable, hideHeader);
         }
 
 
-        public static MigraDoc.DocumentObjectModel.Tables.Table? ToMigraDocTable<T>(this List<T> list, Type type, bool isPivotTable = false) where T : class
+        public static MigraDoc.DocumentObjectModel.Tables.Table? ToMigraDocTable<T>(this List<T> list, Type type, bool isPivotTable = false, bool hideHeader = false) where T : class
         {
             // step 1: make a datatable
             var dataTable = list.ToDataTable();
 
             // step 2: make a migradoc table
-            return dataTable.ToMigraDocTable(type, isPivotTable);
+            return dataTable.ToMigraDocTable(type, isPivotTable, hideHeader);
         }
 
 

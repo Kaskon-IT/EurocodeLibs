@@ -62,6 +62,10 @@ namespace Eurocode.BetonConstructies
             this.ScheurwijdteGrenswaarde.NationaleBijlage = nationaleBijlage;
         }
 
+        // gebruik naam voor positie
+        [TableColumn("Positie", Weergave = WeergaveEnum.StandaardTabel, HeaderTextPivot = "Naam")]
+        public string Naam { get; set; } = "Schil";
+
         // input
         [TableColumn("M~E,freq~", headerTextPivot: "Moment (BGT) M~E,freq~", StringFormat = "0.# kNm")]
         public double MomentFrequent { get { return Snedekrachten.My.Kar; } }
