@@ -72,6 +72,7 @@ namespace ExportFactory.MigraDocContentModels
         public List<TableCellHeaderContent> Headers { get; set; } = new List<TableCellHeaderContent>();
         public List<double> ColumnWidths { get; set; } = new List<double>();
         public List<List<TableCellContent>> Rows { get; set; } = new List<List<TableCellContent>>();
+        public bool HideHeaders { get; set; } = false; // default false
     }
 
     /// <summary>

@@ -133,28 +133,29 @@
                             case "Kop 1":
                                 if (!inhoudsopgaveIsVerwerkt &&
                                     paragraph.Elements.First != null &&
-                                    paragraph.Elements.First is Text text)
+                                    paragraph.Elements.First is Text text &&
+                                    text != null &&
+                                    text.Content != null &&
+                                    text.Content.Equals("inhoudsopgave", StringComparison.CurrentCultureIgnoreCase))
                                 {
-                                    if (text.Content.ToLower() == "inhoudsopgave")
-                                    {
-                                        // TOC hyperlinks
 
-                                        // The button that will scroll to the TOC
-                                        htmlBuilder.Append("<div id='toc-embvg01f'>");
-                                        htmlBuilder.AppendLine($"<h1 class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
-                                        htmlBuilder.Append("<a class='to-toc-btn' onclick='scrollToToc()'>Naar Inhoudsopgave</a>");
-                                        htmlBuilder.Append(GenerateHtmlFromBookmarks(document));
-                                        htmlBuilder.Append("</div>");
-                                    }
+                                    // TOC hyperlinks
+
+                                    // The button that will scroll to the TOC
+                                    htmlBuilder.Append("<div id='toc-embvg01f'>");
+                                    htmlBuilder.AppendLine($"<h1 class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
+                                    htmlBuilder.Append("<a class='to-toc-btn' onclick='scrollToToc()'>Naar Inhoudsopgave</a>");
+                                    htmlBuilder.Append(GenerateHtmlFromBookmarks(document));
+                                    htmlBuilder.Append("</div>");
+
+
+
+
                                     // vanaf nu niet meer in deze if-statement, geef aan dat toc is verwerkt.
                                     inhoudsopgaveIsVerwerkt = true;
                                 }
                                 else
                                 {
-                                    //htmlBuilder.AppendLine("<hr />");
-
-
-
                                     if (accordionIsOpen)
                                     {
                                         // sluit

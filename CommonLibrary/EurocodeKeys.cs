@@ -19,6 +19,24 @@
         public const string Nx = "Nx";
 
 
+        public const string Slankheid_Slankheid = "Slankheid.Slankheid";
+        public const string Slankheid_Grenswaarde = "Slankheid.Grenswaarde";
+        public const string Slankheid_FactorK = "Slankheid.FactorK";
+
+        public const string Slankheid_LengteOverspanning = "Slankheid.LengteOverspanning";
+        public const string Slankheid_EffectieveDikte = "Slankheid.EffectieveDikte";
+
+        public const string Slankheid_WapeningsVerhoudingReferentiewaarde = "Slankheid.WapeningsVerhoudingReferentiewaarde";
+        public const string Slankheid_WapeningsVerhoudingTrekVereist = "Slankheid.WapeningsVerhoudingTrekVereist";
+        public const string Slankheid_WapeningsVerhoudingDrukVereist = "Slankheid.WapeningsVerhoudingDrukVereist";
+        public const string Slankheid_Fck = "Slankheid.Fck";
+
+
+
+
+
+
+
 
 
         public const string TrapOptredeMaat = "Trap.OptredeMaat";

@@ -136,6 +136,19 @@ namespace ExportFactory.Services
         private readonly Dictionary<string, AttributesMapping> _ec2 = new Dictionary<string, AttributesMapping>
         {
 
+            { K.Slankheid_LengteOverspanning, new(sym : "l", desc : "effectieve lengte", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_EffectieveDikte, new(sym : "d", desc : "effectieve dikte", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_WapeningsVerhoudingReferentiewaarde, new(sym : "|rho|~0~", desc : "referentiewaarde wapeningsverhouding = 10^-3^ · √f~ck~", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_WapeningsVerhoudingTrekVereist, new(sym : "|rho|", desc : "vereiste wapeningsverhouding (trek)", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_WapeningsVerhoudingDrukVereist, new(sym : "|rho|'", desc : "vereiste wapeningsverhouding (druk)", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_FactorK, new(sym : "K", desc : "factor constructief systeem", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_Grenswaarde, new(sym : "l/d", desc : "grenswaarde van de slankheid", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_Slankheid, new(sym : "l/d", desc : "slankheid", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_Fck, new(sym : "f~ck~", desc : "druksterkte", norm : "EC2", art: "7.4.2") },
+
+
+
+
             { "Betonsterkteklasse", new(sym : "C", desc : "betonsterkteklasse", norm: "EC2", art: "3.1.2", vgl: "tabel 3.1") },
             { "CementKlasse", new(sym: null, desc : "cement klasse", norm: "EC2", art : "3.1.2 (6)", vgl : null)},
             { "PoissonFactor", new(sym: "|nu|",desc: "poissonfactor", norm: "EC2", art : "3.1.3 (4)", vgl : null) },

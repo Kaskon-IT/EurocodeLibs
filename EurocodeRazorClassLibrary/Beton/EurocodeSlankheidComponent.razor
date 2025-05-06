@@ -1,0 +1,47 @@
+﻿@inherits Custom.EurocodeComponentBase
+@using K = CommonLibrary.EurocodeKeys
+
+<h3>7.4.2 Gevallen waarin berekeningen achterwege mogen blijven</h3>
+
+@if (Model != null)
+{
+    <EurocodeInputNumber @bind-Value="Model.LengteOverspanning" Key="@K.Slankheid_LengteOverspanning" Unit="mm" MinValue="1" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+    
+    
+    <p>Vanuit berekening buiging</p>
+    <EurocodeInputNumber ReadOnly=true Value="Model.Beton.Fck" Key="@K.Slankheid_Fck"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.EffectieveDikte" Key="@K.Slankheid_EffectieveDikte" Unit="mm" ></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.Profiel.Area" Key="@K.BetonDoorsnedeOppervlak" StringFormat="0"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.BendingResults.AsRequired" Key="@K.AsBen" StringFormat="0"></EurocodeInputNumber>
+    
+
+
+    <EurocodeInputNumber ReadOnly=true Value="Model.Rho0" Key="@K.Slankheid_WapeningsVerhoudingReferentiewaarde" StringFormat="0.####"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.Rho" Key="@K.Slankheid_WapeningsVerhoudingTrekVereist" StringFormat="0.####"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.RhoDrukwapening" Key="@K.Slankheid_WapeningsVerhoudingDrukVereist" StringFormat="0.####"></EurocodeInputNumber>
+
+    <EurocodeInputNumber ReadOnly=true Value="Model.Slankheid" Key="@K.Slankheid_Slankheid"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.GrenswaardeSlankheid" Key="@K.Slankheid_Grenswaarde"></EurocodeInputNumber>
+
+    <p>@Model.Formule</p>
+
+
+
+    <p>Testfase</p>
+    <p>@Model.ToMarkupString()</p>
+    
+}
+
+
+
+@code {
+    [Parameter, EditorRequired] 
+    public required Eurocode.BetonConstructies.GrenswaardeSlankheidContext Model { get; set; }
+
+    [Parameter]
+    public EventCallback<Eurocode.BetonConstructies.GrenswaardeSlankheidContext> ModelChanged { get; set; }
+
+
+
+
+}

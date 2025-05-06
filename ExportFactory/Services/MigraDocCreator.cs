@@ -27,7 +27,7 @@ namespace ExportFactory.Services
         /// </summary>
         /// <param name="content">DocumentContent for creating the document</param>
         /// <returns>A Migradoc Document</returns>
-        public static Document GenerateDocument(DocumentContent content)
+        public static Document GenerateDocument(DocumentContent content, bool includeToc = false)
         {
             // Font resolver mag maar 1x gedaan worden!
             if (GlobalFontSettings.FontResolver is not CustomFontResolver)
@@ -56,7 +56,15 @@ namespace ExportFactory.Services
 
             // empty Tabel of Contents (TOC)
             // gebruik een aparte section zodat later deze section kan worden gevuld.
-            AddTableOfContents(document, out Section tocSection);
+            Section tocSection = new();
+            if (includeToc)
+            {
+                AddTableOfContents(document, out tocSection);
+            }
+            else
+            {
+
+            }
 
 
             // Add header and footer
@@ -79,7 +87,8 @@ namespace ExportFactory.Services
             }
 
             // Bookmarks bijwerken (with saved bookmarks)
-            UpdateTableOfContent(tocSection, bookmarks);
+            if (includeToc)
+                UpdateTableOfContent(tocSection, bookmarks);
 
             return document;
         }
@@ -616,6 +625,9 @@ namespace ExportFactory.Services
                 : ParagraphAlignment.Left;
 
             // Add header row
+            if (tableContent.HideHeaders)
+                table.Tag = "hideheader"; // for HtmlCreator
+
             var headerRow = table.AddRow();
             headerRow.Shading.Color = Colors.LightGray;
             for (int i = 0; i < tableContent.Headers.Count; i++)
@@ -625,6 +637,9 @@ namespace ExportFactory.Services
                 AddMarkdownToParagraph(headerPar, tableContent.Headers[i].CellContent.Markdown);
                 //cell.Style = "TableHeader";
             }
+
+
+
 
             // Add rows
             foreach (var row in tableContent.Rows)
