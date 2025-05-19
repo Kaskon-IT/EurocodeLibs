@@ -35,7 +35,7 @@ namespace ExportFactory.MigraDocContentModels
         public List<SectionContent> Sections { get; set; } = new List<SectionContent>();
         public TableOfContentsContent TableOfContents { get; set; }
 
-        public PageMarginAndPageNumberSettingsEnum? PageMarginSetting { get; set; } = PageMarginAndPageNumberSettingsEnum.EvenOnevenGespiegeld;
+        public PageMarginAndPageNumberSettingsEnum? PageMarginSetting { get; set; } = PageMarginAndPageNumberSettingsEnum.MargeLinks_PaginaNummerRechts;
 
 
         public enum PageMarginAndPageNumberSettingsEnum
@@ -61,7 +61,7 @@ namespace ExportFactory.MigraDocContentModels
             { "Date", "Datum" },
             { "Description", "Beschrijving" }
         };
-       
+
     }
 
     public class Revision

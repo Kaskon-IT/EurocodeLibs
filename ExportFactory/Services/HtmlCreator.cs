@@ -240,7 +240,7 @@
                             htmlBuilder.AppendLine("<thead class='ec-table-head'>");
                         }
 
-                        var index = 0;
+                        var rowIndex = 0;
 
                         // Check if first row is 'empty'
                         if (table.Tag is string tag)
@@ -252,6 +252,9 @@
                         foreach (Row row in table.Rows)
                         {
                             var cellIndex = 0;
+
+
+
 
                             if (isPivotTable)
                             {
@@ -285,10 +288,14 @@
 
 
 
+
+
+
                                 if (isPivotTable)
-                                    htmlClass = "ec-td-pivot"; // 'add-colon' plaatst een : voor de tekst
+                                    htmlClass = "ec-td-pivot";
+
                                 // check for th
-                                if ((index == 0 && !isPivotTable) || (isPivotTable && cellIndex <= 2))
+                                if ((rowIndex == 0 && !isPivotTable) || (isPivotTable && cellIndex <= 2))
                                 {
                                     htmlTag = "th"; // <th> first row (normal) or first column (pivot)
                                     htmlClass = "ec-th";
@@ -303,6 +310,10 @@
                                     }
 
 
+
+
+
+
                                     if (cellPar != null && cellPar.Tag != null)
                                     {
                                         switch (cellPar.Tag)
@@ -314,20 +325,43 @@
                                     }
 
                                 }
+
+
+                                // alleen voor de 1e rij, controleer of width is opgegeven
+                                if (rowIndex == 1)
+                                {
+                                    var thisColumn = table.Columns[cellIndex];
+
+
+
+
+                                    if (thisColumn != null && !thisColumn.Width.IsNull)
+                                    {
+                                        //
+                                        var width = thisColumn.Width.Centimeter.ToString("0"); // alleen hele cm ondersteund!
+                                        htmlClass += $" ec-width-{width}";
+                                    }
+                                }
+
+
+
                                 htmlBuilder.AppendLine($"<{htmlTag} class='{htmlClass}'>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
                                 cellIndex++;
                             }
                             htmlBuilder.AppendLine("</tr>");
 
 
-                            if (index == 0 && !isPivotTable)
+                            if (rowIndex == 0 && !isPivotTable)
                             {
                                 htmlBuilder.AppendLine("</thead>");
                             }
 
 
 
-                            index++;
+
+
+
+                            rowIndex++;
 
 
                         }
@@ -519,20 +553,13 @@
 
                         }
 
-
-                        if (character.Char == '\0')
+                        if (character.SymbolName == SymbolName.LineBreak)
                         {
-                            //sb.Append("<br/>");
-                            //sb.Append("___");
+                            // Als het een regelonderbreking is, voeg de huidige verzamelde tekst toe en voeg een <br> toe
+                            currentText += "<br />";
                         }
 
-
-
-
                     }
-
-
-
 
                 }
                 // en de rest

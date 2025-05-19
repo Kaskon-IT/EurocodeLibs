@@ -20,16 +20,16 @@ namespace Eurocode.Belastingen
 
         public int Nr { get; set; }
 
-        [TableColumn("naam", order: 0)]
+        [TableColumn("naam", order: 0, width: 3.0)]
         public string Naam { get { return "BG" + Nr.ToString("D1"); } }
         public string Omschrijving { get; set; } = "G";
 
-        [TableColumn("type", order: 10)]
+        [TableColumn("type", order: 10, width: 5.0)]
         public BelastingGevalTypeEnum? Type { get; set; } = BelastingGevalTypeEnum.Permanent;
 
         public BelastOnbelastTypeEnum? BelastOnbelastType { get; set; } = BelastOnbelastTypeEnum.AllesTegelijk;
 
-        [TableColumn("gebruiksklasse", order: 20)]
+        [TableColumn("gebruiksklasse", order: 20, width: 5.0)]
         public GebruiksklasseEnum? Gebruiksklasse { get; set; } = GebruiksklasseEnum.A_gemeenschappelijke_trappen;
 
 
@@ -57,7 +57,7 @@ namespace Eurocode.Belastingen
 
 
         // userFriendlyHelpers
-        [TableColumn("momentaan factoren", order: 30)]
+        [TableColumn("momentaan factoren", order: 30, width: 5.0, weergave: WeergaveEnum.Geen)]
         public string MomentaanFactorenUserFriendly
         {
             get
@@ -66,6 +66,38 @@ namespace Eurocode.Belastingen
                 else return $"|psi|~0~={MomentaanFactoren.Mom0} |psi|~1~={MomentaanFactoren.Mom1} |psi|~2~={MomentaanFactoren.Mom2}";
             }
         }
+
+
+        [TableColumn("|psi|~0~", order: 40, width: 1.0)]
+        public string Mom0
+        {
+            get
+            {
+                if (Type == BelastingGevalTypeEnum.Permanent) return "";
+                else return MomentaanFactoren.Mom0.ToString("0.##");
+            }
+        }
+
+        [TableColumn("|psi|~1~", order: 41, width: 1.0)]
+        public string Mom1
+        {
+            get
+            {
+                if (Type == BelastingGevalTypeEnum.Permanent) return "";
+                else return MomentaanFactoren.Mom1.ToString("0.##");
+            }
+        }
+
+        [TableColumn("|psi|~2~", order: 42, width: 1.0)]
+        public string Mom2
+        {
+            get
+            {
+                if (Type == BelastingGevalTypeEnum.Permanent) return "";
+                else return MomentaanFactoren.Mom2.ToString("0.##");
+            }
+        }
+
 
 
         public string OpgelegdeBelasting

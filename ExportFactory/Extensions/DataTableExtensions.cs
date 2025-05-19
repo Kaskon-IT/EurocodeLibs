@@ -32,6 +32,7 @@
         {
             Table migraDocTable = new();
             migraDocTable.Borders.Width = 0.25;
+            migraDocTable.Borders.Color = Colors.LightGray;
 
 
             // Check if the TableColumnAttribute is applied to any of the properties
@@ -280,6 +281,9 @@
                 // Add columns to the MigraDoc table based on the property attributes
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
                 {
+
+
+
                     Column migraDocColumn = migraDocTable.AddColumn();
                     migraDocColumn.Format.Alignment = propertyWithAttribute.Attribute.Alignment;
 

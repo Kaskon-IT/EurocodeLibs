@@ -144,10 +144,10 @@ namespace ExportFactory.Shared
             string? headerText = null,
             string? headerTextPivot = null,
             string? stringFormat = null,
-            ParagraphAlignment alignment = ParagraphAlignment.Center,
+            ParagraphAlignment alignment = ParagraphAlignment.Left,
             bool visible = true,
             WeergaveEnum weergave = WeergaveEnum.AlleTabellen,
-            double width = 3.00,
+            double width = 2.00,
             int order = -1,
             string? key = null
             )

@@ -29,12 +29,15 @@ namespace ExportFactory.Services
         /// <returns>A Migradoc Document</returns>
         public static Document GenerateDocument(DocumentContent content, bool includeToc = false)
         {
+
+
+
+
             // Font resolver mag maar 1x gedaan worden!
             if (GlobalFontSettings.FontResolver is not CustomFontResolver)
             {
                 GlobalFontSettings.FontResolver = new CustomFontResolver();
             }
-            //GlobalFontSettings.FontResolver ??= new CustomFontResolver();
 
 
             var document = new Document();
@@ -47,12 +50,6 @@ namespace ExportFactory.Services
                 AddCoverPage(document, content.CoverPage);
             }
 
-            //if (content.Revisions != null)
-            //{
-            //    AddRevisionPage(document, content.Revisions);
-            //}
-
-
 
             // empty Tabel of Contents (TOC)
             // gebruik een aparte section zodat later deze section kan worden gevuld.
@@ -61,16 +58,10 @@ namespace ExportFactory.Services
             {
                 AddTableOfContents(document, out tocSection);
             }
-            else
-            {
-
-            }
 
 
             // Add header and footer
             DefineHeaderAndFooter(document.LastSection, content);
-
-
 
 
             // save bookmarks to be used later in the TOC
@@ -92,6 +83,65 @@ namespace ExportFactory.Services
 
             return document;
         }
+
+
+        /// <summary>
+        /// Exports the document to a RTF file.
+        /// </summary>
+        /// <param name="document">Migradoc document</param>
+        /// <param name="filename">Filename</param>
+        public static void ExportToRtf(Document document, string filename)
+        {
+            // Save the document as RTF
+            var rtfRenderer = new MigraDoc.RtfRendering.RtfDocumentRenderer();
+
+            // Check whether the filename ends with ".rtf" and add it if not
+            if (!filename.EndsWith(".rtf"))
+            {
+                filename += ".rtf";
+            }
+            rtfRenderer.Render(document, filename, null);
+        }
+
+        public static string ExportToRtfString(Document document)
+        {
+            // Save the document as RTF
+            var rtfRenderer = new MigraDoc.RtfRendering.RtfDocumentRenderer();
+            return rtfRenderer.RenderToString(document, null);
+        }
+
+        public static void ExportToPdf(Document document, string filename)
+        {
+            // Save the document as PDF
+            var pdfRenderer = new MigraDoc.Rendering.PdfDocumentRenderer(true);
+            pdfRenderer.Document = document;
+            // Check whether the filename ends with ".pdf" and add it if not
+            if (!filename.EndsWith(".pdf"))
+            {
+                filename += ".pdf";
+            }
+            pdfRenderer.RenderDocument();
+            pdfRenderer.PdfDocument.Save(filename);
+        }
+
+
+        public static void ExportToPdf(Document document, Stream stream)
+        {
+            // Save the document as PDF
+            var pdfRenderer = new MigraDoc.Rendering.PdfDocumentRenderer(true);
+            pdfRenderer.Document = document;
+            pdfRenderer.RenderDocument();
+            pdfRenderer.PdfDocument.Save(stream, false);
+        }
+
+        public static byte[] ExportToPdfBytes(Document document)
+        {
+            using var stream = new MemoryStream();
+            ExportToPdf(document, stream);
+            return stream.ToArray();
+        }
+
+
 
         private static readonly Dictionary<string, string> GreekLetters = new()
         {
@@ -188,6 +238,7 @@ namespace ExportFactory.Services
                 TopMargin = Unit.FromMillimeter(15),
                 BottomMargin = Unit.FromMillimeter(10),
                 RightMargin = Unit.FromMillimeter(25), // outer
+
             };
 
             if (content.PageMarginSetting != null)
@@ -374,50 +425,6 @@ namespace ExportFactory.Services
             AddTable(section, tableModel, $"{typeof(T).Name} Table");
         }
 
-        //private static void HandleTableModel<T>(Section target, TableModel<T> tableModel)
-        //{
-        //    // Check the actual type of TableModel<T> and handle accordingly
-        //    var elementType = tableModel.GetType();
-
-        //    // If the element is a TableModel<T>, check its generic type argument
-        //    if (elementType.IsGenericType && elementType.GetGenericTypeDefinition() == typeof(TableModel<>))
-        //    {
-        //        // Get the actual type of T in TableModel<T>
-        //        var genericArgument = elementType.GetGenericArguments()[0];
-
-        //        if (genericArgument == typeof(object) ||
-        //            typeof(object).IsAssignableFrom(genericArgument))
-        //        {
-
-
-        //            var tableModelObj = (TableModel<object>)tableModel;
-        //            AddTable(target, tableModelObj, "Hoi");
-        //        }
-        //        else if (genericArgument == typeof(int))
-        //        {
-        //            var tableModelInt = (TableModel<int>)tableModel;
-        //            AddTable(target, tableModelInt, "Integer Table");
-        //        }
-        //        else if (genericArgument == typeof(string))
-        //        {
-        //            var tableModelString = (TableModel<string>)tableModel;
-        //            AddTable(target, tableModelString, "String Table");
-        //        }
-        //        else
-        //        {
-        //            // Handle other types of TableModel<T> as needed
-        //            Console.WriteLine($"Unhandled TableModel type: {genericArgument.Name}");
-        //        }
-        //    }
-
-
-
-
-
-        //}
-
-
-
 
 
         public static Table AddTableToContainer<T>(T target) where T : DocumentObject
@@ -602,6 +609,8 @@ namespace ExportFactory.Services
             {
                 //if (tableContent.)
                 var width = header.Width; // default
+
+                // tenzij AutoSize is set
                 switch (header.CellContent.Style.AutoSize)
                 {
                     case AutoColumnSizeOption.None:
@@ -642,24 +651,32 @@ namespace ExportFactory.Services
 
 
             // Add rows
-            foreach (var row in tableContent.Rows)
+            foreach (var rowCells in tableContent.Rows)
             {
                 var tableRow = table.AddRow();
-                for (int i = 0; i < row.Count; i++)
+                for (int i = 0; i < rowCells.Count; i++)
                 {
                     var cell = tableRow.Cells[i];
-                    if (!string.IsNullOrEmpty(row[i].SvgImage))
+                    // controleer of een override op de width is
+                    var currentWidth = table.Columns[i].Width;
+                    var newWidth = rowCells[i].Width;
+                    if (newWidth > 0 && newWidth != currentWidth)
+                    {
+                        table.Columns[i].Width = newWidth;
+                    }
+
+                    if (!string.IsNullOrEmpty(rowCells[i].SvgImage))
                     {
                         try
                         {
-                            var svgContent = row[i].SvgImage;
+                            var svgContent = rowCells[i].SvgImage;
                             var imgStream = SvgService.ConvertSvgToPngStream(svgContent, out double width, out double height);
 
                             if (imgStream != null)
                             {
                                 Console.WriteLine($"SVG converted successfully. Width: {width}, Height: {height}");
                                 var parWithSvgImage = cell.AddParagraph();
-                                parWithSvgImage.Tag = row[i].SvgImage; // write svg to Tag for HtmlCreator.
+                                parWithSvgImage.Tag = rowCells[i].SvgImage; // write svg to Tag for HtmlCreator.
                                 AddImageFromStream(parWithSvgImage, imgStream);
                             }
                             else
@@ -667,28 +684,21 @@ namespace ExportFactory.Services
                                 Console.WriteLine("Failed to convert SVG.");
                             }
 
-
-
-
-
-
                         }
                         catch (Exception ex)
                         {
                             cell.AddParagraph($"Error rendering SVG: {ex.Message}");
                         }
 
-
-
                         //var image = cell.AddImage(CreateSvgImage(row[i].SvgImage));
                         //image.Width = "2cm"; // Adjust size as needed
                         //image.LockAspectRatio = true;
                     }
 
-                    if (!string.IsNullOrEmpty(row[i].Markdown))
+                    if (!string.IsNullOrEmpty(rowCells[i].Markdown))
                     {
                         var par = cell.AddParagraph();
-                        AddMarkdownToParagraph(par, row[i].Markdown);
+                        AddMarkdownToParagraph(par, rowCells[i].Markdown);
                     }
                 }
             }
@@ -848,7 +858,7 @@ namespace ExportFactory.Services
             // table heading
             var tableHeading = document.Styles.AddStyle("TableHeading", "Normal");
             //tableHeading.Font.Size = 12;
-            tableHeading.Font.Italic = true;
+            tableHeading.Font.Italic = !true;
 
 
 
@@ -862,7 +872,7 @@ namespace ExportFactory.Services
             // Title style for the cover page
             var subTitle = document.Styles.AddStyle("Subtitle", "Normal");
             subTitle.Font.Size = 24;
-            subTitle.Font.Italic = true;
+            subTitle.Font.Italic = !true;
             subTitle.Font.Bold = !true;
             subTitle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
 
@@ -1260,8 +1270,99 @@ namespace ExportFactory.Services
 
 
 
-
         private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown)
+        {
+            if (string.IsNullOrWhiteSpace(markdown))
+                return;
+
+            // HTML entities & <br />
+            markdown = markdown.Replace("<br />", "\n");
+            markdown = markdown.Replace("<br>", "\n");
+            markdown = markdown.Replace("×", "x");   // want × is niet ondersteund in rtf
+            markdown = markdown.Replace("³", "^3^"); // want ³ is niet ondersteund in rtf
+            markdown = markdown.Replace("²", "^2^"); // want ² is niet ondersteund in rtf
+            markdown = markdown.Replace("¹", "^1^"); // want ¹ is niet ondersteund in rtf
+            markdown = markdown.Replace("‰", "^0^/~00~"); // want is niet ondersteund in rtf
+
+            // Combine both Markdown & basic HTML tags into tokens
+            var regex = new Regex(
+                @"(?<bold>\*\*(.*?)\*\*|<b>(.*?)</b>)|" +
+                @"(?<italic>\*(.*?)\*|<i>(.*?)</i>)|" +
+                @"(?<underline>__(.*?)__|<u>(.*?)</u>)|" +
+                @"(?<strike>~~(.*?)~~)|" +
+                @"(?<sup>\^(.*?)\^|<sup>(.*?)</sup>)|" +
+                @"(?<sub>~(.*?)~|<sub>(.*?)</sub>)|" +
+                @"(?<color>\{(.*?):(.*?)\})|" +
+                @"(?<br>\n)|" +
+                @"(?<text>[^*^~_<>{}\n]+)",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase
+            );
+
+            foreach (Match match in regex.Matches(markdown))
+            {
+                if (match.Groups["bold"].Success)
+                {
+                    var content = StripTags(match.Value, "**", "<b>", "</b>");
+                    paragraph.AddFormattedText(content, TextFormat.Bold);
+                }
+                else if (match.Groups["italic"].Success)
+                {
+                    var content = StripTags(match.Value, "*", "<i>", "</i>");
+                    paragraph.AddFormattedText(content, TextFormat.Italic);
+                }
+                else if (match.Groups["underline"].Success)
+                {
+                    var content = StripTags(match.Value, "__", "<u>", "</u>");
+                    var text = paragraph.AddFormattedText(content);
+                    text.Underline = Underline.Single;
+                }
+                else if (match.Groups["strike"].Success)
+                {
+                    var content = StripTags(match.Value, "~~");
+                    var text = paragraph.AddFormattedText(content);
+                    text.Color = Colors.Red; // MigraDoc heeft geen strikeout, dus markeer visueel
+                }
+                else if (match.Groups["sup"].Success)
+                {
+                    var content = StripTags(match.Value, "^", "<sup>", "</sup>");
+                    var text = paragraph.AddFormattedText(content);
+                    text.Superscript = true;
+                }
+                else if (match.Groups["sub"].Success)
+                {
+                    var content = StripTags(match.Value, "~", "<sub>", "</sub>");
+                    var text = paragraph.AddFormattedText(content);
+                    text.Subscript = true;
+                }
+                else if (match.Groups["color"].Success)
+                {
+                    var parts = Regex.Match(match.Value, @"\{(.*?):(.*?)\}").Groups;
+                    var color = parts[1].Value.Trim();
+                    var content = parts[2].Value.Trim();
+                    var text = paragraph.AddFormattedText(content);
+                    text.Color = Color.Parse(color);
+                }
+                else if (match.Groups["br"].Success)
+                {
+                    paragraph.AddLineBreak();
+                }
+                else if (match.Groups["text"].Success)
+                {
+                    paragraph.AddText(match.Value);
+                }
+            }
+        }
+
+        private static string StripTags(string input, string markdown = "", string htmlOpen = "", string htmlClose = "")
+        {
+            return input.Replace(markdown, "")
+                        .Replace(htmlOpen, "", StringComparison.OrdinalIgnoreCase)
+                        .Replace(htmlClose, "", StringComparison.OrdinalIgnoreCase);
+        }
+
+
+
+        private static void ApplyMarkdownStylesToParagraphBAK(Paragraph paragraph, string markdown)
         {
             if (string.IsNullOrEmpty(markdown))
             {

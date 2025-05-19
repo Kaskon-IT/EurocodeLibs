@@ -63,11 +63,11 @@ namespace Eurocode.BetonConstructies
         }
 
         // gebruik naam voor positie
-        [TableColumn("Positie", Weergave = WeergaveEnum.StandaardTabel, HeaderTextPivot = "Naam")]
+        [TableColumn("Positie", Weergave = WeergaveEnum.StandaardTabel, HeaderTextPivot = "Naam", Width = 2)]
         public string Naam { get; set; } = "Schil";
 
         // input
-        [TableColumn("M~E,freq~", headerTextPivot: "Moment (BGT) M~E,freq~", StringFormat = "0.# kNm")]
+        [TableColumn("M~E,freq~", headerTextPivot: "Moment (BGT) M~E,freq~", StringFormat = "0.# kNm", Width = 2)]
         public double MomentFrequent { get { return Snedekrachten.My.Kar; } }
 
         [TableColumn("M~Ed~", Weergave = WeergaveEnum.Geen)]

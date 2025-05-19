@@ -98,7 +98,7 @@ namespace Eurocode.BetonConstructies
             {
                 if (BendingResults != null)
                 {
-                    double dsnOppBeton = BendingResults.Profiel?.Area ?? 0;
+                    double dsnOppBeton = BendingResults.Profiel?.Area ?? Profiel?.Area ?? 0;
                     return GrenswaardeSlankheidService.GetRho(dsnOppBeton, BendingResults.AsRequired);
                 }
                 else
@@ -126,7 +126,7 @@ namespace Eurocode.BetonConstructies
             Uitkraging
         }
 
-        public ConstructiefSysteemEnum ConstructiefSysteem { get; set; } = ConstructiefSysteemEnum.VrijOpgelegd; // Constructief systeem van het element
+        public ConstructiefSysteemEnum? ConstructiefSysteem { get; set; } = ConstructiefSysteemEnum.VrijOpgelegd; // Constructief systeem van het element
 
         public override bool IsAkkoord()
         {

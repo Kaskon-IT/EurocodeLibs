@@ -6,7 +6,16 @@
 @if (Model != null)
 {
     <EurocodeInputNumber @bind-Value="Model.LengteOverspanning" Key="@K.Slankheid_LengteOverspanning" Unit="mm" MinValue="1" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+
+    <FluentSelectEnum 
+        Label="schematisering"
+        @bind-EnumSelectedValue="@Model.ConstructiefSysteem"
+        TEnum="Eurocode.BetonConstructies.GrenswaardeSlankheidContext.ConstructiefSysteemEnum" />
+        
+
     
+
+
     
     <p>Vanuit berekening buiging</p>
     <EurocodeInputNumber ReadOnly=true Value="Model.Beton.Fck" Key="@K.Slankheid_Fck"></EurocodeInputNumber>

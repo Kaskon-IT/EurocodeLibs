@@ -18,13 +18,15 @@ namespace Eurocode.Belastingen
             return new MarkupString(ToString());
         }
 
-        [TableColumn("type", order: 11)]
+        [TableColumn("naam", order: -2, width: 3.0)]
+        public string Naam { get { return "BC" + Nr.ToString("D1"); } }
+
+        [TableColumn("type", order: 11, width: 5.0)]
         public BelastingCombinatieTypeEnum Type { get; set; } = type;
 
         public int Nr { get; set; } = nr;
 
-        [TableColumn("naam", order: -2)]
-        public string Naam { get { return "BC" + Nr.ToString("D1"); } }
+
 
 
         public List<BelastingCombinatieItem> Items { get; set; } = [];
@@ -43,7 +45,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("combinatie factoren", order: 21)]
+        [TableColumn("combinatie factoren", order: 21, width: 10.0)]
         public string UserFriendlyTextInclusiefMomentaanFactoren
         {
             get
