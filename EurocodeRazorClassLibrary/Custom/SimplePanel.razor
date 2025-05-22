@@ -3,15 +3,13 @@
 @inject IJSRuntime JS;
 
 
-
 <FluentDialogBody>
+
+    <!-- Mogelijk Aanzetten voor debug -->
+    @* <Ruler LengthCm="21"></Ruler> *@
 
     <!-- Render the raw HTML string here using MarkupString -->
     <div>@((MarkupString)Content)</div>
-
-
-    
-
    
 </FluentDialogBody>
 
@@ -19,11 +17,11 @@
     [Parameter]
     public string Content { get; set; } = default!;
 
-
     private async Task ToggleAccordion(string accordionId)
     {
         await JS.InvokeVoidAsync("toggleAccordion", accordionId);
     }
+
 
     
 

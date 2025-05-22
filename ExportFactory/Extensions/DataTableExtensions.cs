@@ -31,8 +31,9 @@
         public static Table? ToMigraDocTable(this DataTable dataTable, Type objectType, bool isPivotTable = true, bool hideHeader = false)
         {
             Table migraDocTable = new();
+
             migraDocTable.Borders.Width = 0.25;
-            migraDocTable.Borders.Color = Colors.LightGray;
+            migraDocTable.Borders.Color = Colors.Transparent; // Mogelijk aanpassen voor debug
 
 
             // Check if the TableColumnAttribute is applied to any of the properties
@@ -296,6 +297,8 @@
 
                 // Add the header row
                 Row headerRow = migraDocTable.AddRow();
+                headerRow.Style = "TableHeader";
+
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
                 {
                     ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
@@ -308,6 +311,9 @@
                     // set alignment
                     headerRow.Cells[propertiesWithAttributes.IndexOf(propertyWithAttribute)].Format.Alignment = alignment;
 
+                    // set style
+                    //headerRow.Cells[propertiesWithAttributes.IndexOf(propertyWithAttribute)].Format.Font.Italic = true;
+
 
 
                 }
@@ -316,6 +322,8 @@
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
                     Row row = migraDocTable.AddRow();
+                    //row.Format.Font.Italic = false;
+
                     foreach (var columnName in columnNames)
                     {
                         //var columnName = dataTable.Columns[i].ColumnName;

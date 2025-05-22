@@ -579,6 +579,12 @@ namespace ExportFactory.Services
         }
 
 
+        /// <summary>
+        /// Dit is de procedure voor eigen tabelContent om te plaatsen in een MigraDoc.DocumentObject.
+        /// Plaats bijvoorbeeld in een sectie, paragraaf of textframe of een cell, maakt niet uit.
+        /// </summary>
+        /// <param name="target">het doel</param>
+        /// <param name="tableContent">de inhoud.</param>
         private static void AddTable(DocumentObject target, TableContent tableContent)
         {
             // title?
@@ -601,6 +607,8 @@ namespace ExportFactory.Services
             // apply styling
 
             table.Borders.Width = 0.25; // todo apply formating with content
+            table.Borders.Visible = false;
+            //table.Borders.Color = Colors.Transparent;
             //table.Borders.Left = new Border() { Visible = false };
 
 
@@ -619,8 +627,18 @@ namespace ExportFactory.Services
                         break;
                     case AutoColumnSizeOption.ColumnHeader:
                         TextMeasurement tm = new(defaultFont);
-                        var size = tm.MeasureString(header.CellContent.Markdown);
-                        width = size.Width;
+
+                        List<string> words = header.CellContent.Markdown.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+                        if (words.Count > 0)
+                        {
+                            // Get the longest word
+                            string longestWord = words.OrderByDescending(w => w.Length).First();
+                            var longestWordSize = tm.MeasureString(longestWord);
+                            width = longestWordSize.Width;
+                        }
+
+                        //var size = tm.MeasureString(header.CellContent.Markdown);
+                        //width = size.Width;
                         break;
 
                 }
@@ -635,17 +653,28 @@ namespace ExportFactory.Services
 
             // Add header row
             if (tableContent.HideHeaders)
-                table.Tag = "hideheader"; // for HtmlCreator
-
-            var headerRow = table.AddRow();
-            headerRow.Shading.Color = Colors.LightGray;
-            for (int i = 0; i < tableContent.Headers.Count; i++)
             {
-                var cell = headerRow.Cells[i];
-                var headerPar = cell.AddParagraph();
-                AddMarkdownToParagraph(headerPar, tableContent.Headers[i].CellContent.Markdown);
-                //cell.Style = "TableHeader";
+                // vroeg gebruikte we Tag om aan te geven dat de 1e rij niet getoond moet worden.
+                // dit is niet meer nodig!
+                // omzetten naar !HideHeaders indien gecontroleerd is of alles nog werkt.
+                table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om aan te geven dat de 1e rij niet getoond moet worden.
             }
+            else
+            {
+                // maak de header rij aan
+                var headerRow = table.AddRow();
+                headerRow.Shading.Color = Colors.LightGray;
+                for (int i = 0; i < tableContent.Headers.Count; i++)
+                {
+                    var cell = headerRow.Cells[i];
+                    var headerPar = cell.AddParagraph();
+                    AddMarkdownToParagraph(headerPar, tableContent.Headers[i].CellContent.Markdown);
+                    //cell.Style = "TableHeader";
+                }
+            }
+
+
+
 
 
 
@@ -812,6 +841,7 @@ namespace ExportFactory.Services
             var baseStyle = document.Styles["Normal"];
             baseStyle.Font = content.Font;
             baseStyle.Font.Bold = false; // explicitly set to false (for rtf export!)
+            baseStyle.Font.Color = Colors.Black; // expliciet voor pdf export!
 
             // Table of content style
             var tocStyle = document.Styles.AddStyle("TOC", "Normal");
@@ -851,16 +881,28 @@ namespace ExportFactory.Services
             heading3.ParagraphFormat.SpaceAfter = "1mm";
             var kop3 = document.Styles.AddStyle("Kop 3", "Normal");
             kop3.Font.Size = 1.00 * content.Font.Size;
-            kop3.Font.Bold = !true;
+            kop3.Font.Bold = true;
             kop3.ParagraphFormat.SpaceBefore = "1mm";
             kop3.ParagraphFormat.SpaceAfter = "1mm";
+
+            // h4
+            var kop4 = document.Styles.AddStyle("Kop 4", "Normal");
+            kop4.Font.Size = 1.00 * content.Font.Size;
+            kop4.Font.Bold = true;
+            kop4.ParagraphFormat.SpaceBefore = "1mm";
+            kop4.ParagraphFormat.SpaceAfter = "1mm";
+
+
 
             // table heading
             var tableHeading = document.Styles.AddStyle("TableHeading", "Normal");
             //tableHeading.Font.Size = 12;
             tableHeading.Font.Italic = !true;
 
-
+            var tableHeader = document.Styles.AddStyle("TableHeader", "Normal");
+            tableHeader.Font.Italic = true;
+            tableHeader.Font.Size = 0.75 * content.Font.Size;
+            tableHeader.Font.Color = Colors.OrangeRed;
 
 
             // Title style for the cover page

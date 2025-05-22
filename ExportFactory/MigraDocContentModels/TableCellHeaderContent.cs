@@ -8,6 +8,15 @@ namespace ExportFactory.MigraDocContentModels
         public Unit Width { get; set; } = Unit.FromMillimeter(30); // default width
 
 
+        public TableCellHeaderContent Clone()
+        {
+            return new TableCellHeaderContent
+            {
+                CellContent = this.CellContent.Clone(),
+                Width = this.Width
+            };
+        }
+
     }
 
 

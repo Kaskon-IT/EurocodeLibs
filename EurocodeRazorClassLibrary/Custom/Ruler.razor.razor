@@ -1,0 +1,32 @@
+﻿.ruler {
+    position: relative;
+    height: 2cm;
+    border: 1px solid black;
+    background: repeating-linear-gradient(
+        to right,
+        white 0,
+        white 0.9mm,
+        #ccc 0.9mm,
+        #ccc 1mm
+    );
+}
+
+.cm-mark {
+    position: absolute;
+    bottom: 0;
+    width: 0.05cm;
+    height: 1cm;
+    background: black;
+    text-align: center;
+    font-size: 0.3cm;
+    transform: translateX(-50%);
+}
+
+.cm-mark::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 1.05cm;
+    left: 50%;
+    transform: translateX(-50%);
+}
+

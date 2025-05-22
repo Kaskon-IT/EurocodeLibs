@@ -267,6 +267,8 @@
 
 
 
+
+
                             foreach (Cell cell in row.Cells)
                             {
                                 Paragraph? cellPar = null;
@@ -294,6 +296,10 @@
                                 if (isPivotTable)
                                     htmlClass = "ec-td-pivot";
 
+
+
+
+
                                 // check for th
                                 if ((rowIndex == 0 && !isPivotTable) || (isPivotTable && cellIndex <= 2))
                                 {
@@ -311,21 +317,41 @@
 
 
 
-
-
-
-                                    if (cellPar != null && cellPar.Tag != null)
+                                    if (cellPar != null)
                                     {
-                                        switch (cellPar.Tag)
+
+                                        if (cellPar.Tag != null)
                                         {
-                                            case "symbol": htmlClass += " ec-symbol"; break;
-                                            case "description": htmlClass += " ec-description"; break;
-                                            case "article": htmlClass += " ec-article"; break;
+                                            switch (cellPar.Tag)
+                                            {
+                                                case "symbol": htmlClass += " ec-symbol"; break;
+                                                case "description": htmlClass += " ec-description"; break;
+                                                case "article": htmlClass += " ec-article"; break;
+                                            }
                                         }
                                     }
 
+
+
+
                                 }
 
+
+                                // alignment uitlezen van column (en niet van cell, deze wordt genegeerd door MigraDoc)
+                                var column = table.Columns[cellIndex];
+
+
+                                if (column != null)
+                                {
+                                    switch (column.Format.Alignment)
+                                    {
+                                        case ParagraphAlignment.Left: htmlClass += " text-left"; break;
+                                        case ParagraphAlignment.Center: htmlClass += " text-center"; break;
+                                        case ParagraphAlignment.Right: htmlClass += " text-right"; break;
+                                        case ParagraphAlignment.Justify: htmlClass += " text-justify"; break;
+                                    }
+
+                                }
 
                                 // alleen voor de 1e rij, controleer of width is opgegeven
                                 if (rowIndex == 1)
@@ -384,8 +410,15 @@
 
             }
 
+            // Nog 1 div voor blanco deel onder laatste element voor leesbaarheid
+            htmlBuilder.AppendLine("<div style='height:1cm;'></div>");
+
+
             // Close the container div
             htmlBuilder.Append("</div>");
+
+            // Nog een div voor blanco ruimte onder laatste element
+            htmlBuilder.AppendLine("<div style='height:5cm;'></div>");
 
 
             // Einde van de HTML

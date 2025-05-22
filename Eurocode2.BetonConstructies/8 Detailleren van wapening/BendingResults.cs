@@ -130,11 +130,11 @@ namespace Eurocode.BetonConstructies
         } // als er geen snedekrachten opgegeven dan Moment opgave.
 
 
-        [TableColumn("Positie", order: 0)]
-        public string Name { get; set; } = "";
+        [TableColumn("positie", order: 0)]
+        public string Name { get; set; } = "Schil";
 
 
-        [TableColumn("M~Ed~", StringFormat = "0.0 kNm", Order = 1)]
+        [TableColumn("M~Ed~ [kNm]", StringFormat = "0.0", Order = 1, Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Moment
         {
             get => Snedekrachten != null ? Snedekrachten.My.Ed : _moment;
@@ -154,14 +154,14 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("Breedte", order: 2, StringFormat = "0 mm")]
+        [TableColumn("b [mm]", order: 2, StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Breedte
         {
             get => Profiel != null ? Profiel.Breedte : _breedte;
             set => _breedte = value;
         }
 
-        [TableColumn("Hoogte", order: 3, StringFormat = "0 mm")]
+        [TableColumn("h [mm]", order: 3, StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Hoogte
         {
             get => Profiel != null ? Profiel.Hoogte : _hoogte;
@@ -180,11 +180,11 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
-        [TableColumn("d", order: 4, StringFormat = "0 mm")]
+        [TableColumn("d [mm]", order: 4, StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double D { get { return Hoogte - ZRef; } }
 
 
-        [TableColumn("x~u~", order: 5, StringFormat = "0.## mm")]
+        [TableColumn("x~u~ [mm]", order: 5, StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Xu
         {
             get
@@ -216,7 +216,7 @@ namespace Eurocode.BetonConstructies
             get { return Xu / D; }
         }
 
-        [TableColumn("z", order: 21, StringFormat = "0.# mm")]
+        [TableColumn("z [mm]", order: 21, StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Z
         {
             get
@@ -225,7 +225,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("A~s,ben~", Order = 40, StringFormat = "0 mm²")]
+        [TableColumn("A~s,ben~ [mm²]", Order = 40, StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double AsRequired
         {
             get
@@ -234,7 +234,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("A~s,toe~", Order = 41, StringFormat = "0 mm²")]
+        [TableColumn("A~s,toe~ [mm²]", Order = 41, StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double AsApplied
         {
             get => _asApplied;

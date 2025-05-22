@@ -31,7 +31,7 @@ namespace ExportFactory.MigraDocContentModels
 
     public class ColumnStyleSettings
     {
-        public AutoColumnSizeOption AutoSize { get; set; } = AutoColumnSizeOption.ColumnHeader; // default
+        public AutoColumnSizeOption AutoSize { get; set; } = AutoColumnSizeOption.None; // default
         public ParagraphAlignment Alignment { get; set; } = ParagraphAlignment.Center; // default
 
     }

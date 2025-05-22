@@ -63,11 +63,18 @@ namespace Eurocode.BetonConstructies
         }
 
         // gebruik naam voor positie
-        [TableColumn("Positie", Weergave = WeergaveEnum.StandaardTabel, HeaderTextPivot = "Naam", Width = 2)]
+        [TableColumn(headerText: "positie",
+            Weergave = WeergaveEnum.StandaardTabel,
+            HeaderTextPivot = "Naam",
+            Width = 2)]
         public string Naam { get; set; } = "Schil";
 
         // input
-        [TableColumn("M~E,freq~", headerTextPivot: "Moment (BGT) M~E,freq~", StringFormat = "0.# kNm", Width = 2)]
+        [TableColumn("M~E,freq~ [kNm]",
+            headerTextPivot: "Moment (BGT) M~E,freq~",
+            StringFormat = "0.#",
+            Width = 2,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double MomentFrequent { get { return Snedekrachten.My.Kar; } }
 
         [TableColumn("M~Ed~", Weergave = WeergaveEnum.Geen)]
@@ -90,7 +97,7 @@ namespace Eurocode.BetonConstructies
         public double Hoogte { get; set; } = 100;
         public double NuttigeHoogte { get; set; } = 80;
 
-        [TableColumn("A~s,toe~", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("A~s,toe~ [mm²]", Weergave = WeergaveEnum.DraaiTabel)]
         public string WapeningToegepastTekst { get; set; } = "8-150"; // todo Profiel +  wapening
         public double WapDiameterEquivalent { get; set; } = 8.0;
 
@@ -172,21 +179,29 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("s~r,max~", StringFormat = "0.##")]
+        [TableColumn("s~r,max~", StringFormat = "0.##", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double SrMax { get; internal set; }
 
         //[TableColumn("Art.", Weergave = WeergaveEnum.DraaiTabel, HeaderTextPivot = "gebruikt artikel voor s~r,max~")]
         public string GebruiktArtikel { get; set; } = "";
 
 
-        [TableColumn("|epsilon|~sm~-|epsilon|~cm~", StringFormat = "e3")]
+        [TableColumn("|epsilon|~sm~-|epsilon|~cm~", StringFormat = "e2", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double EpsSmMinusEpsCm { get; set; }
 
 
-        [TableColumn("w~k~", headerTextPivot: "(7.8) berekende scheurwijdte w~k~ = s~r,max~ (|epsilon|~sm~-|epsilon|~cm~)", StringFormat = "0.## mm", Key = K.ScheurwijdteBerekend)]
+        [TableColumn("w~k~ [mm]",
+            headerTextPivot: "(7.8) berekende scheurwijdte w~k~ = s~r,max~ (|epsilon|~sm~-|epsilon|~cm~)",
+            StringFormat = "0.## mm",
+            Key = K.ScheurwijdteBerekend,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center
+            )]
         public double Wk { get; internal set; }
 
-        [TableColumn("k~x~", headerTextPivot: "k~x~", StringFormat = "0.##")]
+        [TableColumn("k~x~",
+            headerTextPivot: "k~x~",
+            StringFormat = "0.##",
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double ScheurwijdteGrenswaardeFactorKx
         {
             get
@@ -204,7 +219,10 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("w~max~", headerTextPivot: "grenswaarde scheurwijdte", StringFormat = "0.0 mm")]
+        [TableColumn("w~max~ [mm]",
+            headerTextPivot: "grenswaarde scheurwijdte",
+            StringFormat = "0.0",
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double ScheurwijdteMax
         {
             get

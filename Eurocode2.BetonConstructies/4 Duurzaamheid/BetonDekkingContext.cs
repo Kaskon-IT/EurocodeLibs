@@ -403,21 +403,21 @@ namespace Eurocode.BetonConstructies
             if (stringType.HasFlag(ToStringTypeEnum.Kwaliteitsbeheersing))
             {
                 if (IsKwaliteitsBeheersing)
-                    results.Add($"✔️ kwaliteitsbeheersing");
+                    results.Add($"✅ kwaliteitsbeheersing");
 
             }
             if (stringType.HasFlag(ToStringTypeEnum.Plaatgeometrie))
             {
                 if (IsPlaatGeometrie)
-                    results.Add($"✔️ plaatgeometrie");
+                    results.Add($"✅ plaatgeometrie");
 
             }
             if (stringType.HasFlag(ToStringTypeEnum.Korrel32))
             {
                 if (GrootsteKorrelDiameter <= 32)
-                    results.Add($"✔️ korrel ≤ 32mm");
+                    results.Add($"✅ korreldiameter ≤ 32mm");
                 else
-                    results.Add($"korrel > 32mm");
+                    results.Add($"korreldiameter > 32mm");
             }
             if (stringType.HasFlag(ToStringTypeEnum.Milieuklasse))
                 results.Add($"milieuklasse: {MilieuklassenUserFriendlyName}");

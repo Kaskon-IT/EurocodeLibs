@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+
+<div class="ruler" style="width:@($"{LengthCm}cm");">
+    @for (int i = 0; i <= LengthCm; i++)
+    {
+        <div class="cm-mark" style="left:@($"{i}cm");" data-label="@i"></div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int LengthCm { get; set; } = 10;
+}

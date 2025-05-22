@@ -17,7 +17,22 @@ namespace ExportFactory.MigraDocContentModels
         // settings
         public ColumnStyleSettings Style { get; set; } = new ColumnStyleSettings();
 
-
+        public TableCellContent Clone()
+        {
+            return new TableCellContent
+            {
+                Markdown = this.Markdown,
+                ColSpan = this.ColSpan,
+                RowSpan = this.RowSpan,
+                SvgImage = this.SvgImage,
+                Width = this.Width,
+                Style = new ColumnStyleSettings
+                {
+                    AutoSize = this.Style.AutoSize,
+                    Alignment = this.Style.Alignment
+                }
+            };
+        }
 
 
     }
