@@ -6,6 +6,8 @@ using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using MigraDoc.DocumentObjectModel.Tables;
 using PdfSharp.Fonts;
 using System.Reflection;
+using System.Text;
+
 
 
 //using System.Reflection.Metadata;
@@ -57,6 +59,11 @@ namespace ExportFactory.Services
             if (includeToc)
             {
                 AddTableOfContents(document, out tocSection);
+            }
+            else
+            {
+                // not included, but we need a new section
+                document.AddSection();
             }
 
 
@@ -616,7 +623,16 @@ namespace ExportFactory.Services
             foreach (var header in tableContent.Headers)
             {
                 //if (tableContent.)
-                var width = header.Width; // default
+                Unit width = "6cm";
+
+
+                //width = header.Width; // default
+
+                if (header.CellContent.Width > width)
+                {
+                    width = header.CellContent.Width; // 26-5-2025
+                }
+
 
                 // tenzij AutoSize is set
                 switch (header.CellContent.Style.AutoSize)
@@ -647,9 +663,13 @@ namespace ExportFactory.Services
             }
 
             // Align table
-            table.Format.Alignment = tableContent.Alignment == TableAlignment.Center
-                ? ParagraphAlignment.Center
-                : ParagraphAlignment.Left;
+            switch (tableContent.Alignment)
+            {
+                case TableAlignment.Left: table.Format.Alignment = ParagraphAlignment.Left; break;
+                case TableAlignment.Center: table.Format.Alignment = ParagraphAlignment.Center; break;
+
+            }
+
 
             // Add header row
             if (tableContent.HideHeaders)
@@ -663,13 +683,18 @@ namespace ExportFactory.Services
             {
                 // maak de header rij aan
                 var headerRow = table.AddRow();
-                headerRow.Shading.Color = Colors.LightGray;
+                //headerRow.Shading.Color = Colors.LightGray; 
                 for (int i = 0; i < tableContent.Headers.Count; i++)
                 {
                     var cell = headerRow.Cells[i];
                     var headerPar = cell.AddParagraph();
+
+                    headerPar.Style = "TableHeader";
+                    //headerPar.Format.Alignment = tableContent.Headers[i].CellContent.Style.Alignment; // added 26-5-2025
+
+                    cell.Format.Alignment = tableContent.Headers[i].CellContent.Style.Alignment; // added 26-5-2025
+
                     AddMarkdownToParagraph(headerPar, tableContent.Headers[i].CellContent.Markdown);
-                    //cell.Style = "TableHeader";
                 }
             }
 
@@ -686,6 +711,11 @@ namespace ExportFactory.Services
                 for (int i = 0; i < rowCells.Count; i++)
                 {
                     var cell = tableRow.Cells[i];
+
+                    // alignmet
+                    cell.Format.Alignment = rowCells[i].Style.Alignment; // added 26-5-2025
+
+
                     // controleer of een override op de width is
                     var currentWidth = table.Columns[i].Width;
                     var newWidth = rowCells[i].Width;
@@ -839,8 +869,18 @@ namespace ExportFactory.Services
         private static void DefineStyles(Document document, DocumentContent content)
         {
             var baseStyle = document.Styles["Normal"];
-            baseStyle.Font = content.Font;
-            baseStyle.Font.Bold = false; // explicitly set to false (for rtf export!)
+
+            if (content.Font != null)
+            {
+                baseStyle.Font = content.Font;
+            }
+            else
+            {
+                content.Font = new("Segoe UI Emoji", 9);
+            }
+
+
+            baseStyle.Font.Bold = false; // explicitly set to false (for rtf export!) gebruik formattedText in plaats
             baseStyle.Font.Color = Colors.Black; // expliciet voor pdf export!
 
             // Table of content style
@@ -854,6 +894,8 @@ namespace ExportFactory.Services
             heading1.Font.Bold = !true;
             heading1.ParagraphFormat.PageBreakBefore = true;
             heading1.ParagraphFormat.SpaceAfter = "3mm";
+
+
             var kop1 = document.Styles.AddStyle("Kop 1", "Normal");
             kop1.Font.Size = 1.5 * content.Font.Size;
             kop1.Font.Bold = !true;
@@ -866,6 +908,7 @@ namespace ExportFactory.Services
             heading2.Font.Bold = !true;
             heading2.ParagraphFormat.SpaceBefore = "2mm";
             heading2.ParagraphFormat.SpaceAfter = "2mm";
+
             var kop2 = document.Styles.AddStyle("Kop 2", "Normal");
             kop2.Font.Size = 1.25 * content.Font.Size;
             kop2.Font.Bold = !true;
@@ -879,11 +922,14 @@ namespace ExportFactory.Services
             heading3.Font.Bold = !true;
             heading3.ParagraphFormat.SpaceBefore = "1mm";
             heading3.ParagraphFormat.SpaceAfter = "1mm";
+
+
             var kop3 = document.Styles.AddStyle("Kop 3", "Normal");
             kop3.Font.Size = 1.00 * content.Font.Size;
             kop3.Font.Bold = true;
             kop3.ParagraphFormat.SpaceBefore = "1mm";
             kop3.ParagraphFormat.SpaceAfter = "1mm";
+            kop3.Font.Color = Colors.Black;
 
             // h4
             var kop4 = document.Styles.AddStyle("Kop 4", "Normal");
@@ -891,6 +937,7 @@ namespace ExportFactory.Services
             kop4.Font.Bold = true;
             kop4.ParagraphFormat.SpaceBefore = "1mm";
             kop4.ParagraphFormat.SpaceAfter = "1mm";
+            kop4.Font.Color = Colors.Black;
 
 
 
@@ -900,9 +947,9 @@ namespace ExportFactory.Services
             tableHeading.Font.Italic = !true;
 
             var tableHeader = document.Styles.AddStyle("TableHeader", "Normal");
-            tableHeader.Font.Italic = true;
-            tableHeader.Font.Size = 0.75 * content.Font.Size;
-            tableHeader.Font.Color = Colors.OrangeRed;
+            tableHeader.Font.Italic = !true; // expliciet niet gebruiken, BUG in library. gebruik formatted text in plaats.
+            tableHeader.Font.Size = 0.9 * content.Font.Size;
+            tableHeader.Font.Color = Colors.DarkSlateGray;
 
 
             // Title style for the cover page
@@ -1390,6 +1437,7 @@ namespace ExportFactory.Services
                 }
                 else if (match.Groups["text"].Success)
                 {
+                    //AddFormattedTextWithEmojiFont(paragraph, match.Value); // optie om Emoji te ondersteunen in pdf. 
                     paragraph.AddText(match.Value);
                 }
             }
@@ -1400,6 +1448,37 @@ namespace ExportFactory.Services
             return input.Replace(markdown, "")
                         .Replace(htmlOpen, "", StringComparison.OrdinalIgnoreCase)
                         .Replace(htmlClose, "", StringComparison.OrdinalIgnoreCase);
+        }
+
+
+        private static void AddFormattedTextWithEmojiFont(Paragraph paragraph, string content)
+        {
+            foreach (var rune in content.EnumerateRunes())
+            {
+                var str = rune.ToString();
+                var isEmoji = IsEmoji(rune);
+
+                var text = paragraph.AddFormattedText(str);
+
+                if (isEmoji)
+                {
+                    // Different font for emoji (alleen nodig voor PDF export)
+                    text.Font.Name = "NotoEmoji";
+                }
+            }
+        }
+
+        private static bool IsEmoji(Rune rune)
+        {
+            int code = rune.Value;
+
+            return
+                (code >= 0x1F300 && code <= 0x1FAFF) || // Extended emoji
+                (code >= 0x1F600 && code <= 0x1F64F) || // Emoticons
+                (code >= 0x1F680 && code <= 0x1F6FF) || // Transport & map
+                (code >= 0x2600 && code <= 0x26FF) ||   // Misc symbols
+                (code >= 0x2700 && code <= 0x27BF) ||   // Dingbats
+                (code >= 0x1F1E6 && code <= 0x1F1FF);   // Regional indicators (flags)
         }
 
 

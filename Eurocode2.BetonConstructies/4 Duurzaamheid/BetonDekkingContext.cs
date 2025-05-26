@@ -322,7 +322,16 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-
+        public string GrootsteKorrelDiameterUserFriendlyName
+        {
+            get
+            {
+                if (GrootsteKorrelDiameter <= 32)
+                    return "≤ 32 mm";
+                else
+                    return "> 32 mm";
+            }
+        }
 
         public BetonAfwerkingOppervlakEnum? BetonAfwerkingOppervlak { get; set; } = BetonAfwerkingOppervlakEnum.Glad;
 

@@ -6,7 +6,7 @@ namespace CommonLibrary.Helpers
 {
     public static class MarkupHelper
     {
-        public static MarkupString ToMarkupString(string? input, bool withUnityCheck = true)
+        public static MarkupString ToMarkupString(string? input, bool withUnityCheck = true, bool withEmoji = false)
         {
 
             if (input == null || string.IsNullOrEmpty(input))
@@ -35,7 +35,7 @@ namespace CommonLibrary.Helpers
 
             if (withUnityCheck)
             {
-                return ToMarkupStringWithUcCheck(input);
+                return ToMarkupStringWithUcCheck(input, withEmoji);
             }
 
 
@@ -43,7 +43,7 @@ namespace CommonLibrary.Helpers
         }
 
 
-        public static MarkupString ToMarkupStringWithUcCheck(string? input)
+        public static MarkupString ToMarkupStringWithUcCheck(string? input, bool withEmoji = false)
         {
             if (string.IsNullOrEmpty(input))
                 return new MarkupString(string.Empty);
@@ -63,11 +63,12 @@ namespace CommonLibrary.Helpers
                 {
                     if (uc > 1.0)
                     {
-                        return $"<b>⚠️{match.Value}</b>";
+
+                        return $"<b>{(withEmoji ? "⚠️" : "")}{match.Value}</b>";
                     }
                     else
                     {
-                        return $"<b>✅{match.Value}</b>";
+                        return $"<b>{(withEmoji ? "✅" : "")}{match.Value}</b>";
                     }
                 }
 

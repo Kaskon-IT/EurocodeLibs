@@ -42,11 +42,39 @@
 
             // Voeg handmatige alias toe voor veelgebruikte fontnamen
             AddAlias("arial", "arial");
+
+
             AddAlias("calibri", "calibri");
-            AddAlias("calibri light", "calibril");
+            AddAlias("calibri bold", "calibrib");
+            AddAlias("calibri italic", "calibrili");
+
             AddAlias("verdana", "verdana");
+
+
+
+
             AddAlias("consolas", "consolas");
+
             AddAlias("roboto", "roboto-regular"); // bijvoorbeeld
+            AddAlias("roboto", "roboto-bold"); // bijvoorbeeld
+            AddAlias("roboto", "roboto-italic"); // bijvoorbeeld
+            AddAlias("roboto", "roboto-bolditalic"); // bijvoorbeeld
+
+            AddAlias("notoemoji", "notoemoji-regular"); // bijvoorbeeld
+            AddAlias("notoemoji", "notoemoji-bold"); // bijvoorbeeld
+
+            AddAlias("notosans", "notosans-regular"); // bijvoorbeeld
+            AddAlias("notosans", "notosans-bold"); // bijvoorbeeld
+            AddAlias("notosans", "notosans-italic"); // bijvoorbeeld
+            AddAlias("notosans", "notosans-bolditalic"); // bijvoorbeeld
+
+
+
+
+            AddAlias("segoe ui emoji", "seguiemj"); // bijvoorbeeld
+
+
+
             AddAlias("inconsolata", "inconsolata-regular");
             AddAlias("latin modern math", "latinmodern-math");
             AddAlias("stix math", "stix-math");

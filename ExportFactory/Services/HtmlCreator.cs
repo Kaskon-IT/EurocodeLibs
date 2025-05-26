@@ -193,6 +193,12 @@
                                 htmlBuilder.AppendLine($"<h3>{ProcessParagraph(paragraph)}</h3>");
                                 break;
 
+                            case "Kop 4":
+                            case "Heading4":
+                                htmlBuilder.AppendLine($"<h4>{ProcessParagraph(paragraph)}</h4>");
+                                break;
+
+
                             case "TableHeading":
 
                                 // maak een button voor inklapbaar
@@ -301,9 +307,10 @@
 
 
                                 // check for th
-                                if ((rowIndex == 0 && !isPivotTable) || (isPivotTable && cellIndex <= 2))
+                                if ((rowIndex == 0 && !isPivotTable && !hideHeader) ||
+                                    (isPivotTable && cellIndex <= 2))
                                 {
-                                    htmlTag = "th"; // <th> first row (normal) or first column (pivot)
+                                    htmlTag = "th"; // <th> first row (normal, header visible) or first columns (pivot tabel)
                                     htmlClass = "ec-th";
                                     if (isPivotTable)
                                     {

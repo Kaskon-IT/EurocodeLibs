@@ -7,12 +7,18 @@ namespace ExportFactory.MigraDocContentModels
         public TableCellContent() { }
         public TableCellContent(string markdown) { Markdown = markdown; }
 
+        public TableCellContent(string markdown, Unit width)
+        {
+            Markdown = markdown;
+            Width = width;
+        }
+
         public string Markdown { get; set; } = ""; // Markdown string for cell content
         public int ColSpan { get; set; } = 1; // Default column span
         public int RowSpan { get; set; } = 1; // Default row span
         public string SvgImage { get; set; } = ""; // Default to no image
 
-        public Unit Width { get; set; } = Unit.FromCentimeter(0); // Default to no width
+        public Unit Width { get; set; } = "6cm"; // Default to no width
 
         // settings
         public ColumnStyleSettings Style { get; set; } = new ColumnStyleSettings();
@@ -25,7 +31,7 @@ namespace ExportFactory.MigraDocContentModels
                 ColSpan = this.ColSpan,
                 RowSpan = this.RowSpan,
                 SvgImage = this.SvgImage,
-                Width = this.Width,
+                Width = new(this.Width),
                 Style = new ColumnStyleSettings
                 {
                     AutoSize = this.Style.AutoSize,

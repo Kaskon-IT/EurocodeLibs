@@ -28,7 +28,7 @@ namespace ExportFactory.MigraDocContentModels
         public Color FooterColor { get; set; } = Colors.Black;
 
         public RevisionContent Revisions { get; set; } = new();
-        public Font Font { get; set; } = new Font("Verdana", 9);
+        public Font Font { get; set; } = new Font("Segoe UI Emoji", 9);
         public CoverPageContent CoverPage { get; set; } = new CoverPageContent();
         public PageHeaderContent PageHeader { get; set; } = new PageHeaderContent();
         public PageFooterContent PageFooter { get; set; } = new PageFooterContent();

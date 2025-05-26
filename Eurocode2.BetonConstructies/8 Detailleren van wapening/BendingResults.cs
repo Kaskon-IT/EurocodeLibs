@@ -22,7 +22,7 @@ namespace Eurocode.BetonConstructies
         public override string ToString()
         {
             var result = "";
-            result += $"M~Ed~ = {Moment: 0.##} kNm, ";
+            result += $"M~Ed~ = {Moment: 0.#} kNm, ";
             result += $"afm. {Breedte}×{Hoogte}/{D} mm, ";
             result += "\r\n";
             result += $"A~s,ben~ = {AsRequired: 0} mm², ";

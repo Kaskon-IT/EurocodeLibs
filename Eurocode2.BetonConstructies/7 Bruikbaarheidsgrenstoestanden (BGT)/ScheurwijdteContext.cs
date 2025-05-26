@@ -17,12 +17,19 @@ namespace Eurocode.BetonConstructies
             BetonDekkingContext dekking = new();
             NationaleBijlageEnum nationaleBijlage = NationaleBijlageEnum.NL;
 
-            Beton = beton;
-            Dekking = dekking;
+            //Beton = beton;
+
+            SetDekking(dekking);
+            SetBeton(beton);
+
 
             ScheurwijdteGrenswaarde = new(dekking, nationaleBijlage);
             ScheurwijdteMinimumWapening = new() { Beton = beton };
+
             NationaleBijlage = nationaleBijlage;
+
+
+
         }
 
         public ScheurwijdteContext(
@@ -34,8 +41,11 @@ namespace Eurocode.BetonConstructies
             NationaleBijlageEnum nationaleBijlage)
         {
             Snedekrachten = snedekrachten;
-            Beton = beton;
-            Dekking = dekking;
+            SetDekking(dekking);
+            SetBeton(beton);
+
+            //Beton = beton;
+            //Dekking = dekking;
             Profiel = profiel;
             Wapening = wapening;
             ScheurwijdteGrenswaarde = new(dekking, nationaleBijlage);
@@ -48,13 +58,23 @@ namespace Eurocode.BetonConstructies
         public void SetBeton(BetonContext beton)
         {
             this.Beton = beton;
-            this.Dekking.Beton = beton;
-            this.ScheurwijdteMinimumWapening.Beton = beton;
+
+            if (this.Dekking != null)
+                this.Dekking.Beton = beton;
+
+
+            if (this.ScheurwijdteMinimumWapening != null)
+                this.ScheurwijdteMinimumWapening.Beton = beton;
+
         }
         public void SetDekking(BetonDekkingContext dekking)
         {
             this.Dekking = dekking;
-            this.ScheurwijdteGrenswaarde.DekkingEnDuurzaamheid = dekking;
+
+            if (this.ScheurwijdteGrenswaarde != null)
+                this.ScheurwijdteGrenswaarde.DekkingEnDuurzaamheid = dekking;
+
+
         }
         public void SetNationaleBijlage(NationaleBijlageEnum nationaleBijlage)
         {

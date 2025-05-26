@@ -34,6 +34,8 @@
 
             migraDocTable.Borders.Width = 0.25;
             migraDocTable.Borders.Color = Colors.Transparent; // Mogelijk aanpassen voor debug
+            migraDocTable.Borders.Visible = false;
+
 
 
             // Check if the TableColumnAttribute is applied to any of the properties

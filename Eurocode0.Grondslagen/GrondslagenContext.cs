@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components;
 using MigraDoc.DocumentObjectModel;
 using System.ComponentModel;
 
+
 namespace Eurocode.Grondslagen
 {
     public class GrondslagenContext : IMarkupConvertible, INotifyPropertyChanged
@@ -82,7 +83,7 @@ namespace Eurocode.Grondslagen
                 return $"{Betrouwbaarheidsklasse} → K<sub>FI</sub> = {Kfi:0.##}, {NationaleBijlage} → ξ = {Xi:0.##}";
 
             else
-                return $"{Gevolgklasse} → {Betrouwbaarheidsklasse} → K<sub>FI</sub> = {Kfi:0.##}, ontwerplevensduur {OntwerpLevensduur.GetOntwerplevensduurTekst()}, norm: {NationaleBijlage} → ξ = {Xi:0.##}";
+                return $"{Gevolgklasse} → {Betrouwbaarheidsklasse}, {OntwerpLevensduur.GetOntwerplevensduurTekst()}, norm: {NationaleBijlage} → ξ = {Xi:0.##}";
         }
 
 

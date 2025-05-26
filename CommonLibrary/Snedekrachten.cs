@@ -31,7 +31,15 @@ namespace CommonLibrary
         {
             string labelEd = ",Ed~";
 
-            return $"{prefix}{labelEd} = {Ed.ToString(format)} {eenheid}, {prefix}{labelKar} = {Kar.ToString(format)} {eenheid}";
+            if (Kar == Ed)
+            {
+                return $"{prefix}{labelEd} = {Ed.ToString(format)} {eenheid}";
+            }
+            else
+            {
+                return $"{prefix}{labelEd} = {Ed.ToString(format)} {eenheid}, {prefix}{labelKar} = {Kar.ToString(format)} {eenheid}";
+            }
+
         }
     }
 
