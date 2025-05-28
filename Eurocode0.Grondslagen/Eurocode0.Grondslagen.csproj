@@ -8,7 +8,7 @@
 	<!-- NuGet-package instellingen -->
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageId>Kaskon.Eurocode0.Grondslagen</PackageId>
-	<Version>1.0.13</Version>
+	<Version>1.0.14</Version>
 	<Authors>Bart van der Linden</Authors>
 	<Company>Kaskon</Company>
 	<Description>Eurocode 0 | Grondslagen</Description>
@@ -49,5 +49,8 @@
       <PackagePath>/</PackagePath>
       <Pack>true</Pack>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 </Project>

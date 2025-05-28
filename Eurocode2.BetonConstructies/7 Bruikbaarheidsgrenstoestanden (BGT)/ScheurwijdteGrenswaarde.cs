@@ -1,11 +1,12 @@
-﻿using Eurocode.Grondslagen;
+﻿using CommonLibrary;
+using Eurocode.Grondslagen;
 using System.Text.Json.Serialization;
 
 namespace Eurocode.BetonConstructies
 {
     public partial class Scheurbeheersing
     {
-        public class ScheurwijdteGrenswaarde
+        public class ScheurwijdteGrenswaarde : BaseEurocodeContext
         {
             // 7.3      Scheurbeheersing
             // 7.3.1    Algemene beschouwingen
@@ -152,6 +153,26 @@ namespace Eurocode.BetonConstructies
                 return returnVal;
             }
 
+
+            public override string ToString()
+            {
+                return $"w~max~: {Wmax} mm (k~x~={DekkingEnDuurzaamheid.DekkingToe}/{DekkingEnDuurzaamheid.DekkingNom} ≤ 2 ={FactorKx}, ElementType={ElementType},  NationaleBijlage={NationaleBijlage})";
+            }
+
+            public override bool IsAkkoord()
+            {
+                return DekkingEnDuurzaamheid.IsAkkoord();
+            }
+
+            protected override void Bereken()
+            {
+                Initialiseer();
+            }
+
+            protected override bool Valideer()
+            {
+                return true;
+            }
         }
     }
 }

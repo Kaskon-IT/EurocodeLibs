@@ -15,6 +15,7 @@ namespace Eurocode.BetonConstructies
             // maar dit kan later gedaan worden.
             BetonContext beton = new();
             BetonDekkingContext dekking = new();
+
             NationaleBijlageEnum nationaleBijlage = NationaleBijlageEnum.NL;
 
             //Beton = beton;

@@ -241,6 +241,44 @@
 
         }
 
+        public static List<string> GetWapeningVoorstellen(double asBen, int hohMax, int nauwkeurigheid, List<double> diameters)
+        {
+            List<string> voorstellen = [];
+            foreach (var diameter in diameters)
+            {
+                var voorstel = GetWapeningVoorstel(asBen, hohMax, nauwkeurigheid, diameter);
+                if (voorstel != null)
+                {
+                    voorstellen.Add(voorstel);
+                }
+            }
+
+
+            return voorstellen;
+        }
+
+        public static string? GetWapeningVoorstel(double asBen, int hohMax, int nauwkeurigheid, double d)
+        {
+            double min1 = 50.0;
+            double min2 = 2.5 * d;
+            double hohMin = Math.Max(min1, min2);
+            double nBen = (asBen / GetDsnOpp(1, d));
+            int hohBen = (int)(1000.00 / nBen);
+
+            if (hohBen >= hohMin)
+            {
+                // Rond hohToe naar beneden af op basis van nauwkeurigheid
+                int hohToe = (int)(Math.Floor(Math.Min(hohBen, hohMax) / (double)nauwkeurigheid) * nauwkeurigheid);
+                return $"Ø{d}-{hohToe}";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+
         public static List<string> GetWapeningVoorstellen(double asBen, int hohMax)
         {
             // doe een voorstel met n staven Øk

@@ -7,7 +7,7 @@
 
 @inherits Custom.EurocodeComponentBase
 
-<BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent>
+@* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@
 
 
 @if(Model.Snedekrachten != null)
@@ -69,9 +69,31 @@ else
 
 <EurocodeInputNumber ReadOnly=true Value=Model.SigmaS Key="Staalspanning" Unit="MPa"></EurocodeInputNumber>
 
+
+
+<FluentCheckbox @bind-Value=Model.IsGedrongenLigger Label="Gedrongen ligger"></FluentCheckbox>
+
+@if (Model.IsGedrongenLigger)
+{
+    <p>Deze doorsnede is beschouwd als gedrongen ligger voor de berekening van de benodigde wapening.</p>
+    <EurocodeInputNumber @bind-Value=Model.LengteMaatBijGedrongenLiggerInMM Key="@Model.LengteMaatBijGedrongenLiggerSymbool" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+    <FluentSelectEnum Label="type gedrogen"
+                      TEnum="Schematisering.GedrongenEnum"
+                      @bind-EnumSelectedValue="@Model.Gedrongen" />
+}
+
+
+
+
+
+<EurocodeInputNumber ReadOnly=true Value=Model.AsMin Key="AsMin" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
+<EurocodeInputNumber ReadOnly=true Value=Model.AsRequired Key="AsBen" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
 @if (Model.Wapening != null && Model.BerekeningType == BerekeningTypeEnum.ControleerWapening)
 {
-    <p>Wapeningsvoorstel: @WapeningHelper.GetWapeningVoorstel(Model.AsRequired, 150)</p>
+    <span>💡 Wapeningsvoorstel: @WapeningHelper.GetWapeningVoorstel(Model.AsRequired, 150)</span>
+
+    <span> Voorstellen: @string.Join(" | ", WapeningHelper.GetWapeningVoorstellen(Model.AsRequired, 150, 10, [8,7.5, 10, 12]))</span>
+
 
     <EurocodeInputContainer Key="@K.WapeningToegepast" Unit="">
         <ChildContent>
@@ -83,10 +105,6 @@ else
     @* <FluentButton OnClick="GebruikWapeningsVoorstel"></FluentButton> *@
 }
 
-
-
-<EurocodeInputNumber ReadOnly=true Value=Model.AsMin Key="AsMin" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value=Model.AsRequired Key="AsBen" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.AsApplied Key="AsToe" Unit="mm²" MinValue="Model.AsRequired" MaxValue="Model.AsMax" StringFormat="0"></EurocodeInputNumber>
 
 

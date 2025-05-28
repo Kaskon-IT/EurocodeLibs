@@ -1,4 +1,6 @@
-﻿namespace Eurocode.BetonConstructies
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Eurocode.BetonConstructies
 {
     public static class Schematisering
     {
@@ -7,6 +9,41 @@
         {
             Balk, Plaat, Kolom
         }
+
+        public enum GedrongenEnum
+        {
+            //[Display(Name = "Niet gedrongen")]
+            //NietGedrongen = 0,
+            [Display(Name = "uitkraging")]
+            Uitkraging = 1,
+            [Display(Name = "statisch bepaald")]
+            StatischBepaald = 2,
+            [Display(Name = "statisch onbepaald")]
+            StatischOnbepaald = 3
+
+        }
+
+        public static double GetGedrongenZ(double lengte, double h, GedrongenEnum gedrongen)
+        {
+            switch (gedrongen)
+            {
+                default:
+                case GedrongenEnum.Uitkraging:
+                    // 0,4 a + 0,4 h ≤ 1,6 a
+                    return Math.Min(0.4 * lengte + 0.4 * h, 1.6 * lengte);
+                case GedrongenEnum.StatischBepaald:
+                    // 0,2 l + 0,4 h ≤ 0,6 l
+                    return Math.Min(0.2 * lengte + 0.4 * h, 0.6 * lengte);
+                case GedrongenEnum.StatischOnbepaald:
+                    // 0,3 lo + 0,3 h ≤ 0,8 lo
+                    return Math.Min(0.3 * lengte + 0.3 * h, 0.8 * lengte);
+
+
+
+            }
+
+        }
+
 
 
         public static double GetAsMax(this ConstructiefModelEnum? constructiefModel, double betonDoorsnedeOppervlak)

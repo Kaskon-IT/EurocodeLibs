@@ -1,15 +1,11 @@
 ﻿@using Eurocode.BetonConstructies
-
-
-<BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent>
-
+@* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@ <!-- debug only -->
 
 @if (ShowUserFriendly)
 {
     <p>
         <i>betonsterkteklasse</i> : <b> @Model.BetonSterkteKlasseGebruiksvriendelijkeNaam</b> (@Model.SpanningRekDiagram)
         <i>staalkwaliteit</i> : <b> @Model.BetonStaal.BetonStaalKwaliteit</b> (@Model.BetonStaal.SpanningRekDiagram)
-
     </p>
 }
 else
@@ -20,9 +16,6 @@ else
     @bind-EnumSelectedValue="@Model.Betonsterkteklasse"
     ReadOnly="@ReadOnly"
     Disabled="@ReadOnly" />
-
-
-
 
     @if (ToonBetonSpanningRekDiagram)
     {
@@ -49,15 +42,6 @@ else
         Disabled="@Disabled" />
     }
 }
-
-
-
-
-
-
-
-
-
 
 
 @code {

@@ -221,16 +221,81 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return D - Beton.GetBeta() * Xu;
+                if (IsGedrongenLigger)
+                {
+                    return Schematisering.GetGedrongenZ(LengteMaatBijGedrongenLiggerInMM, Hoogte, Gedrongen ?? Schematisering.GedrongenEnum.Uitkraging);
+                }
+                else
+                {
+                    return D - Beton.GetBeta() * Xu;
+                }
             }
         }
+
+        public bool IsGedrongenLigger { get; set; } = false;
+
+        public string LengteMaatBijGedrongenLiggerSymbool
+        {
+            get
+            {
+                switch (Gedrongen)
+                {
+                    default:
+                    case null:
+                    case Schematisering.GedrongenEnum.Uitkraging:
+                        return "a";
+                    case Schematisering.GedrongenEnum.StatischBepaald:
+                        return "l";
+                    case Schematisering.GedrongenEnum.StatischOnbepaald:
+                        return "l~0~";
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// De overspanning van de ligger.
+        /// In millimeters!
+        /// Dit afstand tussen momenten-nulpunten wordt hiermee bedoeld.
+        /// </summary>
+        public double LengteMaatBijGedrongenLiggerInMM { get; set; } = 400;
+        public bool Uitkraging = false;
+
+
+        public bool StatischBepaald { get; set; } = true;
+
+
+
+
+        public Schematisering.GedrongenEnum? Gedrongen
+        {
+            get; set;
+        }
+
+
 
         [TableColumn("A~s,ben~ [mm²]", Order = 40, StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double AsRequired
         {
             get
             {
-                return Math.Max(AsMin, AsBerekend);
+                var asBenodigdZuivereBuiging = Math.Max(AsMin, AsBerekend);
+                if (IsGedrongenLigger)
+                {
+                    var asBenodigdGedrongen = Moment * 1e6 / Z / Beton.BetonStaal.Fyd;
+                    if (asBenodigdZuivereBuiging > asBenodigdGedrongen)
+                    {
+                        // melding 
+                        // OPMERKING Bij relatief slanke constructies en/ of bij de toepassing van grote hoeveelheden wapening is het
+                        // mogelijk dat bij de uitgangspunten geformuleerd in (1)P een lagere waarde van de momentweerstand wordt
+                        // gevonden.Deze lagere waarde is dan bepalend voor de momentweerstand van de beschouwde constructie.
+
+                        // (1)P maatgevend
+                    }
+                    return Math.Max(asBenodigdGedrongen, asBenodigdZuivereBuiging);
+                }
+
+                return asBenodigdZuivereBuiging;
             }
         }
 
@@ -380,24 +445,17 @@ namespace Eurocode.BetonConstructies
         public override bool IsAkkoord()
         {
             return Valideer();
-
-
         }
 
         protected override void Bereken()
         {
-
             Wapening.SetZRef();
-
-
             VerwerkAsApplied();
-
             // volgens mij gaat dit volledig automatisch...
         }
 
         protected override bool Valideer()
         {
-
             if (Xu > XuMax)
             {
                 AddMeldingWaarschuwing("hoogte drukzone niet akkoord");
@@ -410,8 +468,6 @@ namespace Eurocode.BetonConstructies
                 //Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
                 return false;
             }
-
-
 
 
             if (AsApplied > this.AsMax)
