@@ -41,13 +41,28 @@ namespace ExportFactory.Services
         private readonly Dictionary<string, AttributesMapping> _algemeen = new()
         {
             { K.My, new(sym: "M~y~", desc:"Moment om Y-as") },
+            { K.MyEd, new(sym: "M~y,Ed~", desc:"Moment om Y-as (rekenwaarde)") },
+            { K.MyBGT, new(sym: "M~y,Ed,BGT~", desc:"Moment om Y-as (rekenwaarde BGT)") },
+
+
             { K.Mz, new(sym: "M~z~", desc:"Moment om Z-as") },
+            { K.MzEd, new(sym: "M~z,Ed~", desc:"Moment om Z-as") },
+            { K.MzBGT, new(sym: "M~z,Ed,BGT~", desc:"Moment om Z-as (rekenwaarde BGT)") },
+
 
             { K.Vy, new(sym: "V~y~", desc:"Dwarskracht in Y-richting") },
+            { K.VyEd, new(sym: "V~y,Ed~", desc:"Dwarskracht in Y-richting") },
+
+
             { K.Vz, new(sym: "V~z~", desc:"Dwarskracht in Z-richting") },
+            { K.VzEd, new(sym: "V~z,Ed~", desc:"Dwarskracht in Z-richting") },
+
 
             { K.Tx, new(sym: "T~x~", desc:"Torsie om X-as") },
+            { K.TxEd, new(sym: "T~x,Ed~", desc:"Torsie om X-as") },
+
             { K.Nx, new(sym: "N~x~", desc:"Normaalkracht in X-as") },
+            { K.NxEd, new(sym: "N~x,Ed~", desc:"Normaalkracht in X-as") },
 
 
             { K.Wapening, new(sym:"",desc:"wapening") },

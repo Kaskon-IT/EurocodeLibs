@@ -4,10 +4,10 @@
 
 @inject Services.ReadOnlyService ReadOnlyService
 
-<BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent>
+@* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@
 
 
-beton:@Model.Beton.ToString();
+beton:@Model.Beton.ToString()
 
 
 <p>@Model.ToMarkupString()</p>
@@ -15,7 +15,7 @@ beton:@Model.Beton.ToString();
 
 <FluentGrid Spacing="4">
     <FluentGridItem xs="12">
-        <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Ved)) @bind-Value="Model.Ved" Key="@K.DwarskrachtRekenwaarde" Unit="kN" MinValue=-Model.DwarskrachtWeerstandMax MaxValue="@Model.DwarskrachtWeerstandMax"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=true Value="Model.Ved" Key="@K.DwarskrachtRekenwaarde" Unit="kN" MinValue=-Model.DwarskrachtWeerstandMax MaxValue="@Model.DwarskrachtWeerstandMax"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.Profiel.Breedte)) @bind-Value="Model.Profiel.Breedte" Key="Breedte" MinValue=60 Unit="mm"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.NutHoogte)) @bind-Value="Model.NutHoogte" Key="NutHoogte" MinValue=30 Unit="mm"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnlyService.IsFieldReadOnly(nameof(Model.AsLangs)) @bind-Value="Model.AsLangs" MinValue=0 Key="AsLangs" MaxValue="@Balken.GetAsMax(Model.Profiel)" Unit="mm²"></EurocodeInputNumber>

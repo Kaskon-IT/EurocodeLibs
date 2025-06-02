@@ -69,7 +69,19 @@
                 var details = GetWapDetails(wapgroep);
                 //var n = details.n.HasValue ? details.n.Value : 1.0;
                 oppTotaal += details.dsnOpp;
-                nTotaal += details.n.HasValue ? details.n.Value : 1.0;
+
+                if (details.n.HasValue)
+                {
+                    nTotaal += details.n.Value;
+                }
+                else
+                {
+                    nTotaal += 1.0; // als n niet is opgegeven, dan is het 1
+                }
+
+
+
+                //nTotaal += details.n.HasValue ? details.n.Value : ;
             }
 
             // Gemiddeld oppervlak per staaf
@@ -110,16 +122,16 @@
                 if (IsCharInString(diamChars, hohGroep.First()))
                 {
                     var nGroep = hohGroep.First().Split(diamChars).ToList();
-                    double.TryParse(nGroep.First(), out double n);
+                    double.TryParse(nGroep.First(), out double nSnede);
                     double.TryParse(nGroep.Last(), out d);
 
-                    if (n == 0) n = 1;
+                    if (nSnede == 0) nSnede = 1;
 
-                    return (GetDsnOpp(n, d, hoh), d, hoh, n);
+                    return (GetDsnOpp(nSnede, d, hoh), d, hoh, nSnede * 1000.0 / hoh);
                 }
                 else
                 {
-                    return (GetDsnOpp(d: d, hoh: hoh), d, hoh, 1000 / hoh);
+                    return (GetDsnOpp(d: d, hoh: hoh), d, hoh, 1000.0 / hoh);
 
                 }
 
@@ -138,7 +150,7 @@
 
                 return (GetDsnOpp(n: n, d: d), d, null, n);
             }
-            else return (0, 0, 1000, 0);
+            else return (0, 0, 1000.0, 0);
         }
 
 
@@ -244,12 +256,25 @@
         public static List<string> GetWapeningVoorstellen(double asBen, int hohMax, int nauwkeurigheid, List<double> diameters)
         {
             List<string> voorstellen = [];
+
+            int aantalKeerDatHohMaxIsToegepast = 0;
             foreach (var diameter in diameters)
             {
-                var voorstel = GetWapeningVoorstel(asBen, hohMax, nauwkeurigheid, diameter);
+
+                var voorstel = GetWapeningVoorstel(asBen, hohMax, nauwkeurigheid, diameter, out int hohToe);
                 if (voorstel != null)
                 {
-                    voorstellen.Add(voorstel);
+                    if (hohToe == hohMax)
+                    {
+                        aantalKeerDatHohMaxIsToegepast++;
+                    }
+
+                    // stop als meerdere keren maximale hoh-maat is toegepast.
+                    if (aantalKeerDatHohMaxIsToegepast < 3)
+                    {
+                        voorstellen.Add(voorstel);
+
+                    }
                 }
             }
 
@@ -257,7 +282,7 @@
             return voorstellen;
         }
 
-        public static string? GetWapeningVoorstel(double asBen, int hohMax, int nauwkeurigheid, double d)
+        public static string? GetWapeningVoorstel(double asBen, int hohMax, int nauwkeurigheid, double d, out int hohToe)
         {
             double min1 = 50.0;
             double min2 = 2.5 * d;
@@ -268,11 +293,12 @@
             if (hohBen >= hohMin)
             {
                 // Rond hohToe naar beneden af op basis van nauwkeurigheid
-                int hohToe = (int)(Math.Floor(Math.Min(hohBen, hohMax) / (double)nauwkeurigheid) * nauwkeurigheid);
+                hohToe = (int)(Math.Floor(Math.Min(hohBen, hohMax) / (double)nauwkeurigheid) * nauwkeurigheid);
                 return $"Ø{d}-{hohToe}";
             }
             else
             {
+                hohToe = 1;
                 return null;
             }
         }

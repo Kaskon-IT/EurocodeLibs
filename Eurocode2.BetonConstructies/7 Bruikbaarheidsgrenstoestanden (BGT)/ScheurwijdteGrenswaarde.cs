@@ -156,7 +156,7 @@ namespace Eurocode.BetonConstructies
 
             public override string ToString()
             {
-                return $"w~max~: {Wmax} mm (k~x~={DekkingEnDuurzaamheid.DekkingToe}/{DekkingEnDuurzaamheid.DekkingNom} ≤ 2 ={FactorKx}, ElementType={ElementType},  NationaleBijlage={NationaleBijlage})";
+                return $"w~max~ = {Wmax:0.##} mm (k~x~={DekkingEnDuurzaamheid.DekkingToe}/{DekkingEnDuurzaamheid.DekkingNom} ≤ 2 ={FactorKx:0.##})";
             }
 
             public override bool IsAkkoord()

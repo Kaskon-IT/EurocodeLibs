@@ -26,6 +26,7 @@ namespace Eurocode.BetonConstructies
 
         public void SetZRef()
         {
+            this._gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
             this._zRef = DekkingToegepast + _gemiddeldeDiameter / 2;
         }
 

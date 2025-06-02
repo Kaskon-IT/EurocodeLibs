@@ -4,26 +4,25 @@
 @using CommonLibrary
 
 
-<h3>BuigingBasisDefault</h3>
+<h3>Buiging zonder normaalkracht</h3>
 
 @if (SampleProject !=null)
 {
 
-    <FluentButton OnClick="StateHasChanged">StateHasChanged</FluentButton>
+    @* <FluentButton OnClick="StateHasChanged">StateHasChanged</FluentButton> *@
 
-    <BetonProfiel @bind-Model="SampleProject.BetonProfiel" OnStateChanged="StateHasChanged"></BetonProfiel>
+    @* <BetonProfiel @bind-Model="SampleProject.BetonProfiel" OnStateChanged="StateHasChanged"></BetonProfiel> *@
 
-    <BuigingBasicComponent @bind-Model="SampleProject.BendingResults" OnStateChanged="StateHasChanged"></BuigingBasicComponent>
+    @* <BuigingBasicComponent @bind-Model="SampleProject.BendingResults" OnStateChanged="StateHasChanged"></BuigingBasicComponent> *@
 
-    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" />
-
-
+    <h5>Snedekrachten</h5>
+    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false />
+    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false ToonWaardeBruiksbaarheidsGrensToestand=true />
 
     <EurocodeBetondoorsnedeComponent 
         BuigingContext="SampleProject.BendingResults"
-        ScheurwijdteContext="SampleProject.ScheurwijdteDemo"
-        DwarskrachtContext="SampleProject.DwarskrachtDemo" />
-
+        ScheurwijdteContext="SampleProject.ScheurwijdteDemo" />
+        
 
 
     @* <FluentButton OnClick="UpdateChart">Update</FluentButton> *@

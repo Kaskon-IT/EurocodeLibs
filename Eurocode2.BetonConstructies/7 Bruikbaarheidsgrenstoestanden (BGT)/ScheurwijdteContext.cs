@@ -139,10 +139,8 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn("factor k~t~", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "0.##")]
-
         public double FactorKt { get; set; } = 0.6;
 
-        //[TableColumn("factor k~c~", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "0.##")]
 
         public double FactorKc { get; set; } = 0.4; // naar 7.3.2
 

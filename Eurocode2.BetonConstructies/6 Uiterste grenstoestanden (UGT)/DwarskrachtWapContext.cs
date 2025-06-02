@@ -67,12 +67,14 @@ namespace Eurocode.BetonConstructies
 
         public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; }
 
+        public Snedekrachten Snedekrachten { get; set; } = new();
+
 
         /// <summary>
         /// Rekenwaarde van de dwarskracht in kN
         /// </summary>
         [TableColumn("V~Ed~", StringFormat = "0.##\tkN")]
-        public double Ved { get; set; }
+        public double Ved { get { return Snedekrachten.Vz.Ed; } }
 
         /// <summary>
         /// is de hoek in graden tussen de drukdiagonaal van beton en de as van de ligger loodrecht op de dwarskracht;
@@ -151,11 +153,11 @@ namespace Eurocode.BetonConstructies
         public double BeugelAfstandDwarsToegepast;
         public double DekkingZijkantToegepast;
 
-        public DwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, double ved)
+        public DwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, Snedekrachten snedekrachten)
         {
             Beton = beton; // materiaal, staal, dekking, etcetera
             Profiel = profiel; // geometrie 
-            Ved = ved; // krachten
+            Snedekrachten = snedekrachten; // krachten
         }
 
 

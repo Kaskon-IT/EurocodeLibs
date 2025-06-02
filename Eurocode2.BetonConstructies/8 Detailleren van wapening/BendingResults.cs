@@ -21,16 +21,27 @@ namespace Eurocode.BetonConstructies
 
         public override string ToString()
         {
+
+
+
+
             var result = "";
             result += $"M~Ed~ = {Moment: 0.#} kNm, ";
             result += $"afm. {Breedte}×{Hoogte}/{D} mm, ";
             result += "\r\n";
             result += $"A~s,ben~ = {AsRequired: 0} mm², ";
-            result += $"A~s,toe~ = {AsApplied: 0} mm², ";
+
+
+
+            if (BerekeningType == BerekeningTypeEnum.ControleerWapening)
+            {
+                result += $"A~s,toe~ = {AsApplied: 0} mm², ";
+
+                result += $"(UC = {(AsRequired / AsApplied):0.00}), ";
+
+            }
 
             if (MinimaleWapeningToegepast) result += $"minimale wapening van toepassing, ";
-            if (BerekeningType == BerekeningTypeEnum.ControleerWapening) result += $"(UC = {(AsRequired / AsApplied):0.00}), ";
-
 
 
 

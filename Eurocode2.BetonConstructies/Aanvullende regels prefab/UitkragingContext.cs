@@ -1,4 +1,6 @@
-﻿namespace Eurocode.BetonConstructies
+﻿using CommonLibrary;
+
+namespace Eurocode.BetonConstructies
 {
     public class UitkragingContext
     {
@@ -52,6 +54,7 @@
         public BendingResults Buiging1 { get; set; }
 
         public DwarskrachtWapContext TandShear { get; set; }
+        public Snedekrachten Snedekrachten { get; set; } = new Snedekrachten();
 
 
 
@@ -67,7 +70,7 @@
 
             ParametrischeProfielen.ParametrischProfielContext profiel = new(TandBreedte, TandHoogte);
 
-            TandShear = new(Beton, profiel, this.Reactiekracht) { NutHoogte = this.TandNuttigeHoogte };
+            TandShear = new(Beton, profiel, Snedekrachten) { NutHoogte = this.TandNuttigeHoogte };
 
 
         }

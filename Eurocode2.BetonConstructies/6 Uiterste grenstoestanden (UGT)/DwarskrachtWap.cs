@@ -1,4 +1,5 @@
-﻿using Eurocode.BetonConstructies.Algemeen;
+﻿using CommonLibrary;
+using Eurocode.BetonConstructies.Algemeen;
 
 namespace Eurocode.BetonConstructies
 {
@@ -12,7 +13,7 @@ namespace Eurocode.BetonConstructies
         #region Berekeningen aan te roepen vanuit interface
 
 
-        public static DwarskrachtWapContext GetDwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, double theta, double d, double dwarskracht,
+        public static DwarskrachtWapContext GetDwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, double theta, double d, Snedekrachten snedekrachten,
             double aantalSnede, double diameter, List<double> hohAfstanden)
         {
 
@@ -20,11 +21,10 @@ namespace Eurocode.BetonConstructies
 
             List<string> artikelen = new List<string>();
 
-            DwarskrachtWapContext context = new(beton, profiel, dwarskracht)
+            DwarskrachtWapContext context = new(beton, profiel, snedekrachten)
             {
                 Theta = theta,
                 NutHoogte = d,
-                Ved = dwarskracht,
                 LijstBeugelWap = []
             };
 

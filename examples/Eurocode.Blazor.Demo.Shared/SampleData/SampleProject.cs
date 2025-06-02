@@ -37,7 +37,7 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
         public UitkragingContext UitkragingDemo { get; set; } = new();
         public ScheurwijdteContext ScheurwijdteDemo { get; set; }
         public WapeningContext WapeningContext { get; set; } = new();
-        public Snedekrachten Snedekrachten { get; set; } = new() { My = new(80, 70) };
+        public Snedekrachten Snedekrachten { get; set; } = new() { My = new(80, 70), Vz = new(93) };
 
 
         public SampleProject(GrondslagenContext grondslagen)
@@ -50,7 +50,7 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
 
             BendingResults = new(Beton, BetonProfiel.Profiel, WapeningContext, Snedekrachten);
             //DwarskrachtDemo = new(Beton, new ParametrischeProfielen.ParametrischProfielContext(), 100);
-            DwarskrachtDemo = DwarskrachtWap.GetDwarskrachtWapContext(Beton, BetonProfiel.Profiel, 21.8, 350, 102, 2, 8, [75, 150, 300]);
+            DwarskrachtDemo = DwarskrachtWap.GetDwarskrachtWapContext(Beton, BetonProfiel.Profiel, 21.8, 350, Snedekrachten, 2, 8, [75, 150, 300]);
             UitkragingDemo = new() { Beton = Beton };
             ScheurwijdteDemo = new(Snedekrachten, Beton, Dekking, BetonProfiel.Profiel, WapeningContext, Grondslagen.NationaleBijlage ?? NationaleBijlageEnum.NL);
             GrenswaardeSlankheidDemo = new() { Beton = Beton, Profiel = BetonProfiel.Profiel, BendingResults = BendingResults, LengteOverspanning = 2000, ConstructiefSysteem = GrenswaardeSlankheidContext.ConstructiefSysteemEnum.VrijOpgelegd };

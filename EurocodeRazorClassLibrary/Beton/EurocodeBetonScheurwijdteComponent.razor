@@ -4,7 +4,7 @@
 
 @* <EurocodeRefreshButton Model="@Model" OnUpdated="@OnUpdated" /> *@
 
-<BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent>
+@* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@
 
 
 @if(Model != null)
@@ -12,12 +12,13 @@
     
 
 
-<p>@Model.ToMarkupString()</p>
+@* <p>@Model.ToMarkupString()</p> *@
 
 <div>
-    beton : @Model.Beton.ToMarkupString() <br />
-    dekking : @Model.Dekking.ToMarkupString() <br />
-        grenswaarde: @Model.ScheurwijdteGrenswaarde.ToMarkupString() <br />
+    @* beton : @Model.Beton.ToMarkupString() <br /> *@
+    @* dekking : @Model.Dekking.ToMarkupString() <br /> *@
+    <h5>Scheurwijdte</h5>
+    @* grenswaarde: @Model.ScheurwijdteGrenswaarde.ToMarkupString() <br /> *@
 
 </div>
 
@@ -27,20 +28,20 @@
 
 
 
-<EurocodeInputContainer Key="Wapening">
+@* <EurocodeInputContainer Key="Wapening">
     <FluentTextField @bind-Value="Model.Wapening.Tekst"></FluentTextField>
-</EurocodeInputContainer>
+</EurocodeInputContainer> *@
 
-<EurocodeInputNumber ReadOnly=true Value=Model.AsToe Key="@K.AsToe" Unit="mm²"></EurocodeInputNumber>
+@* <EurocodeInputNumber ReadOnly=true Value=Model.AsToe Key="@K.AsToe" Unit="mm²" ></EurocodeInputNumber> *@
 
-<EurocodeInputNumber ReadOnly=true Value="Model.MomentFrequent" Key="@K.MomentFrequent" Unit="kNm"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteAsMin" Key="@K.ScheurwijdteAsMin" Unit="mm²"></EurocodeInputNumber>
+@* <EurocodeInputNumber ReadOnly=true Value="Model.MomentFrequent" Key="@K.MomentFrequent" Unit="kNm"></EurocodeInputNumber> *@
+    <EurocodeInputNumber ReadOnly=true Value="Model.Mcr" Key="@K.MomentScheurmoment" StringFormat="0.#" Unit="kNm"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteAsMin" Key="@K.ScheurwijdteAsMin" StringFormat="0" Unit="mm²"></EurocodeInputNumber>
 @* <EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteMax" Key="@K.ScheurwijdteMax" Unit="mm"></EurocodeInputNumber> *@
-<EurocodeInputNumber ReadOnly=true Value="Model.Wk" Key="@K.ScheurwijdteBerekend" Unit="mm" MaxValue="Model.ScheurwijdteMax"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value="Model.Mcr" Key="@K.MomentScheurmoment" Unit="kNm"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.Wk" Key="@K.ScheurwijdteBerekend" Unit="mm" MaxValue="Model.ScheurwijdteMax"></EurocodeInputNumber>
 
 
-<EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteGrenswaarde.Wmax" Key="@K.ScheurwijdteMax" Unit="mm"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteGrenswaarde.Wmax" Key="@K.ScheurwijdteMax" Unit="mm"></EurocodeInputNumber>
 @* <EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteMinimumWapening.AsMin" Key="@K.ScheurwijdteAsMin" Unit="mm²"></EurocodeInputNumber> *@
 
 

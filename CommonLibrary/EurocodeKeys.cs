@@ -7,16 +7,28 @@
 
         public const string My = "My";
         public const string MyEd = "MyEd";
+        public const string MyBGT = "MyBGT";
         public const string MyKar = "MyKar";
         public const string MyFreq = "MyFreq";
 
         public const string Mz = "Mz";
+        public const string MzEd = "MzEd";
+        public const string MzBGT = "MzBGT";
+
 
         public const string Vz = "Vz";
+        public const string VzEd = "VzEd";
+
         public const string Vy = "Vy";
+        public const string VyEd = "VyEd";
+
 
         public const string Tx = "Tx";
+        public const string TxEd = "TxEd";
+
+
         public const string Nx = "Nx";
+        public const string NxEd = "NxEd";
 
 
         public const string Slankheid_Slankheid = "Slankheid.Slankheid";
