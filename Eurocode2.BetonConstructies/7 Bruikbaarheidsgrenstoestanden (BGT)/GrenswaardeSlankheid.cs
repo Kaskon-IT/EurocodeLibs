@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
@@ -19,8 +20,7 @@ namespace Eurocode.BetonConstructies
         //wapening en andere variabelen.Bij de afleiding van deze vergelijkingen is geen rekening gehouden met een
         //eventuele zeeg.
 
-
-        // oorzaak
+        // oorzaken
         public double LengteOverspanning { get; set; } // Lengte van de overspanning van het element in mm
         public double EffectieveDikte
         {
@@ -35,16 +35,15 @@ namespace Eurocode.BetonConstructies
         } // Effectieve dikte van het element in mm
 
 
-
-
-        public BetonContext Beton { get; set; } = new BetonContext();
-
         public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
+
+
 
         public required BendingResults BendingResults { get; set; }
 
 
-        // gevolg
+        // gevolgen
+        [TableColumn()]
         public double GrenswaardeSlankheid
         {
             get
@@ -54,6 +53,7 @@ namespace Eurocode.BetonConstructies
             }
         } // Grenswaarde van de slankheid van het element
 
+        [TableColumn()]
         public double Slankheid
         {
             get
@@ -88,7 +88,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return 0.001 * Math.Sqrt(Beton.Fck);
+                return 0.001 * Math.Sqrt(BendingResults.Beton.Fck);
             }
         } // is de referentiewaarde van de wapeningsverhouding = 10-3 · √fck;
 
@@ -130,16 +130,28 @@ namespace Eurocode.BetonConstructies
 
         public override bool IsAkkoord()
         {
+            Meldingen.Clear();
+
             if (GrenswaardeSlankheid > 0 && Slankheid > 0)
             {
+                if (Slankheid > GrenswaardeSlankheid)
+                {
+                    AddMeldingWaarschuwing($"De slankheid van het element is {Slankheid:0.#} > {GrenswaardeSlankheid:0.#} (l/d) en voldoet niet aan de grenswaarde van de slankheid.");
+                    return false;
+                }
+
                 return Slankheid <= GrenswaardeSlankheid;
             }
             else
             {
+                AddMeldingWaarschuwing("Onbekende fout");
                 return false;
             }
             throw new NotImplementedException();
         }
+
+
+
 
         protected override void Bereken()
         {
@@ -150,6 +162,8 @@ namespace Eurocode.BetonConstructies
 
         protected override bool Valideer()
         {
+
+
             return IsAkkoord();
         }
 
@@ -186,14 +200,16 @@ namespace Eurocode.BetonConstructies
                 return 0;
 
             double returnVal;
+            var fck = context.BendingResults.Beton.Fck;
+
             if (context.Rho <= context.Rho0)
             {
                 // (7.16.a)
                 context.Artikel = "7.16a";
                 returnVal = context.FactorK *
-                    (11 + 1.5 * Math.Sqrt(context.Beton.Fck) * (context.Rho0 / context.Rho) + 3.2 * Math.Sqrt(context.Beton.Fck) * Math.Pow((context.Rho0 / context.Rho - 1), 1.5));
+                    (11 + 1.5 * Math.Sqrt(fck) * (context.Rho0 / context.Rho) + 3.2 * Math.Sqrt(fck) * Math.Pow((context.Rho0 / context.Rho - 1), 1.5));
 
-                context.Formule = $"{context.FactorK:0.#}×[11+1.5×√({context.Beton.Fck:0})×{context.Rho0 / context.Rho:0.###}+3.2×√({context.Beton.Fck:0})×{(context.Rho0 / context.Rho - 1):0.###}^1.5]";
+                context.Formule = $"{context.FactorK:0.#}×[11+1.5×√({fck:0})×{context.Rho0 / context.Rho:0.###}+3.2×√({fck:0})×{(context.Rho0 / context.Rho - 1):0.###}^1.5]";
 
             }
             else
@@ -201,9 +217,9 @@ namespace Eurocode.BetonConstructies
                 // 7.16.b
                 context.Artikel = "7.16b";
                 returnVal = context.FactorK *
-                    (11 + 1.5 * Math.Sqrt(context.Beton.Fck) * (context.Rho0 / (context.Rho - context.RhoDrukwapening)) + 1.0 / 12.0 * Math.Sqrt(context.Beton.Fck) * Math.Sqrt((context.RhoDrukwapening / context.Rho0)));
+                    (11 + 1.5 * Math.Sqrt(fck) * (context.Rho0 / (context.Rho - context.RhoDrukwapening)) + 1.0 / 12.0 * Math.Sqrt(fck) * Math.Sqrt((context.RhoDrukwapening / context.Rho0)));
 
-                context.Formule = $"{context.FactorK:0.#}×[11+1.5×√({context.Beton.Fck:0})×{context.Rho0 / (context.Rho - context.RhoDrukwapening):0.###}+1/12×√({context.Beton.Fck:0})×√({(context.RhoDrukwapening / context.Rho):0.###})]";
+                context.Formule = $"{context.FactorK:0.#}×[11+1.5×√({fck:0})×{context.Rho0 / (context.Rho - context.RhoDrukwapening):0.###}+1/12×√({fck:0})×√({(context.RhoDrukwapening / context.Rho):0.###})]";
             }
 
 

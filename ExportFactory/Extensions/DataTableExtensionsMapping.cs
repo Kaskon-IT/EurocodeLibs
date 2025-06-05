@@ -157,7 +157,7 @@ namespace ExportFactory.Services
             { K.Slankheid_WapeningsVerhoudingTrekVereist, new(sym : "|rho|", desc : "vereiste wapeningsverhouding (trek)", norm : "EC2", art: "7.4.2") },
             { K.Slankheid_WapeningsVerhoudingDrukVereist, new(sym : "|rho|'", desc : "vereiste wapeningsverhouding (druk)", norm : "EC2", art: "7.4.2") },
             { K.Slankheid_FactorK, new(sym : "K", desc : "factor constructief systeem", norm : "EC2", art: "7.4.2") },
-            { K.Slankheid_Grenswaarde, new(sym : "l/d", desc : "grenswaarde van de slankheid", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_Grenswaarde, new(sym : "", desc : "grenswaarde van de slankheid (l/d)", norm : "EC2", art: "7.4.2") },
             { K.Slankheid_Slankheid, new(sym : "l/d", desc : "slankheid", norm : "EC2", art: "7.4.2") },
             { K.Slankheid_Fck, new(sym : "f~ck~", desc : "druksterkte", norm : "EC2", art: "7.4.2") },
 

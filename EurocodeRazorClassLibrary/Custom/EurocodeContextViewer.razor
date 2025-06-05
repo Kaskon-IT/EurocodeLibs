@@ -1,0 +1,102 @@
+﻿@typeparam TModel
+@using CommonLibrary
+@using System.Reflection
+
+@if (Model == null)
+{
+    <p><em>Geen data</em></p>
+}
+else
+{
+
+    <p><em>@Model.ToString()</em></p>
+
+    @foreach (var wrapper in ContextWrappers)
+    {
+        <div class="context-block">
+            <FluentButton OnClick="@(() => Toggle(wrapper))">@wrapper.Path</FluentButton>
+
+            @if (Expanded.Contains(wrapper))
+            {
+                <div class="context-detail">
+                    @((MarkupString)wrapper.Context.ToMarkupString())
+                </div>
+            }
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public TModel? Model { get; set; }
+
+    private record ContextWrapper(string Path, CommonLibrary.BaseEurocodeContext Context);
+
+    private List<ContextWrapper> ContextWrappers = new();
+    private HashSet<ContextWrapper> Expanded = new();
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        ContextWrappers = new();
+        if (Model != null)
+        {
+            var visited = new HashSet<object>();
+            FindContexts(Model, "", visited, ContextWrappers);
+        }
+    }
+
+    private void Toggle(ContextWrapper wrapper)
+    {
+        if (!Expanded.Add(wrapper))
+            Expanded.Remove(wrapper);
+    }
+
+    private void FindContexts(object? obj, string path, HashSet<object> visited, List<ContextWrapper> result)
+    {
+        if (obj == null || visited.Contains(obj))
+            return;
+
+        visited.Add(obj);
+
+        if (obj is CommonLibrary.BaseEurocodeContext ctx)
+        {
+            result.Add(new ContextWrapper(path, ctx));
+        }
+
+        var type = obj.GetType();
+
+        if (typeof(System.Collections.IEnumerable).IsAssignableFrom(type) && type != typeof(string))
+        {
+            int index = 0;
+            foreach (var item in (System.Collections.IEnumerable)obj)
+            {
+                FindContexts(item, $"{path}[{index}]", visited, result);
+                index++;
+            }
+            return;
+        }
+
+
+       
+
+        foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            try
+            {
+                if (prop.GetIndexParameters().Length > 0) continue;
+
+                var value = prop.GetValue(obj);
+                if (value == null) continue;
+
+                FindContexts(value, string.IsNullOrEmpty(path) ? prop.Name : $"{path}.{prop.Name}", visited, result);
+            }
+            catch
+            {
+                // Sla properties over die niet toegankelijk zijn of fouten geven
+                continue;
+            }
+        }
+       
+    }
+}

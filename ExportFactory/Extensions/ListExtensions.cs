@@ -21,6 +21,7 @@ namespace ExportFactory.Extensions
             try
             {
                 // Verkrijg de eigenschappen van T (de kolommen)
+                var myType = typeof(T);
                 var properties = typeof(T).GetProperties();
 
                 // Voeg kolommen toe aan de DataTable op basis van de eigenschappen van T

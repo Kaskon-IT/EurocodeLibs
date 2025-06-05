@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace Eurocode.Belastingen
 {
-    public class BelastingGeval : IMarkupConvertible
+    public class BelastingGeval : IContext, IMarkupConvertible
     {
         public override string ToString()
         {

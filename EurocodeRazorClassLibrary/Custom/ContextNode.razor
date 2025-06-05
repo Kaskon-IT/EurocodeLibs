@@ -1,0 +1,23 @@
+﻿@using CommonLibrary
+
+<div class="context-node" style="margin-left:@(Node.Depth * 1.25)rem; display:flex; align-items:center;">
+    <button class="expand-btn" @onclick="() => OnToggle.InvokeAsync(Node)">
+        @(Expanded.Contains(Node) ? "▾" : "▸")
+    </button>
+    <span class="context-label" @onclick="() => OnToggle.InvokeAsync(Node)" style="cursor:pointer; user-select:none; margin-left:0.25rem;">
+        @Node.Path
+    </span>
+</div>
+
+@if (Expanded.Contains(Node))
+{
+    <div class="context-detail" style="margin-left:@((Node.Depth + 1) * 1.25)rem;">
+        @((MarkupString)Node.Context.ToMarkupString())
+    </div>
+}
+
+@code {
+    [Parameter] public ContextNodeWrapper Node { get; set; } = default!;
+    [Parameter] public EventCallback<ContextNodeWrapper> OnToggle { get; set; }
+    [Parameter] public HashSet<ContextNodeWrapper> Expanded { get; set; } = default!;
+}

@@ -13,7 +13,7 @@ namespace CommonLibrary
     /// (bijvoorbeeld "Waarschuwing - Overschrijding hoogte drukzone" of
     /// neutrale melding "Minimale wapening toegepast conform artikel 80.80")
     /// </summary>
-    public abstract class BaseEurocodeContext : IEurocodeContext, IMarkupConvertible, INotifyPropertyChanged
+    public abstract class BaseEurocodeContext : IEurocodeContext, IContext, IMarkupConvertible, INotifyPropertyChanged
     {
         public Guid Id { get; private set; } = Guid.NewGuid();
 

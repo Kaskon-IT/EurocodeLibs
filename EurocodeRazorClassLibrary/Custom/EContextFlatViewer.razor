@@ -1,0 +1,113 @@
+﻿@using System.Reflection
+@using CommonLibrary
+
+@typeparam TModel
+
+<div class="context-tree-viewer">
+    <h4>Directe BaseEurocodeContext‐eigenschappen in @nameof(TModel) (EContextFlatViewer):</h4>
+
+    @if (Nodes.Count == 0)
+    {
+        <p><em>Geen directe BaseEurocodeContext-eigenschappen gevonden in dit model.</em></p>
+    }
+    else
+    {
+        <ul class="context-list">
+            @foreach (var node in Nodes)
+            {
+                <li class="context-item">
+                    <strong>@node.Path:</strong>
+                    @if (node.Context == null)
+                    {
+                        <span class="null-value">NULL</span>
+                    }
+                    else
+                    {
+                        <div class="context-detail">
+                            @((MarkupString)node.Context.ToMarkupString())
+                        </div>
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter] public TModel? Model { get; set; }
+
+    /// <summary>
+    /// Hoeveel lagen diep we mogen zoeken:
+    /// 1 = enkel directe properties,
+    /// 2 = één niveau genest,
+    /// 3 = twee niveaus genest.
+    /// </summary>
+    private int MaxDepth { get; set; } = 1;
+
+
+    private readonly List<EContextNodeInfo> Nodes = new();
+
+    protected override void OnParametersSet()
+    {
+        Nodes.Clear();
+        if (Model == null)
+            return;
+
+        var type = Model.GetType();
+
+        // Loop over alle directe properties van Model
+        foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            // Sla indexers over
+            if (prop.GetIndexParameters().Length > 0)
+                continue;
+
+            var propType = prop.PropertyType;
+            var thisPath = prop.Name;
+
+            // 1) Als deze property een BaseEurocodeContext is (of subtype), toon 'm
+            if (typeof(BaseEurocodeContext).IsAssignableFrom(propType))
+            {
+                BaseEurocodeContext? ctxValue = null;
+                try { ctxValue = prop.GetValue(Model) as BaseEurocodeContext; }
+                catch { /* Pak null als het misgaat */ }
+
+                Nodes.Add(new EContextNodeInfo(thisPath, ctxValue, MaxDepth));
+                continue;
+            }
+
+            // 2) Anders: kijk wél of deze property *zelf* een object is dat op zijn beurt
+            //    één of meer directe BaseEurocodeContext-properties bevat.
+            //    We doorlopen dus de PUBLIC instance-properties van propType, wél één niveau diep.
+
+            if (!propType.IsPrimitive && propType != typeof(string))
+            {
+                object? parentValue;
+                try { parentValue = prop.GetValue(Model); }
+                catch { parentValue = null; }
+
+                if (parentValue == null)
+                    continue;
+
+                // Voor iedere subproperty binnen dit object
+                foreach (var subProp in propType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                {
+                    if (subProp.GetIndexParameters().Length > 0)
+                        continue;
+
+                    var subType = subProp.PropertyType;
+                    // 2a) Als subProp type BaseEurocodeContext is (of subtype), bundel onder pad "Prop.SubProp"
+                    if (typeof(BaseEurocodeContext).IsAssignableFrom(subType))
+                    {
+                        BaseEurocodeContext? subValue = null;
+                        try { subValue = subProp.GetValue(parentValue) as BaseEurocodeContext; }
+                        catch { subValue = null; }
+
+                        var combinedPath = $"{thisPath}.{subProp.Name}";
+                        Nodes.Add(new EContextNodeInfo(combinedPath, subValue, MaxDepth));
+                    }
+                }
+            }
+        }
+    }
+}

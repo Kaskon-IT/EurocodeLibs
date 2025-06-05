@@ -8,7 +8,7 @@
 		<!-- NuGet-package instellingen -->
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Kaskon.EurocodeComponenten</PackageId>
-		<Version>1.1.1</Version>
+		<Version>1.1.7</Version>
 		<Authors>Bart van der Linden</Authors>
 		<Company>Kaskon</Company>
 		<Description>Blazor component library voor berekeningen conform de Eurocode.</Description>
@@ -27,10 +27,12 @@
   
 	</PropertyGroup>
 
+	
+
 	<ItemGroup>
 		<!-- Voeg het pictogram toe aan de NuGet package -->
 		<None Include="wwwroot/icons/kaskon.png" Pack="true" PackagePath="/" />
-		<None  Include="wwwroot/docs/license.md" Pack="true" PackagePath="/" />
+		<None Include="wwwroot/docs/license.md" Pack="true" PackagePath="/" />
 		<None Include="wwwroot/docs/readme.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
 	

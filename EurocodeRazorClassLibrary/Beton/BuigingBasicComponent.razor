@@ -27,6 +27,13 @@
     }
 }
 
+@if (Model.Beton != null)
+{
+    <p>this.Beton = @Model.Beton.ToMarkupString()</p>
+}
+
+
+
 
 <FluentSelectEnum 
 Label="type berekening"

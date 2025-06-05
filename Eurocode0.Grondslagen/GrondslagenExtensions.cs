@@ -70,26 +70,26 @@
             }
         }
 
-        public static Dictionary<string, string> GetRowData(this GrondslagenContext context)
-        {
-            Dictionary<string, string> rowData = new Dictionary<string, string>();
+        //public static Dictionary<string, string> GetRowData(this GrondslagenContext context)
+        //{
+        //    Dictionary<string, string> rowData = new Dictionary<string, string>();
 
-            foreach (var kvp in context.Headers)
-            {
-                var value = "";
-                switch (kvp.Key)
-                {
-                    case "NationaleBijlage": value = context.NationaleBijlage.GetValueOrDefault().ToString(); break;
-                    case "OntwerpLevensduur": value = context.OntwerpLevensduur.GetValueOrDefault().ToString(); break;
-                    case "Gevolgklasse": value = context.Gevolgklasse.GetValueOrDefault().ToString(); break;
-                    case "Betrouwbaarheidsklasse": value = context.Betrouwbaarheidsklasse.ToString(); break;
-                    case "Kfi": value = context.Kfi.ToString("0.0"); break;
-                    case "Xi": value = context.Xi.ToString("0.00"); break;
-                }
-                rowData.Add(kvp.Key, value);
-            }
-            return rowData;
-        }
+        //    foreach (var kvp in context.Headers)
+        //    {
+        //        var value = "";
+        //        switch (kvp.Key)
+        //        {
+        //            case "NationaleBijlage": value = context.NationaleBijlage.GetValueOrDefault().ToString(); break;
+        //            case "OntwerpLevensduur": value = context.OntwerpLevensduur.GetValueOrDefault().ToString(); break;
+        //            case "Gevolgklasse": value = context.Gevolgklasse.GetValueOrDefault().ToString(); break;
+        //            case "Betrouwbaarheidsklasse": value = context.Betrouwbaarheidsklasse.ToString(); break;
+        //            case "Kfi": value = context.Kfi.ToString("0.0"); break;
+        //            case "Xi": value = context.Xi.ToString("0.00"); break;
+        //        }
+        //        rowData.Add(kvp.Key, value);
+        //    }
+        //    return rowData;
+        //}
 
 
     }

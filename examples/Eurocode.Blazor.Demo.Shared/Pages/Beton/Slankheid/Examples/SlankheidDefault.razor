@@ -10,7 +10,10 @@
 
     @* <FluentButton OnClick="StateHasChanged">StateHasChanged</FluentButton> *@
 
-    <EurocodeSlankheidComponent @bind-Model="SampleProject.GrenswaardeSlankheidDemo" OnStateChanged="StateHasChanged"></EurocodeSlankheidComponent>
+    <EurocodeSlankheidComponent 
+        @bind-Model="SampleProject.GrenswaardeSlankheidDemo" 
+        ReadOnly=false
+        OnStateChanged="StateHasChanged"></EurocodeSlankheidComponent>
 
     
 }

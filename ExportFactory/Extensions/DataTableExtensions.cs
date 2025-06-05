@@ -336,21 +336,33 @@
 
                         var rowProperties = propertiesWithAttributes[i];
 
-                        string? format = rowProperties.Attribute.StringFormat;
+                        string? format = rowProperties?.Attribute?.StringFormat;
 
-                        // Format the value if stringFormat exists
-                        if (!string.IsNullOrEmpty(format))
+                        // Alleen foratteren als value geen getal is
+                        if (value is IFormattable formattableValue)
                         {
+                            // Gebruik standaard "0.#" als er geen format is opgegeven
+                            if (string.IsNullOrEmpty(format))
+                            {
+                                format = "0.#";
+                            }
+
                             if (!format.StartsWith("{"))
                             {
                                 format = "{0:" + format + "}";
                             }
-                            value = string.Format(format, value);
+
+                            value = string.Format(format, formattableValue);
+
+
                         }
+
+
+
 
                         // Apply value to the cell (with markdown support)
                         var cellPar = row.Cells[i].AddParagraph();
-                        MigraDocCreator.AddMarkdownToParagraph(cellPar, value.ToString());
+                        MigraDocCreator.AddMarkdownToParagraph(cellPar, value?.ToString() ?? string.Empty);
                     }
                 }
             }

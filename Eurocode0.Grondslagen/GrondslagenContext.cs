@@ -3,6 +3,7 @@
 //using CsvFactory.Interfaces;
 
 ///using CsvFactory;
+using CommonLibrary;
 using CommonLibrary.Interfaces;
 using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
@@ -12,7 +13,7 @@ using System.ComponentModel;
 
 namespace Eurocode.Grondslagen
 {
-    public class GrondslagenContext : IMarkupConvertible, INotifyPropertyChanged
+    public class GrondslagenContext : BaseEurocodeContext, IMarkupConvertible, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -189,21 +190,21 @@ namespace Eurocode.Grondslagen
         /// <summary>
         /// Obsolete, use Custom Attributes 'TableColumn' for export
         /// </summary>
-        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>()
-        {
-            { "NationaleBijlage", "Eurocode [NB]"},
-            { "Gevolgklasse", "Gevolgklasse [CC]" },
-            { "OntwerpLevensduur", "Levensduur [jaren]"},
-            { "Betrouwbaarheidsklasse", "Reliability Class RC" },
-            { "Kfi", "K_FI~" },
-            { "Xi", "ξ" },
-        };
+        //public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>()
+        //{
+        //    { "NationaleBijlage", "Eurocode [NB]"},
+        //    { "Gevolgklasse", "Gevolgklasse [CC]" },
+        //    { "OntwerpLevensduur", "Levensduur [jaren]"},
+        //    { "Betrouwbaarheidsklasse", "Reliability Class RC" },
+        //    { "Kfi", "K_FI~" },
+        //    { "Xi", "ξ" },
+        //};
 
 
         /// <summary>
         /// Obsolete, generic DataTable with Custom Attributes.
         /// </summary>
-        public Dictionary<string, string> RowData { get { return this.GetRowData(); } }
+        //public Dictionary<string, string> RowData { get { return this.GetRowData(); } }
 
 
         public void AddToSection(Section section)
@@ -224,6 +225,21 @@ namespace Eurocode.Grondslagen
             return CommonLibrary.Helpers.MarkupHelper.ToMarkupString(this.ToString(alleenFactoren));
 
             //throw new NotImplementedException();
+        }
+
+        public override bool IsAkkoord()
+        {
+            return true;
+        }
+
+        protected override void Bereken()
+        {
+            // kan niet berekend worden
+        }
+
+        protected override bool Valideer()
+        {
+            return true;
         }
 
 

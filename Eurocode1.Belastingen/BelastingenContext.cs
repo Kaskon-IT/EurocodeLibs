@@ -1,4 +1,5 @@
-﻿using Eurocode.Grondslagen;
+﻿using CommonLibrary;
+using Eurocode.Grondslagen;
 using System.Text.Json.Serialization;
 
 namespace Eurocode.Belastingen
@@ -8,13 +9,19 @@ namespace Eurocode.Belastingen
 
 
 
-    public class BelastingenContext
+    public class BelastingenContext : BaseEurocodeContext
     {
 
         public BelastingenContext()
         {
             Grondslagen = new();
         }
+
+        public override string? ToString()
+        {
+            return base.ToString();
+        }
+
 
         [JsonConstructor]
         public BelastingenContext(GrondslagenContext grondslagen)
@@ -197,11 +204,20 @@ namespace Eurocode.Belastingen
             }
         }
 
+        public override bool IsAkkoord()
+        {
+            return true;
+        }
 
+        protected override void Bereken()
+        {
+            return; // geen berekening
+        }
 
-
-
-
+        protected override bool Valideer()
+        {
+            return true; // geen validatie
+        }
     }
 
 
