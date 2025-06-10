@@ -1,5 +1,7 @@
 ﻿using CommonLibrary;
+using ExportFactory.Extensions;
 using ExportFactory.Shared;
+using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
@@ -490,6 +492,22 @@ namespace Eurocode.BetonConstructies
 
             return true;
 
+        }
+
+        public override MarkupString ToHtml(bool isDraaiTabel = true)
+        {
+            try
+            {
+                return this.ToHtmlTable(isDraaiTabel);
+            }
+            catch (Exception ex)
+            {
+                // Log de fout of geef een melding weer
+                Console.WriteLine($"Fout bij het genereren van HTML: {ex.Message}");
+                return new MarkupString("Fout bij het genereren van HTML.");
+            }
+
+            throw new NotImplementedException();
         }
     }
 

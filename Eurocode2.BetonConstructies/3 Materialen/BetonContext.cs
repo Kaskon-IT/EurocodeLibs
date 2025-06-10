@@ -1,6 +1,7 @@
 ﻿using CommonLibrary;
 using ExportFactory.Extensions;
 using ExportFactory.Shared;
+using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
@@ -348,6 +349,11 @@ namespace Eurocode.BetonConstructies
             // nakijken, volgens mij altijd goed
             return true;
             //throw new NotImplementedException();
+        }
+
+        public override MarkupString ToHtml(bool isDraaiTabel = true)
+        {
+            return this.ToHtmlTable(isDraaiTabel);
         }
 
         [JsonIgnore]

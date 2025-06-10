@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using Eurocode.Grondslagen;
+using Microsoft.AspNetCore.Components;
 using System.Text.Json.Serialization;
 
 namespace Eurocode.Belastingen
@@ -217,6 +218,11 @@ namespace Eurocode.Belastingen
         protected override bool Valideer()
         {
             return true; // geen validatie
+        }
+
+        public override MarkupString ToHtml(bool isDraaiTabel = true)
+        {
+            throw new NotImplementedException();
         }
     }
 

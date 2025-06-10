@@ -14,6 +14,8 @@
 <EurocodeInputNumber @bind-Value=Model.Profiel.Breedte Key="@K.ProfielBreedte" MinValue="80" Unit="mm" StringFormat="0" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
 <EurocodeInputNumber @bind-Value=Model.Profiel.Hoogte Key="@K.ProfielHoogte" MinValue="80" Unit="mm" StringFormat="0" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
 
+
+
 @* <EurocodeInputContainer Key="@K.WapeningToegepast" Unit="MM">
     <ChildContent>
         <FluentSelectEnum Label="Vorm"
@@ -44,6 +46,7 @@
 <EurocodeInputNumber ReadOnly=true Value=Model.Profiel.Area Key="@K.BetonDoorsnedeOppervlak" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.Profiel.Wy Key="Wy" Unit="mm³" StringFormat="0"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.Profiel.Iy Key="Iy" Unit="mm³" StringFormat="0"></EurocodeInputNumber>
+
 
 
 @code {

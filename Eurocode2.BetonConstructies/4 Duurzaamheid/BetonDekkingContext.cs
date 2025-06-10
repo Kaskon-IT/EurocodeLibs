@@ -1,6 +1,8 @@
 ﻿using CommonLibrary;
 using Eurocode.Grondslagen;
+using ExportFactory.Extensions;
 using ExportFactory.Shared;
+using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
@@ -56,7 +58,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("Constructieklasse", Order = 20)]
+        [TableColumn("constructieklasse", Order = 20, Weergave = WeergaveEnum.DraaiTabel)]
         public string ConstructieklasseUserFriendlyName
         {
             get
@@ -69,7 +71,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Naam van de betondekking context, bijvoorbeeld 'bovenzijde' of 'onderzijde' 
         /// </summary>
-        [TableColumn("Dekking (positie)", order: 0)]
+        [TableColumn("positie", order: 0, Weergave = WeergaveEnum.StandaardTabel)]
         public string Naam { get; set; } = "Bovenzijde";
 
 
@@ -113,7 +115,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien plaatgeometrie van toepassing dan een vermindering van 1 op de constructieklasse.
         /// </summary>
-        [TableColumn("Plaatgeometrie?", Order = 2)]
+        [TableColumn("plaatgeometrie?", headerTextPivot: "-", Order = 2, Weergave = WeergaveEnum.DraaiTabel)]
         public bool IsPlaatGeometrie
         {
             get => _isPlaatGeometrie;
@@ -123,7 +125,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien specifieke kwaliteitsbeheersing (bijvoorbeeld bij prefab beton) vermindering met 1 op constructieklasse.
         /// </summary>
-        [TableColumn("Kwaliteitsbeheersing?", Order = 3)]
+        [TableColumn("kwaliteitsbeheersing?", Order = 3, Weergave = WeergaveEnum.DraaiTabel)]
         public bool IsKwaliteitsBeheersing
         {
             get => _isKwaliteitsBeheersing;
@@ -156,7 +158,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("Milieuklasse", Order = 1)]
+        [TableColumn("milieuklasse", Order = 1)]
         public string MilieuklassenUserFriendlyName
         {
             get
@@ -308,7 +310,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             headerText: "korrel",
             headerTextPivot: "Grootste korrel",
-            Order = 5, StringFormat = "≤ 0 mm")]
+            Order = 5, StringFormat = "≤ 0 mm", Weergave = WeergaveEnum.DraaiTabel)]
         public double GrootsteKorrelDiameter
         {
             get => _grootsteKorrelDiameter;
@@ -462,6 +464,12 @@ namespace Eurocode.BetonConstructies
 
             return true;
 
+        }
+
+
+        public override MarkupString ToHtml(bool isDraaiTabel = true)
+        {
+            return this.ToHtmlTable(isDraaiTabel);
         }
     }
 }

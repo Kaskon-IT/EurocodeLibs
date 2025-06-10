@@ -45,12 +45,14 @@
 @* <EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteMinimumWapening.AsMin" Key="@K.ScheurwijdteAsMin" Unit="mm²"></EurocodeInputNumber> *@
 
 
+    <BaseEurocodeContextComponent TContext="ScheurwijdteContext" @bind-Model="@Model" />
+
 }
 
 
 @code {
     [Parameter]
-    public ScheurwijdteContext Model { get; set; } 
+    public ScheurwijdteContext? Model { get; set; } 
     
     [Parameter]
     public EventCallback<ScheurwijdteContext> ModelChanged { get; set; }
@@ -58,7 +60,7 @@
     protected override void OnInitialized()
     {
         // Subscribe op wijzigingen binnen Wapening
-        if (Model.Wapening is INotifyPropertyChanged observable)
+        if (Model!.Wapening is INotifyPropertyChanged observable)
         {
             observable.PropertyChanged += WapeningPropertyChanged;
         }
@@ -68,7 +70,7 @@
     private void WapeningPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         // Bij elke wijziging binnen Wapening:
-        Model.BerekenEnValideer();
+        Model!.BerekenEnValideer();
         StateHasChanged(); // Als je UI wilt hertekenen
         ModelChanged.InvokeAsync(Model); // Als je twee-weg binding gebruikt
     }

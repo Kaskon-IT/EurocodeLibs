@@ -204,6 +204,13 @@
                         }
 
 
+
+                        if (value is bool myBool)
+                        {
+                            value = myBool ? "ja" : "nee";
+                        }
+
+
                         if (value is double && string.IsNullOrEmpty(format))
                         {
                             // getallen altijd een default format meegeven;
@@ -331,6 +338,9 @@
                         //var columnName = dataTable.Columns[i].ColumnName;
                         var value = dataRow[columnName];
 
+
+
+
                         // Get the column's custom string format if applied
                         int i = columnNames.IndexOf(columnName);
 
@@ -355,6 +365,11 @@
                             value = string.Format(format, formattableValue);
 
 
+                        }
+
+                        if (value is bool myBool)
+                        {
+                            value = myBool ? "ja" : "nee";
                         }
 
 

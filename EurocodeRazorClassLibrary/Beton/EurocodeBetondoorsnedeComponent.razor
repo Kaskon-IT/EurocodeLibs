@@ -34,6 +34,11 @@
 @code {
     [Parameter, EditorRequired] public required BendingResults BuigingContext { get; set; }
     [Parameter, EditorRequired] public required ScheurwijdteContext ScheurwijdteContext { get; set; }
+
+
+
+
+
     //[Parameter, EditorRequired] public required DwarskrachtWapContext DwarskrachtContext { get; set; }
 
     private GrondslagenContext grondslagen => ScheurwijdteContext.Dekking.Grondslagen;

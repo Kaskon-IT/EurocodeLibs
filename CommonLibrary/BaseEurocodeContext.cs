@@ -83,5 +83,7 @@ namespace CommonLibrary
 
 
         public MarkupString ToMarkupString(bool withUnityCheck) => Helpers.MarkupHelper.ToMarkupString(this.ToString(), withUnityCheck);
+        public abstract MarkupString ToHtml(bool isDraaiTabel = true);
+        //public abstract MarkupString ToHtml(bool isDraaiTabel = true);
     }
 }

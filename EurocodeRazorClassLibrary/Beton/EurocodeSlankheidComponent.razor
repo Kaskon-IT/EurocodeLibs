@@ -1,5 +1,6 @@
 ﻿@inherits Custom.EurocodeComponentBase
 @using K = CommonLibrary.EurocodeKeys
+@using Eurocode.BetonConstructies
 
 <h5>7.4 Doorbuigingscontrole</h5>
 <h5>7.4.2 Gevallen waarin berekeningen achterwege mogen blijven</h5>
@@ -62,6 +63,9 @@
 
 }
 
+
+
+<BaseEurocodeContextComponent TContext="GrenswaardeSlankheidContext" @bind-Model="@Model" />
 
 
 @code {

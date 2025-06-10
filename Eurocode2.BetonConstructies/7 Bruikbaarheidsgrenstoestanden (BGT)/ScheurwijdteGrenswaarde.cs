@@ -1,11 +1,19 @@
 ﻿using CommonLibrary;
 using Eurocode.Grondslagen;
+using Microsoft.AspNetCore.Components;
 using System.Text.Json.Serialization;
 
 namespace Eurocode.BetonConstructies
 {
     public partial class Scheurbeheersing
     {
+        public override MarkupString ToHtml(bool isDraaiTabel = true)
+        {
+            return this.ToHtml(isDraaiTabel);
+
+            throw new NotImplementedException();
+        }
+
         public class ScheurwijdteGrenswaarde : BaseEurocodeContext
         {
             // 7.3      Scheurbeheersing
@@ -172,6 +180,11 @@ namespace Eurocode.BetonConstructies
             protected override bool Valideer()
             {
                 return true;
+            }
+
+            public override MarkupString ToHtml(bool isDraaiTabel = true)
+            {
+                throw new NotImplementedException();
             }
         }
     }

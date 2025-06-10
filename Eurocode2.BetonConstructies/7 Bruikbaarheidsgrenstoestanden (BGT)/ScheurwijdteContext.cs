@@ -1,6 +1,8 @@
 ﻿using CommonLibrary;
 using Eurocode.Grondslagen;
+using ExportFactory.Extensions;
 using ExportFactory.Shared;
+using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 using K = CommonLibrary.EurocodeKeys;
 
@@ -366,6 +368,12 @@ namespace Eurocode.BetonConstructies
             result += $"k~x~ = {ScheurwijdteGrenswaarde.FactorKx:0.##}, ";
             result += $"(UC = {(Wk / ScheurwijdteGrenswaarde.Wmax):0.00})";
             return result;
+        }
+
+        public override MarkupString ToHtml(bool isDraaiTabel = true)
+        {
+            return this.ToHtmlTable(isDraaiTabel);
+            throw new NotImplementedException();
         }
     }
 

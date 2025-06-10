@@ -54,8 +54,6 @@
         {
             StringBuilder htmlBuilder = new StringBuilder();
 
-
-
             // Extract font style from the first section (this can be modified to extract from styles, paragraphs, etc.)
             var fontStyleString = ExtractFontStyles(document, out string fontFamily);
 
@@ -74,8 +72,6 @@
 
             htmlBuilder.AppendLine("<body>");
 
-
-
             // Apply centered style if the 'centered' parameter is true
             string containerStyle = centered ? "text-align: center; margin: 0 auto; max-width: 680px;" : "text-align: left; max-width: 680px;";
 
@@ -84,8 +80,6 @@
 
             // TOC
             //htmlBuilder.Append(GenerateHtmlFromBookmarks(document));
-
-
 
             // Loop door de secties en paragrafen in het document
             bool inhoudsopgaveIsVerwerkt = false;
@@ -107,9 +101,6 @@
 
                 }
 
-
-
-
                 foreach (var element in section.Elements)
                 {
                     string bookmarkId = "";
@@ -121,7 +112,6 @@
                         {
                             bookmarkId = $"id='{bookmarkField.Name}'";
                         }
-
 
                         switch (paragraph.Style)
                         {
@@ -168,13 +158,6 @@
                                     htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{ProcessParagraph(paragraph)}</button>");
                                     htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
                                     htmlBuilder.AppendLine($"<h1 {bookmarkId} class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
-
-
-
-
-
-
-
                                 }
 
                                 break;
@@ -260,8 +243,6 @@
                             var cellIndex = 0;
 
 
-
-
                             if (isPivotTable)
                             {
                                 htmlBuilder.AppendLine("<tr class='ec-table-row ec-table-row-pivot'>");
@@ -270,9 +251,6 @@
                             {
                                 htmlBuilder.AppendLine("<tr class='ec-table-row'>");
                             }
-
-
-
 
 
                             foreach (Cell cell in row.Cells)
@@ -296,15 +274,8 @@
 
 
 
-
-
-
                                 if (isPivotTable)
                                     htmlClass = "ec-td-pivot";
-
-
-
-
 
                                 // check for th
                                 if ((rowIndex == 0 && !isPivotTable && !hideHeader) ||
@@ -338,9 +309,6 @@
                                         }
                                     }
 
-
-
-
                                 }
 
 
@@ -366,8 +334,6 @@
                                     var thisColumn = table.Columns[cellIndex];
 
 
-
-
                                     if (thisColumn != null && !thisColumn.Width.IsNull)
                                     {
                                         //
@@ -376,9 +342,9 @@
                                     }
                                 }
 
+                                if (cellPar != null)
+                                    htmlBuilder.AppendLine($"<{htmlTag} class='{htmlClass}'>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
 
-
-                                htmlBuilder.AppendLine($"<{htmlTag} class='{htmlClass}'>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
                                 cellIndex++;
                             }
                             htmlBuilder.AppendLine("</tr>");
@@ -389,14 +355,7 @@
                                 htmlBuilder.AppendLine("</thead>");
                             }
 
-
-
-
-
-
                             rowIndex++;
-
-
                         }
 
                         // apply closing tags  
@@ -405,7 +364,7 @@
                             htmlBuilder.AppendLine("</tbody>");
                         }
                         htmlBuilder.AppendLine("</table>");
-                    }
+                    } // end if table
                 }
 
                 // Close the accordion div
@@ -418,14 +377,14 @@
             }
 
             // Nog 1 div voor blanco deel onder laatste element voor leesbaarheid
-            htmlBuilder.AppendLine("<div style='height:1cm;'></div>");
+            //htmlBuilder.AppendLine("<div style='height:1cm;'></div>");
 
 
             // Close the container div
             htmlBuilder.Append("</div>");
 
             // Nog een div voor blanco ruimte onder laatste element
-            htmlBuilder.AppendLine("<div style='height:5cm;'></div>");
+            //htmlBuilder.AppendLine("<div style='height:5cm;'></div>");
 
 
             // Einde van de HTML

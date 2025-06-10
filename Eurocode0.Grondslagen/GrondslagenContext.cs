@@ -242,6 +242,11 @@ namespace Eurocode.Grondslagen
             return true;
         }
 
+        public override MarkupString ToHtml(bool isDraaiTabel = true)
+        {
+            throw new NotImplementedException();
+        }
+
 
 
         //public string CreateCsv()

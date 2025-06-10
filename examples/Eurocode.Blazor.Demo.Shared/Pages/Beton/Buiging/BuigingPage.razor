@@ -12,8 +12,9 @@
     <h2>Voorbeelden</h2>
     <DemoSection Title="Basic" Component="typeof(BuigingBasisDefault)"/>
 
+    <BaseEurocodeContextComponent TContext="BendingResults" @bind-Model="@SampleProject.BendingResults" @key=SampleProject.BendingResults />
+
     <ApiDocumentation Component="typeof(BuigingBasic)" />
-    <ApiDocumentation Component="typeof(PlotlyChart)" />
 
 
 @code {

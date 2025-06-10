@@ -1,5 +1,7 @@
 ﻿using CommonLibrary;
+using ExportFactory.Extensions;
 using ExportFactory.Shared;
+using Microsoft.AspNetCore.Components;
 
 namespace Eurocode.BetonConstructies
 {
@@ -21,7 +23,11 @@ namespace Eurocode.BetonConstructies
         //eventuele zeeg.
 
         // oorzaken
+
+        [TableColumn("l [mm]")]
         public double LengteOverspanning { get; set; } // Lengte van de overspanning van het element in mm
+
+        [TableColumn("d [mm]")]
         public double EffectieveDikte
         {
             get
@@ -37,13 +43,11 @@ namespace Eurocode.BetonConstructies
 
         public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
 
-
-
         public required BendingResults BendingResults { get; set; }
 
 
         // gevolgen
-        [TableColumn()]
+        [TableColumn("grenswaarde (l/d)")]
         public double GrenswaardeSlankheid
         {
             get
@@ -53,7 +57,7 @@ namespace Eurocode.BetonConstructies
             }
         } // Grenswaarde van de slankheid van het element
 
-        [TableColumn()]
+        [TableColumn("l/d")]
         public double Slankheid
         {
             get
@@ -84,6 +88,7 @@ namespace Eurocode.BetonConstructies
             }
         } // K is een factor om de verschillende constructieve systemen in rekening te brengen
 
+        [TableColumn("ρ~0~")]
         public double Rho0
         {
             get
@@ -92,6 +97,7 @@ namespace Eurocode.BetonConstructies
             }
         } // is de referentiewaarde van de wapeningsverhouding = 10-3 · √fck;
 
+        [TableColumn("ρ")]
         public double Rho
         {
             get
@@ -178,6 +184,16 @@ namespace Eurocode.BetonConstructies
 
         }
 
+        public override MarkupString ToHtml(bool isDraaiTabel = true)
+        {
+            return this.ToHtmlTable(isDraaiTabel);
+            //var dt = this.ToDataTable();
+            //var type = typeof(GrenswaardeSlankheidContext);
+            //var mdd = dt.ToMigraDocDocument(type);
+            //var html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(mdd);
+
+            //return new MarkupString(html);
+        }
     }
 
 

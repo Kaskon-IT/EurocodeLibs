@@ -161,13 +161,13 @@ namespace ExportFactory.Services
             { K.Slankheid_Slankheid, new(sym : "l/d", desc : "slankheid", norm : "EC2", art: "7.4.2") },
             { K.Slankheid_Fck, new(sym : "f~ck~", desc : "druksterkte", norm : "EC2", art: "7.4.2") },
 
-
+            { "PlaatGeometrie", new(sym: "-", desc: "plaatgeometrie?", norm: "EC2", art:"") },
 
 
             { "Betonsterkteklasse", new(sym : "C", desc : "betonsterkteklasse", norm: "EC2", art: "3.1.2", vgl: "tabel 3.1") },
-            { "CementKlasse", new(sym: null, desc : "cement klasse", norm: "EC2", art : "3.1.2 (6)", vgl : null)},
+            { "CementKlasse", new(sym: "", desc : "cement klasse", norm: "EC2", art : "3.1.2 (6)", vgl : null)},
             { "PoissonFactor", new(sym: "|nu|",desc: "poissonfactor", norm: "EC2", art : "3.1.3 (4)", vgl : null) },
-            { "SpanningRekDiagram", new(sym: null, desc: "spanning-rekdiagram")},
+            { "SpanningRekDiagram", new(sym: "", desc: "spanning-rekdiagram")},
 
 
             // B
@@ -218,9 +218,9 @@ namespace ExportFactory.Services
             // Dekking en duurzaamheid
             { "MilieuklassenUserFriendlyName", new(sym : "X",desc : "milieuklasse(n)",norm:"EC2",art:"4.4") },
 
-            { "IsPlaatGeometrie", new(sym: null, desc:"plaatgeometrie?", norm:"EC2", art:"4.4.1.2 (5)", vgl : "tabel 4.3N") },
-            { "IsKwaliteitsBeheersing", new(sym : null, "kwaliteitsbeheersing?", norm : "EC2", art : "4.4.1.2 (5)", vgl: "tabel 4.3N") },
-            { "GrootsteKorrelDiameter", new(sym : null, desc : "grootste korrel diameter", norm : "EC2", art : "4.4.1.2 (3)", vgl: "tabel 4.2") },
+            { "IsPlaatGeometrie", new(sym: "", desc:"plaatgeometrie?", norm:"EC2", art:"4.4.1.2 (5)", vgl : "tabel 4.3N") },
+            { "IsKwaliteitsBeheersing", new(sym : "", "kwaliteitsbeheersing?", norm : "EC2", art : "4.4.1.2 (5)", vgl: "tabel 4.3N") },
+            { "GrootsteKorrelDiameter", new(sym : "", desc : "grootste korrel diameter", norm : "EC2", art : "4.4.1.2 (3)", vgl: "tabel 4.2") },
             { "ConstructieklasseUserFriendlyName", new(sym : "S", desc : "constructieklasse", norm : "EC2", art : "4.4.1.2 (5)", vgl : "tabel 4.3N")  },
             { "Naam", new(sym : null, desc : "", norm : null, art : null) }, // todo iets voor bedenken (universeel)
             { "WapeningDiameterGelijkwaardig", new(sym : "Ø~eq~", "gelijkwaardige diameter", norm : "EC2", art : "8.9.1") },
@@ -322,6 +322,14 @@ namespace ExportFactory.Services
 
 
             // Oplegging
+            { "OplegType", new(sym: "", desc: "oplegtype")},
+            { "OplegMateriaal", new(sym: "", desc: "oplegmateriaal")},
+            { "DetailleringWapening", new(sym: "", desc: "detaillering wapening")},
+            { "DrogeVerbinding", new(sym: "", desc: "droge verbinding?")},
+            { "VellingkantenNoodzakelijk", new(sym: "", desc: "vellingkanten noodzakelijk?")},
+
+            //{ K.OpleggingElementType, new(sym: "", desc: "elementtype")},
+
             { "OplegLengteNominaal", new(sym: "a", desc: "nominale opleglengte a = a~1~ + a~2~ + a~3~ + √(|Delta|a~2~^2^ + |Delta|a~3~^2^) + |Delta|~e~", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
             { "OplegLengteNetto", new(sym: "a~1~", desc: "netto-opleglengte mbt oplegspanning a1 = F~Ed~ / (b~1~ f~Rd~), maar mag niet kleiner zijn dan de minimumwaarde in tabel 10.2", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
             { "OplegLengteAanwezig", new(sym: "a~aanw~", desc: "aanwezige opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },

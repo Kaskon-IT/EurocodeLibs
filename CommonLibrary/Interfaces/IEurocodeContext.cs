@@ -21,6 +21,8 @@ namespace CommonLibrary.Interfaces
         // interface voor context
         public MarkupString ToMarkupString() => Helpers.MarkupHelper.ToMarkupString(this.ToString());
 
+
+
     }
 
 

@@ -4,7 +4,11 @@
 
 @if (SampleProject != null)
 {
-    <EurocodeBetonDuurzaamheid @bind-Model="@SampleProject.Dekking"></EurocodeBetonDuurzaamheid>
+    <FluentCard>
+        <EurocodeBetonDuurzaamheid @bind-Model="@SampleProject.Dekking"></EurocodeBetonDuurzaamheid>
+
+    </FluentCard>
+    <BaseEurocodeContextComponent TContext="BetonDekkingContext" @bind-Model="@SampleProject.Dekking" />
 }
 
 

@@ -123,6 +123,8 @@ else
 <EurocodeInputNumber ReadOnly=true Value=Model.AsApplied Key="AsToe" Unit="mm²" MinValue="Model.AsRequired" MaxValue="Model.AsMax" StringFormat="0"></EurocodeInputNumber>
 
 
+<BaseEurocodeContextComponent TContext="BendingResults" @bind-Model="@Model" />
+
 @if (Model.MinimaleWapeningToegepast)
 {
     <p>Minimale wapening maatgevend</p>

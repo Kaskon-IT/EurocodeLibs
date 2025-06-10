@@ -15,9 +15,14 @@
     Title="Met opgave enums" 
     Component="@typeof(BetonMaterialenMetOpgaveEnums)"></DemoSection>
 
+<BaseEurocodeContextComponent TContext="BetonContext" @bind-Model="@SampleProject.Beton" />
+
 <ApiDocumentation Component="typeof(EurocodeBetonMaterialen)" />
 
 @code{
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
     private Dictionary<string, object> _componentParameters1 = new(){
         {"Disabled", !true }
     };
