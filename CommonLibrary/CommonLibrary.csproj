@@ -7,7 +7,7 @@
 
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageId>Kaskon.CommonLibrary</PackageId>
-	  <Version>1.1.7</Version>
+	  <Version>1.1.17</Version>
 	  <Authors>Bart van der Linden</Authors>
 	  <Company>Kaskon</Company>
 	  <Description>Library voor veelgebruikte extensions, helpers, interfaces en meer.</Description>
@@ -35,8 +35,8 @@
   <ItemGroup>
     <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
     <PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
-    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.3" />
+    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.6" />
     <PackageReference Include="MigraDoc.DocumentObjectModel.Core" Version="1.0.0" />
   </ItemGroup>
 

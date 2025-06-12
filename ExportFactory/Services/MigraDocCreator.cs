@@ -1295,8 +1295,98 @@ namespace ExportFactory.Services
 
             section.AddParagraph(coverPage.Title ?? "", "Title");
             section.AddParagraph(coverPage.Subtitle ?? "", "Subtitle");
-            section.AddParagraph($"Project Number: {coverPage.ProjectNumber}", "Normal").Format.Alignment = ParagraphAlignment.Center;
-            section.AddParagraph(coverPage.CompanyName, "Normal").Format.Alignment = ParagraphAlignment.Center;
+
+
+
+
+            var projectTable = section.AddTable();
+            projectTable.Tag = "hideheader";
+            projectTable.Borders.Visible = false;
+            projectTable.AddColumn(Unit.FromCentimeter(4)); // left column
+            projectTable.AddColumn(Unit.FromCentimeter(10)); // right column
+            foreach (var item in coverPage.ProjectLabeledValues)
+            {
+                var projectRow = projectTable.AddRow();
+                projectRow.Cells[0].AddParagraph(item.Label);
+                projectRow.Cells[1].AddParagraph(item.ValueAsString);
+            }
+
+
+            projectTable.AddRow(); // lege rij
+            foreach (var item in coverPage.DocumentLabeledValues)
+            {
+                var projectRow = projectTable.AddRow();
+                projectRow.Cells[0].AddParagraph(item.Label);
+                projectRow.Cells[1].AddParagraph(item.ValueAsString);
+            }
+
+
+
+
+
+
+
+            var docInfo = section.AddTable();
+            docInfo.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
+            docInfo.Borders.Visible = false;
+            docInfo.AddColumn(Unit.FromCentimeter(4)); // left column
+            docInfo.AddColumn(Unit.FromCentimeter(10)); // right column
+
+            var row = docInfo.AddRow();
+            row.Cells[0].AddParagraph("document nummer :");
+            row.Cells[1].AddParagraph(coverPage.DocumentNumber);
+
+            row = docInfo.AddRow();
+            row.Cells[0].AddParagraph("opgesteld door :");
+            row.Cells[1].AddParagraph(coverPage.Author);
+
+            row = docInfo.AddRow();
+            row.Cells[0].AddParagraph("gecontroleerd door :");
+            row.Cells[1].AddParagraph(coverPage.CheckedBy);
+
+
+            //section.AddParagraph($"projectnummmer : {coverPage.ProjectNumber}", "Normal").Format.Alignment = ParagraphAlignment.Center;
+            //section.AddParagraph(coverPage.CompanyName, "Normal").Format.Alignment = ParagraphAlignment.Center;
+
+
+            //section.AddParagraph($"document nummer : {coverPage.DocumentNumber}");
+            //section.AddParagraph($"opgesteld door : {coverPage.Author}");
+            //section.AddParagraph($"gecontroleerd door : {coverPage.CheckedBy}");
+
+
+
+
+
+
+
+
+
+
+            var revisionTable = section.AddTable();
+            revisionTable.Borders.Visible = false;
+            revisionTable.AddColumn(Unit.FromCentimeter(4));
+            revisionTable.AddColumn(Unit.FromCentimeter(4));
+            revisionTable.AddColumn(Unit.FromCentimeter(6));
+
+
+
+            foreach (var revision in coverPage.RevisionContent.Revisions)
+            {
+                var revisionRow = revisionTable.AddRow();
+                revisionRow.Cells[0].AddParagraph(revision.Name);
+                revisionRow.Cells[1].AddParagraph($"{revision.Date.ToShortDateString()}");
+                revisionRow.Cells[2].AddParagraph(revision.Description);
+            }
+
+
+
+
+
+
+
+
+
+
         }
 
 

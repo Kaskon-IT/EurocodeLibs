@@ -8,7 +8,7 @@
 		<!-- NuGet-package instellingen -->
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Kaskon.ExportFactory</PackageId>
-		<Version>1.1.8</Version>
+		<Version>1.1.17</Version>
 		<Authors>Bart van der Linden</Authors>
 		<Company>Kaskon</Company>
 		<Description>Library voor pdf, csv, word, html, svg exports.</Description>
@@ -45,7 +45,7 @@
         <PackageReference Include="MigraDoc.Rendering.Core" Version="1.0.0" />
         <PackageReference Include="MigraDoc.RtfRendering.Core" Version="1.0.0" />
         <PackageReference Include="SkiaSharp.Extended" Version="2.0.0" />
-        <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
+        <PackageReference Include="Svg.Skia" Version="3.0.3" />
     </ItemGroup>
 
     <ItemGroup>
