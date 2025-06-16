@@ -1,6 +1,4 @@
-﻿using CommonLibrary;
-using ExportFactory.Shared;
-using Microsoft.AspNetCore.Components;
+﻿using ExportFactory.Shared;
 using System.ComponentModel;
 using System.Data;
 using System.Reflection;
@@ -92,10 +90,6 @@ namespace ExportFactory.Extensions
                     foreach (var prop in properties)
                     {
                         // Assign the property value to the corresponding column in the DataRow
-                        Console.WriteLine($"Setting value for {prop.Name}: {prop.GetValue(item)}");
-
-
-
                         row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
 
                         // description
@@ -104,11 +98,9 @@ namespace ExportFactory.Extensions
                             row[prop.Name] = description;
                         }
                     }
-
                     // Add the populated row to the DataTable
                     dataTable.Rows.Add(row);
                 }
-
             }
             catch (Exception ex)
             {
@@ -135,7 +127,7 @@ namespace ExportFactory.Extensions
             var dataTable = list.ToDataTable();
 
             // step 2: make a migradoc table
-            return dataTable.ToMigraDocTable(type, isPivotTable, hideHeader);
+            return dataTable.ToTable(type, isPivotTable, hideHeader);
         }
 
 
@@ -276,29 +268,6 @@ namespace ExportFactory.Extensions
             }
 
             return string.Empty; // Return empty string if it's not an enum
-        }
-
-
-    }
-
-    public static class BaseEurocodeContextExtensions
-    {
-        // Convert 
-
-        public static DataTable ToDataTable<T>(this T obj) where T : BaseEurocodeContext
-        {
-            // maak een list (ook al zit er maar 1 item in)
-            var list = new List<T> { obj };
-            // gebruik de extensie methode om de list om te zetten naar een DataTable
-            return list.ToDataTable();
-        }
-
-        public static MarkupString ToHtmlTable<T>(this T obj, bool isDraaiTabel = true) where T : BaseEurocodeContext
-        {
-            var dt = obj.ToDataTable(); // datatable
-            var mdd = dt.ToMigraDocDocument(objectType: obj.GetType(), isPivotTable: isDraaiTabel); // migraDoc.Document
-            var html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(mdd);
-            return new MarkupString(html);
         }
 
 

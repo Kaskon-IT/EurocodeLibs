@@ -11,7 +11,7 @@ namespace Eurocode.BetonConstructies
     public partial class BetonDekkingContext : BaseEurocodeContext
     {
 
-
+        public override string Heading => "Dekking en duurzaamheid";
 
         /// <summary>
         /// Referentie naar de context uit de Eurocode1
@@ -180,9 +180,9 @@ namespace Eurocode.BetonConstructies
         /// De nominale betondekking (c,nom) is de minimale betondekking inclusief uitvoeringstoleranties (Δc,dev)
         /// </summary>
         [TableColumn(
-            headerText: "c~nom~ ",
+            headerText: "c~nom~ [mm]",
             HeaderTextPivot = "c~nom~\tnominale dekking art. 4.4.1.1",
-            Order = 1, StringFormat = "0 mm")]
+            Order = 1, StringFormat = "0")]
         public double DekkingNom
         {
             get => _dekkingNom;
@@ -193,9 +193,9 @@ namespace Eurocode.BetonConstructies
         /// Is de minimumdekking op basis van de milieu-omstandigheden, zie 4.4.1.2 (5)
         /// </summary>
         [TableColumn(
-            headerText: "c~min,dur~",
+            headerText: "c~min,dur~ [mm]",
             headerTextPivot: "c~min,dur~\tminimumdekking duurzaamheid art. 4.4.1.2 (5)",
-            order: 41, StringFormat = "0 mm")]
+            order: 41, StringFormat = "0")]
         public double DekkingMinDuurzaamheid
         {
             get { return this.GetCminDur(); }
@@ -209,9 +209,9 @@ namespace Eurocode.BetonConstructies
         /// zie 4.4.1.2
         /// </summary>
         [TableColumn(
-            headerText: "c~min~",
+            headerText: "c~min~ [mm]",
             headerTextPivot: "c~min~\tminimale dekking art.4.4.1.2",
-            order: 39, StringFormat = "0 mm")]
+            order: 39, StringFormat = "0")]
         public double DekkingMin
         {
             get { return this.GetMinimaleBetondekking(); }
@@ -222,9 +222,9 @@ namespace Eurocode.BetonConstructies
         /// Minimale dekking tbv aanhechting betonstaal
         /// </summary>
         [TableColumn(
-            headerText: "c~min,b~",
+            headerText: "c~min,b~ [mm]",
             headerTextPivot: "c~min,b~\tminimumdekking aanhechting art. 4.4.1.2 (3)",
-            order: 40, StringFormat = "0 mm")]
+            order: 40, StringFormat = "0")]
         public double DekkingMinAanhechting
         {
             get
@@ -240,8 +240,8 @@ namespace Eurocode.BetonConstructies
         /// Verhoging van de dekking tbv uitvoeringstoleranties (Δc,dev) volgens 4.4.1.3 (1)
         /// </summary>
         [TableColumn(
-            headerText: "|Delta|c~dev~",
-            headerTextPivot: "|Delta|c~dev~\t toeslag uitvoeringstoleranties art. 4.4.1.3(1)", order: 50, StringFormat = "0 mm")]
+            headerText: "|Delta|c~dev~ [mm]",
+            headerTextPivot: "|Delta|c~dev~\t toeslag uitvoeringstoleranties art. 4.4.1.3(1)", order: 50, StringFormat = "0")]
         public double DekkingToeslagUitvoeringsToleranties { get { return this.Grondslagen.NationaleBijlage.GetUitvoeringstoleraties(); } }
 
         /// <summary>

@@ -1,5 +1,15 @@
-﻿namespace ExportFactory.MigraDocContentModels
+﻿using System.Text.Json.Serialization;
+
+namespace ExportFactory.MigraDocContentModels
 {
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+    [JsonDerivedType(typeof(HeadingContent), "headingContent")]
+    [JsonDerivedType(typeof(TableContent), "tableContent")]
+    [JsonDerivedType(typeof(SectionContent), "sectionContent")]
+    [JsonDerivedType(typeof(ParagraphContent), "paragraphContent")]
+    [JsonDerivedType(typeof(MigraDocElement), "migraDocElement")]
+    [JsonDerivedType(typeof(MigraDocTable), "migraDocTable")]
+
     public abstract class SectionElement
     {
         public int Order { get; set; }

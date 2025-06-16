@@ -27,6 +27,7 @@ namespace ExportFactory.Services
 
         const string? _MPa = "0.##\tN/mm²";
         const string? _Promille = "0.##\t‰";
+        const string? _Procent = "0.##\t%";
         // const string? _formatProcent = "0.##\t%";
         const string? _kN = "0.#\tkN";
         const string? _kNm = "0.#\tkNm";
@@ -79,7 +80,7 @@ namespace ExportFactory.Services
 
 
             { K.MomentArm, new(sym: "a", desc:"arm voor moment") },
-            { K.MomentRekenwaarde, new(sym: "M~Ed~", desc: "rekenwaarde moment") },
+            { K.MomentRekenwaarde, new(sym: "M~Ed~", desc: "rekenwaarde moment", format: "0.# kNm") },
             { K.Staalspanning, new(sym: "|sigma|~s~", desc: "staalspanning") },
 
             { K.TandHoogte, new(sym: "h~tand~", desc:"hoogte van de tand")},
@@ -92,8 +93,8 @@ namespace ExportFactory.Services
 
 
             { K.BetonDoorsnedeOppervlak, new(sym: "A~c~", desc:"betondoorsnedeoppervlak") },
-            { K.ProfielBreedte, new(sym: "b", desc:"breedte profiel") },
-            { K.ProfielHoogte, new(sym: "h", desc:"hoogte profiel") },
+            { K.ProfielBreedte, new(sym: "b", desc:"breedte profiel", format: "0 mm") },
+            { K.ProfielHoogte, new(sym: "h", desc:"hoogte profiel", format:"0 mm") },
             { "B1", new(sym: "b~1~", desc:"afstand") },
             { "B2", new(sym: "b~2~", desc:"afstand") },
             { "H1", new(sym: "h~1~", desc:"afstand") },
@@ -109,13 +110,13 @@ namespace ExportFactory.Services
 
             { "ReferentieAfstandVoorNuttigeHoogte", new(sym: "h~ref~", desc:"referentie afstand voor nuttige hoogte") },
             { "XuD", new(sym: "x~u~/d", desc:"hoogte drukzone / nuttige hoogte") },
-            { "NuttigeHoogte", new(sym: "d", desc:"nuttige hoogte") },
+            { "NuttigeHoogte", new(sym: "d", desc:"nuttige hoogte", format : "0.# mm") },
 
 
-            {"AsBen", new(sym: "A~s,ben~", desc: "benodigde wapening") },
-            {"AsToe", new(sym: "A~s,toe~", desc: "toegepaste wapening") },
-            {"AsMin", new(sym: "A~s,min~", desc: "minimaal benodigde wapening") },
-            {"Xu", new(sym: "x~u~", desc: "hoogte drukzone") },
+            {"AsBen", new(sym: "A~s,ben~", desc: "benodigde wapening", format : "0 mm²") },
+            {"AsToe", new(sym: "A~s,toe~", desc: "toegepaste wapening", format : "0 mm²") },
+            {"AsMin", new(sym: "A~s,min~", desc: "minimaal benodigde wapening", format : "0 mm²") },
+            {"Xu", new(sym: "x~u~", desc: "hoogte drukzone", format : "0.# mm") },
 
 
 
@@ -130,11 +131,11 @@ namespace ExportFactory.Services
         private readonly Dictionary<string, AttributesMapping> _ec0 = new Dictionary<string, AttributesMapping>
         {
             { "GebruikteNorm", new(sym: null, desc: "gebruikte norm", norm: null, art: null ) },
-            { "Gevolgklasse", new(sym:"CC", desc: "gevolgklasse (Consequence Class)", norm: "EC0", art:"2.3") },
-            { "OntwerpLevensduur", new(sym: null, desc: "Ontwerplevensduur", norm:"EC0", art: "", vgl: "") },
+            { "Gevolgklasse", new(sym:"", desc: "gevolgklasse (Consequence Class)", norm: "EC0", art:"2.3") },
+            { "OntwerpLevensduur", new(sym: null, desc: "ontwerplevensduur", norm:"EC0", art: "", vgl: "") },
             { "Kfi", new(sym : "K~FI~", desc : "belastingfactor tbv de betrouwbaarheidsdifferentiatie", norm: "EC0", art: "B.3.3", vgl: "tabel B3")},
             { "Xi", new(sym: "|xi|", desc: "reductiefactor voor ongunstige blijvende belastingen", norm:"EC0", art: "6.4.3.2 (3)", vgl: "(6.10b)") },
-            { "Betrouwbaarheidsklasse", new(sym : "RC", desc : "betrouwbaarheidsklasse (Reliability Class)", norm : "EC0", art : "B.3.2") },
+            { "Betrouwbaarheidsklasse", new(sym : "", desc : "betrouwbaarheidsklasse (Reliability Class)", norm : "EC0", art : "B.3.2") },
             { "FlagEmoji", new(sym: null, desc: "Land", norm: "", art: ""  ) },
             { "FlagSvg", new(null, "Nationale Bijlage") },
 
@@ -151,20 +152,20 @@ namespace ExportFactory.Services
         private readonly Dictionary<string, AttributesMapping> _ec2 = new Dictionary<string, AttributesMapping>
         {
 
-            { K.Slankheid_LengteOverspanning, new(sym : "l", desc : "effectieve lengte", norm : "EC2", art: "7.4.2") },
-            { K.Slankheid_EffectieveDikte, new(sym : "d", desc : "effectieve dikte", norm : "EC2", art: "7.4.2") },
-            { K.Slankheid_WapeningsVerhoudingReferentiewaarde, new(sym : "|rho|~0~", desc : "referentiewaarde wapeningsverhouding = 10^-3^ · √f~ck~", norm : "EC2", art: "7.4.2") },
-            { K.Slankheid_WapeningsVerhoudingTrekVereist, new(sym : "|rho|", desc : "vereiste wapeningsverhouding (trek)", norm : "EC2", art: "7.4.2") },
-            { K.Slankheid_WapeningsVerhoudingDrukVereist, new(sym : "|rho|'", desc : "vereiste wapeningsverhouding (druk)", norm : "EC2", art: "7.4.2") },
-            { K.Slankheid_FactorK, new(sym : "K", desc : "factor constructief systeem", norm : "EC2", art: "7.4.2") },
-            { K.Slankheid_Grenswaarde, new(sym : "", desc : "grenswaarde van de slankheid (l/d)", norm : "EC2", art: "7.4.2") },
-            { K.Slankheid_Slankheid, new(sym : "l/d", desc : "slankheid", norm : "EC2", art: "7.4.2") },
+            { K.Slankheid_LengteOverspanning, new(sym : "l", desc : "effectieve lengte", norm : "EC2", art: "7.4.2", format : _mm) },
+            { K.Slankheid_EffectieveDikte, new(sym : "d", desc : "effectieve dikte", norm : "EC2", art: "7.4.2", format : _mm) },
+            { K.Slankheid_WapeningsVerhoudingReferentiewaarde, new(sym : "|rho|~0~", desc : "referentiewaarde wapeningsverhouding", norm : "EC2", art: "7.4.2", format: _Procent) },
+            { K.Slankheid_WapeningsVerhoudingTrekVereist, new(sym : "|rho|", desc : "vereiste wapeningsverhouding (trek)", norm : "EC2", art: "7.4.2", format: _Procent) },
+            { K.Slankheid_WapeningsVerhoudingDrukVereist, new(sym : "|rho|'", desc : "vereiste wapeningsverhouding (druk)", norm : "EC2", art: "7.4.2", format: _Procent) },
+            { K.Slankheid_FactorK, new(sym : "K", desc : "factor constructief systeem", norm : "EC2", art: "7.4.2", format: "0.#") },
+            { K.Slankheid_Grenswaarde, new(sym : "l/d", desc : "grenswaarde van de slankheid", norm : "EC2", art: "7.4.2", format : "0.#") },
+            { K.Slankheid_Slankheid, new(sym : "l/d", desc : "slankheid", norm : "EC2", art: "7.4.2", format : "0.#") },
             { K.Slankheid_Fck, new(sym : "f~ck~", desc : "druksterkte", norm : "EC2", art: "7.4.2") },
 
             { "PlaatGeometrie", new(sym: "-", desc: "plaatgeometrie?", norm: "EC2", art:"") },
 
 
-            { "Betonsterkteklasse", new(sym : "C", desc : "betonsterkteklasse", norm: "EC2", art: "3.1.2", vgl: "tabel 3.1") },
+            { "Betonsterkteklasse", new(sym : "", desc : "betonsterkteklasse", norm: "EC2", art: "3.1.2", vgl: "tabel 3.1") },
             { "CementKlasse", new(sym: "", desc : "cement klasse", norm: "EC2", art : "3.1.2 (6)", vgl : null)},
             { "PoissonFactor", new(sym: "|nu|",desc: "poissonfactor", norm: "EC2", art : "3.1.3 (4)", vgl : null) },
             { "SpanningRekDiagram", new(sym: "", desc: "spanning-rekdiagram")},
@@ -216,12 +217,12 @@ namespace ExportFactory.Services
 
 
             // Dekking en duurzaamheid
-            { "MilieuklassenUserFriendlyName", new(sym : "X",desc : "milieuklasse(n)",norm:"EC2",art:"4.4") },
+            { "MilieuklassenUserFriendlyName", new(sym : "",desc : "milieuklasse(n)",norm:"EC2",art:"4.4") },
 
             { "IsPlaatGeometrie", new(sym: "", desc:"plaatgeometrie?", norm:"EC2", art:"4.4.1.2 (5)", vgl : "tabel 4.3N") },
             { "IsKwaliteitsBeheersing", new(sym : "", "kwaliteitsbeheersing?", norm : "EC2", art : "4.4.1.2 (5)", vgl: "tabel 4.3N") },
-            { "GrootsteKorrelDiameter", new(sym : "", desc : "grootste korrel diameter", norm : "EC2", art : "4.4.1.2 (3)", vgl: "tabel 4.2") },
-            { "ConstructieklasseUserFriendlyName", new(sym : "S", desc : "constructieklasse", norm : "EC2", art : "4.4.1.2 (5)", vgl : "tabel 4.3N")  },
+            { "GrootsteKorrelDiameter", new(sym : "", desc : "grootste korreldiameter", norm : "EC2", art : "4.4.1.2 (3)", vgl: "tabel 4.2") },
+            { "ConstructieklasseUserFriendlyName", new(sym : "", desc : "constructieklasse", norm : "EC2", art : "4.4.1.2 (5)", vgl : "tabel 4.3N")  },
             { "Naam", new(sym : null, desc : "", norm : null, art : null) }, // todo iets voor bedenken (universeel)
             { "WapeningDiameterGelijkwaardig", new(sym : "Ø~eq~", "gelijkwaardige diameter", norm : "EC2", art : "8.9.1") },
 
@@ -260,8 +261,8 @@ namespace ExportFactory.Services
             { "AswToegepast", new(sym:"A~sw,toe~",  desc: "toegepaste doorsnedeoppervlak dwarskrachtwapening", norm: "EC2", art:"", vgl: "") },
 
             { "AsLangs", new(sym:"A~sl~",  desc: "doorsnedeoppervlak trekwapening", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _mm2) },
-            { "Rho1", new(sym:"|rho|~1~",  desc: "= A~sl~ / (b~w~ d) ≤ 0,02", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _formatVerhouding) },
-            { "RhoWMin", new(sym:"|rho|~w,min~",  desc: "= (0,08 / √f~ck~) / f~yk~", norm: "EC2", art:"9.2.2 (5)", vgl: "(9.5N)", format : _formatVerhouding) },
+            { "Rho1", new(sym:"|rho|~1~",  desc: "factor", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _formatVerhouding) },
+            { "RhoWMin", new(sym:"|rho|~w,min~",  desc: "factor", norm: "EC2", art:"9.2.2 (5)", vgl: "(9.5N)", format : _formatVerhouding) },
 
             { "Crdc", new(sym:"C~Rd,c~",  desc: "factor", norm: "EC2", art:"6.2.2 (1)", vgl: "(6.2)", format : _formatVerhouding) },
             { "SterkteReductieFactorBetonGescheurdDoorDwarskracht", new(sym: "|nu|", desc: "sterktereductiefactor beton gescheurd door dwarskracht", norm: "EC2", art: "6.2.2 (6)", vgl:"(6.6N)", format : _formatVerhouding ) },
@@ -289,10 +290,10 @@ namespace ExportFactory.Services
             { "FactorKt", new(sym: "k~t~",desc:  "factor belastingsduur",norm:"EC2",art: "7.3.4 (2)", format: _formatVerhouding) },
             { "StaalspanningOptredend", new(sym: "|sigma|~s~", desc: "spanning trekwapening",norm: "EC2",art: "7.3.4 (2)",format: _MPa)},
             { "RhoPeff", new(sym: "|rho|~p,eff~",desc: "= (A~s~ + |xi|~1~ A~p~')/A~c,eff~", norm: "EC2", art: "7.3.4 (2)" , vgl: "(7.10)", format : _formatVerhouding) },
-            { "ScheurwijdteVerhoudingElasticiteitsmodulusStaalBeton", new(sym : "|alpha|~e~", desc : "verhouding E~s~ / E~cm~", norm : "EC2", art : "7.3.4 (2)", format : _formatVerhouding) },
+            { "ScheurwijdteVerhoudingElasticiteitsmodulusStaalBeton", new(sym : "|alpha|~e~", desc : "verhouding E~s~ / E~cm~ ->", norm : "EC2", art : "7.3.4 (2)", format : _formatVerhouding) },
             { K.ScheurwijdteBerekend, new(sym: "w~k~", desc: "berekende scheurwijdte",norm: "EC2", art:"7.3.4 (1)",vgl: "(7.8)",format: _mmExact) },
             { K.ScheurwijdteMax, new(sym:"w~max~",desc: "grenswaarde scheurwijdte", norm: "EC2", art: "7.3.1 (5)", format: _mmExact) },
-            { K.ScheurwijdteKx, new(sym:"k~x~",desc: "factor voor w~max~", norm: "EC2", art: "7.3.1 (5)", vgl:"", format: _formatVerhouding) },
+            { K.ScheurwijdteKx, new(sym:"k~x~",desc: "factor voor bepalen grenswaarde scheurwijdte", norm: "EC2", art: "7.3.1 (5)", vgl:"", format: _formatVerhouding) },
             { K.ScheurwijdteK1, new(sym: "k~1~", desc: "factor aanhechtingseigenschappen", norm:"EC2", art: "7.3.4 (3)", vgl:"", format: _formatVerhouding) },
             { K.ScheurwijdteK2, new(sym : "k~2~", desc : "factor rekverdeling", norm : "EC2", art : "7.3.4 (3)",vgl:"", format: _formatVerhouding) },
             { K.ScheurwijdteK3, new(sym : "k~3~", desc : "factor zie nationale bijlage", norm : "EC2", art : "7.3.4 (3)", vgl : "(7.11)", format : _formatVerhouding) },
@@ -330,8 +331,8 @@ namespace ExportFactory.Services
 
             //{ K.OpleggingElementType, new(sym: "", desc: "elementtype")},
 
-            { "OplegLengteNominaal", new(sym: "a", desc: "nominale opleglengte a = a~1~ + a~2~ + a~3~ + √(|Delta|a~2~^2^ + |Delta|a~3~^2^) + |Delta|~e~", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
-            { "OplegLengteNetto", new(sym: "a~1~", desc: "netto-opleglengte mbt oplegspanning a1 = F~Ed~ / (b~1~ f~Rd~), maar mag niet kleiner zijn dan de minimumwaarde in tabel 10.2", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
+            { "OplegLengteNominaal", new(sym: "a", desc: "nominale opleglengte" , norm:"EC2", art: "10.9.5.2", vgl: "(10.6)" , format: _mm )  },
+            { "OplegLengteNetto", new(sym: "a~1~", desc: "netto-opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
             { "OplegLengteAanwezig", new(sym: "a~aanw~", desc: "aanwezige opleglengte", norm:"EC2", art: "10.9.5.2", vgl: "", format: _mm  )  },
             { "OplegReactieRekenwaarde", new(sym: "F~Ed~", desc: "rekenwaarde oplegreactie", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _kN  )  },
             { "OplegBreedteNetto", new(sym: "b~1~", desc: "netto-oplegbreedte", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
@@ -340,25 +341,15 @@ namespace ExportFactory.Services
             { "AfstandA2", new(sym: "a~2~", desc: "randafstand dragende element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandA3", new(sym: "a~3~", desc: "randafstand ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
             { "AfstandDeltaA2", new(sym: "|Delta|a~2~", desc: "tolerantie afstand tussen dragende elementen", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
-            { "AfstandDeltaA3", new(sym: "|Delta|a~3~", desc: "tolerantie lengte element Δ~a3~ = l~n~/2500", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
-            { "AfstandDeltaElementType", new(sym: "|Delta|~e~", desc: "indien afzonderlijk element, nominale lengte +20 mm.", norm:"EC2", art: "10.9.5.3", vgl: "", format: _mm  )  },
-
+            { "AfstandDeltaA3", new(sym: "|Delta|a~3~", desc: "tolerantie lengte element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
+            { "AfstandDeltaElementType", new(sym: "", desc: "indien afzonderlijk element, nominale lengte +20 mm", norm:"EC2", art: "10.9.5.3", vgl: "", format: _mm  )  },
             { "LengteOndersteundeElement", new(sym: "l~n~", desc: "lengte ondersteunde element", norm:"EC2", art: "10.9.5.2", vgl: "(10.6)", format: _mm  )  },
-
             { "RelatieveOplegspanning", new(sym: "|sigma|~Ed~ / f~cd~", desc: "relatieve oplegspanning", norm:"EC2", art: "10.9.5.2", vgl: "Tabel 10.2/3", format: _formatVerhouding  )  },
             { "OplegSpanningRekenwaarde", new(sym: "|sigma|~Ed~", desc: "oplegspanning", norm:"EC2", art: "10.9.5.2", vgl: "", format: _MPa  )  },
-
-
             { "RekenwaardeOplegmateriaal", new(sym: "f~bed~", desc: "rekenwaarde oplegmateriaal", norm:"EC2", art: "10.9.5.2 (2)", vgl: "", format: _MPa  )  },
-            { "LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement", new(sym: "f~cd~", desc: "laagste rekenwaarde van de sterktes van het ondersteunde en het ondersteunende element", norm:"EC2", art: "10.9.5.2 (2)", vgl: "", format: _MPa  )  },
+            { "LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement", new(sym: "f~cd~", desc: "laagste rekenwaarde sterkte elementen", norm:"EC2", art: "10.9.5.2 (2)", vgl: "", format: _MPa  )  },
             { "OpleggingElementType", new(sym: "", desc: "doorgaand of afzonderlijk", norm:"EC2", art: "10.9.5.2/3", vgl: "", format: _MPa  )  },
             { "OpgaveDruksterkteMetselwerk", new(sym: "f~bd~", desc: "rekenwaarde druksterkte metselwerk (volgens EN771)", norm: "", art:"", vgl:"", format: _MPa) },
-
-
-
-
-
-
 
         };
 

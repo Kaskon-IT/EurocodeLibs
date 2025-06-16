@@ -2,11 +2,13 @@
 using ExportFactory.Extensions;
 using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
+using K = CommonLibrary.EurocodeKeys;
 
 namespace Eurocode.BetonConstructies
 {
     public class GrenswaardeSlankheidContext : BaseEurocodeContext
     {
+        public override string Heading => "Slankheid";
         //7.4.2 Gevallen waarin berekeningen achterwege mogen blijven 
 
         //(1)P In het algemeen is het niet nodig doorbuigingen expliciet te berekenen, omdat eenvoudige regels kunnen
@@ -24,10 +26,10 @@ namespace Eurocode.BetonConstructies
 
         // oorzaken
 
-        [TableColumn("l [mm]")]
+        [TableColumn("l [mm]", Key = K.Slankheid_LengteOverspanning)]
         public double LengteOverspanning { get; set; } // Lengte van de overspanning van het element in mm
 
-        [TableColumn("d [mm]")]
+        [TableColumn("d [mm]", Key = K.Slankheid_EffectieveDikte)]
         public double EffectieveDikte
         {
             get
@@ -47,7 +49,7 @@ namespace Eurocode.BetonConstructies
 
 
         // gevolgen
-        [TableColumn("grenswaarde (l/d)")]
+        [TableColumn("grenswaarde (l/d)", Key = K.Slankheid_Grenswaarde)]
         public double GrenswaardeSlankheid
         {
             get
@@ -57,7 +59,7 @@ namespace Eurocode.BetonConstructies
             }
         } // Grenswaarde van de slankheid van het element
 
-        [TableColumn("l/d")]
+        [TableColumn("slankheid (l/d)", Key = K.Slankheid_Slankheid)]
         public double Slankheid
         {
             get
@@ -71,7 +73,7 @@ namespace Eurocode.BetonConstructies
         } // Slankheid van het element (l/d)
 
 
-
+        [TableColumn("factor K", Key = K.Slankheid_FactorK)]
         public double FactorK
         {
             get
@@ -88,7 +90,10 @@ namespace Eurocode.BetonConstructies
             }
         } // K is een factor om de verschillende constructieve systemen in rekening te brengen
 
-        [TableColumn("ρ~0~")]
+        /// <summary>
+        /// is de referentiewaarde van de wapeningsverhouding = 10-3 · √fck;
+        /// </summary>
+        [TableColumn("ρ~0~", Key = K.Slankheid_WapeningsVerhoudingReferentiewaarde, StringFormat = "0.####")]
         public double Rho0
         {
             get
@@ -97,7 +102,7 @@ namespace Eurocode.BetonConstructies
             }
         } // is de referentiewaarde van de wapeningsverhouding = 10-3 · √fck;
 
-        [TableColumn("ρ")]
+        [TableColumn("ρ", Key = K.Slankheid_WapeningsVerhoudingTrekVereist, StringFormat = "0.####")]
         public double Rho
         {
             get
@@ -116,7 +121,7 @@ namespace Eurocode.BetonConstructies
           // (bij uitkragingen ter plaatse van de oplegging)
           // waarmee het moment ten gevolge van de rekenwaarde van de belastingen kan zijn opgenomen
 
-        public double RhoDrukwapening { get; set; } // is de vereiste wapeningsverhouding van de trekwapening in het midden van de overspanning
+        public double RhoDrukwapening { get; set; }
 
         public string Artikel { get; set; } = ""; // Artikelnummer van de formule die is gebruikt om de grenswaarde van de slankheid te berekenen
         public string Formule { get; set; } = ""; // Formule die is gebruikt om de grenswaarde van de slankheid te berekenen
@@ -131,6 +136,7 @@ namespace Eurocode.BetonConstructies
             Plaatvloer,
             Uitkraging
         }
+
 
         public ConstructiefSysteemEnum? ConstructiefSysteem { get; set; } = ConstructiefSysteemEnum.VrijOpgelegd; // Constructief systeem van het element
 

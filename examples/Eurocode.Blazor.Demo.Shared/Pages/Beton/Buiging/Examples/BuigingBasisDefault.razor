@@ -9,7 +9,7 @@
 @if (SampleProject !=null)
 {
 
-    @* <FluentButton OnClick="StateHasChanged">StateHasChanged</FluentButton> *@
+   
 
     @* <BetonProfiel @bind-Model="SampleProject.BetonProfiel" OnStateChanged="StateHasChanged"></BetonProfiel> *@
 
@@ -45,6 +45,12 @@
     PlotlyChart chart;
     Config config = new Config();
     Layout layout = new Layout();
+
+
+    private void RunTest()
+    {
+        
+    }
 
     protected override void OnInitialized()
     {

@@ -1,6 +1,7 @@
 ﻿using Eurocode.Belastingen;
 using Eurocode.BetonConstructies;
 using Eurocode.Grondslagen;
+using ExportFactory.MigraDocContentModels;
 
 namespace ProjectLibrary
 {
@@ -13,6 +14,19 @@ namespace ProjectLibrary
         public string Number { get; set; } = "3-TXZ-46";
 
 
+        public CoverPageContent CoverPage { get; set; } = new CoverPageContent
+        {
+            Title = "Demo Project",
+            Subtitle = "Eurocode Test",
+            ProjectNumber = "3-TXZ-46",
+            CompanyName = "Your Company Name",
+            DocumentNumber = "Document Number",
+            Author = "Author Name",
+            CheckedBy = "Checked By",
+
+
+
+        };
 
 
         public GrondslagenContext Grondslagen { get; set; } = new();

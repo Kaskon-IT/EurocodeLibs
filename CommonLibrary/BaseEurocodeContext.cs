@@ -16,7 +16,7 @@ namespace CommonLibrary
     public abstract class BaseEurocodeContext : IEurocodeContext, IContext, IMarkupConvertible, INotifyPropertyChanged
     {
         public Guid Id { get; private set; } = Guid.NewGuid();
-
+        public virtual string Heading => "Onbekend";
 
 
         public virtual void Init() { } // Init methode om de context te initialiseren, kan overschreven worden in child-classes
@@ -25,7 +25,7 @@ namespace CommonLibrary
 
         public DateTime GewijzigdOp { get; set; } = DateTime.UtcNow;
 
-        public ObservableCollection<Melding> Meldingen { get; private set; } = [];
+        public ObservableCollection<Melding> Meldingen { get; private set; } = new ObservableCollection<Melding>();
         public event Action? OnUpdated; // 🔥 Event voor automatische UI-updates
         public event PropertyChangedEventHandler? PropertyChanged; // Welke moeten we nu gebruiken?.. 
 

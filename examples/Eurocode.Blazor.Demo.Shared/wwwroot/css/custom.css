@@ -174,8 +174,15 @@
 
 .ec-description{
     font-weight: 100;
+    font-size: small;
+    text-align: right !important;
+    width: 8cm;
     /*width: 6cm;*/
 }
+
+    .ec-description:after{
+        content: " =";
+    }
 
 .ec-article{
     color: gray;

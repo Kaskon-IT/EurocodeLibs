@@ -31,10 +31,6 @@ namespace ExportFactory.Services
         /// <returns>A Migradoc Document</returns>
         public static Document GenerateDocument(DocumentContent content, bool includeToc = false)
         {
-
-
-
-
             // Font resolver mag maar 1x gedaan worden!
             if (GlobalFontSettings.FontResolver is not CustomFontResolver)
             {

@@ -1,4 +1,5 @@
 ﻿using MigraDoc.DocumentObjectModel;
+using System.Text.Json.Serialization;
 
 namespace ExportFactory.MigraDocContentModels
 {
@@ -7,6 +8,7 @@ namespace ExportFactory.MigraDocContentModels
     /// </summary>
     public class MigraDocElement : SectionElement
     {
+        [JsonIgnore]
         public MigraDoc.DocumentObjectModel.DocumentObject? DocumentObject { get; set; }
 
         public MigraDocElement()

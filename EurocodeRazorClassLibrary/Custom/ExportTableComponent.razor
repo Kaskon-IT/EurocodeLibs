@@ -105,7 +105,7 @@
 
         // Convert Data to DataTable
         var dataTable = list.ToDataTable();
-        var table = dataTable.ToMigraDocTable(typeof(T));
+        var table = dataTable.ToTable(typeof(T));
         var document = new MigraDoc.DocumentObjectModel.Document();
         document.AddSection().Add(table);
 

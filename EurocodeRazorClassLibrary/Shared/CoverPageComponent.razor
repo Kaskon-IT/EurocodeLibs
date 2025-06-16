@@ -1,0 +1,27 @@
+﻿@using ExportFactory.Shared
+@using ExportFactory.MigraDocContentModels
+
+
+
+<h6>Documentgegevens:</h6>
+<FluentTextArea Label="Titel" @bind-Value="Model.Title" Rows="2"/>
+<FluentTextArea Label="Subtitel" @bind-Value="Model.Subtitle" Rows="3"/>
+<FluentTextField Label="Auteur" @bind-Value="Model.Author" />
+<FluentTextField Label="Documentnummer" @bind-Value="Model.DocumentNumber" />
+
+<h6>Projectgegevens: </h6>
+<LabeledValuesComponent @bind-Items="Model.ProjectLabeledValues" />
+
+<h6>Uitgave & Revisies:</h6>
+@foreach (var revision in Model.RevisionContent.Revisions)
+{
+    <p>@revision.ToString()</p>
+}
+
+@code {
+    [Parameter, EditorRequired] public CoverPageContent Model { get; set; } = new CoverPageContent();
+    [Parameter] public EventCallback<CoverPageContent> ModelChanged { get; set; }
+
+
+
+}

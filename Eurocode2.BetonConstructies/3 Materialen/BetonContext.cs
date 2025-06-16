@@ -34,7 +34,7 @@ namespace Eurocode.BetonConstructies
             BetonStaal = new BetonStaalContext(vorige.BetonStaal);
         }
 
-
+        public override string Heading => "Beton";
 
         // 3.2 betonstaal als onderdeel
         /// <summary>

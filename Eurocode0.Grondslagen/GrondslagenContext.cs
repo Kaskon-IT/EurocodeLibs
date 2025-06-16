@@ -5,6 +5,8 @@
 ///using CsvFactory;
 using CommonLibrary;
 using CommonLibrary.Interfaces;
+using ExportFactory.Extensions;
+using ExportFactory.MigraDocContentModels;
 using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using MigraDoc.DocumentObjectModel;
@@ -88,11 +90,12 @@ namespace Eurocode.Grondslagen
         }
 
 
+        public override string Heading => "Grondslagen";
 
         //[TableColumn("Eurocode")]
         public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
 
-        [TableColumn("NB")]
+        //[TableColumn("NB")]
         public string FlagSvg
         {
             get
@@ -114,7 +117,7 @@ namespace Eurocode.Grondslagen
             }
         }
 
-        [TableColumn("Land")]
+        //[TableColumn("Land")]
         public string FlagEmoji
         {
             get
@@ -132,7 +135,7 @@ namespace Eurocode.Grondslagen
 
 
 
-        [TableColumn("Ontwerp Levensduur", order: 0)]
+        [TableColumn("ontwerplevensduur", order: 0)]
         public OntwerpLevensduurEnum? OntwerpLevensduur { get; set; } = OntwerpLevensduurEnum.Vijftig;
 
 
@@ -143,7 +146,7 @@ namespace Eurocode.Grondslagen
         /// constructie
         /// </summary>
         /// 
-        [TableColumn("Gevolgklasse (Consequence Class)", order: 1, width: 4)]
+        [TableColumn("gevolgklasse", order: 1, width: 4)]
         public GevolgklasseEnum? Gevolgklasse
         {
             get => _gevolgklasse;
@@ -160,7 +163,7 @@ namespace Eurocode.Grondslagen
 
 
 
-        [TableColumn("Betrouwbaarheidsklasse (Reliability Class)", order: 2, width: 5)]
+        [TableColumn("betrouwbaarheidsklasse", order: 2, width: 5)]
         public BetrouwbaarheidsklasseEnum Betrouwbaarheidsklasse
         {
             get { return this.Gevolgklasse.GetBetrouwbaarheidsklasse(); }
@@ -244,6 +247,7 @@ namespace Eurocode.Grondslagen
 
         public override MarkupString ToHtml(bool isDraaiTabel = true)
         {
+            return this.ToHtmlTable(isDraaiTabel: isDraaiTabel);
             throw new NotImplementedException();
         }
 

@@ -13,6 +13,7 @@ namespace Eurocode.BetonConstructies
 
     public class OpleggingContext : BaseEurocodeContext
     {
+        public override string Heading => "Oplegging";
         // 10 aanvullende regels prefab elementen
         // 10.9 bijzondere regels
         // 10.9.5 opleggingen

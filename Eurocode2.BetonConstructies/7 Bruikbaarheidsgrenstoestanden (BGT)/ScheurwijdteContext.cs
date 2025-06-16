@@ -11,6 +11,8 @@ namespace Eurocode.BetonConstructies
 
     public class ScheurwijdteContext : BaseEurocodeContext
     {
+        public override string Heading => "Scheurwijdte";
+
         public ScheurwijdteContext()
         {
             // default constructor, let op geen referentie naar dekking, beton en NB
@@ -95,15 +97,20 @@ namespace Eurocode.BetonConstructies
         // input
         [TableColumn("M~E,freq~ [kNm]",
             headerTextPivot: "Moment (BGT) M~E,freq~",
+            Key = K.MomentFrequent,
             StringFormat = "0.#",
             Width = 2,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double MomentFrequent { get { return Snedekrachten.My.Kar; } }
 
-        [TableColumn("M~Ed~", Weergave = WeergaveEnum.Geen)]
+        [TableColumn("M~Ed~",
+            Key = K.MomentRekenwaarde,
+            Weergave = WeergaveEnum.Geen)]
         public double MomentRekenwaarde { get { return Snedekrachten.My.Ed; } }
 
-        [TableColumn("M~cr~", Weergave = WeergaveEnum.DraaiTabel, HeaderTextPivot = "Scheurmoment M~cr~", StringFormat = "0.0 kNm")]
+        [TableColumn("M~cr~",
+            Key = K.MomentScheurmoment,
+            Weergave = WeergaveEnum.DraaiTabel, HeaderTextPivot = "Scheurmoment M~cr~", StringFormat = "0.0 kNm")]
         public double Mcr { get; set; }
 
         public NationaleBijlageEnum NationaleBijlage { get; set; } = NationaleBijlageEnum.EU;
@@ -120,7 +127,9 @@ namespace Eurocode.BetonConstructies
         public double Hoogte { get; set; } = 100;
         public double NuttigeHoogte { get; set; } = 80;
 
-        [TableColumn("A~s,toe~ [mm²]", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("A~s,toe~ [mm²]",
+        //    Key = K.AsToe,
+            Weergave = WeergaveEnum.DraaiTabel)]
         public string WapeningToegepastTekst { get; set; } = "8-150"; // todo Profiel +  wapening
         public double WapDiameterEquivalent { get; set; } = 8.0;
 
@@ -146,7 +155,7 @@ namespace Eurocode.BetonConstructies
 
         public double FactorKc { get; set; } = 0.4; // naar 7.3.2
 
-        [TableColumn("k~1~", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("k~1~", Weergave = WeergaveEnum.DraaiTabel, Key = K.ScheurwijdteK1)]
         public double MaximaleScheurAfstandFactorK1 { get; set; } = 0.8; // naar 7.3.2
 
         //[TableColumn("Type", Weergave = WeergaveEnum.DraaiTabel)]
@@ -156,7 +165,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// is een factor die rekening houdt met de rekverdeling (in 7.11)
         /// </summary>
-        [TableColumn("k~2~", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("k~2~", Weergave = WeergaveEnum.DraaiTabel, Key = K.ScheurwijdteK2)]
 
         public double MaximaleScheurAfstandFactorK2
         {
@@ -171,10 +180,10 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("k~3~", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("k~3~", Weergave = WeergaveEnum.DraaiTabel, Key = K.ScheurwijdteK3)]
         public double MaximaleScheurAfstandFactorK3 { get; set; } = 3.4;
 
-        [TableColumn("k~4~", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("k~4~", Weergave = WeergaveEnum.DraaiTabel, Key = K.ScheurwijdteK4)]
         public double MaximaleScheurAfstandFactorK4 { get; set; } = 0.425;
 
 
@@ -221,6 +230,7 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn("k~x~",
             headerTextPivot: "k~x~",
+            Key = K.ScheurwijdteKx,
             StringFormat = "0.##",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double ScheurwijdteGrenswaardeFactorKx
@@ -242,6 +252,7 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn("w~max~ [mm]",
             headerTextPivot: "grenswaarde scheurwijdte",
+            Key = K.ScheurwijdteMax,
             StringFormat = "0.0",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double ScheurwijdteMax
@@ -283,7 +294,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("A~s,min~", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "0 mm²")]
+        [TableColumn("A~s,min~", Weergave = WeergaveEnum.DraaiTabel, Key = K.ScheurwijdteAsMin, StringFormat = "0 mm²")]
         public double ScheurwijdteAsMin { get; set; }
 
 

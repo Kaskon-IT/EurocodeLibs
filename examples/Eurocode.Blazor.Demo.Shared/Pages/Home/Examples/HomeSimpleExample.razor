@@ -173,7 +173,7 @@
         // demo (met correcte data)
         var section = document.LastSection;
         var dtProductDemos = ProductDemos.ToDataTable();
-        var table = dtProductDemos.ToMigraDocTable(typeof(ProductDemo));
+        var table = dtProductDemos.ToTable(typeof(ProductDemo));
 
 
 
@@ -186,7 +186,7 @@
 
         // demo (incorrecte data)
         var dtPersons = Persons.ToDataTable();
-        table = dtPersons.ToMigraDocTable(typeof(DemoData));
+        table = dtPersons.ToTable(typeof(DemoData));
         if (table != null)
         {
             section = document.AddSection();

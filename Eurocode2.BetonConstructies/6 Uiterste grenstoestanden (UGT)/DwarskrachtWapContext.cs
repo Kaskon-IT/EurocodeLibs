@@ -24,6 +24,7 @@ namespace Eurocode.BetonConstructies
         //private Dictionary<int, Melding> _betonMeldingen = new MeldingenBeton().Meldingen;
 
         //public List<Melding> Meldingen { get; set; } = [];
+        public override string Heading => "Dwarskracht";
 
         public override string ToString()
         {
@@ -53,7 +54,7 @@ namespace Eurocode.BetonConstructies
         public BerekeningTypeEnum BerekeningType { get; set; } = BerekeningTypeEnum.BepaalBenodigeWapening;
 
 
-        [TableColumn("Opm.", "Opmerkingen")]
+        //[TableColumn("Opm.", "Opmerkingen")]
         public string MeldingenUserFriendlyName { get { return string.Join(",", Meldingen); } }
 
         //[TableColumn("Art.", "Artikelen")]
@@ -75,13 +76,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Rekenwaarde van de dwarskracht in kN
         /// </summary>
-        [TableColumn("V~Ed~", StringFormat = "0.##\tkN")]
+        [TableColumn("V~Ed~ [kN]", StringFormat = "0.##")]
         public double Ved { get { return Snedekrachten.Vz.Ed; } }
 
         /// <summary>
         /// is de hoek in graden tussen de drukdiagonaal van beton en de as van de ligger loodrecht op de dwarskracht;
         /// </summary>
-        [TableColumn("|theta|", StringFormat = "0.##\t°")]
+        [TableColumn("|theta| [°]", StringFormat = "0.##")]
 
         public double Theta { get; set; } = 21.8;
 
@@ -117,9 +118,10 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// is de hoek tussen de dwarskrachtwapening en de as van de ligger loodrecht op de dwarskracht (positief gemeten zoals getoond in figuur 6.5) in graden;
         /// </summary>
-        [TableColumn("|alpha|", StringFormat = "0.##\t°")]
+        [TableColumn("|alpha| [°]", StringFormat = "0.##")]
         public double Alpha { get; set; } = 90;  // hoek van de dwarskrachtwapning standaard 90 graden
-        [TableColumn("tan |alpha|", StringFormat = "0.##")]
+
+        //[TableColumn("tan |alpha|", StringFormat = "0.##")]
         private double TanAlpha { get { return Math.Tan(Alpha * Math.PI / 180); } }
         public double CotAlpha { get { return 1 / TanAlpha; } }
 
@@ -127,7 +129,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Breedte van de doorsnede voor de dwarskracht in mm
         /// </summary>
-        [TableColumn("b")]
+        [TableColumn("b [mm]")]
 
         public double Breedte
         {
@@ -137,13 +139,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// is de minimale breedte tussen de trek- en drukrand in mm²
         /// </summary>
-        [TableColumn("A~sl~")]
+        [TableColumn("A~sl~[mm²]")]
         public double AsLangs { get; set; }
 
         /// <summary>
         /// Nuttige hooge (d) van de dwarskrachtdoorsnede in mm
         /// </summary>
-        [TableColumn("d")]
+        [TableColumn("d[mm]")]
         public double NutHoogte { get; set; } = 90;
 
 

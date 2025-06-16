@@ -18,7 +18,7 @@
         public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false, bool hideHeader = false)
         {
             MigraDoc.DocumentObjectModel.Document document = new();
-            var table = dataTable.ToMigraDocTable(objectType, isPivotTable, hideHeader);
+            var table = dataTable.ToTable(objectType, isPivotTable, hideHeader);
 
             if (table != null)
             {
@@ -28,7 +28,7 @@
             return document;
         }
 
-        public static Table? ToMigraDocTable(this DataTable dataTable, Type objectType, bool isPivotTable = true, bool hideHeader = false)
+        public static Table? ToTable(this DataTable dataTable, Type objectType, bool isPivotTable = true, bool hideHeader = false, bool vereenvoudigdeWeergave = true)
         {
             Table migraDocTable = new();
 
@@ -91,15 +91,56 @@
 
                 // Add description colum + data columns
                 int colIndex = 0;
-                Column descriptionColumn = migraDocTable.AddColumn();
 
-                for (int k = 0; k < dataTable.Rows.Count + 2; k++)   // col[0,1,2] zijn voor de header. 
-                                                                     // col[0]=Symbol
-                                                                     // col[1]=Description
-                                                                     // col[2]=Article
+                // col[0]
+                Column descriptionColumn = migraDocTable.AddColumn(); descriptionColumn.Width = "8cm";
+                Column symbolColumn = migraDocTable.AddColumn(); symbolColumn.Width = "2cm";
+
+                if (!vereenvoudigdeWeergave)
                 {
-                    migraDocTable.AddColumn();
+                    Column articleColumn = migraDocTable.AddColumn(); articleColumn.Width = "2cm";
                 }
+
+
+                Column valueColumn = migraDocTable.AddColumn(); valueColumn.Width = "6cm";
+
+
+
+                //for (int k = 0; k < dataTable.Rows.Count + 2; k++)   // col[0,1,2] zijn voor de header. 
+                //                                                     // col[0]=Symbol
+                //                                                     // col[1]=Description
+                //                                                     // col[2]=Article
+
+                //// of mogelijk [description][article][symbol][value]
+
+                //{
+
+
+                //    migraDocTable.AddColumn();
+                //}
+
+                int indexDescription = 0;
+                int indexArticle = 1;
+                int indexSymbol = 2;
+                int indexValue = 1; // data starts at 
+
+
+                if (vereenvoudigdeWeergave)
+                {
+                    indexDescription = 0;
+                    indexArticle = -1;
+                    indexSymbol = 1;
+                    indexValue = 2;
+                }
+                else
+                {
+                    indexDescription = 0;
+                    indexArticle = 1;
+                    indexSymbol = 2;
+                    indexValue = 3;
+                }
+
+
 
                 // Add rows
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
@@ -129,30 +170,57 @@
                     // mapping
                     if (mapping != null)
                     {
+                        if (vereenvoudigdeWeergave)
+                        {
+                            var parEenvoudigeTekst = row.Cells[indexDescription].AddParagraph();
+                            parEenvoudigeTekst.Tag = "description";
+                            parEenvoudigeTekst.Format.Alignment = ParagraphAlignment.Left;
+                            if (mapping.Description != null)
+                            {
+                                MigraDocCreator.AddMarkdownToParagraph(parEenvoudigeTekst, mapping.Description);
+                            }
 
+                            var parEenvoudgieSymbol = row.Cells[indexSymbol].AddParagraph();
+                            parEenvoudgieSymbol.Tag = "symbol";
+                            parEenvoudgieSymbol.Format.Alignment = ParagraphAlignment.Right;
+                            if (mapping.Symbol != null)
+                            {
 
-                        if (mapping.Symbol != null)
-                        {
-                            var parSymbol = row.Cells[0].AddParagraph();
-                            parSymbol.Tag = "symbol";
-                            MigraDocCreator.AddMarkdownToParagraph(parSymbol, mapping.Symbol);
-                        }
-                        if (mapping.Description != null)
-                        {
-                            var parDesc = row.Cells[1].AddParagraph();
-                            parDesc.Tag = "description";
-                            MigraDocCreator.AddMarkdownToParagraph(parDesc, mapping.Description);
-                        }
-                        if (mapping.Article != null)
-                        {
-                            var parArticle = row.Cells[2].AddParagraph();
-                            parArticle.Tag = "article";
-                            MigraDocCreator.AddMarkdownToParagraph(parArticle, mapping.Article);
-                        }
-                        if (mapping.Format != null)
-                        {
+                                //parEenvoudigeTekst.AddText(" ");
+                                MigraDocCreator.AddMarkdownToParagraph(parEenvoudgieSymbol, mapping.Symbol);
+                                parEenvoudgieSymbol.AddText(" =");
+                            }
 
                         }
+                        else
+                        {
+                            if (mapping.Symbol != null)
+                            {
+                                var parSymbol = row.Cells[indexSymbol].AddParagraph();
+                                parSymbol.Tag = "symbol";
+                                MigraDocCreator.AddMarkdownToParagraph(parSymbol, mapping.Symbol);
+                            }
+                            if (mapping.Description != null)
+                            {
+                                var parDesc = row.Cells[indexDescription].AddParagraph();
+                                parDesc.Tag = "description";
+                                MigraDocCreator.AddMarkdownToParagraph(parDesc, mapping.Description);
+                            }
+                            if (mapping.Article != null)
+                            {
+                                var parArticle = row.Cells[indexArticle].AddParagraph();
+                                parArticle.Tag = "article";
+                                MigraDocCreator.AddMarkdownToParagraph(parArticle, mapping.Article);
+                            }
+                            if (mapping.Format != null)
+                            {
+
+                            }
+                        }
+
+
+
+
 
 
                         //headerText = $"DICTIONARY{mapping.Symbol}";
@@ -168,7 +236,7 @@
                 }
 
                 // Fill data column(s)
-                colIndex = 3; // start with index 3 when pivottable
+                colIndex = indexValue; // set the column index for data values
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
                     int rowIndex = 0;
@@ -177,7 +245,7 @@
                     {
                         //var columnName = dataTable.Columns[i].ColumnName;
                         var value = dataRow[columnName];
-
+                        AttributesMapping? mapping = null;
 
 
 
@@ -188,20 +256,51 @@
 
                         var rowProperties = propertiesWithAttributes[i];
                         string? format = rowProperties.Attribute.StringFormat;
-                        if (_mappingDict.ContainsKey(columnName))
+
+                        bool formatGevonden = false;
+                        try
                         {
-                            var mapping = _mappingDict[columnName];
+                            var prop = propertiesWithAttributes.FirstOrDefault(p => p.Property?.Name == columnName);
 
-
-                            if (mapping.Format != null)
+                            if (prop != null)
                             {
-                                format = mapping.Format;
+                                _mappingDict.TryGetValue(prop.Attribute?.Key, out mapping);
 
+                                if (mapping != null && mapping.Format != null)
+                                {
+                                    formatGevonden = true;
+                                    format = mapping.Format;
+                                }
                             }
 
 
-                            //headerText = $"DICTIONARY{mapping.Symbol}";
+
                         }
+                        catch (Exception ex)
+                        {
+
+                        }
+
+
+                        if (!formatGevonden)
+                        {
+                            if (_mappingDict.ContainsKey(columnName))
+                            {
+                                var mapping3 = _mappingDict[columnName];
+
+
+                                if (mapping3.Format != null)
+                                {
+                                    format = mapping3.Format;
+
+                                }
+
+
+                                //headerText = $"DICTIONARY{mapping.Symbol}";
+                            }
+                        }
+
+
 
 
 

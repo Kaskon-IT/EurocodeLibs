@@ -16,6 +16,7 @@ namespace Eurocode.BetonConstructies
 
         public class ScheurwijdteGrenswaarde : BaseEurocodeContext
         {
+            public override string Heading => "Scheurwijdte grenswaarde";
             // 7.3      Scheurbeheersing
             // 7.3.1    Algemene beschouwingen
             // 7.3.1(5) Grenswaarde w,max 

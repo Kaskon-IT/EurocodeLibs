@@ -3,6 +3,7 @@ using ExportFactory.Extensions;
 using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
+using K = CommonLibrary.EurocodeKeys;
 
 namespace Eurocode.BetonConstructies
 {
@@ -12,6 +13,7 @@ namespace Eurocode.BetonConstructies
     public class BendingResults : BaseEurocodeContext
     {
 
+        public override string Heading => "Momentwapening";
 
         private double _asApplied;
         private BerekeningTypeEnum? _berekeningType = BerekeningTypeEnum.ControleerWapening;
@@ -143,11 +145,13 @@ namespace Eurocode.BetonConstructies
         } // als er geen snedekrachten opgegeven dan Moment opgave.
 
 
-        [TableColumn("positie", order: 0)]
+        [TableColumn("positie", order: 0, Weergave = WeergaveEnum.StandaardTabel)]
         public string Name { get; set; } = "Schil";
 
 
-        [TableColumn("M~Ed~ [kNm]", StringFormat = "0.0", Order = 1, Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("M~Ed~ [kNm]", StringFormat = "0.0", Order = 1,
+            Key = K.MomentRekenwaarde,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Moment
         {
             get => Snedekrachten != null ? Snedekrachten.My.Ed : _moment;
@@ -167,14 +171,18 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("b [mm]", order: 2, StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("b [mm]", order: 2,
+            Key = K.ProfielBreedte,
+            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Breedte
         {
             get => Profiel != null ? Profiel.Breedte : _breedte;
             set => _breedte = value;
         }
 
-        [TableColumn("h [mm]", order: 3, StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("h [mm]", order: 3,
+            Key = K.ProfielHoogte,
+            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Hoogte
         {
             get => Profiel != null ? Profiel.Hoogte : _hoogte;
@@ -193,11 +201,15 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
-        [TableColumn("d [mm]", order: 4, StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("d [mm]", order: 4,
+            Key = K.NuttigeHoogte,
+            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double D { get { return Hoogte - ZRef; } }
 
 
-        [TableColumn("x~u~ [mm]", order: 5, StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("x~u~ [mm]", order: 5,
+            Key = K.Xu,
+            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Xu
         {
             get
@@ -229,7 +241,9 @@ namespace Eurocode.BetonConstructies
             get { return Xu / D; }
         }
 
-        [TableColumn("z [mm]", order: 21, StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("z [mm]", order: 21,
+            // Key = K.InwendigeHefboom,
+            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double Z
         {
             get
@@ -287,7 +301,9 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("A~s,ben~ [mm²]", Order = 40, StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("A~s,ben~ [mm²]", Order = 40,
+            Key = K.AsBen,
+            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double AsRequired
         {
             get
@@ -312,7 +328,9 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("A~s,toe~ [mm²]", Order = 41, StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("A~s,toe~ [mm²]", Order = 41,
+            Key = K.AsToe,
+            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
         public double AsApplied
         {
             get => _asApplied;
