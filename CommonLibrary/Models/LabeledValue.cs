@@ -1,21 +1,105 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace CommonLibrary.Models
 {
-    public class LabeledValue
+    public class LabeledValue : INotifyPropertyChanged
     {
-        public string Label { get; set; }
-        public object? Value { get; set; }
-        public string? Format { get; set; }
-        public string NullDisplayText { get; set; } = "-";
-        public IFormatProvider FormatProvider { get; set; } = CultureInfo.InvariantCulture;
+        private string _label = string.Empty;
+        private object? _value = null;
+        private string? _format = null;
+        private string _nullDisplayText = "NULL";
+        private string _cultureName = CultureInfo.InvariantCulture.Name;
 
-        public LabeledValue(string label, object? value, string? format = null)
+        public string Label
+        {
+            get => _label;
+            set
+            {
+                if (_label != value)
+                {
+                    _label = value;
+                    OnPropertyChanged(nameof(Label));
+                }
+            }
+        }
+
+        public object? Value
+        {
+            get => _value;
+            set
+            {
+                if (!IsAllowedType(value))
+                    throw new InvalidOperationException($"Type '{value?.GetType().Name}' is not allowed in LabeledValue.");
+
+                if (_value != value)
+                {
+                    _value = value;
+                    OnPropertyChanged(nameof(Value));
+                    OnPropertyChanged(nameof(ValueAsString));
+                }
+            }
+        }
+
+        public string? Format
+        {
+            get => _format;
+            set
+            {
+                if (_format != value)
+                {
+                    _format = value;
+                    OnPropertyChanged(nameof(Format));
+                    OnPropertyChanged(nameof(ValueAsString));
+                }
+            }
+        }
+
+        public string NullDisplayText
+        {
+            get => _nullDisplayText;
+            set
+            {
+                if (_nullDisplayText != value)
+                {
+                    _nullDisplayText = value;
+                    OnPropertyChanged(nameof(NullDisplayText));
+                    OnPropertyChanged(nameof(ValueAsString));
+                }
+            }
+        }
+
+        public string CultureName
+        {
+            get => _cultureName;
+            set
+            {
+                if (_cultureName != value)
+                {
+                    _cultureName = value;
+                    OnPropertyChanged(nameof(CultureName));
+                    OnPropertyChanged(nameof(Culture));
+                    OnPropertyChanged(nameof(ValueAsString));
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public CultureInfo Culture => CultureInfo.GetCultureInfo(CultureName);
+
+
+        public LabeledValue(string label, object? value, string? format = null, string nullDisplayText = "NULL")
         {
             Label = label;
             Value = value;
             Format = format;
+            NullDisplayText = nullDisplayText;
         }
+
+
+
+
 
         /// <summary>
         /// Geeft de waarde als geformatteerde string, rekening houdend met Format en null.
@@ -28,11 +112,37 @@ namespace CommonLibrary.Models
                     return NullDisplayText;
 
                 if (Value is IFormattable formattable && !string.IsNullOrWhiteSpace(Format))
-                    return formattable.ToString(Format, FormatProvider);
+                    return formattable.ToString(Format, Culture);
 
                 return Value.ToString() ?? NullDisplayText;
             }
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private static bool IsAllowedType(object? value)
+        {
+            if (value == null)
+                return true;
+
+            var type = value.GetType();
+
+            return type == typeof(string) ||
+                   type == typeof(int) ||
+                   type == typeof(double) ||
+                   type == typeof(decimal) ||
+                   type == typeof(bool) ||
+                   type == typeof(DateTime) ||
+                   type == typeof(float) ||
+                   type == typeof(long) ||
+                   type == typeof(short) ||
+                   type.IsEnum;
+        }
+
 
         public override string ToString()
         {

@@ -3,12 +3,12 @@
 namespace ExportFactory.MigraDocContentModels
 {
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
-    [JsonDerivedType(typeof(HeadingContent), "headingContent")]
-    [JsonDerivedType(typeof(TableContent), "tableContent")]
-    [JsonDerivedType(typeof(SectionContent), "sectionContent")]
-    [JsonDerivedType(typeof(ParagraphContent), "paragraphContent")]
-    [JsonDerivedType(typeof(MigraDocElement), "migraDocElement")]
-    [JsonDerivedType(typeof(MigraDocTable), "migraDocTable")]
+    [JsonDerivedType(typeof(HeadingContent), "HeadingContent")]
+    [JsonDerivedType(typeof(TableContent), "TableContent")]
+    //[JsonDerivedType(typeof(SectionContent), "SectionContent")]
+    [JsonDerivedType(typeof(ParagraphContent), "ParagraphContent")]
+    [JsonDerivedType(typeof(MigraDocElement), "MigraDocElement")]
+    [JsonDerivedType(typeof(MigraDocTable), "MigraDocTable")]
 
     public abstract class SectionElement
     {

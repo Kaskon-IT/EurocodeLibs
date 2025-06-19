@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Models;
 using ExportFactory.MigraDocContentModels;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
@@ -301,6 +302,8 @@ namespace ExportFactory.Services
                 // Check if the element is a TableModel<T> where T is derived from BaseClass
                 if (IsTableModelDerivedFromBaseClass(element))
                 {
+                    // todo mogelijk herstellen (of hebben we dit niet meer nodig????)
+
                     var tableModel = (TableModel<DemoDataClass>)element; // Cast to TableModel<BaseClass>
                     HandleTableModel(section, tableModel); // Handle the TableModel<BaseClass> case
                 }
@@ -599,7 +602,7 @@ namespace ExportFactory.Services
             }
 
             // table
-            var table = AddTableToContainer(target);
+            var table = AddTableToContainer(target); // hier clone helpt niet..
             //var parent = target.Document.Styles;
             var defaultFont = target.Document.Styles["Normal"].Font;
 
@@ -619,7 +622,7 @@ namespace ExportFactory.Services
             foreach (var header in tableContent.Headers)
             {
                 //if (tableContent.)
-                Unit width = "6cm";
+                Unit width = "2cm";
 
 
                 //width = header.Width; // default
@@ -1266,6 +1269,48 @@ namespace ExportFactory.Services
 
         }
 
+
+
+        private static void AddLabeledValues(Section section, List<LabeledValue> labeledValues)
+        {
+            if (labeledValues == null || labeledValues.Count == 0) return;
+            var table = section.AddTable();
+            table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
+            table.Borders.Visible = false;
+            table.AddColumn(Unit.FromCentimeter(4)); // left column
+            table.AddColumn(Unit.FromCentimeter(10)); // right column
+            foreach (var item in labeledValues)
+            {
+                var row = table.AddRow();
+                row.Cells[0].AddParagraph(item.Label);
+                row.Cells[1].AddParagraph(item.ValueAsString);
+            }
+        }
+
+        private static void AddRevisionTable(Section section, RevisionContent content)
+        {
+            var table = section.AddTable();
+            table.Borders.Visible = false;
+            table.AddColumn(Unit.FromCentimeter(4));
+            table.AddColumn(Unit.FromCentimeter(4));
+            table.AddColumn(Unit.FromCentimeter(6));
+
+            var headerRow = table.AddRow();
+            headerRow.Cells[0].AddParagraph("versie");
+            headerRow.Cells[1].AddParagraph("datum");
+            headerRow.Cells[2].AddParagraph("beschrijving");
+
+
+
+            foreach (var revision in content.Revisions)
+            {
+                var row = table.AddRow();
+                row.Cells[0].AddParagraph(revision.Name);
+                row.Cells[1].AddParagraph($"{revision.Date.ToShortDateString()}");
+                row.Cells[2].AddParagraph(revision.Description);
+            }
+        }
+
         /// <summary>
         /// Adds a cover page to a document
         /// </summary>
@@ -1293,52 +1338,59 @@ namespace ExportFactory.Services
             section.AddParagraph(coverPage.Subtitle ?? "", "Subtitle");
 
 
+            // Project-labels
+            AddLabeledValues(section, coverPage.ProjectLabeledValues);
 
-
-            var projectTable = section.AddTable();
-            projectTable.Tag = "hideheader";
-            projectTable.Borders.Visible = false;
-            projectTable.AddColumn(Unit.FromCentimeter(4)); // left column
-            projectTable.AddColumn(Unit.FromCentimeter(10)); // right column
-            foreach (var item in coverPage.ProjectLabeledValues)
-            {
-                var projectRow = projectTable.AddRow();
-                projectRow.Cells[0].AddParagraph(item.Label);
-                projectRow.Cells[1].AddParagraph(item.ValueAsString);
-            }
-
-
-            projectTable.AddRow(); // lege rij
-            foreach (var item in coverPage.DocumentLabeledValues)
-            {
-                var projectRow = projectTable.AddRow();
-                projectRow.Cells[0].AddParagraph(item.Label);
-                projectRow.Cells[1].AddParagraph(item.ValueAsString);
-            }
+            // Document-labels
+            AddLabeledValues(section, coverPage.DocumentLabeledValues);
 
 
 
 
+            //var projectTable = section.AddTable();
+            //projectTable.Tag = "hideheader";
+            //projectTable.Borders.Visible = false;
+            //projectTable.AddColumn(Unit.FromCentimeter(4)); // left column
+            //projectTable.AddColumn(Unit.FromCentimeter(10)); // right column
+            //foreach (var item in coverPage.ProjectLabeledValues)
+            //{
+            //    var projectRow = projectTable.AddRow();
+            //    projectRow.Cells[0].AddParagraph(item.Label);
+            //    projectRow.Cells[1].AddParagraph(item.ValueAsString);
+            //}
+
+
+            //projectTable.AddRow(); // lege rij
+            //foreach (var item in coverPage.DocumentLabeledValues)
+            //{
+            //    var projectRow = projectTable.AddRow();
+            //    projectRow.Cells[0].AddParagraph(item.Label);
+            //    projectRow.Cells[1].AddParagraph(item.ValueAsString);
+            //}
 
 
 
-            var docInfo = section.AddTable();
-            docInfo.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
-            docInfo.Borders.Visible = false;
-            docInfo.AddColumn(Unit.FromCentimeter(4)); // left column
-            docInfo.AddColumn(Unit.FromCentimeter(10)); // right column
 
-            var row = docInfo.AddRow();
-            row.Cells[0].AddParagraph("document nummer :");
-            row.Cells[1].AddParagraph(coverPage.DocumentNumber);
 
-            row = docInfo.AddRow();
-            row.Cells[0].AddParagraph("opgesteld door :");
-            row.Cells[1].AddParagraph(coverPage.Author);
 
-            row = docInfo.AddRow();
-            row.Cells[0].AddParagraph("gecontroleerd door :");
-            row.Cells[1].AddParagraph(coverPage.CheckedBy);
+
+            //var docInfo = section.AddTable();
+            //docInfo.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
+            //docInfo.Borders.Visible = false;
+            //docInfo.AddColumn(Unit.FromCentimeter(4)); // left column
+            //docInfo.AddColumn(Unit.FromCentimeter(10)); // right column
+
+            //var row = docInfo.AddRow();
+            //row.Cells[0].AddParagraph("document nummer :");
+            //row.Cells[1].AddParagraph(coverPage.DocumentNumber);
+
+            //row = docInfo.AddRow();
+            //row.Cells[0].AddParagraph("opgesteld door :");
+            //row.Cells[1].AddParagraph(coverPage.Author);
+
+            //row = docInfo.AddRow();
+            //row.Cells[0].AddParagraph("gecontroleerd door :");
+            //row.Cells[1].AddParagraph(coverPage.CheckedBy);
 
 
             //section.AddParagraph($"projectnummmer : {coverPage.ProjectNumber}", "Normal").Format.Alignment = ParagraphAlignment.Center;
@@ -1354,25 +1406,25 @@ namespace ExportFactory.Services
 
 
 
+            AddRevisionTable(section, coverPage.RevisionContent);
 
 
 
-
-            var revisionTable = section.AddTable();
-            revisionTable.Borders.Visible = false;
-            revisionTable.AddColumn(Unit.FromCentimeter(4));
-            revisionTable.AddColumn(Unit.FromCentimeter(4));
-            revisionTable.AddColumn(Unit.FromCentimeter(6));
-
+            //var revisionTable = section.AddTable();
+            //revisionTable.Borders.Visible = false;
+            //revisionTable.AddColumn(Unit.FromCentimeter(4));
+            //revisionTable.AddColumn(Unit.FromCentimeter(4));
+            //revisionTable.AddColumn(Unit.FromCentimeter(6));
 
 
-            foreach (var revision in coverPage.RevisionContent.Revisions)
-            {
-                var revisionRow = revisionTable.AddRow();
-                revisionRow.Cells[0].AddParagraph(revision.Name);
-                revisionRow.Cells[1].AddParagraph($"{revision.Date.ToShortDateString()}");
-                revisionRow.Cells[2].AddParagraph(revision.Description);
-            }
+
+            //foreach (var revision in coverPage.RevisionContent.Revisions)
+            //{
+            //    var revisionRow = revisionTable.AddRow();
+            //    revisionRow.Cells[0].AddParagraph(revision.Name);
+            //    revisionRow.Cells[1].AddParagraph($"{revision.Date.ToShortDateString()}");
+            //    revisionRow.Cells[2].AddParagraph(revision.Description);
+            //}
 
 
 

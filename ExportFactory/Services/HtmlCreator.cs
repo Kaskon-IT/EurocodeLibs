@@ -328,8 +328,8 @@
 
                                 }
 
-                                // alleen voor de 1e rij, controleer of width is opgegeven
-                                if (rowIndex == 1)
+                                // alleen voor de 1e rij en de tweede rij, controleer of width is opgegeven
+                                if (rowIndex <= 1)
                                 {
                                     var thisColumn = table.Columns[cellIndex];
 

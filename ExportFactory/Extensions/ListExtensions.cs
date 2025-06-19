@@ -41,7 +41,7 @@ namespace ExportFactory.Extensions
 
                     var column = new DataColumn();
                     // Maak een nieuwe DataColumn voor elke eigenschap
-                    Console.WriteLine($"Adding column: {prop.Name} of type {prop.PropertyType}");
+                    //Console.WriteLine($"Adding column: {prop.Name} of type {prop.PropertyType}");
 
                     // check if nullable enum (not supported in datatable)
                     if (IsNullableEnum(prop) || IsEnum(prop) || IsNullable(prop))

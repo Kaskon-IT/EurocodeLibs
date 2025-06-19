@@ -146,16 +146,16 @@ namespace ExportFactory.MigraDocContentModels
 
 
 
-                            new TableModel<DemoDataClass>{
-                                Data =
-                                [
-                                    new DemoDataClass(){ Med = 240, Mfreq = 200, SvgDemo = _svgBrem},
-                                    new DemoDataClass(){ },
-                                    new DemoDataClass(){ },
-                                ],
+                            //new TableModel<DemoDataClass>{
+                            //    Data =
+                            //    [
+                            //        new DemoDataClass(){ Med = 240, Mfreq = 200, SvgDemo = _svgBrem},
+                            //        new DemoDataClass(){ },
+                            //        new DemoDataClass(){ },
+                            //    ],
 
-                            },
-
+                            //},
+                            
                             new TableContent
                             {
                                 Title = "My table title",

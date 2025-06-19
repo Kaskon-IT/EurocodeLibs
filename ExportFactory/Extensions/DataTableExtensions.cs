@@ -36,8 +36,6 @@
             migraDocTable.Borders.Color = Colors.Transparent; // Mogelijk aanpassen voor debug
             migraDocTable.Borders.Visible = false;
 
-
-
             // Check if the TableColumnAttribute is applied to any of the properties
             bool hasTableColumnAttribute = objectType.GetProperties()
                 .Any(p => p.GetCustomAttributes(typeof(TableColumnAttribute), false).Any());
@@ -49,14 +47,11 @@
             }
 
 
-
-
             WeergaveEnum weergave = WeergaveEnum.StandaardTabel;
             if (isPivotTable)
             {
                 weergave = WeergaveEnum.DraaiTabel;
             }
-
 
 
             // Get the properties of the object type and their associated ColumnAttribute
@@ -228,6 +223,8 @@
                     else
                     {
                         // add a paragraph with and apply markdown (if any) to it.
+
+
                         var par = row.Cells[colIndex].AddParagraph();
                         MigraDocCreator.AddMarkdownToParagraph(par, headerText);
                     }
@@ -240,6 +237,18 @@
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
                     int rowIndex = 0;
+
+                    if (colIndex >= migraDocTable.Columns.Count)
+                    {
+                        // Add a new row for each data row in the DataTable
+                        Console.WriteLine($"Te weining kolommen in migradoc tabel. Gedraaide tabel maximum bereikt.");
+                        continue;
+
+                        //Row migraDocRow = migraDocTable.AddRow();
+                        //migraDocRow.Tag = "datarow"; // Optional: Tag for identification
+                    }
+
+
                     //Column dataColumn = migraDocTable.AddColumn();
                     foreach (var columnName in columnNames)
                     {
