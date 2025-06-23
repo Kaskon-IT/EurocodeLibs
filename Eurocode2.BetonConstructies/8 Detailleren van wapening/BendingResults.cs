@@ -22,6 +22,7 @@ namespace Eurocode.BetonConstructies
         private double _hoogte = 400;
         private double _moment = 80.80;
         private Snedekrachten? _snedekrachten;
+        private VerankeringLangswapeningContext? _verankeringsLengte;
 
         public override string ToString()
         {
@@ -57,6 +58,7 @@ namespace Eurocode.BetonConstructies
             Beton = new();
             Wapening = new();
             Wapening.PropertyChanged += OnWapeningChanged;
+            _verankeringsLengte = new VerankeringLangswapeningContext() { Beton = Beton };
             BerekenEnValideer();
         }
 
@@ -68,6 +70,13 @@ namespace Eurocode.BetonConstructies
             Snedekrachten = snedekrachten;
             //ZRef = zRef;
             Wapening = wapening;
+            _verankeringsLengte = new VerankeringLangswapeningContext()
+            {
+                Beton = Beton,
+                StaafType = VerankeringLangswapeningContext.StaafTypeEnum.Trekstaaf,
+                GoedeAanhechtingOmstandigheden = true,
+                Diameter = wapening.GemiddeldeDiameter
+            };
             BerekenEnValideer();
         }
 
@@ -93,7 +102,18 @@ namespace Eurocode.BetonConstructies
             // Hier kun je aanvullende acties uitvoeren, zoals andere properties bijwerken.
         }
 
-
+        public VerankeringLangswapeningContext? VerankeringsLengte
+        {
+            get => _verankeringsLengte;
+            set
+            {
+                if (_verankeringsLengte != value)
+                {
+                    _verankeringsLengte = value;
+                    OnPropertyChanged(nameof(VerankeringsLengte));
+                }
+            }
+        }
 
         public BerekeningTypeEnum? BerekeningType
         {
@@ -482,6 +502,15 @@ namespace Eurocode.BetonConstructies
         {
             Wapening.SetZRef();
             VerwerkAsApplied();
+
+            // als de wapening wijzigt, dan ook
+            if (_verankeringsLengte != null)
+            {
+                _verankeringsLengte.Diameter = Wapening.GemiddeldeDiameter;
+            }
+
+
+
             // volgens mij gaat dit volledig automatisch...
         }
 

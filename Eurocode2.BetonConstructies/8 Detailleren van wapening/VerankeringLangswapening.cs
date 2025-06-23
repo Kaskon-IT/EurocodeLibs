@@ -44,6 +44,9 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        /// <summary>
+        /// l~b,min~
+        /// </summary>
         public double MinimumVerankeringsLengte
         {
             get
@@ -51,18 +54,25 @@ namespace Eurocode.BetonConstructies
                 if (StaafType == StaafTypeEnum.Trekstaaf)
                 {
                     List<double> minimaTrekverankeringen = [
-                        0.3* BasisVerankeringsLengte,
+                        0.3 * BasisVerankeringsLengte,
                         10 * Diameter,
                         100
                         ];
-                    return minimaTrekverankeringen.Max();
+                    return minimaTrekverankeringen.Max(); // (8.6) Minimum verankeringslengte voor trekstaven
                 }
                 else if (StaafType == StaafTypeEnum.Drukstaaf)
                 {
                     List<double> minimaDrukverankeringen = [
-
+                        0.6 * BasisVerankeringsLengte,
+                        10 * Diameter,
+                        100
                         ];
+                    return minimaDrukverankeringen.Max(); // (8.7) Minimum verankeringslengte voor drukstaven
 
+                }
+                else
+                {
+                    return 9999; // Onbekend type, return een hoge waarde
                 }
             }
         }
@@ -138,7 +148,9 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-
+        /// <summary>
+        /// f~bd~ (8.2)
+        /// </summary>
         public double Fbd
         {
             get
@@ -147,7 +159,9 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-
+        /// <summary>
+        /// l~b,rqd~ (8.3)
+        /// </summary>
         public double BasisVerankeringsLengte
         {
             get
@@ -158,14 +172,13 @@ namespace Eurocode.BetonConstructies
         }
 
         /// <summary>
-        /// l~bd~
+        /// l~bd~ (8.4)
         /// </summary>
         public double RekenwaardeVerankeringsLengte
         {
             get
             {
-
-                return BasisVerankeringsLengte * _alpha6;
+                return Math.Max(BasisVerankeringsLengte * _alpha1 * _alpha2 * _alpha3 * _alpha4 * _alpha5, MinimumVerankeringsLengte);
             }
         }
 
@@ -313,6 +326,13 @@ namespace Eurocode.BetonConstructies
         {
             return true; // Placeholder, implement actual validation logic
             throw new NotImplementedException();
+        }
+
+        public override string ToString()
+        {
+            return $"l~bd~ = {this.RekenwaardeVerankeringsLengte:0} mm, l~b,min~ = {this.MinimumVerankeringsLengte:0} mm, l~b,rqd~ = {this.BasisVerankeringsLengte:0} mm, f~bd~ = {this.Fbd:0.##} MPa, f~ctd~={this.Fctd:0.##} MPa";
+
+            //return base.ToString();
         }
     }
 }
