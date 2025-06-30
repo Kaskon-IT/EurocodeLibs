@@ -282,7 +282,7 @@ namespace Eurocode.BetonConstructies
         public static double SetSchuifspanningWeerstandZonderDwarskrachtWapening(this DwarskrachtWapContext context)
         {
             return DwarskrachtHelpers.GetSchuifSpanningWeerstandZonderDwarskrachtWapening(
-                context.SchuifspanningWeerstandStaal, context.Crdc, context.FactorKDwarskrachtWeerstandBeton, context.Rho1, context.Beton.Fcd);
+                context.SchuifspanningMin, context.Crdc, context.FactorKDwarskrachtWeerstandBeton, context.Rho1, context.Beton.Fcd, context.FactorK1DwarskrachtWeerstandBeton, context.SigmaCp);
         }
 
         public static double SetCrdc(this DwarskrachtWapContext context)
@@ -304,7 +304,7 @@ namespace Eurocode.BetonConstructies
             return (returnVal, art);
         }
 
-        public static (double value, string art) SetVrds(this DwarskrachtWapContext context)
+        public static (double vrds, string art) SetVrds(this DwarskrachtWapContext context)
         {
             // V_Rd,s volgens art. 6.2.3(3) formule (6.8)
             string art = "";
@@ -325,6 +325,12 @@ namespace Eurocode.BetonConstructies
                 reductiefactorIndienVergelijkingZesPuntTienGebruikt = 1;
                 returnVal = 0.001 * (context.AswToegepast / 1000) * context.Z * context.Beton.BetonStaal.Fywd * reductiefactorIndienVergelijkingZesPuntTienGebruikt * context.CotTheta;
             }
+
+            // werk de schuifspanning weerstandswaarde bij
+            //context.SchuifspanningWeerstandStaal = returnVal / (context.Profiel.BreedteDwarskracht * 1000); // in N/mm²
+
+
+
             return (returnVal, art);
 
             //context.DwarskrachtWeerstandStaal = 
@@ -404,12 +410,10 @@ namespace Eurocode.BetonConstructies
             return 0.035 * Math.Pow(k, (1.5)) * Math.Sqrt(fck);
         }
 
-        public static double GetSchuifSpanningWeerstandZonderDwarskrachtWapening(double vmin, double cRdc, double k, double rho1, double fcd)
+        public static double GetSchuifSpanningWeerstandZonderDwarskrachtWapening(double vmin, double cRdc, double k, double rho1, double fcd, double k1 = 0.15, double sigmacp = 0)
         {
-            // N.B. dit is het gedeeldte tussen [ ] in Vergelijking (6.2.a)
-            double returnVal = cRdc * k * Math.Pow((100 * rho1 * fcd), (1.0 / 3.0));
-            if (returnVal < vmin) { return vmin; }
-            else return returnVal;
+            // N.B. dit is het gedeeldte tussen [ ] in Vergelijking (6.2.a) met een minimum van vmin + k1 * sigmacp
+            return Math.Max(cRdc * k * Math.Pow((100 * rho1 * fcd), (1.0 / 3.0)) + k1 * sigmacp, vmin + k1 * sigmacp);
         }
 
         public static double GetCrdC(double gammaC)

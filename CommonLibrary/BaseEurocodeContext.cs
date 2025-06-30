@@ -40,7 +40,7 @@ namespace CommonLibrary
 
         protected BaseEurocodeContext()
         {
-            OnUpdated += () => Console.WriteLine($"{GetType().Name} aangemaakt!");
+            OnUpdated += () => Console.WriteLine($"{GetType().Name} updated");
         }
 
         public bool IsValidated { get; private set; }

@@ -171,27 +171,27 @@
 
 
         // demo (met correcte data)
-        var section = document.LastSection;
-        var dtProductDemos = ProductDemos.ToDataTable();
-        var table = dtProductDemos.ToTable(typeof(ProductDemo));
+        // var section = document.LastSection;
+        // var dtProductDemos = ProductDemos.ToDataTable();
+        // var table = dtProductDemos.ToTable(typeof(ProductDemo));
 
 
 
-        if (table != null){
-            section = document.AddSection();
-            section.Add(table);
-        }
+        // if (table != null){
+        //     section = document.AddSection();
+        //     section.Add(table);
+        // }
 
 
 
-        // demo (incorrecte data)
-        var dtPersons = Persons.ToDataTable();
-        table = dtPersons.ToTable(typeof(DemoData));
-        if (table != null)
-        {
-            section = document.AddSection();
-            section.Add(table);
-        }
+        // // demo (incorrecte data)
+        // var dtPersons = Persons.ToDataTable();
+        // table = dtPersons.ToTable(typeof(DemoData));
+        // if (table != null)
+        // {
+        //     section = document.AddSection();
+        //     section.Add(table);
+        // }
 
         var fileName = @"wwwroot/demo/sample-document";
 

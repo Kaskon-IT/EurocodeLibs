@@ -1,4 +1,6 @@
-﻿namespace CommonLibrary
+﻿using Microsoft.AspNetCore.Components;
+
+namespace CommonLibrary
 {
 
     public enum MeldingType
@@ -7,8 +9,16 @@
         Waarschuwing,
     }
 
+
+
+
     public class Melding
     {
+
+
+        public const string colorWarning = "#E67E22"; // hexadecimale kleurcode voor waarschuwing 
+        public const string colorInfo = "#17A2B8"; // typische kleur voor informatieve meldingen (blauwachtig)
+
         public MeldingType Type { get; set; }
         public string Bericht { get; set; }
 
@@ -50,6 +60,18 @@
             return $"{TypeEmoji} {Bericht}";
         }
 
+        public MarkupString ToMarkupString()
+        {
+            var color = Type switch
+            {
+                MeldingType.Opmerking => colorInfo,
+                _ => colorWarning, // MeldingType.Waarschuwing
+            };
+
+            // Omzetten van {kleur:tekst} naar <span style="color:kleur">tekst</span>
+            string val = "{" + $"{color}:" + $"{this}" + "}";
+            return new MarkupString(val);
+        }
 
 
     }

@@ -49,7 +49,7 @@ namespace Eurocode.BetonConstructies
 
 
         // gevolgen
-        [TableColumn("grenswaarde (l/d)", Key = K.Slankheid_Grenswaarde)]
+        [TableColumn("grens (l/d)", Key = K.Slankheid_Grenswaarde)]
         public double GrenswaardeSlankheid
         {
             get
@@ -59,7 +59,7 @@ namespace Eurocode.BetonConstructies
             }
         } // Grenswaarde van de slankheid van het element
 
-        [TableColumn("slankheid (l/d)", Key = K.Slankheid_Slankheid)]
+        [TableColumn("(l/d)", Key = K.Slankheid_Slankheid)]
         public double Slankheid
         {
             get
@@ -148,7 +148,7 @@ namespace Eurocode.BetonConstructies
             {
                 if (Slankheid > GrenswaardeSlankheid)
                 {
-                    AddMeldingWaarschuwing($"De slankheid van het element is {Slankheid:0.#} > {GrenswaardeSlankheid:0.#} (l/d) en voldoet niet aan de grenswaarde van de slankheid.");
+                    AddMeldingWaarschuwing($"De slankheid (l/d) van het element ({Slankheid:0.#}) is groter dan de grenswaarde ({GrenswaardeSlankheid:0.#}). Toetsing doorbuiging noodzakelijk.");
                     return false;
                 }
 

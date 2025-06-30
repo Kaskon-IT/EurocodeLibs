@@ -6,6 +6,52 @@
     using System.Text;
     using System.Text.RegularExpressions;
 
+    class TextStyle
+    {
+        public bool Bold { get; set; }
+        public bool Italic { get; set; }
+        public bool Sub { get; set; }
+        public bool Sup { get; set; }
+        public Color Color { get; set; } = Colors.Black;
+
+        public string Wrap(string input)
+        {
+            var result = input;
+
+            if (Sup) result = $"<sup>{result}</sup>";
+            if (Sub) result = $"<sub>{result}</sub>";
+            if (Italic) result = $"<i>{result}</i>";
+            if (Bold) result = $"<b>{result}</b>";
+
+            string htmlColor = $"#{Color.R:X2}{Color.G:X2}{Color.B:X2}";
+
+            // Voeg alleen <span> toe als het NIET zwart is
+            if (htmlColor != "#000000")
+            {
+                result = $"<span style=\"color:{htmlColor};\">{result}</span>";
+            }
+
+            return result;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is TextStyle other &&
+                   Bold == other.Bold &&
+                   Italic == other.Italic &&
+                   Sub == other.Sub &&
+                   Sup == other.Sup &&
+                   Color == other.Color;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Bold, Italic, Sub, Sup, Color);
+        }
+    }
+
+
+
     public class HtmlCreator
     {
 
@@ -17,6 +63,16 @@
             {
                 // |greek| 
                 markdown = MigraDocCreator.ReplaceGreekLetters(markdown);
+
+                // Kleuren: {red:tekst} -> <span style="color:red">tekst</span>
+                markdown = Regex.Replace(markdown, @"\{(\w+):(.+?)\}", "<span style=\"color:$1\">$2</span>");
+
+
+                // Underline: __text__ -> <u>text</u>
+                markdown = Regex.Replace(markdown, @"__(.*?)__", "<u>$1</u>");
+
+                // Strikethrough: ~~text~~ -> <s>text</s>
+                markdown = Regex.Replace(markdown, @"~~(.*?)~~", "<s>$1</s>");
 
                 // Subscript: ~sub~ -> <sub>sub</sub> 
                 markdown = Regex.Replace(markdown, @"~(.*?)~", "<sub>$1</sub>");
@@ -30,11 +86,7 @@
                 // Italic: *text* -> <em>text</em>
                 markdown = Regex.Replace(markdown, @"\*(.*?)\*", "<em>$1</em>");
 
-                // Underline: __text__ -> <u>text</u>
-                markdown = Regex.Replace(markdown, @"__(.*?)__", "<u>$1</u>");
 
-                // Strikethrough: ~~text~~ -> <s>text</s>
-                markdown = Regex.Replace(markdown, @"~~(.*?)~~", "<s>$1</s>");
 
                 // Line breaks: dubbele nieuwe regel -> <br/>
                 markdown = Regex.Replace(markdown, @"\n\s*\n", "<br/>");
@@ -483,8 +535,163 @@
         }
 
 
-        // Methode om een paragraaf te verwerken en te converteren naar HTML
         public static string ProcessParagraph(Paragraph? paragraph)
+        {
+            if (paragraph == null)
+                return "";
+
+            var sb = new StringBuilder();
+
+            if (paragraph.Tag is string tagString && tagString.StartsWith("<svg"))
+            {
+                sb.AppendLine(tagString);
+                return sb.ToString();
+            }
+
+            var currentText = new StringBuilder();
+            var currentStyle = new TextStyle();
+
+            void FlushCurrentText()
+            {
+                if (currentText.Length == 0) return;
+                sb.Append(currentStyle.Wrap(currentText.ToString()));
+                currentText.Clear();
+            }
+
+            foreach (var inline in paragraph.Elements)
+            {
+                switch (inline)
+                {
+                    case Character ch when ch.SymbolName == SymbolName.Tab:
+                        FlushCurrentText();
+                        sb.Append("<span class=\"tab-simulated\"></span>");
+                        break;
+
+                    case Character ch when ch.SymbolName == SymbolName.LineBreak:
+                        currentText.Append("<br />");
+                        break;
+
+                    case Text t:
+                        currentText.Append(t.Content);
+                        break;
+
+                    case FormattedText ft:
+                        foreach (var el in ft.Elements)
+                        {
+                            if (el is Text ftText)
+                            {
+                                var newStyle = new TextStyle
+                                {
+                                    Bold = ft.Bold,
+                                    Italic = ft.Italic,
+                                    Sub = ft.Subscript,
+                                    Sup = ft.Superscript,
+                                    Color = ft.Color
+                                };
+
+                                if (!currentStyle.Equals(newStyle))
+                                {
+                                    FlushCurrentText();
+                                    currentStyle = newStyle;
+                                }
+
+                                currentText.Append(ftText.Content);
+                            }
+                        }
+                        break;
+                }
+            }
+
+            FlushCurrentText();
+
+            return sb.ToString();
+        }
+
+
+
+        public static string ProcessParagraphVERSIE2(Paragraph? paragraph)
+        {
+            if (paragraph == null)
+                return "";
+
+            StringBuilder sb = new StringBuilder();
+
+            if (paragraph.Tag != null &&
+                paragraph.Tag.ToString().StartsWith("<svg"))
+            {
+                sb.AppendLine(paragraph.Tag.ToString());
+            }
+            else
+            {
+                string currentText = string.Empty;
+
+                foreach (var inline in paragraph.Elements)
+                {
+                    switch (inline)
+                    {
+                        case FormattedText ft:
+                            var contentBuilder = new StringBuilder();
+                            foreach (var ftElement in ft.Elements)
+                            {
+                                if (ftElement is Text ftText)
+                                {
+                                    contentBuilder.Append(ftText.Content);
+                                }
+                            }
+
+                            string content = contentBuilder.ToString();
+
+                            if (string.IsNullOrEmpty(content))
+                                break;
+
+                            if (ft.Bold)
+                                content = $"<b>{content}</b>";
+                            if (ft.Italic)
+                                content = $"<i>{content}</i>";
+                            if (ft.Subscript)
+                                content = $"<sub>{content}</sub>";
+                            if (ft.Superscript)
+                                content = $"<sup>{content}</sup>";
+                            if (ft.Color != Colors.Black)
+                                content = $"<span style='color:{ft.Color.ToString().ToLowerInvariant()};'>{content}</span>";
+
+                            currentText += content;
+                            break;
+
+                        case Text text:
+                            currentText += text.Content;
+                            break;
+
+                        case Character character:
+                            if (character.SymbolName == SymbolName.Tab)
+                            {
+                                if (!string.IsNullOrEmpty(currentText))
+                                {
+                                    sb.Append($"<span class=\"tab-simulated\">{currentText}</span>");
+                                    currentText = string.Empty;
+                                }
+                            }
+                            else if (character.SymbolName == SymbolName.LineBreak)
+                            {
+                                currentText += "<br />";
+                            }
+                            break;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(currentText))
+                {
+                    sb.Append(currentText);
+                }
+            }
+
+            return sb.ToString();
+        }
+
+
+
+        // Methode om een paragraaf te verwerken en te converteren naar HTML
+        public static string ProcessParagraphDELETE(Paragraph? paragraph)
         {
             if (paragraph == null)
                 return "";
@@ -528,6 +735,13 @@
                             content = "<sub>" + content + "</sub>";
                         if (ft.Superscript)
                             content = "<sup>" + content + "</sup>";
+
+                        if (ft.Color != Colors.Black)
+                        {
+                            content = "<span style='color:red;'>" + content + "</span>";
+                        }
+
+
 
                         //sb.Append(content);
                         currentText += content;

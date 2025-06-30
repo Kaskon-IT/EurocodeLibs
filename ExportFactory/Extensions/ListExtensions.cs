@@ -1,4 +1,5 @@
-﻿using ExportFactory.Shared;
+﻿using CommonLibrary;
+using ExportFactory.Shared;
 using System.ComponentModel;
 using System.Data;
 using System.Reflection;
@@ -8,8 +9,15 @@ namespace ExportFactory.Extensions
     public static class ListExtensions
     {
 
+        // Extensiemethode om een IEnumerable<BaseEurocodeContext> om te zetten naar een DataTable
+        public static DataTable ToDataTable<T>(this IEnumerable<T> list) where T : BaseEurocodeContext
+        {
+            // Maak een lijst van T om de extensiemethode te gebruiken
+            return ToDataTableInternal(list.ToList());
+        }
+
         // Extensiemethode om een List<T> om te zetten naar een DataTable, inclusief kolominstellingen zoals header, uitlijning en zichtbaarheid
-        public static DataTable ToDataTable<T>(this List<T> list) where T : class
+        private static DataTable ToDataTableInternal<T>(List<T> list) where T : BaseEurocodeContext
         {
             var dataTable = new DataTable();
 
@@ -111,7 +119,7 @@ namespace ExportFactory.Extensions
         }
 
 
-        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument<T>(this List<T> list, Type type, bool isPivotTable = true, bool hideHeader = false) where T : class
+        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument<T>(this List<T> list, Type type, bool isPivotTable = true, bool hideHeader = false) where T : BaseEurocodeContext
         {
             // step 1: make a datatable
             var dataTable = list.ToDataTable();
@@ -121,7 +129,7 @@ namespace ExportFactory.Extensions
         }
 
 
-        public static MigraDoc.DocumentObjectModel.Tables.Table? ToMigraDocTable<T>(this List<T> list, Type type, bool isPivotTable = false, bool hideHeader = false) where T : class
+        public static MigraDoc.DocumentObjectModel.Tables.Table? ToMigraDocTable<T>(this List<T> list, Type type, bool isPivotTable = false, bool hideHeader = false) where T : BaseEurocodeContext
         {
             // step 1: make a datatable
             var dataTable = list.ToDataTable();

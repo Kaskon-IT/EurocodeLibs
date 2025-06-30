@@ -100,7 +100,7 @@ namespace Eurocode.BetonConstructies
             Key = K.MomentFrequent,
             StringFormat = "0.#",
             Width = 2,
-            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double MomentFrequent { get { return Snedekrachten.My.Kar; } }
 
         [TableColumn("M~Ed~",
@@ -127,10 +127,10 @@ namespace Eurocode.BetonConstructies
         public double Hoogte { get; set; } = 100;
         public double NuttigeHoogte { get; set; } = 80;
 
-        [TableColumn("A~s,toe~ [mm²]",
+        //[TableColumn("A~s,toe~ [mm²]",
         //    Key = K.AsToe,
-            Weergave = WeergaveEnum.DraaiTabel)]
-        public string WapeningToegepastTekst { get; set; } = "8-150"; // todo Profiel +  wapening
+        //     Weergave = WeergaveEnum.DraaiTabel)]
+        //public string WapeningToegepastTekst { get; set; } = "8-150"; // todo Profiel +  wapening
         public double WapDiameterEquivalent { get; set; } = 8.0;
 
         public List<MilieuklasseEnum> Milieuklassen { get; set; } = [];
@@ -209,22 +209,22 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("s~r,max~", StringFormat = "0.##", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("s~r,max~", StringFormat = "0.##", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double SrMax { get; internal set; }
 
         //[TableColumn("Art.", Weergave = WeergaveEnum.DraaiTabel, HeaderTextPivot = "gebruikt artikel voor s~r,max~")]
         public string GebruiktArtikel { get; set; } = "";
 
 
-        [TableColumn("|epsilon|~sm~-|epsilon|~cm~", StringFormat = "e2", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+        [TableColumn("|epsilon|~sm~-|epsilon|~cm~", StringFormat = "e2", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double EpsSmMinusEpsCm { get; set; }
 
 
         [TableColumn("w~k~ [mm]",
             headerTextPivot: "(7.8) berekende scheurwijdte w~k~ = s~r,max~ (|epsilon|~sm~-|epsilon|~cm~)",
-            StringFormat = "0.## mm",
+            StringFormat = "0.##",
             Key = K.ScheurwijdteBerekend,
-            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
         public double Wk { get; internal set; }
 
@@ -232,7 +232,7 @@ namespace Eurocode.BetonConstructies
             headerTextPivot: "k~x~",
             Key = K.ScheurwijdteKx,
             StringFormat = "0.##",
-            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double ScheurwijdteGrenswaardeFactorKx
         {
             get
@@ -254,7 +254,7 @@ namespace Eurocode.BetonConstructies
             headerTextPivot: "grenswaarde scheurwijdte",
             Key = K.ScheurwijdteMax,
             StringFormat = "0.0",
-            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Center)]
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double ScheurwijdteMax
         {
             get
@@ -288,7 +288,7 @@ namespace Eurocode.BetonConstructies
             get
             {
                 // α;e			is de verhouding E;s/E;c
-                return Beton.BetonStaal.ElasticiteitsModulus / Ec;
+                return Beton.BetonStaal.ElasticiteitsModulus / (Ec * 1000.0); // let op dat we hier met N/mm² werken, dus * 1000 om naar MPa te gaan
             }
         }
 
@@ -301,6 +301,11 @@ namespace Eurocode.BetonConstructies
 
         public WapeningContext Wapening { get; set; } = new() { Tekst = "8-100" };
 
+        [TableColumn("A~s,toe~ [mm²]",
+            headerTextPivot: "toegepaste wapening A~s,toe~",
+            Key = K.AsToe,
+            StringFormat = "0 mm²",
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsToe
         {
             get { return Wapening.As; }

@@ -134,6 +134,23 @@ namespace Eurocode.Grondslagen
         }
 
 
+        public string NormPrefix
+        {
+            get
+            {
+                switch (NationaleBijlage)
+                {
+                    default:
+                    case NationaleBijlageEnum.EU: return "CEN";
+                    case NationaleBijlageEnum.NL: return "NEN";
+                    case NationaleBijlageEnum.BE: return "NBN";
+                    case NationaleBijlageEnum.DE: return "DIN";
+                }
+            }
+        }
+        public string NormTitel => $"{NormPrefix}-EN 1990 Grondslagen voor het ontwerp van constructies";
+
+
 
         [TableColumn("ontwerplevensduur", order: 0)]
         public OntwerpLevensduurEnum? OntwerpLevensduur { get; set; } = OntwerpLevensduurEnum.Vijftig;

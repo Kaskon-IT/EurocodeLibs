@@ -40,7 +40,6 @@ namespace Eurocode.BetonConstructies
         {
             double a1 = context.OplegReactieRekenwaarde * 1000 / (context.OplegBreedteNetto * context.OplegSterkteRekenwaarde);
             double a1Min = context.GetMinimaleNettoOplegLengte();
-            context.OplegLengteNettoAanwezig = Math.Max(a1Min, a1); // todo controleer hoe we hier mee om moeten gaan, mogelijk bied nieuwe uitgave norm duidelijkheid.
             return Math.Max(a1Min, a1);
         }
 

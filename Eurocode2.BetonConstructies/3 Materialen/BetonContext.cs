@@ -364,6 +364,9 @@ namespace Eurocode.BetonConstructies
 
         public double Rho1Max { get { return this.GetRho1Max(); } }
 
+        /// <summary>
+        /// Let op! Ecm is in GPa 
+        /// </summary>
         [TableColumn("E~cm~", HeaderTextPivot = "E~cm~\tsecans-elasticiteitsmodulus van beton", StringFormat = "0.## \tGPa")]
         public double Ecm { get { return this.GetEcm(); } }
 

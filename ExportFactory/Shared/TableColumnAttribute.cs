@@ -1,5 +1,7 @@
 ﻿using CommonLibrary;
+using ExportFactory.Extensions;
 using ExportFactory.Services;
+using Microsoft.AspNetCore.Components;
 using MigraDoc.DocumentObjectModel;
 
 
@@ -14,7 +16,7 @@ namespace ExportFactory.Shared
         AlleTabellen = StandaardTabel | DraaiTabel,
     }
 
-    public class KeyValueMappingModel
+    public class KeyValueMappingModel : BaseEurocodeContext
     {
 
         [TableColumn("Key")]
@@ -45,8 +47,28 @@ namespace ExportFactory.Shared
         [TableColumn("Vergelijking")]
         public string? Vergelijking { get { return Mapping.Vergelijking; } }
 
+        public override bool IsAkkoord()
+        {
+            return true;
+        }
 
+        public override MarkupString ToHtml(bool isDraaiTabel = true)
+        {
+            var dt = this.ToDataTable(); // maak een DataTable van de context
+            var mdd = dt.ToMigraDocDocument(objectType: this.GetType(), isPivotTable: isDraaiTabel); // maak een MigraDocDocument
+            var html = HtmlCreator.GenerateHtmlFromDocument(mdd); // genereer HTML vanuit het MigraDocDocument
+            return new MarkupString(html); // retourneer als MarkupString
+        }
 
+        protected override void Bereken()
+        {
+            // Geen specifieke berekening nodig voor deze context
+        }
+
+        protected override bool Valideer()
+        {
+            return true; // altijd akkoord, geen specifieke validatie nodig
+        }
     }
 
 

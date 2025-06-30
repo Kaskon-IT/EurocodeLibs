@@ -222,7 +222,8 @@ namespace Eurocode.Belastingen
 
         public override MarkupString ToHtml(bool isDraaiTabel = true)
         {
-            throw new NotImplementedException();
+            return new MarkupString("BelastingenContext.ToHtml() not implemented yet.");
+            //throw new NotImplementedException();
         }
     }
 

@@ -24,7 +24,7 @@ namespace Eurocode.Belastingen
         public string Naam { get { return "BG" + Nr.ToString("D1"); } }
         public string Omschrijving { get; set; } = "G";
 
-        [TableColumn("type", order: 10, width: 5.0)]
+        [TableColumn("type", order: 10, width: 4.0)]
         public BelastingGevalTypeEnum? Type { get; set; } = BelastingGevalTypeEnum.Permanent;
 
         public BelastOnbelastTypeEnum? BelastOnbelastType { get; set; } = BelastOnbelastTypeEnum.AllesTegelijk;
@@ -57,7 +57,7 @@ namespace Eurocode.Belastingen
 
 
         // userFriendlyHelpers
-        [TableColumn("momentaan factoren", order: 30, width: 5.0, weergave: WeergaveEnum.Geen)]
+        [TableColumn("momentaan factoren", order: 30, width: 4.0, weergave: WeergaveEnum.Geen)]
         public string MomentaanFactorenUserFriendly
         {
             get

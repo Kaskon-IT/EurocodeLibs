@@ -59,31 +59,7 @@ namespace Eurocode.BetonConstructies
         public double OplegReactieRekenwaarde => BerekenOplegReactieRekenwaarde?.Invoke() ?? 0;
 
 
-        [TableColumn("detaillering", Weergave = WeergaveEnum.DraaiTabel)]
-        public DetailleringWapeningEnum? DetailleringWapening { get; set; } = DetailleringWapeningEnum.VerticaleHaarspelden;
-        public enum DetailleringWapeningEnum
-        {
-            [Description("Doorgaande staven boven de ondersteuning (ingeklemd of niet)")]
-            DoorgaandeStavenBovenOndersteuning,
-            [Description("Rechte staven, horizontale haarspelden, dichtbij het einde van het element")]
-            RechteStavenHorizontaleHaarspelden,
-            [Description("Voorspanelementen of rechte staven die aan het \r\neinde van het element zichtbaar zijn")]
-            Voorspanelementen,
-            [Description("Verticale haarspelden")]
-            VerticaleHaarspelden
-        }
 
-        [TableColumn("elementtype", Weergave = WeergaveEnum.DraaiTabel)]
-
-        public OpleggingElementTypeEnum? OpleggingElementType { get; set; } = OpleggingElementTypeEnum.AfzonderlijkElement;
-
-        public enum OpleggingElementTypeEnum
-        {
-            [Description("Doorgaand element (meerdere steunpunten)")]
-            DoorgaandElement,
-            [Description("Afzonderlijk element")]
-            AfzonderlijkElement
-        }
 
 
         public double EindDekking { get; set; } = 20;
@@ -116,7 +92,7 @@ namespace Eurocode.BetonConstructies
         /// a~aanw~
         /// </summary>
         //[TableColumn("a~1,aanw~", "aanwezige netto opleglengte")]
-        public double OplegLengteNettoAanwezig { get; set; } = 75;
+        public double OplegLengteNettoAanwezig { get; set; } = 90;
 
 
 
@@ -274,6 +250,33 @@ namespace Eurocode.BetonConstructies
 
 
 
+        [TableColumn("detaillering", Weergave = WeergaveEnum.DraaiTabel)]
+        public DetailleringWapeningEnum? DetailleringWapening { get; set; } = DetailleringWapeningEnum.VerticaleHaarspelden;
+        public enum DetailleringWapeningEnum
+        {
+            [Description("Doorgaande staven boven de ondersteuning (ingeklemd of niet)")]
+            DoorgaandeStavenBovenOndersteuning,
+            [Description("Rechte staven, horizontale haarspelden, dichtbij het einde van het element")]
+            RechteStavenHorizontaleHaarspelden,
+            [Description("Voorspanelementen of rechte staven die aan het \r\neinde van het element zichtbaar zijn")]
+            Voorspanelementen,
+            [Description("Verticale haarspelden")]
+            VerticaleHaarspelden
+        }
+
+        [TableColumn("elementtype", Weergave = WeergaveEnum.DraaiTabel)]
+
+        public OpleggingElementTypeEnum? OpleggingElementType { get; set; } = OpleggingElementTypeEnum.AfzonderlijkElement;
+
+        public enum OpleggingElementTypeEnum
+        {
+            [Description("Doorgaand element (meerdere steunpunten)")]
+            DoorgaandElement,
+            [Description("Afzonderlijk element")]
+            AfzonderlijkElement
+        }
+
+
         public override string ToString()
         {
             List<string> results = [];
@@ -346,6 +349,21 @@ namespace Eurocode.BetonConstructies
 
         public override bool IsAkkoord()
         {
+            // de aanwezige opleglengte moet groter of gelijk zijn aan de nominale opleglengte
+            if (OplegLengteNettoAanwezig < OplegLengteNominaal)
+            {
+                this.AddMeldingWaarschuwing("onvoldoende opleglengte aanwezig");
+                return false;
+            }
+
+            // de oplegspanning mag niet groter zijn dan de oplegsterkte rekenwaarde
+            if (OplegSpanningRekenwaarde > OplegSterkteRekenwaarde)
+            {
+                this.AddMeldingWaarschuwing("overschrijding oplegspanning");
+                return false;
+            }
+
+
             return true;
             //throw new NotImplementedException();
         }

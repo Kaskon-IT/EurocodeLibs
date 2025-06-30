@@ -290,7 +290,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             headerText: "Ø~eq~",
             headerTextPivot: "Ø~eq~\tgelijkwaardige diameter",
-            Order = 24, StringFormat = "Ø0.##")]
+            Order = 24, StringFormat = "0.##")]
         public double WapeningDiameterGelijkwaardig
         {
             get => _wapeningDiameterGelijkwaardig;

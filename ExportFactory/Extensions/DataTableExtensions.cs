@@ -35,6 +35,7 @@
             migraDocTable.Borders.Width = 0.25;
             migraDocTable.Borders.Color = Colors.Transparent; // Mogelijk aanpassen voor debug
             migraDocTable.Borders.Visible = false;
+            migraDocTable.KeepTogether = true; // Zorgt ervoor dat de tabel niet wordt gesplitst over pagina's
 
             // Check if the TableColumnAttribute is applied to any of the properties
             bool hasTableColumnAttribute = objectType.GetProperties()

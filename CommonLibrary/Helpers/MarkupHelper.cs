@@ -12,6 +12,17 @@ namespace CommonLibrary.Helpers
             if (input == null || string.IsNullOrEmpty(input))
                 return new MarkupString(string.Empty);
 
+
+            // Omzetten van {kleur:tekst} naar <span style="color:kleur">tekst</span>
+            input = Regex.Replace(input, @"\{(\w+):(.+?)\}", "<span style=\"color:$1\">$2</span>");
+
+
+            // Underline: __text__ -> <u>text</u>
+            input = Regex.Replace(input, @"__(.*?)__", "<u>$1</u>");
+
+            // Strikethrough: ~~text~~ -> <s>text</s>
+            input = Regex.Replace(input, @"~~(.*?)~~", "<s>$1</s>");
+
             // Omzetten van ~text~ naar <sub>text</sub>
             input = Regex.Replace(input, @"~(.*?)~", "<sub>$1</sub>");
 
@@ -24,11 +35,7 @@ namespace CommonLibrary.Helpers
             // Italic: *text* -> <em>text</em>
             input = Regex.Replace(input, @"\*(.*?)\*", "<em>$1</em>");
 
-            // Underline: __text__ -> <u>text</u>
-            input = Regex.Replace(input, @"__(.*?)__", "<u>$1</u>");
 
-            // Strikethrough: ~~text~~ -> <s>text</s>
-            input = Regex.Replace(input, @"~~(.*?)~~", "<s>$1</s>");
 
             // Line breaks: dubbele nieuwe regel -> <br/>
             input = Regex.Replace(input, @"\n\s*\n", "<br/>");

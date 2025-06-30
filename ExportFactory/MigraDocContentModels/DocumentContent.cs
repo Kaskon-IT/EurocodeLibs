@@ -52,23 +52,98 @@ namespace ExportFactory.MigraDocContentModels
     }
 
 
-    public class RevisionContent
+    public class RevisionContent : INotifyPropertyChanged
     {
-        public List<Revision> Revisions { get; set; } = [];
-        public Dictionary<string, string> ColumnNames { get; set; } = new Dictionary<string, string>()
-        {
-            { "Name", "Rev."},
-            { "Date", "Datum" },
-            { "Description", "Beschrijving" }
-        };
+        private List<Revision> _revisions = new List<Revision>();
 
+
+        public List<Revision> Revisions
+        {
+            get => _revisions;
+            set
+            {
+                _revisions = value;
+                OnPropertyChanged(nameof(Revisions));
+            }
+        }
+
+
+
+
+        //public Dictionary<string, string> ColumnNames { get; set; } = new Dictionary<string, string>()
+        //{
+        //    { "Name", "Rev."},
+        //    { "Date", "Datum" },
+        //    { "Description", "Beschrijving" }
+        //};
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
-    public class Revision
+    public class Revision : INotifyPropertyChanged
     {
-        public string Name { get; set; } = "";
-        public string Description { get; set; } = "";
-        public DateTime Date { get; set; } = DateTime.Now;
+        private string _name = "";
+        private string _description = "";
+        private DateTime? _date = DateTime.Now;
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        public string Description
+        {
+            get => _description;
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+                    OnPropertyChanged(nameof(Description));
+                }
+            }
+        }
+
+
+        public DateTime? Date
+        {
+            get => _date;
+            set
+            {
+                if (_date != value)
+                {
+                    _date = value;
+                    OnPropertyChanged(nameof(Date));
+                }
+            }
+        }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} - {Date?.ToShortDateString()} - {Description}";
+        }
+
+
     }
 
 

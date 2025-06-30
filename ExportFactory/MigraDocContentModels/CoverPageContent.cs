@@ -131,6 +131,12 @@ namespace ExportFactory.MigraDocContentModels
 
         public List<LabeledValue> ProjectLabeledValues { get; set; } = [];
         public List<LabeledValue> DocumentLabeledValues { get; set; } = [];
+
+
+        public List<LabelWithStringValue> ProjectLabels { get; set; } = [];
+        public List<LabelWithStringValue> DocumentLabels { get; set; } = [];
+
+
         public RevisionContent RevisionContent { get; set; } = new RevisionContent();
 
         public event PropertyChangedEventHandler? PropertyChanged;

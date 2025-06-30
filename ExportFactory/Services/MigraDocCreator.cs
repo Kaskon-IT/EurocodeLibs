@@ -6,6 +6,7 @@ using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using MigraDoc.DocumentObjectModel.Tables;
 using PdfSharp.Fonts;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 
@@ -60,7 +61,7 @@ namespace ExportFactory.Services
             else
             {
                 // not included, but we need a new section
-                document.AddSection();
+                document.AddSection(); // anders komt het titelblad niet apart!
             }
 
 
@@ -73,7 +74,8 @@ namespace ExportFactory.Services
 
 
             // Add new section 
-            document.AddSection();
+            if (includeToc)
+                document.AddSection(); // alleen nodig indien we een TOC hebben
 
             // Add sections (iterate through all contents)
             foreach (var sectionContent in content.Sections.OrderBy(sc => sc.Order))
@@ -295,7 +297,9 @@ namespace ExportFactory.Services
 
 
             // Sort elements by order
-            var sortedElements = sectionContent.Elements.OrderBy(e => e.Order);
+            var sortedElements = sectionContent.Elements
+                .Where(e => e != null)
+                .OrderBy(e => e.Order);
 
             foreach (var element in sortedElements)
             {
@@ -343,6 +347,7 @@ namespace ExportFactory.Services
 
                                 if (migraDocElement.DocumentObject is MigraDoc.DocumentObjectModel.Tables.Table table)
                                 {
+                                    table.KeepTogether = true;
                                     target.Add(table);
                                 }
                                 else if (migraDocElement.DocumentObject is Paragraph paragraph)
@@ -614,6 +619,7 @@ namespace ExportFactory.Services
 
             table.Borders.Width = 0.25; // todo apply formating with content
             table.Borders.Visible = false;
+            table.KeepTogether = true; // keep the table together on one page // Added 26-5-2025
             //table.Borders.Color = Colors.Transparent;
             //table.Borders.Left = new Border() { Visible = false };
 
@@ -881,6 +887,8 @@ namespace ExportFactory.Services
 
             baseStyle.Font.Bold = false; // explicitly set to false (for rtf export!) gebruik formattedText in plaats
             baseStyle.Font.Color = Colors.Black; // expliciet voor pdf export!
+            //baseStyle.ParagraphFormat.SpaceAfter = "3mm"; // default space after paragraphs (niet doen, dit wordt ook gebruikt in tabellen namelijk)
+            // Vanaf kop 2 passen we SpaceBefore toe om afstand te creëren.
 
             // Table of content style
             var tocStyle = document.Styles.AddStyle("TOC", "Normal");
@@ -901,6 +909,7 @@ namespace ExportFactory.Services
             kop1.ParagraphFormat.PageBreakBefore = true;
             kop1.ParagraphFormat.SpaceAfter = "3mm";
 
+
             // h2
             var heading2 = document.Styles.AddStyle("Heading2", "Normal");
             heading2.Font.Size = 1.25 * content.Font.Size;
@@ -911,7 +920,7 @@ namespace ExportFactory.Services
             var kop2 = document.Styles.AddStyle("Kop 2", "Normal");
             kop2.Font.Size = 1.25 * content.Font.Size;
             kop2.Font.Bold = !true;
-            kop2.ParagraphFormat.SpaceBefore = "2mm";
+            kop2.ParagraphFormat.SpaceBefore = "3mm";
             kop2.ParagraphFormat.SpaceAfter = "2mm";
 
 
@@ -919,14 +928,14 @@ namespace ExportFactory.Services
             var heading3 = document.Styles.AddStyle("Heading3", "Normal");
             heading3.Font.Size = 1.00 * content.Font.Size;
             heading3.Font.Bold = !true;
-            heading3.ParagraphFormat.SpaceBefore = "1mm";
+            heading3.ParagraphFormat.SpaceBefore = "3mm";
             heading3.ParagraphFormat.SpaceAfter = "1mm";
 
 
             var kop3 = document.Styles.AddStyle("Kop 3", "Normal");
             kop3.Font.Size = 1.00 * content.Font.Size;
             kop3.Font.Bold = true;
-            kop3.ParagraphFormat.SpaceBefore = "1mm";
+            kop3.ParagraphFormat.SpaceBefore = "3mm";
             kop3.ParagraphFormat.SpaceAfter = "1mm";
             kop3.Font.Color = Colors.Black;
 
@@ -934,7 +943,7 @@ namespace ExportFactory.Services
             var kop4 = document.Styles.AddStyle("Kop 4", "Normal");
             kop4.Font.Size = 1.00 * content.Font.Size;
             kop4.Font.Bold = true;
-            kop4.ParagraphFormat.SpaceBefore = "1mm";
+            kop4.ParagraphFormat.SpaceBefore = "3mm";
             kop4.ParagraphFormat.SpaceAfter = "1mm";
             kop4.Font.Color = Colors.Black;
 
@@ -1271,6 +1280,22 @@ namespace ExportFactory.Services
 
 
 
+        private static void AddLabels(Section section, List<LabelWithStringValue> labels)
+        {
+            if (labels == null || labels.Count == 0) return;
+            var table = section.AddTable();
+            table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
+            table.Borders.Visible = false;
+            table.AddColumn(Unit.FromCentimeter(4)); // left column
+            table.AddColumn(Unit.FromCentimeter(10)); // right column
+            foreach (var item in labels)
+            {
+                var row = table.AddRow();
+                row.Cells[0].AddParagraph(item.Label);
+                row.Cells[1].AddParagraph(item.StringValue);
+            }
+        }
+
         private static void AddLabeledValues(Section section, List<LabeledValue> labeledValues)
         {
             if (labeledValues == null || labeledValues.Count == 0) return;
@@ -1306,7 +1331,7 @@ namespace ExportFactory.Services
             {
                 var row = table.AddRow();
                 row.Cells[0].AddParagraph(revision.Name);
-                row.Cells[1].AddParagraph($"{revision.Date.ToShortDateString()}");
+                row.Cells[1].AddParagraph($"{revision.Date?.ToShortDateString()}");
                 row.Cells[2].AddParagraph(revision.Description);
             }
         }
@@ -1338,102 +1363,23 @@ namespace ExportFactory.Services
             section.AddParagraph(coverPage.Subtitle ?? "", "Subtitle");
 
 
+            // blank line
+            section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
+
             // Project-labels
-            AddLabeledValues(section, coverPage.ProjectLabeledValues);
+            //AddLabeledValues(section, coverPage.ProjectLabeledValues);
+            AddLabels(section, coverPage.ProjectLabels);
+
+            // blank line
+            section.AddParagraph(); // Add a blank paragraph for spacing
 
             // Document-labels
-            AddLabeledValues(section, coverPage.DocumentLabeledValues);
+            //AddLabeledValues(section, coverPage.DocumentLabeledValues);
+            AddLabels(section, coverPage.DocumentLabels);
 
-
-
-
-            //var projectTable = section.AddTable();
-            //projectTable.Tag = "hideheader";
-            //projectTable.Borders.Visible = false;
-            //projectTable.AddColumn(Unit.FromCentimeter(4)); // left column
-            //projectTable.AddColumn(Unit.FromCentimeter(10)); // right column
-            //foreach (var item in coverPage.ProjectLabeledValues)
-            //{
-            //    var projectRow = projectTable.AddRow();
-            //    projectRow.Cells[0].AddParagraph(item.Label);
-            //    projectRow.Cells[1].AddParagraph(item.ValueAsString);
-            //}
-
-
-            //projectTable.AddRow(); // lege rij
-            //foreach (var item in coverPage.DocumentLabeledValues)
-            //{
-            //    var projectRow = projectTable.AddRow();
-            //    projectRow.Cells[0].AddParagraph(item.Label);
-            //    projectRow.Cells[1].AddParagraph(item.ValueAsString);
-            //}
-
-
-
-
-
-
-
-            //var docInfo = section.AddTable();
-            //docInfo.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
-            //docInfo.Borders.Visible = false;
-            //docInfo.AddColumn(Unit.FromCentimeter(4)); // left column
-            //docInfo.AddColumn(Unit.FromCentimeter(10)); // right column
-
-            //var row = docInfo.AddRow();
-            //row.Cells[0].AddParagraph("document nummer :");
-            //row.Cells[1].AddParagraph(coverPage.DocumentNumber);
-
-            //row = docInfo.AddRow();
-            //row.Cells[0].AddParagraph("opgesteld door :");
-            //row.Cells[1].AddParagraph(coverPage.Author);
-
-            //row = docInfo.AddRow();
-            //row.Cells[0].AddParagraph("gecontroleerd door :");
-            //row.Cells[1].AddParagraph(coverPage.CheckedBy);
-
-
-            //section.AddParagraph($"projectnummmer : {coverPage.ProjectNumber}", "Normal").Format.Alignment = ParagraphAlignment.Center;
-            //section.AddParagraph(coverPage.CompanyName, "Normal").Format.Alignment = ParagraphAlignment.Center;
-
-
-            //section.AddParagraph($"document nummer : {coverPage.DocumentNumber}");
-            //section.AddParagraph($"opgesteld door : {coverPage.Author}");
-            //section.AddParagraph($"gecontroleerd door : {coverPage.CheckedBy}");
-
-
-
-
-
+            section.AddParagraph(); // Add a blank paragraph for spacing
 
             AddRevisionTable(section, coverPage.RevisionContent);
-
-
-
-            //var revisionTable = section.AddTable();
-            //revisionTable.Borders.Visible = false;
-            //revisionTable.AddColumn(Unit.FromCentimeter(4));
-            //revisionTable.AddColumn(Unit.FromCentimeter(4));
-            //revisionTable.AddColumn(Unit.FromCentimeter(6));
-
-
-
-            //foreach (var revision in coverPage.RevisionContent.Revisions)
-            //{
-            //    var revisionRow = revisionTable.AddRow();
-            //    revisionRow.Cells[0].AddParagraph(revision.Name);
-            //    revisionRow.Cells[1].AddParagraph($"{revision.Date.ToShortDateString()}");
-            //    revisionRow.Cells[2].AddParagraph(revision.Description);
-            //}
-
-
-
-
-
-
-
-
-
 
         }
 
@@ -1497,10 +1443,122 @@ namespace ExportFactory.Services
 
 
 
-        private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown)
+        private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown, Color? currentColor = null, int depth = 0)
+        {
+            const int maxDepth = 15;
+            if (depth > maxDepth || string.IsNullOrWhiteSpace(markdown))
+                return;
+
+            // Preprocessing
+            markdown = markdown.Replace("<br />", "\n")
+                               .Replace("<br>", "\n")
+                               .Replace("×", "x")
+                               .Replace("³", "^3^")
+                               .Replace("²", "^2^")
+                               .Replace("¹", "^1^")
+                               .Replace("‰", "^0^/~00~");
+
+            var regex = new Regex(
+                @"(?<bold>\*\*(.*?)\*\*|<b>(.*?)</b>)|" +
+                @"(?<italic>\*(.*?)\*|<i>(.*?)</i>)|" +
+                @"(?<underline>__(.*?)__|<u>(.*?)</u>)|" +
+                @"(?<strike>~~(.*?)~~)|" +
+                @"(?<sup>\^(.*?)\^|<sup>(.*?)</sup>)|" +
+                @"(?<sub>~(.*?)~|<sub>(.*?)</sub>)|" +
+                @"(?<color>\{(.*?):(.*?)\})|" +
+                @"(?<br>\n)|" +
+                @"(?<text>[^*^~_<>{}\n]+)",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase
+            );
+
+            foreach (Match match in regex.Matches(markdown))
+            {
+                if (match.Groups["bold"].Success)
+                {
+                    var inner = StripTags(match.Value, "**", "<b>", "</b>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Bold = true;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["italic"].Success)
+                {
+                    var inner = StripTags(match.Value, "*", "<i>", "</i>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Italic = true;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["underline"].Success)
+                {
+                    var inner = StripTags(match.Value, "__", "<u>", "</u>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Underline = Underline.Single;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["strike"].Success)
+                {
+                    var inner = StripTags(match.Value, "~~");
+                    var text = paragraph.AddFormattedText(inner);
+                    text.Color = Colors.Red; // markeer als strike
+                }
+                else if (match.Groups["sup"].Success)
+                {
+                    var inner = StripTags(match.Value, "^", "<sup>", "</sup>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Superscript = true;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["sub"].Success)
+                {
+                    var inner = StripTags(match.Value, "~", "<sub>", "</sub>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Subscript = true;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["color"].Success)
+                {
+                    var parts = Regex.Match(match.Value, @"\{(.*?):(.*?)\}").Groups;
+                    var color = Color.Parse(parts[1].Value.Trim());
+                    var content = parts[2].Value.Trim();
+                    ApplyMarkdownStylesToParagraph(paragraph, content, color, depth + 1);
+                }
+                else if (match.Groups["br"].Success)
+                {
+                    paragraph.AddLineBreak();
+                }
+                else if (match.Groups["text"].Success)
+                {
+                    AddFormattedTextWithEmojiFont(paragraph, match.Value, currentColor);
+                }
+            }
+        }
+
+
+        private static void ApplyMarkdownStylesToParagraphBAK(Paragraph paragraph, string markdown)
         {
             if (string.IsNullOrWhiteSpace(markdown))
                 return;
+
+
 
             // HTML entities & <br />
             markdown = markdown.Replace("<br />", "\n");
@@ -1564,10 +1622,13 @@ namespace ExportFactory.Services
                 else if (match.Groups["color"].Success)
                 {
                     var parts = Regex.Match(match.Value, @"\{(.*?):(.*?)\}").Groups;
-                    var color = parts[1].Value.Trim();
-                    var content = parts[2].Value.Trim();
-                    var text = paragraph.AddFormattedText(content);
-                    text.Color = Color.Parse(color);
+                    var color = parts[1].Value.Trim(); // linkerdeel is de kleur
+                    var content = parts[2].Value.Trim(); // rechterdeel is de tekst
+
+                    AddFormattedTextWithEmojiFont(paragraph, content, Color.Parse(color));
+
+                    //var text = paragraph.AddFormattedText(content); // TODO ook Emoji in kleur zetten.
+                    //text.Color = Color.Parse(color);
                 }
                 else if (match.Groups["br"].Success)
                 {
@@ -1575,8 +1636,8 @@ namespace ExportFactory.Services
                 }
                 else if (match.Groups["text"].Success)
                 {
-                    //AddFormattedTextWithEmojiFont(paragraph, match.Value); // optie om Emoji te ondersteunen in pdf. 
-                    paragraph.AddText(match.Value);
+                    AddFormattedTextWithEmojiFont(paragraph, match.Value); // optie om Emoji te ondersteunen in pdf. 
+                    //paragraph.AddText(match.Value);
                 }
             }
         }
@@ -1589,21 +1650,52 @@ namespace ExportFactory.Services
         }
 
 
-        private static void AddFormattedTextWithEmojiFont(Paragraph paragraph, string content)
+        private static void AddFormattedTextWithEmojiFont(Paragraph paragraph, string content, Color? color = null)
         {
-            foreach (var rune in content.EnumerateRunes())
-            {
-                var str = rune.ToString();
-                var isEmoji = IsEmoji(rune);
+            if (string.IsNullOrEmpty(content))
+                return;
 
-                var text = paragraph.AddFormattedText(str);
+            var stringInfo = new StringInfo(content);
+            int count = stringInfo.LengthInTextElements;
+
+            for (int i = 0; i < count; i++)
+            {
+                string element = stringInfo.SubstringByTextElements(i, 1);
+                if (string.IsNullOrEmpty(element))
+                    continue;
+
+                // Gebruik de eerste rune om te bepalen of dit een emoji is
+                Rune rune = Rune.GetRuneAt(element, 0);
+                bool isEmoji = IsEmoji(rune);
+
+                var text = paragraph.AddFormattedText(element);
+                if (color != null)
+                    text.Color = color.Value;
+
 
                 if (isEmoji)
                 {
-                    // Different font for emoji (alleen nodig voor PDF export)
-                    text.Font.Name = "NotoEmoji";
+                    text.Font.Name = "NotoEmoji"; // Of jouw emoji-font
+                    //text.Font.Size = (text.Font.Size > 0 ? text.Font.Size : 9) * 1.41; // gebruik bv. 9 als default
                 }
             }
+
+            // hieronder oude code om alle runes te enumereren, maar dit is niet nodig omdat we met StringInfo werken.
+
+            //foreach (var rune in content.EnumerateRunes())
+            //{
+            //    var str = rune.ToString();
+            //    var isEmoji = IsEmoji(rune);
+
+            //    var text = paragraph.AddFormattedText(str);
+
+            //    if (isEmoji)
+            //    {
+            //        // Different font for emoji (alleen nodig voor PDF export)
+            //        text.Font.Name = "NotoEmoji";
+            //        text.Font.Size *= 1.41; // Increase size for better visibility
+            //    }
+            //}
         }
 
         private static bool IsEmoji(Rune rune)
@@ -1611,17 +1703,19 @@ namespace ExportFactory.Services
             int code = rune.Value;
 
             return
-                (code >= 0x1F300 && code <= 0x1FAFF) || // Extended emoji
-                (code >= 0x1F600 && code <= 0x1F64F) || // Emoticons
-                (code >= 0x1F680 && code <= 0x1F6FF) || // Transport & map
-                (code >= 0x2600 && code <= 0x26FF) ||   // Misc symbols
-                (code >= 0x2700 && code <= 0x27BF) ||   // Dingbats
-                (code >= 0x1F1E6 && code <= 0x1F1FF);   // Regional indicators (flags)
+                    (code >= 0x1F300 && code <= 0x1FAFF) || // Extended emoji
+                    (code >= 0x1F600 && code <= 0x1F64F) || // Emoticons
+                    (code >= 0x1F680 && code <= 0x1F6FF) || // Transport & map
+                    (code >= 0x2600 && code <= 0x26FF) || // Misc symbols
+                    (code >= 0x2700 && code <= 0x27BF) || // Dingbats
+                    (code >= 0x1F1E6 && code <= 0x1F1FF) || // Regional flags
+                    (code == 0x200D) || // Zero Width Joiner
+                    (code == 0xFE0F);                       // Variation Selector-16 (emoji style)
         }
 
 
 
-        private static void ApplyMarkdownStylesToParagraphBAK(Paragraph paragraph, string markdown)
+        private static void ApplyMarkdownStylesToParagraphBAK2(Paragraph paragraph, string markdown)
         {
             if (string.IsNullOrEmpty(markdown))
             {

@@ -21,7 +21,7 @@ namespace Eurocode.Belastingen
         [TableColumn("naam", order: -2, width: 2.0)]
         public string Naam { get { return "BC" + Nr.ToString("D1"); } }
 
-        [TableColumn("type", order: 11, width: 5.0)]
+        [TableColumn("type", order: 11, width: 4.0)]
         public BelastingCombinatieTypeEnum Type { get; set; } = type;
 
         public int Nr { get; set; } = nr;

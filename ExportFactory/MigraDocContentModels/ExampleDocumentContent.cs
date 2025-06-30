@@ -23,8 +23,15 @@ namespace ExportFactory.MigraDocContentModels
             "• `|beta|` → |beta|\r\n" +
             "• `|gamma|` → |gamma|\r\n" +
             "• `|Gamma|` → |Gamma| etcetera\r\n" +
-            "• gebruik ook combinaties van hierboven: `*E=mc*^2^` -> *E=mc*^2^\r\n" +
+            "• gebruik ook combinaties van hierboven: `*E=mc*^2^` -> *E=mc^2^*\r\n" +
+            "• `<sub>subscript</sub> →` <sub>subscript</sub>\r\n" +
+            "• `{blue:gekleurde tekst}` → {blue:gekleurde text}\r\n" +
+            "• `{#FF0000:gekleurde tekst}` → {#FF0000:gekleurde text}\r\n" +
+
             "• Unicode wordt ondersteund (controleer Font)\r\n";
+
+
+
 
 
         const string _par2 = "Hoofdstukken met **Kop2** komen ook in de inhoudsopgave. Er wordt automatisch lege ruimte boven en onder de koptekst gelaten.";
@@ -180,17 +187,17 @@ namespace ExportFactory.MigraDocContentModels
                                     new TableCellHeaderContent()
                                     {
                                         Width = Unit.FromCentimeter(10),
-                                        CellContent = new TableCellContent() { Markdown = "Translates to" },
+                                        CellContent = new TableCellContent() { Markdown = "Translates to", Width = "4cm" },
                                     },
                                     new TableCellHeaderContent()
                                     {
                                         Width = Unit.FromCentimeter(10),
-                                        CellContent = new TableCellContent() { Markdown = "Demo" },
+                                        CellContent = new TableCellContent() { Markdown = "Demo", Width = "4cm" },
                                     },
                                     new TableCellHeaderContent()
                                     {
                                         Width = Unit.FromCentimeter(10),
-                                        CellContent = new TableCellContent() { Markdown = "Demo" },
+                                        CellContent = new TableCellContent() { Markdown = "Demo", Width = "4cm" },
                                     },
 
 
@@ -200,12 +207,14 @@ namespace ExportFactory.MigraDocContentModels
                                     [ new TableCellContent(){
                                         //Markdown = _svgDemo,
                                         SvgImage = _svgBrem,
-                                        ColSpan = 2
+                                        ColSpan = 2,
+                                        Width = "4cm"
                                     }],
                                     [ new TableCellContent(){
                                         //Markdown = _svgDemo,
                                         SvgImage = _svgKaskonCyclingTeam,
-                                        ColSpan = 2
+                                        ColSpan = 2, Width = "4cm"
+
                                     }],
                                      [ new TableCellContent(){
                                         //Markdown = _svgDemo,
@@ -213,13 +222,13 @@ namespace ExportFactory.MigraDocContentModels
                                         ColSpan = 2
                                     }],
 
-                                    [ new TableCellContent { Markdown = "`**Bold**`" }, new TableCellContent { Markdown = "**Bold**" }],
+                                    [ new TableCellContent { Markdown = "`**Bold**`", Width = "4cm"}, new TableCellContent { Markdown = "**Bold**", Width = "4cm" }],
                                     [ new TableCellContent { Markdown = "`*Italic*`" }, new TableCellContent { Markdown = "*Italic*" }],
                                     [ new TableCellContent { Markdown = "```|xi|~nl~```" }, new TableCellContent { Markdown = "|xi|~nl~" }],
                                     [ new TableCellContent { Markdown = "```*|xi|*~nl~```" }, new TableCellContent { Markdown = "*|xi|*~nl~" }],
                                     [ new TableCellContent { Markdown = "`H~2~O`" }, new TableCellContent { Markdown = "H~2~O" }],
                                     [ new TableCellContent { Markdown = "```x^3.14^```" }, new TableCellContent { Markdown = "x^3.14^" }],
-                                    [ new TableCellContent("```~~rode tekst~~````"),new TableCellContent("~~rode tekst~~")], 
+                                    [ new TableCellContent("`~~rode tekst~~`", "4cm"),new TableCellContent { Markdown = "rodetekst", Width = "4cm" }], 
                                     //[ new TableCellContent("`<svg></svg>`"), new TableCellContent(){SvgImage = _svgDemo} ],
                                 ]
                             },

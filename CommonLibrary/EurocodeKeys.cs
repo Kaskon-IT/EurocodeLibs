@@ -134,6 +134,7 @@
         public const string TandLengte = "Tand.Lengte";
         public const string TandHoogte = "Tand.Hoogte";
         public const string TandNuttigeHoogte = "Tand.NuttigeHoogte";
+        public const string HalsDikte = "Hals.Dikte";
 
 
         public const string Wapening = "Wapening";

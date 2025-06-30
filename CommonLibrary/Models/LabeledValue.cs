@@ -4,6 +4,65 @@ using System.Text.Json.Serialization;
 
 namespace CommonLibrary.Models
 {
+    public class LabelWithStringValue : INotifyPropertyChanged
+    {
+        public LabelWithStringValue()
+        {
+
+        }
+
+        public LabelWithStringValue(string label, string stringValue)
+        {
+            Label = label;
+            StringValue = stringValue;
+        }
+
+        private string _label = string.Empty;
+        private string _stringValue = string.Empty;
+
+        public string Label
+        {
+            get => _label;
+            set
+            {
+                if (_label != value)
+                {
+                    _label = value;
+                    OnPropertyChanged(nameof(Label));
+                }
+            }
+        }
+
+        public string StringValue
+        {
+            get => _stringValue;
+            set
+            {
+                if (_stringValue != value)
+                {
+                    _stringValue = value;
+                    OnPropertyChanged(nameof(StringValue));
+                }
+            }
+        }
+
+
+        public override string ToString()
+        {
+            return $"{Label} : {StringValue}";
+        }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName) =>
+           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+
+
+
+
     public class LabeledValue : INotifyPropertyChanged
     {
         private string _label = string.Empty;
