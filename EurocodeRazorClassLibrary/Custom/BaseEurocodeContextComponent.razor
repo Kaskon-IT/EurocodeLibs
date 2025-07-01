@@ -1,4 +1,5 @@
 ﻿@using CommonLibrary
+@using ExportFactory.Extensions
 @using Microsoft.Extensions.Hosting
 @using System.ComponentModel
 @inject IHostEnvironment Env
@@ -11,7 +12,7 @@
     <FluentSwitch @bind-Value="IsDraaiTabel" CheckedMessage="draaitabel voorbeeld" UncheckedMessage="tabel voorbeeld" />
     <FluentCard>
         
-        @Model.ToHtml(IsDraaiTabel)
+        @Model.ToHtmlTable(IsDraaiTabel)
     </FluentCard>
     @* <br/>
     <FluentCard>

@@ -1,18 +1,17 @@
 ﻿using CommonLibrary;
 using Eurocode.Grondslagen;
-using Microsoft.AspNetCore.Components;
 using System.Text.Json.Serialization;
 
 namespace Eurocode.BetonConstructies
 {
     public partial class Scheurbeheersing
     {
-        public override MarkupString ToHtml(bool isDraaiTabel = true)
-        {
-            return this.ToHtml(isDraaiTabel);
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    return this.ToHtml(isDraaiTabel);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
         public class ScheurwijdteGrenswaarde : BaseEurocodeContext
         {
@@ -183,10 +182,10 @@ namespace Eurocode.BetonConstructies
                 return true;
             }
 
-            public override MarkupString ToHtml(bool isDraaiTabel = true)
-            {
-                throw new NotImplementedException();
-            }
+            //public override MarkupString ToHtml(bool isDraaiTabel = true)
+            //{
+            //    throw new NotImplementedException();
+            //}
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using CommonLibrary;
-using Eurocode.BetonConstructies.Algemeen;
 
 namespace Eurocode.BetonConstructies
 {
@@ -114,7 +113,7 @@ namespace Eurocode.BetonConstructies
                 {
                     // foutmelding!!!!!!!! verhoog de drukdiagonaal!
                     // maak melding
-                    var melding = MeldingenBetonHelper.GetMelding(203);
+                    var melding = CommonLibrary.Helpers.MeldingenBetonHelper.GetMelding(2003);
                     context.Meldingen.Add(melding);
                 }
                 else

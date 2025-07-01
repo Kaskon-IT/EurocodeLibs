@@ -1,7 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
 using CommonLibrary.Helpers;
-using ExportFactory.Extensions;
 using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
@@ -380,12 +379,12 @@ namespace Eurocode.BetonConstructies
             //throw new NotImplementedException();
         }
 
-        public override MarkupString ToHtml(bool isDraaiTabel = true)
-        {
-            return this.ToHtmlTable(isDraaiTabel);
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    return this.ToHtmlTable(isDraaiTabel);
 
-            //throw new NotImplementedException();
-        }
+        //    //throw new NotImplementedException();
+        //}
     }
 
     public enum OplegMateriaalEnum

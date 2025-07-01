@@ -15,15 +15,37 @@
         private static Dictionary<string, AttributesMapping> _mappingDict { get; } = _mappingService.Data;
 
 
-        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false, bool hideHeader = false)
+        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false, bool hideHeader = false, List<CommonLibrary.Melding>? meldingen = null)
         {
+
+
+
+            // deze methode wordt ALLEEN gebruikt voor een leeg document met 
+            // een ENKELE Tabel 
+            // bijvoorbeeld voor export of voorbeeld doeleinde
+
+
             MigraDoc.DocumentObjectModel.Document document = new();
             var table = dataTable.ToTable(objectType, isPivotTable, hideHeader);
+
+
 
             if (table != null)
             {
                 document.AddSection();
                 document.LastSection.Add(table);
+
+                // voeg de opmerkingen toe 
+                if (meldingen != null && meldingen.Count != 0)
+                {
+                    var parMeldingen = document.LastSection.AddParagraph();
+                    foreach (var melding in meldingen)
+                    {
+                        var inspecteer = melding.ToMarkupString().Value;
+
+                        parMeldingen.AddText(melding.ToMarkupString().Value + "\r\n"); // Gebruik Markup (want gaat niet door markdown Parser)
+                    }
+                }
             }
             return document;
         }

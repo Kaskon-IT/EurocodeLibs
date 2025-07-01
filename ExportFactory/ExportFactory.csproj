@@ -8,7 +8,7 @@
 		<!-- NuGet-package instellingen -->
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Kaskon.ExportFactory</PackageId>
-		<Version>1.1.642</Version> <!-- Increment version for next release -->
+		<Version>1.1.645</Version> <!-- Increment version for next release -->
 		<Authors>Bart van der Linden</Authors>
 		<Company>Kaskon</Company>
 		<Description>Library voor pdf, csv, word, html, svg exports.</Description>

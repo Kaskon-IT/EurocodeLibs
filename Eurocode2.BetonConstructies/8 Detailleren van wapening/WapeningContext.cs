@@ -1,5 +1,4 @@
 ﻿using CommonLibrary;
-using Microsoft.AspNetCore.Components;
 
 namespace Eurocode.BetonConstructies
 {
@@ -147,11 +146,11 @@ namespace Eurocode.BetonConstructies
 
         }
 
-        public override MarkupString ToHtml(bool isDraaiTabel = true)
-        {
-            return this.ToHtml(isDraaiTabel);
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    return this.ToHtml(isDraaiTabel);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
     }
 }

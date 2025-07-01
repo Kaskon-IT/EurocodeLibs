@@ -1703,15 +1703,17 @@ namespace ExportFactory.Services
             int code = rune.Value;
 
             return
-                    (code >= 0x1F300 && code <= 0x1FAFF) || // Extended emoji
-                    (code >= 0x1F600 && code <= 0x1F64F) || // Emoticons
-                    (code >= 0x1F680 && code <= 0x1F6FF) || // Transport & map
-                    (code >= 0x2600 && code <= 0x26FF) || // Misc symbols
-                    (code >= 0x2700 && code <= 0x27BF) || // Dingbats
-                    (code >= 0x1F1E6 && code <= 0x1F1FF) || // Regional flags
-                    (code == 0x200D) || // Zero Width Joiner
-                    (code == 0xFE0F);                       // Variation Selector-16 (emoji style)
+                (code >= 0x1F300 && code <= 0x1FAFF) || // Extended emoji
+                (code >= 0x1F600 && code <= 0x1F64F) || // Emoticons
+                (code >= 0x1F680 && code <= 0x1F6FF) || // Transport & map
+                (code >= 0x2600 && code <= 0x26FF) ||   // Misc symbols
+                (code >= 0x2700 && code <= 0x27BF) ||   // Dingbats
+                (code >= 0x1F1E6 && code <= 0x1F1FF) || // Regional flags
+                (code == 0x200D) ||                     // Zero Width Joiner
+                (code == 0xFE0F) ||                     // Variation Selector-16 (emoji style)
+                (code == 0x2139);                       // ℹ Information source
         }
+
 
 
 

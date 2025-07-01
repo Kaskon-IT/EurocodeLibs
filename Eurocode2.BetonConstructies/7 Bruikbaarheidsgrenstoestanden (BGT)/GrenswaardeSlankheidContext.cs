@@ -1,7 +1,5 @@
 ﻿using CommonLibrary;
-using ExportFactory.Extensions;
 using ExportFactory.Shared;
-using Microsoft.AspNetCore.Components;
 using K = CommonLibrary.EurocodeKeys;
 
 namespace Eurocode.BetonConstructies
@@ -190,16 +188,16 @@ namespace Eurocode.BetonConstructies
 
         }
 
-        public override MarkupString ToHtml(bool isDraaiTabel = true)
-        {
-            return this.ToHtmlTable(isDraaiTabel);
-            //var dt = this.ToDataTable();
-            //var type = typeof(GrenswaardeSlankheidContext);
-            //var mdd = dt.ToMigraDocDocument(type);
-            //var html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(mdd);
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    return this.ToHtmlTable(isDraaiTabel);
+        //    //var dt = this.ToDataTable();
+        //    //var type = typeof(GrenswaardeSlankheidContext);
+        //    //var mdd = dt.ToMigraDocDocument(type);
+        //    //var html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(mdd);
 
-            //return new MarkupString(html);
-        }
+        //    //return new MarkupString(html);
+        //}
     }
 
 

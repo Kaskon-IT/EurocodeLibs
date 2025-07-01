@@ -1,7 +1,5 @@
 ﻿using CommonLibrary;
-using ExportFactory.Extensions;
 using ExportFactory.Services;
-using Microsoft.AspNetCore.Components;
 using MigraDoc.DocumentObjectModel;
 
 
@@ -52,13 +50,13 @@ namespace ExportFactory.Shared
             return true;
         }
 
-        public override MarkupString ToHtml(bool isDraaiTabel = true)
-        {
-            var dt = this.ToDataTable(); // maak een DataTable van de context
-            var mdd = dt.ToMigraDocDocument(objectType: this.GetType(), isPivotTable: isDraaiTabel); // maak een MigraDocDocument
-            var html = HtmlCreator.GenerateHtmlFromDocument(mdd); // genereer HTML vanuit het MigraDocDocument
-            return new MarkupString(html); // retourneer als MarkupString
-        }
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    var dt = this.ToDataTable(); // maak een DataTable van de context
+        //    var mdd = dt.ToMigraDocDocument(objectType: this.GetType(), isPivotTable: isDraaiTabel); // maak een MigraDocDocument
+        //    var html = HtmlCreator.GenerateHtmlFromDocument(mdd); // genereer HTML vanuit het MigraDocDocument
+        //    return new MarkupString(html); // retourneer als MarkupString
+        //}
 
         protected override void Bereken()
         {

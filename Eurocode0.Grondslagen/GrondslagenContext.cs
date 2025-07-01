@@ -5,7 +5,6 @@
 ///using CsvFactory;
 using CommonLibrary;
 using CommonLibrary.Interfaces;
-using ExportFactory.Extensions;
 using ExportFactory.MigraDocContentModels;
 using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
@@ -262,11 +261,11 @@ namespace Eurocode.Grondslagen
             return true;
         }
 
-        public override MarkupString ToHtml(bool isDraaiTabel = true)
-        {
-            return this.ToHtmlTable(isDraaiTabel: isDraaiTabel);
-            throw new NotImplementedException();
-        }
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    return this.ToHtmlTable(isDraaiTabel: isDraaiTabel);
+        //    throw new NotImplementedException();
+        //}
 
 
 

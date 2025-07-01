@@ -60,17 +60,47 @@ namespace CommonLibrary
             return $"{TypeEmoji} {Bericht}";
         }
 
+        private string Color
+        {
+            get
+            {
+                return Type switch
+                {
+                    MeldingType.Opmerking => colorInfo,
+                    _ => colorWarning, // MeldingType.Waarschuwing
+                };
+            }
+        }
+
+
         public MarkupString ToMarkupString()
         {
-            var color = Type switch
-            {
-                MeldingType.Opmerking => colorInfo,
-                _ => colorWarning, // MeldingType.Waarschuwing
-            };
+            //var color = Type switch
+            //{
+            //    MeldingType.Opmerking => colorInfo,
+            //    _ => colorWarning, // MeldingType.Waarschuwing
+            //};
 
             // Omzetten van {kleur:tekst} naar <span style="color:kleur">tekst</span>
-            string val = "{" + $"{color}:" + $"{this}" + "}";
+            // ZET HET OM NAAR HTML dus gebruik geen Markdown 
+            // gebruik een <span> element
+
+            string val = $"<span style=color:{this.Color};>{this}</span>";
+
             return new MarkupString(val);
+        }
+
+        public string ToMarkDownString()
+        {
+            // Zet de melding om naar een Markdown string
+            // Markdown gebruikt geen HTML, dus we gebruiken de standaard Markdown syntax
+            // NB. we ondersteunen wel <sub><sup><strong><em><u><i><b> en <br> in de Markdown string
+            // Alleen de "{#RRGGBB:gekleurde tekst}" wordt alleen ondersteund als MARKDOWN 
+            string val = "{" + this.Color + ":" + this.ToString() + "}";
+
+
+
+            return val;
         }
 
 

@@ -1,8 +1,6 @@
 ﻿using CommonLibrary;
-using ExportFactory.Extensions;
 using ExportFactory.MigraDocContentModels;
 using ExportFactory.Shared;
-using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
@@ -451,10 +449,10 @@ namespace Eurocode.BetonConstructies
             return true;
         }
 
-        public override MarkupString ToHtml(bool isDraaiTabel = true)
-        {
-            return this.ToHtmlTable(isDraaiTabel);
-            throw new NotImplementedException();
-        }
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    return this.ToHtmlTable(isDraaiTabel);
+        //    throw new NotImplementedException();
+        //}
     }
 }

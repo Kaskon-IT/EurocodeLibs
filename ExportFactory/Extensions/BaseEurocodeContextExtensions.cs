@@ -23,8 +23,24 @@ namespace ExportFactory.Extensions
         public static MarkupString ToHtmlTable<T>(this T obj, bool isDraaiTabel = true) where T : BaseEurocodeContext
         {
             var dt = obj.ToDataTable(); // datatable
-            var mdd = dt.ToMigraDocDocument(objectType: obj.GetType(), isPivotTable: isDraaiTabel); // migraDoc.Document
+
+            // zijn er meldingen?
+            //if (obj.Meldingen.Any())
+
+            var mdd = dt.ToMigraDocDocument(objectType: obj.GetType(), isPivotTable: isDraaiTabel, meldingen: [.. obj.Meldingen]); // migraDoc.Document
+
+            // onderaan alle opmerkingen (indien aanwezig)
+
+
+
+
+
             var html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(mdd);
+
+
+
+
+
             return new MarkupString(html);
         }
 
@@ -82,7 +98,7 @@ namespace ExportFactory.Extensions
             {
                 ParagraphContent par = new ParagraphContent
                 {
-                    Markdown = obj.Meldingen.Select(m => m.ToMarkupString().Value).Aggregate((current, next) => current + "\n" + next),
+                    Markdown = obj.Meldingen.Select(m => m.ToMarkDownString()).Aggregate((current, next) => current + "\n" + next),
                 };
                 return par;
             }

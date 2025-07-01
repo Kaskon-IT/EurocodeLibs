@@ -38,6 +38,10 @@
         document.LastSection.AddParagraph("Grondslagen", "TableHeading");
         document.LastSection.Add(table);
 
+
+
+
+
         var pivotTable = list.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext), true);
         document.LastSection.AddParagraph("Grondslagen (Pivot-table)", "TableHeading");
         document.LastSection.Add(pivotTable);

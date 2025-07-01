@@ -1,5 +1,4 @@
 ﻿using CommonLibrary;
-using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
@@ -310,11 +309,11 @@ namespace Eurocode.BetonConstructies
             throw new NotImplementedException();
         }
 
-        public override MarkupString ToHtml(bool isDraaiTabel = true)
-        {
-            // Implement the logic to convert the context to HTML format
-            throw new NotImplementedException();
-        }
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    // Implement the logic to convert the context to HTML format
+        //    throw new NotImplementedException();
+        //}
 
         protected override void Bereken()
         {

@@ -1,7 +1,5 @@
 ﻿using CommonLibrary;
-using ExportFactory.Extensions;
 using ExportFactory.Shared;
-using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 using K = CommonLibrary.EurocodeKeys;
 
@@ -26,10 +24,6 @@ namespace Eurocode.BetonConstructies
 
         public override string ToString()
         {
-
-
-
-
             var result = "";
             result += $"M~Ed~ = {Moment: 0.#} kNm, ";
             result += $"afm. {Breedte}×{Hoogte}/{D} mm, ";
@@ -41,14 +35,11 @@ namespace Eurocode.BetonConstructies
             if (BerekeningType == BerekeningTypeEnum.ControleerWapening)
             {
                 result += $"A~s,toe~ = {AsApplied: 0} mm², ";
-
                 result += $"(UC = {(AsRequired / AsApplied):0.00}), ";
 
             }
 
             if (MinimaleWapeningToegepast) result += $"minimale wapening van toepassing, ";
-
-
 
             return result.TrimEnd(',', ' ');
         }
@@ -192,6 +183,7 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn("b [mm]", order: 2,
+            Weergave = WeergaveEnum.DraaiTabel,
             Key = K.ProfielBreedte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Breedte
@@ -201,6 +193,7 @@ namespace Eurocode.BetonConstructies
         }
 
         [TableColumn("h [mm]", order: 3,
+            Weergave = WeergaveEnum.DraaiTabel,
             Key = K.ProfielHoogte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Hoogte
@@ -279,7 +272,28 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        public bool IsGedrongenLigger { get; set; } = false;
+        private bool _isGedrongenLigger;
+
+        public bool IsGedrongenLigger
+        {
+            get => _isGedrongenLigger;
+            set
+            {
+                if (_isGedrongenLigger != value)
+                {
+                    _isGedrongenLigger = value;
+                    OnPropertyChanged(nameof(IsGedrongenLigger));
+                    BerekenEnValideer();
+                }
+            }
+        }
+
+
+        private bool IsGedrongenMaarSlankIsMaatgevend
+        {
+            get; set;
+        }
+
 
         public string LengteMaatBijGedrongenLiggerSymbool
         {
@@ -299,6 +313,8 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
+
+
 
         /// <summary>
         /// De overspanning van de ligger.
@@ -334,6 +350,7 @@ namespace Eurocode.BetonConstructies
                     var asBenodigdGedrongen = Moment * 1e6 / Z / Beton.BetonStaal.Fyd;
                     if (asBenodigdZuivereBuiging > asBenodigdGedrongen)
                     {
+                        AddMelding(1004);
                         // melding 
                         // OPMERKING Bij relatief slanke constructies en/ of bij de toepassing van grote hoeveelheden wapening is het
                         // mogelijk dat bij de uitgangspunten geformuleerd in (1)P een lagere waarde van de momentweerstand wordt
@@ -412,8 +429,6 @@ namespace Eurocode.BetonConstructies
 
 
 
-
-
         public double SigmaS
         {
             get
@@ -451,6 +466,29 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        /// <summary>
+        /// Gebruik artikel 7.3.1 minimale wapening voor gecontroleerde scheurbeheersing.
+        /// </summary>
+        public bool MinimaleWapeningScheurbeheersingToepassen { get; set; } = true;
+        public double AsMinScheurbeheersing
+        {
+            get
+            {
+                if (MinimaleWapeningScheurbeheersingToepassen)
+                {
+                    Scheurbeheersing.ScheurwijdteMinimumWapening ScheurwijdteAsMin = new()
+                    {
+                        Beton = Beton,
+
+                    };
+                    return ScheurwijdteAsMin.AsMin;
+                }
+                else return double.MaxValue; // geen minimale wapening voor scheurbeheersing toepassen
+
+            }
+        }
+
+
         public double AsMax
         {
             get
@@ -483,8 +521,6 @@ namespace Eurocode.BetonConstructies
 
 
 
-
-
         public bool MinimaleWapeningToegepast
         {
             get
@@ -492,6 +528,21 @@ namespace Eurocode.BetonConstructies
                 return AsMin > AsBerekend;
             }
         }
+
+
+        //private List<int> _meldingCodes = [];
+
+        [TableColumn("Opm.", Order = 9999)]
+        public string MeldingNummers
+        {
+            get
+            {
+                //MeldingCodes ??= [];
+
+                return string.Join(", ", MeldingCodes.Select(code => $"{code % 1000}"));
+            }
+        }
+
 
         public override bool IsAkkoord()
         {
@@ -509,53 +560,79 @@ namespace Eurocode.BetonConstructies
                 _verankeringsLengte.Diameter = Wapening.GemiddeldeDiameter;
             }
 
+            // controleer of slank maatgevend 
+            if (_isGedrongenLigger)
+            {
+                if (AsRequired == AsBerekend)
+                {
 
+                }
+            }
 
             // volgens mij gaat dit volledig automatisch...
         }
 
         protected override bool Valideer()
         {
+            //_meldingCodes?.Clear();
+            bool returnVal = true;
+
             if (Xu > XuMax)
             {
-                AddMeldingWaarschuwing("hoogte drukzone niet akkoord");
-                //Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
-                return false;
+                AddMelding(1051);
+                //AddMeldingWaarschuwing("Overschrijding maximale drukzone");
+                returnVal = false;
             }
             if (AsApplied < AsRequired)
             {
-                AddMeldingWaarschuwing("onvoldoende wapening");
-                //Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
-                return false;
+                AddMelding(1053);
+                returnVal = false;
             }
 
 
             if (AsApplied > this.AsMax)
             {
-                AddMeldingWaarschuwing("overschrijding maximale wapening (voor balk)");
-                return false;
+                AddMelding(1052);
+                //AddMeldingWaarschuwing($"Overschrijding maximale wapening");
+                returnVal = false;
             }
 
 
-            return true;
+            // OPMERKINGEN (do not return false)
+
+            if (MinimaleWapeningToegepast)
+                AddMelding(1001);
+
+            if (IsGedrongenLigger)
+                AddMelding(1003);
+
+            // DEBUG
+            AddMelding(1002); // controle 
+            AddMelding(999); // bestaat niet voor NotFound error
+
+
+
+
+
+            return returnVal;
 
         }
 
-        public override MarkupString ToHtml(bool isDraaiTabel = true)
-        {
-            try
-            {
-                return this.ToHtmlTable(isDraaiTabel);
-            }
-            catch (Exception ex)
-            {
-                // Log de fout of geef een melding weer
-                Console.WriteLine($"Fout bij het genereren van HTML: {ex.Message}");
-                return new MarkupString("Fout bij het genereren van HTML.");
-            }
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    try
+        //    {
+        //        return this.ToHtmlTable(isDraaiTabel);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log de fout of geef een melding weer
+        //        Console.WriteLine($"Fout bij het genereren van HTML: {ex.Message}");
+        //        return new MarkupString("Fout bij het genereren van HTML.");
+        //    }
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
     }
 
 
