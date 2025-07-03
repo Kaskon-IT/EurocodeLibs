@@ -38,7 +38,7 @@
                 // voeg de opmerkingen toe 
                 if (meldingen != null && meldingen.Count != 0)
                 {
-                    var parMeldingen = document.LastSection.AddParagraph();
+                    var parMeldingen = document.LastSection.AddParagraph("Opmerkingen\r\n");
                     foreach (var melding in meldingen)
                     {
                         var inspecteer = melding.ToMarkupString().Value;

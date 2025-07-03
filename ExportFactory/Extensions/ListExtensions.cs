@@ -9,6 +9,10 @@ namespace ExportFactory.Extensions
     public static class ListExtensions
     {
 
+
+
+
+
         // Extensiemethode om een IEnumerable<BaseEurocodeContext> om te zetten naar een DataTable
         public static DataTable ToDataTable<T>(this IEnumerable<T> list) where T : BaseEurocodeContext
         {
@@ -19,6 +23,12 @@ namespace ExportFactory.Extensions
         // Extensiemethode om een List<T> om te zetten naar een DataTable, inclusief kolominstellingen zoals header, uitlijning en zichtbaarheid
         private static DataTable ToDataTableInternal<T>(List<T> list) where T : BaseEurocodeContext
         {
+            ArgumentNullException.ThrowIfNull(list);
+            ArgumentNullException.ThrowIfNull(list.FirstOrDefault());
+
+            var type = list.FirstOrDefault()?.GetType();
+            ArgumentNullException.ThrowIfNull(type);
+
             var dataTable = new DataTable();
 
             if (list.Count == 0)
@@ -29,8 +39,9 @@ namespace ExportFactory.Extensions
             try
             {
                 // Verkrijg de eigenschappen van T (de kolommen)
-                var myType = typeof(T);
-                var properties = typeof(T).GetProperties();
+                //var myType = typeof(T);
+                var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
 
                 // Voeg kolommen toe aan de DataTable op basis van de eigenschappen van T
                 foreach (var prop in properties)

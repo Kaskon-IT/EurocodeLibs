@@ -12,6 +12,7 @@
         public bool Italic { get; set; }
         public bool Sub { get; set; }
         public bool Sup { get; set; }
+        public bool Underline { get; set; }
         public Color Color { get; set; } = Colors.Black;
 
         public string Wrap(string input)
@@ -22,6 +23,7 @@
             if (Sub) result = $"<sub>{result}</sub>";
             if (Italic) result = $"<i>{result}</i>";
             if (Bold) result = $"<b>{result}</b>";
+            if (Underline) result = $"<u>{result}</u>";
 
             string htmlColor = $"#{Color.R:X2}{Color.G:X2}{Color.B:X2}";
 
@@ -41,12 +43,13 @@
                    Italic == other.Italic &&
                    Sub == other.Sub &&
                    Sup == other.Sup &&
+                   Underline == other.Underline &&
                    Color == other.Color;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Bold, Italic, Sub, Sup, Color);
+            return HashCode.Combine(Bold, Italic, Sub, Sup, Underline, Color);
         }
     }
 
@@ -586,6 +589,7 @@
                                     Italic = ft.Italic,
                                     Sub = ft.Subscript,
                                     Sup = ft.Superscript,
+                                    Underline = ft.Underline != Underline.None,
                                     Color = ft.Color
                                 };
 

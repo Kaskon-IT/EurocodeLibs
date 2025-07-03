@@ -5,7 +5,7 @@ namespace Eurocode.BetonConstructies
 
     public class WapeningContext : BaseEurocodeContext
     {
-        public override string Heading => "Wapening";
+        public override string Heading { get; set; } = "Wapening";
 
         public WapeningContext()
         {

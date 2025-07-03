@@ -15,7 +15,7 @@
     @* <p>moment : @Model.Snedekrachten.My.ToString("0.##") kNm</p> *@
 }
 
-<EurocodeMeldingenComponent Meldingen="Model.Meldingen"></EurocodeMeldingenComponent>
+@* <EurocodeMeldingenComponent Meldingen="Model.Meldingen"></EurocodeMeldingenComponent> *@
 
 @* <p>@Model.ToMarkupString()</p> *@
 
@@ -27,7 +27,7 @@
     }
 }
 
-@if (Model.Beton != null)
+@* @if (Model.Beton != null)
 {
     <p>this.Beton = @Model.Beton.ToMarkupString()</p>
 }
@@ -35,7 +35,7 @@
 @if (Model.VerankeringsLengte != null)
 {
     <p>this.VerankeringsLengte = @Model.VerankeringsLengte.ToMarkupString()</p>
-}
+} *@
 
 
 
@@ -127,12 +127,9 @@ else
 <EurocodeInputNumber ReadOnly=true Value=Model.AsApplied Key="AsToe" Unit="mm²" MinValue="Model.AsRequired" MaxValue="Model.AsMax" StringFormat="0"></EurocodeInputNumber>
 
 
-<BaseEurocodeContextComponent TContext="BendingResults" @bind-Model="@Model" />
+<BaseEurocodeContextComponent TContext="BendingResults" @bind-Model="@Model" /> 
 
-@if (Model.MinimaleWapeningToegepast)
-{
-    <p>Minimale wapening maatgevend</p>
-}
+
 
 
 @code {

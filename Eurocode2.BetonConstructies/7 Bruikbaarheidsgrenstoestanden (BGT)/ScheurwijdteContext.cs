@@ -9,7 +9,7 @@ namespace Eurocode.BetonConstructies
 
     public class ScheurwijdteContext : BaseEurocodeContext
     {
-        public override string Heading => "Scheurwijdte";
+        public override string Heading { get; set; } = "Scheurwijdte";
 
         public ScheurwijdteContext()
         {

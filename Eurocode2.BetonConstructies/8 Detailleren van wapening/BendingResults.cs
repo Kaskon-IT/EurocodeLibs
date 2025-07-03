@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Helpers;
 using ExportFactory.Shared;
 using System.ComponentModel;
 using K = CommonLibrary.EurocodeKeys;
@@ -11,7 +12,7 @@ namespace Eurocode.BetonConstructies
     public class BendingResults : BaseEurocodeContext
     {
 
-        public override string Heading => "Momentwapening";
+        public override string Heading { get; set; } = "Momentwapening";
 
         private double _asApplied;
         private BerekeningTypeEnum? _berekeningType = BerekeningTypeEnum.ControleerWapening;
@@ -350,7 +351,7 @@ namespace Eurocode.BetonConstructies
                     var asBenodigdGedrongen = Moment * 1e6 / Z / Beton.BetonStaal.Fyd;
                     if (asBenodigdZuivereBuiging > asBenodigdGedrongen)
                     {
-                        AddMelding(1004);
+                        AddMelding(StandaardMeldingenCatalogus.GedrongenLiggerNietMaatgevend);
                         // melding 
                         // OPMERKING Bij relatief slanke constructies en/ of bij de toepassing van grote hoeveelheden wapening is het
                         // mogelijk dat bij de uitgangspunten geformuleerd in (1)P een lagere waarde van de momentweerstand wordt
@@ -532,14 +533,20 @@ namespace Eurocode.BetonConstructies
 
         //private List<int> _meldingCodes = [];
 
-        [TableColumn("Opm.", Order = 9999)]
+        [TableColumn("opm.", Order = 9999)]
         public string MeldingNummers
         {
             get
             {
-                //MeldingCodes ??= [];
+                return string.Join(", ",
+                    Meldingen
+                        .Where(m => m.Code.HasValue)
+                        .Select(m => m.Code!.Value % 1000)
+                        .OrderBy(n => n)
+                        .Select(n => n.ToString())
+                );
 
-                return string.Join(", ", MeldingCodes.Select(code => $"{code % 1000}"));
+                //return string.Join(", ", MeldingCodes.Select(code => $"{code % 1000}"));
             }
         }
 
@@ -577,62 +584,45 @@ namespace Eurocode.BetonConstructies
             //_meldingCodes?.Clear();
             bool returnVal = true;
 
+            if (double.IsNaN(Xu))
+            {
+                AddMelding(StandaardMeldingenCatalogus.BerekeningNietAkkoord);
+            }
+
             if (Xu > XuMax)
             {
-                AddMelding(1051);
-                //AddMeldingWaarschuwing("Overschrijding maximale drukzone");
+                AddMelding(StandaardMeldingenCatalogus.OverschrijdingDrukzone);
                 returnVal = false;
             }
             if (AsApplied < AsRequired)
             {
-                AddMelding(1053);
+                AddMelding(StandaardMeldingenCatalogus.OnvoldoendeLangsWapening);
                 returnVal = false;
             }
 
 
             if (AsApplied > this.AsMax)
             {
-                AddMelding(1052);
-                //AddMeldingWaarschuwing($"Overschrijding maximale wapening");
+                AddMelding(StandaardMeldingenCatalogus.OverschrijdingMaximaleWapening);
                 returnVal = false;
             }
 
 
             // OPMERKINGEN (do not return false)
-
             if (MinimaleWapeningToegepast)
-                AddMelding(1001);
+            {
+                AddMelding(StandaardMeldingenCatalogus.MinimaleWapening);
+            }
 
             if (IsGedrongenLigger)
-                AddMelding(1003);
-
-            // DEBUG
-            AddMelding(1002); // controle 
-            AddMelding(999); // bestaat niet voor NotFound error
-
-
-
+                AddMelding(StandaardMeldingenCatalogus.GedrongenLigger);
 
 
             return returnVal;
 
         }
 
-        //public override MarkupString ToHtml(bool isDraaiTabel = true)
-        //{
-        //    try
-        //    {
-        //        return this.ToHtmlTable(isDraaiTabel);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log de fout of geef een melding weer
-        //        Console.WriteLine($"Fout bij het genereren van HTML: {ex.Message}");
-        //        return new MarkupString("Fout bij het genereren van HTML.");
-        //    }
 
-        //    throw new NotImplementedException();
-        //}
     }
 
 

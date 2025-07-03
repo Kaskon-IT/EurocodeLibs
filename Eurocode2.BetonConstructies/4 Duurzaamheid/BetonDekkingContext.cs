@@ -9,7 +9,7 @@ namespace Eurocode.BetonConstructies
     public partial class BetonDekkingContext : BaseEurocodeContext
     {
 
-        public override string Heading => "Dekking en duurzaamheid";
+        public override string Heading { get; set; } = "Dekking en duurzaamheid";
 
         /// <summary>
         /// Referentie naar de context uit de Eurocode1

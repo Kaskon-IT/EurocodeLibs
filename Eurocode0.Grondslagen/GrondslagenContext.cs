@@ -89,7 +89,7 @@ namespace Eurocode.Grondslagen
         }
 
 
-        public override string Heading => "Grondslagen";
+        public override string Heading { get; set; } = "Grondslagen";
 
         //[TableColumn("Eurocode")]
         public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;

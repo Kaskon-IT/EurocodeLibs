@@ -7,6 +7,9 @@ namespace CommonLibrary
     {
         Opmerking,
         Waarschuwing,
+        Neutraal,
+        Hint,
+        Error,
     }
 
 
@@ -15,22 +18,59 @@ namespace CommonLibrary
     public class Melding
     {
 
+        public int? Code { get; set; } // Optioneel, kan gebruikt worden voor catalogus
 
+
+        // kleuren voor meldingen
         public const string colorWarning = "#E67E22"; // hexadecimale kleurcode voor waarschuwing 
         public const string colorInfo = "#17A2B8"; // typische kleur voor informatieve meldingen (blauwachtig)
+        public const string colorError = "#DC3545"; // hexadecimale kleurcode voor foutmelding (rood)
+        public const string colorNeutral = "#6C757D"; // hexadecimale kleurcode voor neutrale meldingen (grijsachtig)
+        public const string colorHint = "#28A745"; // hexadecimale kleurcode voor hint (groenachtig)
+
+        public const string emojiWaarschuwing = "⚠️";
+        public const string emojiHint = "💡";
+        public const string emojiError = "❌";
+        public const string emojiInfo = "ℹ️";
 
         public MeldingType Type { get; set; }
         public string Bericht { get; set; }
+        public bool ShowEmoji { get; set; } = true; // Toon emoji in de UI, standaard aan
 
-        private string TypeEmoji
+
+        private string BerichtHtml
         {
             get
             {
-                switch (Type)
+                if (Type == MeldingType.Waarschuwing)
                 {
-                    case MeldingType.Opmerking: return "ℹ️";
-                    default:
-                    case MeldingType.Waarschuwing: return "⚠️";
+                    return $"<u>{Bericht}</u>";
+                }
+                else
+                {
+                    return Bericht;
+                }
+            }
+        }
+
+        private string? Emoji
+        {
+            get
+            {
+                if (ShowEmoji)
+                {
+                    return Type switch
+                    {
+                        MeldingType.Opmerking => emojiInfo,
+                        MeldingType.Hint => emojiHint,
+                        MeldingType.Error => emojiError,
+                        MeldingType.Waarschuwing => emojiWaarschuwing,
+                        _ => "",
+                    };
+                }
+                else
+                {
+                    return null; // Geen emoji tonen
                 }
             }
         }
@@ -48,17 +88,41 @@ namespace CommonLibrary
             }
         }
 
-        public Melding(MeldingType type, string bericht)
+        public Melding(MeldingType type, string bericht, int? code = null)
         {
             Type = type;
             Bericht = bericht;
+            Code = code;
         }
 
+
+        //public override string ToString() => Code.HasValue ? $"[{Code}] {Bericht}" : Bericht;
         public override string ToString()
         {
+            List<string> parts = [];
 
-            return $"{TypeEmoji} {Bericht}";
+            // code?
+            if (Code.HasValue)
+            {
+                parts.Add($"{Code % 1000}."); // bijvoorbeeld 1. 
+            }
+
+            // bericht
+            parts.Add(BerichtHtml);
+
+            // emoji?
+            if (Emoji != null)
+            {
+                parts.Add(Emoji);
+            }
+
+            // voorbeelden
+            // 1. Lekker bezig hoor 💡
+            // 51. Rode onderstreepte tekst !
+            return string.Join(" ", parts);
         }
+
+
 
         private string Color
         {
@@ -67,7 +131,11 @@ namespace CommonLibrary
                 return Type switch
                 {
                     MeldingType.Opmerking => colorInfo,
-                    _ => colorWarning, // MeldingType.Waarschuwing
+                    MeldingType.Error => colorError,
+                    MeldingType.Neutraal => colorNeutral,
+                    MeldingType.Hint => colorHint,
+                    MeldingType.Waarschuwing => colorWarning,
+                    _ => colorWarning, // Default case 
                 };
             }
         }
@@ -75,12 +143,6 @@ namespace CommonLibrary
 
         public MarkupString ToMarkupString()
         {
-            //var color = Type switch
-            //{
-            //    MeldingType.Opmerking => colorInfo,
-            //    _ => colorWarning, // MeldingType.Waarschuwing
-            //};
-
             // Omzetten van {kleur:tekst} naar <span style="color:kleur">tekst</span>
             // ZET HET OM NAAR HTML dus gebruik geen Markdown 
             // gebruik een <span> element
@@ -101,6 +163,26 @@ namespace CommonLibrary
 
 
             return val;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Melding other)
+                return false;
+
+            if (Code.HasValue && other.Code.HasValue)
+            {
+                return Code.Value == other.Code.Value;
+            }
+
+            return string.Equals(Bericht, other.Bericht, StringComparison.Ordinal);
+        }
+
+        public override int GetHashCode()
+        {
+            return Code.HasValue
+                ? Code.Value.GetHashCode()
+                : Bericht.GetHashCode();
         }
 
 

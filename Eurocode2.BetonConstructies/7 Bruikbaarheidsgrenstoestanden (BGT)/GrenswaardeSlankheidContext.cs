@@ -6,7 +6,7 @@ namespace Eurocode.BetonConstructies
 {
     public class GrenswaardeSlankheidContext : BaseEurocodeContext
     {
-        public override string Heading => "Slankheid";
+        public override string Heading { get; set; } = "Slankheid";
         //7.4.2 Gevallen waarin berekeningen achterwege mogen blijven 
 
         //(1)P In het algemeen is het niet nodig doorbuigingen expliciet te berekenen, omdat eenvoudige regels kunnen

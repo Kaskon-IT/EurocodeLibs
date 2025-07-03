@@ -15,9 +15,9 @@ namespace CommonLibrary
     public abstract class BaseEurocodeContext : IEurocodeContext, IContext, IMarkupConvertible, INotifyPropertyChanged
     {
         public Guid Id { get; private set; } = Guid.NewGuid();
-        public virtual string Heading => "Onbekend";
+        public virtual string Heading { get; set; } = "Onbekend";
 
-
+        //public StandaardMeldingenCatalogus MeldingenCatalogus = new();
         public virtual void Init() { } // Init methode om de context te initialiseren, kan overschreven worden in child-classes
 
         public DateTime AangemaaktOp { get; private set; } = DateTime.UtcNow;
@@ -69,7 +69,13 @@ namespace CommonLibrary
 
         protected abstract bool Valideer();
 
-        public void AddMelding(Melding melding) => Meldingen.Add(melding); // Voeg een melding toe aan de lijst
+        public void AddMelding(Melding melding)
+        {
+            if (!Meldingen.Any(m => m.Bericht == melding.Bericht))
+            {
+                Meldingen.Add(melding);
+            }
+        }  // Voeg een melding toe aan de lijst
 
         public void AddMelding(int code)
         {

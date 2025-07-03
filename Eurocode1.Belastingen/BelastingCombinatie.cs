@@ -1,22 +1,38 @@
-﻿using CommonLibrary.Extensions;
+﻿using CommonLibrary;
+using CommonLibrary.Extensions;
 using CommonLibrary.Helpers;
 using CommonLibrary.Interfaces;
 using ExportFactory.Shared;
-using Microsoft.AspNetCore.Components;
 
 namespace Eurocode.Belastingen
 {
-    public class BelastingCombinatie(int nr, BelastingCombinatieTypeEnum type) : IMarkupConvertible
+    public class BelastingCombinatie(int nr, BelastingCombinatieTypeEnum type) : BaseEurocodeContext, IMarkupConvertible
     {
         public override string ToString()
         {
             return $"{Naam,-8} {Type.GetDisplayName()} {UserFriendlyTextInclusiefMomentaanFactoren}";
         }
 
-        public MarkupString ToMarkupString()
+        public override bool IsAkkoord()
         {
-            return new MarkupString(ToString());
+            return true;
         }
+
+        protected override void Bereken()
+        {
+            // geen berekeningen
+        }
+
+        protected override bool Valideer()
+        {
+            // voeg eventueel validaties toe
+            return true;
+        }
+
+        //public MarkupString ToMarkupString()
+        //{
+        //    return new MarkupString(ToString());
+        // }
 
         [TableColumn("naam", order: -2, width: 2.0)]
         public string Naam { get { return "BC" + Nr.ToString("D1"); } }

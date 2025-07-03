@@ -5,7 +5,7 @@ namespace Eurocode.BetonConstructies
 {
     public partial class Scheurbeheersing : BaseEurocodeContext
     {
-        public override string Heading => "Scheurbeheersing";
+        public override string Heading { get; set; } = "Scheurbeheersing";
         public override bool IsAkkoord()
         {
             if (Meldingen.Any(m => m.Type == MeldingType.Waarschuwing)) return false;

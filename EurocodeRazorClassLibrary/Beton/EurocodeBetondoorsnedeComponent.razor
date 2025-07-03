@@ -2,7 +2,7 @@
 @using ParametrischeProfielen
 @using Eurocode.Grondslagen
 
-<h5>Doorsnede toetsing</h5>
+
 
 <table>
     <tr><td>grondslagen</td><td>@grondslagen.ToMarkupString()</td></tr>
@@ -12,12 +12,7 @@
     <tr><td>snedekrachten</td><td>@snedekrachten.ToMarkupString()</td></tr>
     <tr><td>dekking</td><td>@dekking.ToMarkupString()</td></tr>
     <tr><td>buiging</td><td>@BuigingContext.ToMarkupString()</td></tr>
-    @if (BuigingContext.BerekeningType == BerekeningTypeEnum.ControleerWapening)
-    {
-        <tr><td>scheurwijdte</td><td>@ScheurwijdteContext.ToMarkupString()</td></tr>
 
-    }
-    @* <tr><td>dwarskracht</td><td>@DwarskrachtContext.ToMarkupString()</td></tr> *@
 </table>
 
 
@@ -26,9 +21,7 @@
 @if(BuigingContext.BerekeningType == BerekeningTypeEnum.ControleerWapening)
 {
     <EurocodeBetonScheurwijdteComponent @bind-Model="ScheurwijdteContext" />
-
 }
-@* <EurocodeBetonDwarskrachtComponent @bind-Model="DwarskrachtContext" /> *@
 
 
 @code {
@@ -37,9 +30,6 @@
 
 
 
-
-
-    //[Parameter, EditorRequired] public required DwarskrachtWapContext DwarskrachtContext { get; set; }
 
     private GrondslagenContext grondslagen => ScheurwijdteContext.Dekking.Grondslagen;
     private BetonDekkingContext dekking => ScheurwijdteContext.Dekking;

@@ -52,7 +52,7 @@ namespace Eurocode.BetonConstructies
         //private Dictionary<int, Melding> _betonMeldingen = new MeldingenBeton().Meldingen;
 
         //public List<Melding> Meldingen { get; set; } = [];
-        public override string Heading => "Dwarskracht";
+        public override string Heading { get; set; } = "Dwarskracht";
 
         public override string ToString()
         {
