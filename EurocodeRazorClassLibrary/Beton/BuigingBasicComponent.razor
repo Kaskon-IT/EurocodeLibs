@@ -105,9 +105,20 @@ else
 {
     @* <span>💡 Wapeningsvoorstel: @WapeningHelper.GetWapeningVoorstel(Model.AsRequired, 150)</span> *@
 
-    <span> 💡 Voorstellen wapening: </span>
+    <span> 💡 Voorstellen wapening: </span><br />
 
-    @foreach (var voorstel in WapeningHelper.GetWapeningVoorstellen(Model.AsRequired, WapeningMaximaleHohMaat, WapeningNauwkeurigheid, WapeningMogelijkeDiameters))
+    @if (Model.Breedte == 1000 && Model.ConstructiefModel == Schematisering.ConstructiefModelEnum.Plaat)
+    {
+        @foreach (var voorstel in WapeningHelper.GetWapeningVoorstellen(Model.AsRequired, WapeningMaximaleHohMaat, WapeningNauwkeurigheid, WapeningMogelijkeDiameters))
+        {
+            <FluentButton @onclick="() => OnVoorstelClicked(voorstel)">
+                @voorstel
+            </FluentButton>
+        }
+        <br />
+    }
+
+    @foreach (var voorstel in WapeningHelper.GetWapeningVoorstellenAantalDiameter(Model.AsRequired, WapeningMaximaleHohMaat, (Model.Breedte - (Model.ZRef *2)), WapeningMogelijkeDiameters))
     {
         <FluentButton @onclick="() => OnVoorstelClicked(voorstel)">
             @voorstel

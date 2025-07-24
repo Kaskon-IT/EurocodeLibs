@@ -282,6 +282,68 @@
             return voorstellen;
         }
 
+        public static List<string> GetWapeningVoorstellenAantalDiameter(double asBen, double maxHoh, double werkendeBreede, List<double> diameters)
+        {
+            List<string> voorstellen = [];
+            int? nAppliedPrevious = null;
+            int nApplied = 0;
+            foreach (var diameter in diameters)
+            {
+                var voorstel = GetWapeningVoorstelAantalDiameter(asBen, maxHoh, diameter, werkendeBreede, out nApplied);
+                if (voorstel != null)
+                {
+                    // stop als meerdere keren maximale hoh-maat is toegepast.
+                    if (nAppliedPrevious != null && nAppliedPrevious == nApplied)
+                    {
+                        break;
+                    }
+                    voorstellen.Add(voorstel);
+                    nAppliedPrevious = nApplied;
+                }
+            }
+            return voorstellen;
+        }
+
+
+        public static string? GetWapeningVoorstelAantalDiameter(double asBen, double maxHoh, double d, double werkendeBreedte, out int nApplied)
+        {
+            double hohMin = 2.5 * d;
+            double nBenodigdVoorDoorsnede = (asBen / GetDsnOpp(1, d));
+            double nBenodigdOmAanHohMaxTeVoldoen = werkendeBreedte / maxHoh;
+
+            double nBen = Math.Max(nBenodigdVoorDoorsnede, nBenodigdOmAanHohMaxTeVoldoen);
+
+            // we gebruiken hele staven, dus rond af naar boven
+            nApplied = (int)Math.Ceiling(nBen);
+            // controleer of we aan de hoh-min voldoen (mits meerdere staven zijn toegepast)
+            if (nApplied > 1)
+            {
+                var hohToe = werkendeBreedte / (nApplied - 1);
+                if (hohToe >= hohMin && hohToe <= maxHoh)
+                {
+                    return $"{nApplied}Ø{d}";
+                }
+                else
+                {
+                    return null; // geen config gevonden.
+                }
+            }
+            else if (nApplied == 1)
+            {
+                return $"{nApplied}Ø{d}";
+            }
+            else
+            {
+                return null;
+            }
+
+
+
+
+
+
+        }
+
         public static string? GetWapeningVoorstel(double asBen, int hohMax, int nauwkeurigheid, double d, out int hohToe)
         {
             double min1 = 50.0;
