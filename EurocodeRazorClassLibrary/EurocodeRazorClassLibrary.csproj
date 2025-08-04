@@ -8,7 +8,7 @@
 		<!-- NuGet-package instellingen -->
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Kaskon.EurocodeComponenten</PackageId>
-		<Version>1.1.507</Version>
+		<Version>1.1.702</Version>
 		<Authors>Bart van der Linden</Authors>
 		<Company>Kaskon</Company>
 		<Description>Blazor component library voor berekeningen conform de Eurocode.</Description>
@@ -47,7 +47,7 @@
 	<ItemGroup>
 		<!-- NuGet afhankelijkheden -->
 		<PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
-		<PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
+		<PackageReference Include="Kaskon.BetonProfielen" Version="1.1.500" />
 		<PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
 		
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.6" />

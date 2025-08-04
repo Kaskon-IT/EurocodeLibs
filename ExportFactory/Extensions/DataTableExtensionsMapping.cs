@@ -114,8 +114,8 @@ namespace ExportFactory.Services
             { "NuttigeHoogte", new(sym: "d", desc:"nuttige hoogte", format : "0.# mm") },
 
 
-            {"AsBen", new(sym: "A~s,ben~", desc: "benodigde wapening", format : "0 mm²") },
-            {"AsToe", new(sym: "A~s,toe~", desc: "toegepaste wapening", format : "0 mm²") },
+            {"AsBen", new(sym: "A~s,req~", desc: "benodigde wapening", format : "0 mm²") },
+            {"AsToe", new(sym: "A~s,prov~", desc: "toegepaste wapening", format : "0 mm²") },
             {"AsMin", new(sym: "A~s,min~", desc: "minimaal benodigde wapening", format : "0 mm²") },
             {"Xu", new(sym: "x~u~", desc: "hoogte drukzone", format : "0.# mm") },
 

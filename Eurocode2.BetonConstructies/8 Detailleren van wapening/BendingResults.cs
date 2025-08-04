@@ -29,13 +29,13 @@ namespace Eurocode.BetonConstructies
             result += $"M~Ed~ = {Moment: 0.#} kNm, ";
             result += $"afm. {Breedte}×{Hoogte}/{D} mm, ";
             result += "\r\n";
-            result += $"A~s,ben~ = {AsRequired: 0} mm², ";
+            result += $"A~s,req~ = {AsRequired: 0} mm², ";
 
 
 
             if (BerekeningType == BerekeningTypeEnum.ControleerWapening)
             {
-                result += $"A~s,toe~ = {AsApplied: 0} mm², ";
+                result += $"A~s,prov~ = {AsApplied: 0} mm², ";
                 result += $"(UC = {(AsRequired / AsApplied):0.00}), ";
 
             }
@@ -338,7 +338,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("A~s,ben~ [mm²]", Order = 40,
+        [TableColumn("A~s,req~ [mm²]", Order = 40,
             Key = K.AsBen,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsRequired

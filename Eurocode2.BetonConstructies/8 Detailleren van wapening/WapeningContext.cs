@@ -44,6 +44,11 @@ namespace Eurocode.BetonConstructies
                     //OnPropertyChanged();
 
                     _wapgroepen = WapeningHelper.GetWapGroepen(_tekst);
+                    //_subgroepen.Clear();
+                    //foreach (var groep in _wapgroepen)
+                    //{
+                    //   _subgroepen.Add(new() { Tekst = groep });
+                    //}
                     OnPropertyChanged(nameof(Tekst));
                     OnPropertyChanged(nameof(As));
                     OnPropertyChanged(nameof(HohMaat));
@@ -53,10 +58,27 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+
+        public List<WapeningContext> GetSupGroepen()
+        {
+            List<WapeningContext> subgroepen = new();
+            if (_wapgroepen != null)
+            {
+                foreach (var groep in _wapgroepen)
+                {
+                    subgroepen.Add(new() { Tekst = groep });
+                }
+            }
+
+            return subgroepen;
+        }
         public override string ToString()
         {
             return $"{Tekst} | ({As:0} mm²)";
         }
+
+
+
 
 
         public BetonDekkingContext Dekking
@@ -114,8 +136,13 @@ namespace Eurocode.BetonConstructies
         public double As { get { return WapeningHelper.GetDsnOpp(Tekst); } }
 
         private List<string>? _wapgroepen;
+        public List<WapeningContext> _subgroepen { get; set; } = new();
+
 
         public double HohMaat { get { return WapeningHelper.GetKleinsteHohMaat(_wapgroepen); } }
+
+
+
 
 
 

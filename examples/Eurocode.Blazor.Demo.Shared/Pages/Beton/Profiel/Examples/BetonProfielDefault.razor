@@ -3,14 +3,24 @@
 
  
 
-            <BetonProfiel @bind-Model="@SampleProject.BetonProfiel"></BetonProfiel>
+    <BetonProfiel @bind-Model="@SampleProject.BetonProfiel"></BetonProfiel>
 
 
     <FluentSwitch @bind-Value="tekenVanuitZwaartepunt">Zwaartpunt</FluentSwitch>
 
-    <div style="width:100%;">
+    @* <div style="width:100%;">
         <BetonProfielChart TekenVanuitZwaartepunt="tekenVanuitZwaartepunt"
                            Model="SampleProject.BetonProfiel.Profiel" />
+    </div> *@
+
+
+    <div>
+        <BetonDoorsnedePlot @bind-BetonProfiel="SampleProject.BetonProfiel" WapeningContext="SampleProject.WapeningContext"/>
+    </div>
+
+    <div>
+        @* <BetonDoorsnedePlot2 /> *@
+
     </div>
 }
 

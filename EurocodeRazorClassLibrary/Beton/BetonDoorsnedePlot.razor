@@ -1,1 +1,410 @@
-﻿
+﻿@using Plotly.Blazor
+@using Plotly.Blazor.LayoutLib
+@using SL = Plotly.Blazor.LayoutLib.ShapeLib
+@using System.ComponentModel
+
+<PlotlyChart @ref="chart"
+             Data="@plotData"
+             Layout="@plotLayout"
+             Config="@plotConfig"
+             Style="width: 600px; height: 600px;" />
+
+@code {
+    private PlotlyChart chart;
+    private List<ITrace> plotData;
+    private Layout plotLayout;
+    private Config plotConfig;
+
+
+    //private List<ITrace> PlotData = new();
+
+    [Parameter, EditorRequired] public BetonProfielen.BetonProfiel BetonProfiel{ get; set; }
+    [Parameter] public EventCallback<BetonProfielen.BetonProfiel> BetonProfielChanged{ get; set; }
+
+    [Parameter] public Eurocode.BetonConstructies.WapeningContext WapeningContext { get; set; } = new()
+    {
+        Tekst = "4r16",
+
+    };
+
+
+
+
+    private BetonProfielen.BetonProfiel? previousBetonProfiel;
+    private ParametrischeProfielen.ParametrischProfielContext? previousProfiel;
+
+    protected override void OnParametersSet()
+    {
+
+
+
+
+        if (previousBetonProfiel != null)
+            previousBetonProfiel.PropertyChanged -= OnBetonProfielChanged;
+
+        if (previousProfiel != null)
+            previousProfiel.PropertyChanged -= OnProfielChanged;
+
+
+        if (BetonProfiel != null)
+        {
+            BetonProfiel.PropertyChanged += OnBetonProfielChanged;
+
+            if (BetonProfiel.Profiel != null)
+            {
+                BetonProfiel.Profiel.PropertyChanged += OnProfielChanged;
+                previousProfiel = BetonProfiel.Profiel;
+            }
+
+            previousBetonProfiel = BetonProfiel;
+        }
+
+        UpdatePlot(); // altijd opnieuw tekenen bij gewijzigde inputparameter
+    }
+
+
+    private void OnBetonProfielChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // heel gek, werkt alleen zo als we eerst hier invoke doen.
+        InvokeAsync(UpdatePlot);
+
+    }
+
+    private async void OnProfielChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ParametrischeProfielen.ParametrischProfielContext.Breedte) ||
+            e.PropertyName == nameof(ParametrischeProfielen.ParametrischProfielContext.Hoogte))
+        {
+            await Task.Yield(); // wacht tot nieuwe waarde is gezet
+            await InvokeAsync(UpdatePlot);
+        }
+    }
+
+
+    // protected override async Task OnParametersSetAsync()
+    // {
+    //     BetonProfiel.PropertyChanged += OnBetonProfielChanged;
+    //     UpdatePlot();
+
+
+    // }
+
+    private void UpdatePlot()
+    {
+        if (BetonProfiel?.Profiel == null)
+            return;
+
+        breedte = BetonProfiel.Profiel.Breedte;
+        hoogte = BetonProfiel.Profiel.Hoogte;
+        dekking = WapeningContext.DekkingToegepast;
+        referentieAfstandWapening = WapeningContext.DekkingToegepast + WapeningContext.GemiddeldeDiameter / 2.0;
+        wapeningsDiameter = WapeningContext.GemiddeldeDiameter;
+
+
+        // groepen
+        var groepen = WapeningContext.GetSupGroepen();
+
+
+
+        var hoh = WapeningContext.HohMaat;
+        //var tussenafstand = breedte - (2 * dekking) / WapeningContext.HohMaat;
+
+
+        plotData = GetPlotData();
+        plotLayout = CreateLayout();
+        plotConfig = CreateConfig();
+
+
+
+        //PlotData.Clear();
+        //PlotData.AddRange(GetPlotData());
+        if (chart != null)
+        {
+            //plotData = null;         // verwijder referentie
+            //await Task.Yield();      // geef Blazor kans te renderen
+
+            //plotData = GetPlotData();
+            chart.NewPlot();   // forceer nieuwe plot
+
+
+        }
+
+
+        // Forceer hertekenen
+        StateHasChanged();
+
+    }
+
+    private double breedte = 300; // mm
+    private double hoogte = 500;  // mm
+    private double dekking = 30;  // mm
+    private double referentieAfstandWapening = 35; // mm, referentiehoogte voor wapening
+    private double wapeningsDiameter = 16; // mm
+
+    private List<(double x, double y)> GetBetonHoekpunten()
+    {
+        return new()
+    {
+        (0, 0),
+        (breedte, 0),
+        (breedte, hoogte),
+        (0, hoogte),
+        (0, 0)
+    };
+    }
+
+
+    private List<(double x, double y)> GetWapeningHoekpunten()
+    {
+        return new()
+    {
+        (dekking, dekking),
+        (breedte - dekking, dekking),
+        (breedte - dekking, dekking + wapeningsDiameter),
+        (dekking, dekking + wapeningsDiameter),
+        (dekking, dekking)
+    };
+    }
+
+    private List<(double x, double y, double d)> GetWapeningPosities()
+    {
+        var n = WapeningContext.HohMaat;
+
+
+
+        return new()
+        {
+            (referentieAfstandWapening, referentieAfstandWapening, wapeningsDiameter),
+            (breedte - referentieAfstandWapening, referentieAfstandWapening, wapeningsDiameter),
+        };
+    }
+
+
+
+    // Wapeningspunten
+    private List<(double x, double y)> wapeningsPosities => new()
+    {
+        (dekking, dekking),
+        (breedte - dekking, dekking),
+        (breedte - dekking, hoogte - dekking),
+        (dekking, hoogte - dekking)
+    };
+
+    // Betoncontour als dikkere lijn
+    private List<ITrace> GetPlotData()
+    {
+        var betonHoekpunten = GetBetonHoekpunten();
+        var wapeningHoekpunten = GetWapeningHoekpunten();
+
+        return new List<ITrace>
+        {
+            new Plotly.Blazor.Traces.Scatter
+            {
+                Mode = Plotly.Blazor.Traces.ScatterLib.ModeFlag.Lines,
+                X = betonHoekpunten.Select(p => (object)p.x).ToList(),
+                Y = betonHoekpunten.Select(p => (object)p.y).ToList(),
+                Line = new Plotly.Blazor.Traces.ScatterLib.Line { Color = "gray", Width = 3 },
+                Fill = Plotly.Blazor.Traces.ScatterLib.FillEnum.ToSelf,
+
+                ShowLegend = false
+            },
+            new Plotly.Blazor.Traces.Scatter
+            {
+                Mode = Plotly.Blazor.Traces.ScatterLib.ModeFlag.Lines,
+                X = wapeningHoekpunten.Select(p => (object)p.x).ToList(),
+                Y = wapeningHoekpunten.Select(p => (object)p.y).ToList(),
+                Line = new Plotly.Blazor.Traces.ScatterLib.Line { Color = "red", Width = 1 },
+                Fill = Plotly.Blazor.Traces.ScatterLib.FillEnum.ToSelf,
+                ShowLegend = false
+            }
+        };
+
+
+
+    }
+
+
+
+
+    private Layout CreateLayout()
+    {
+        return new Layout
+        {
+            Title = new Title { Text = $"profiel: {BetonProfiel.Profiel} \r\nwapening: {WapeningContext}" },
+            ShowLegend = false,
+            XAxis = new List<XAxis>
+        {
+            new XAxis { ShowGrid = false, ZeroLine = false, Visible = false }
+        },
+            YAxis = new List<YAxis>
+        {
+            new YAxis
+            {
+                ShowGrid = false, ZeroLine = false, Visible = false,
+                ScaleAnchor = "x", ScaleRatio = 1
+            }
+        },
+            Shapes = CreateShapes(),
+            Annotations = new List<Plotly.Blazor.LayoutLib.Annotation>
+        {
+            new()
+            {
+                X = breedte / 2, Y = -dekking * 1.4,
+                Text = $"{breedte} mm", ShowArrow = false
+            },
+            new()
+            {
+                X = -dekking * 2.6, Y = hoogte / 2,
+                Text = $"{hoogte} mm", ShowArrow = false, TextAngle = -90
+            }
+        }
+        };
+    }
+
+
+    private Config CreateConfig()
+    {
+        return new Config
+        {
+            DisplayModeBar = Plotly.Blazor.ConfigLib.DisplayModeBarEnum.False,
+            ScrollZoom = Plotly.Blazor.ConfigLib.ScrollZoomFlag.False
+        };
+    }
+
+
+
+    private List<Shape> CreateShapes()
+    {
+        var shapes = new List<Shape>();
+
+        // Instellingen
+        double maatlijnOffset = dekking * 2;
+        double uitsteken = 10; // maatlijn mag iets uitsteken
+        double schuineStreepLengte = 10; // voor schuine streepjes
+        decimal maatlijnDikte = 1M;
+        //double betonlijnDikte = 3;
+
+        // --- Breedte maatlijn onder beton ---
+        double yMaatlijn = -maatlijnOffset;
+
+        // Aanhaallijnen (dot)
+        shapes.AddRange(new[]
+        {
+            new Shape  // Links aanhaal
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = 0, Y0 = 0, X1 = 0, Y1 = yMaatlijn,
+                Line = new SL.Line { Color = "black", Dash = "dot", Width = maatlijnDikte }
+            },
+            new Shape  // Rechts aanhaal
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = breedte, Y0 = 0, X1 = breedte, Y1 = yMaatlijn,
+                Line = new SL.Line { Color = "black", Dash = "dot", Width = maatlijnDikte }
+            }
+        });
+
+        // Maatlijn zelf (met uitsteken)
+        shapes.Add(new Shape
+        {
+            Type = SL.TypeEnum.Line,
+            X0 = -uitsteken,
+            Y0 = yMaatlijn,
+            X1 = breedte + uitsteken,
+            Y1 = yMaatlijn,
+            Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+        });
+
+        // Schuine streepjes breedte
+        shapes.AddRange(new[]
+        {
+            new Shape  // Linker schuine
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = 0 , Y0 = yMaatlijn - schuineStreepLengte / 2,
+                X1 = 0 , Y1 = yMaatlijn + schuineStreepLengte / 2,
+                Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+            },
+            new Shape  // Rechter schuine
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = breedte , Y0 = yMaatlijn - schuineStreepLengte / 2,
+                X1 = breedte , Y1 = yMaatlijn + schuineStreepLengte / 2,
+                Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+            }
+        });
+
+        // --- Hoogte maatlijn links beton ---
+        double xMaatlijn = -maatlijnOffset;
+
+        // Aanhaallijnen
+        shapes.AddRange(new[]
+        {
+            new Shape  // Onder aanhaal
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = 0, Y0 = 0, X1 = xMaatlijn, Y1 = 0,
+                Line = new SL.Line { Color = "black", Dash = "dot", Width = maatlijnDikte }
+            },
+            new Shape  // Boven aanhaal
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = 0, Y0 = hoogte, X1 = xMaatlijn, Y1 = hoogte,
+                Line = new SL.Line { Color = "black", Dash = "dot", Width = maatlijnDikte }
+            }
+        });
+
+        // Maatlijn hoogte (met uitsteken)
+        shapes.Add(new Shape
+        {
+            Type = SL.TypeEnum.Line,
+            X0 = xMaatlijn,
+            Y0 = -uitsteken,
+            X1 = xMaatlijn,
+            Y1 = hoogte + uitsteken,
+            Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+        });
+
+        // Schuine streepjes hoogte
+        shapes.AddRange(new[]
+        {
+            new Shape  // Onder schuine
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = xMaatlijn - schuineStreepLengte / 2, Y0 = 0 ,
+                X1 = xMaatlijn + schuineStreepLengte / 2, Y1 = 0 ,
+                Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+            },
+            new Shape  // Boven schuine
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = xMaatlijn - schuineStreepLengte / 2, Y0 = hoogte ,
+                X1 = xMaatlijn + schuineStreepLengte / 2, Y1 = hoogte ,
+                Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+            }
+        });
+
+        // Wapening als cirkels
+        // var wapPosities = GetWapeningPosities();
+
+        // shapes.AddRange(
+        //     wapPosities.Select(p => new Shape
+        //     {
+        //         Type = SL.TypeEnum.Circle,
+        //         X0 = p.x - wapeningsDiameter / 2,
+        //         Y0 = p.y - wapeningsDiameter / 2,
+        //         X1 = p.x + wapeningsDiameter / 2,
+        //         Y1 = p.y + wapeningsDiameter / 2,
+        //         FillColor = "red",
+        //         Line = new SL.Line { Color = "red" }
+        //     })
+        // );
+
+
+
+
+        return shapes;
+    }
+
+   
+}

@@ -39,15 +39,15 @@
 
 
 
-<FluentSelectEnum 
+@* <FluentSelectEnum 
 Label="type berekening"
 TEnum="BerekeningTypeEnum"
 OnStateChanged="NotifyParentAsync"
-@bind-EnumSelectedValue="@Model.BerekeningType" />
+@bind-EnumSelectedValue="@Model.BerekeningType" /> *@
 
-<FluentSelectEnum Label="schematisering"
+@* <FluentSelectEnum Label="schematisering"
 TEnum="@Schematisering.ConstructiefModelEnum"
-@bind-EnumSelectedValue="@Model.ConstructiefModel" />
+@bind-EnumSelectedValue="@Model.ConstructiefModel" /> *@
 
 
 
@@ -69,22 +69,28 @@ else
 }
 else
 {
-    <EurocodeInputNumber @bind-Value=Model.Profiel.Breedte Key="@K.ProfielBreedte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
-    <EurocodeInputNumber @bind-Value=Model.Profiel.Hoogte Key="@K.ProfielHoogte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+   @*  <EurocodeInputNumber @bind-Value=Model.Profiel.Breedte Key="@K.ProfielBreedte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+    <EurocodeInputNumber @bind-Value=Model.Profiel.Hoogte Key="@K.ProfielHoogte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber> *@
 }
 
 
 
 <EurocodeInputNumber ReadOnly=true Value=Model.D Key="NuttigeHoogte" Unit="mm"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value=Model.Xu Key="Xu" Unit="mm" MaxValue="Model.XuMax"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.XuD Key="XuD" Unit="-" MaxValue="Model.XuDMax"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value=Model.Z Key="Z" Unit="mm"></EurocodeInputNumber>
 
-<EurocodeInputNumber ReadOnly=true Value=Model.SigmaS Key="Staalspanning" Unit="MPa"></EurocodeInputNumber>
+@if (IsUitgebreid)
+{
+    <EurocodeInputNumber ReadOnly=true Value=Model.Xu Key="Xu" Unit="mm" MaxValue="Model.XuMax"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value=Model.Z Key="Z" Unit="mm"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value=Model.SigmaS Key="Staalspanning" Unit="MPa"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value=Model.AsMin Key="AsMin" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
+
+}
 
 
 
-<FluentCheckbox @bind-Value=Model.IsGedrongenLigger Label="Gedrongen ligger"></FluentCheckbox>
+
+@* <FluentCheckbox @bind-Value=Model.IsGedrongenLigger Label="Gedrongen ligger"></FluentCheckbox> *@
 
 @if (Model.IsGedrongenLigger)
 {
@@ -99,13 +105,15 @@ else
 
 
 
-<EurocodeInputNumber ReadOnly=true Value=Model.AsMin Key="AsMin" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
 <EurocodeInputNumber ReadOnly=true Value=Model.AsRequired Key="AsBen" Unit="mm²" StringFormat="0"></EurocodeInputNumber>
+
+
+
 @if (Model.Wapening != null && Model.BerekeningType == BerekeningTypeEnum.ControleerWapening)
 {
     @* <span>💡 Wapeningsvoorstel: @WapeningHelper.GetWapeningVoorstel(Model.AsRequired, 150)</span> *@
 
-    <span> 💡 Voorstellen wapening: </span><br />
+    <span> 💡 Wapening voorstel: (Klik om over te nemen) </span><br />
 
     @if (Model.Breedte == 1000 && Model.ConstructiefModel == Schematisering.ConstructiefModelEnum.Plaat)
     {
@@ -137,8 +145,11 @@ else
 
 <EurocodeInputNumber ReadOnly=true Value=Model.AsApplied Key="AsToe" Unit="mm²" MinValue="Model.AsRequired" MaxValue="Model.AsMax" StringFormat="0"></EurocodeInputNumber>
 
+@if (IsUitgebreid)
+{
+    <BaseEurocodeContextComponent TContext="BendingResults" @bind-Model="@Model" />
 
-<BaseEurocodeContextComponent TContext="BendingResults" @bind-Model="@Model" /> 
+}
 
 
 
@@ -147,7 +158,8 @@ else
     [Parameter, EditorRequired]
     public required BendingResults Model{ get; set; }
 
-
+    [Parameter]
+    public bool IsUitgebreid { get; set; } = false;
 
 
     [Parameter]

@@ -173,6 +173,8 @@
 
         }
 
+
+
         public static bool IsCharInString(char[] chars, string inputString)
         {
             // Loop through the array of characters

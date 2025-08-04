@@ -19,10 +19,12 @@
     <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false />
     <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false ToonWaardeBruiksbaarheidsGrensToestand=true />
 
-    <EurocodeBetondoorsnedeComponent 
+    <BuigingBasicComponent @bind-Model="SampleProject.BendingResults"></BuigingBasicComponent>
+
+    @* <EurocodeBetondoorsnedeComponent 
         BuigingContext="SampleProject.BendingResults"
         ScheurwijdteContext="SampleProject.ScheurwijdteDemo" />
-        
+         *@
 
 
     @* <FluentButton OnClick="UpdateChart">Update</FluentButton> *@
