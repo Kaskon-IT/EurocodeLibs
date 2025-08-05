@@ -76,6 +76,7 @@ namespace ExportFactory.Services
             { K.TrapAantredeMaat, new(sym:"aan", desc:"aantrede maat")},
             { K.TrapOptredeAantal, new(sym:"n", desc:"aantal optreden")},
             { K.TrapSchilDikte, new(sym:"h~schil~", desc:"schildikte")},
+            { K.TrapBreedte, new(sym:"b",  desc: "breedte van de trap") },
 
 
 

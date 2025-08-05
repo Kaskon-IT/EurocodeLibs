@@ -46,11 +46,9 @@
 
 
 
+        public const string DwarskrachtBreedte = "Dwarskracht.Breedte";
 
-
-
-
-
+        public const string TrapBreedte = "Trap.Breedte";
         public const string TrapOptredeMaat = "Trap.OptredeMaat";
         public const string TrapAantredeMaat = "Trap.AantredeMaat";
         public const string TrapOptredeAantal = "Trap.OptredeAantal";

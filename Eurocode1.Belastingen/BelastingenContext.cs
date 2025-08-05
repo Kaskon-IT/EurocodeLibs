@@ -47,12 +47,14 @@ namespace Eurocode.Belastingen
                     Omschrijving = "Q",
                     Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
                     Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen,
+                    Opmerking = "puntlast"
                 },
                 new BelastingGeval(){
                     Nr = 3,
                     Omschrijving = "q",
                     Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
                     Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen,
+                    Opmerking = "vlaklast"
                 }
             ];
 

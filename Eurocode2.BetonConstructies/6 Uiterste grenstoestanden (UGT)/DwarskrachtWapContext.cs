@@ -75,7 +75,10 @@ namespace Eurocode.BetonConstructies
         }
 
 
-
+        public bool IsDwarskrachtWapeningBenodigd()
+        {
+            return Ved > DwarskrachtWeerstandBeton;
+        }
 
         public List<string> Artikelen { get; set; } = [];
 
@@ -190,6 +193,8 @@ namespace Eurocode.BetonConstructies
             Beton = beton; // materiaal, staal, dekking, etcetera
             Profiel = profiel; // geometrie 
             Snedekrachten = snedekrachten; // krachten
+            //LijstBeugelWap = new List<BeugelWap>();
+
         }
 
 

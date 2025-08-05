@@ -32,6 +32,9 @@ namespace Eurocode.Belastingen
         [TableColumn("gebruiksklasse", order: 20, width: 8.0)]
         public GebruiksklasseEnum? Gebruiksklasse { get; set; } = GebruiksklasseEnum.A_gemeenschappelijke_trappen;
 
+        [TableColumn("opm.", order: 9999, width: 8.0)]
+        public string Opmerking { get; set; } = "";
+
 
         public OpgelegdeBelastingen OpgelegdeBelastingen { get { return Gebruiksklasse.HasValue ? Gebruiksklasse.Value.GetOpgelegdeBelastingen() : new(); } }
 
