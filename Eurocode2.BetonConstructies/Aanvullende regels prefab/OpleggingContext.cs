@@ -55,7 +55,7 @@ namespace Eurocode.BetonConstructies
         /// F~Ed~
         /// </summary>
         [TableColumn("F~Ed~", "rekenwaarde oplegreactie")]
-        public double OplegReactieRekenwaarde => BerekenOplegReactieRekenwaarde?.Invoke() ?? 0;
+        public double OplegReactieRekenwaarde => BerekenOplegReactieRekenwaarde?.Invoke() ?? 100;
 
 
 
@@ -148,7 +148,7 @@ namespace Eurocode.BetonConstructies
         }
 
         [TableColumn("l~n~", "lengte ondersteunde element")]
-        public double LengteOndersteundeElement => BerekenLengteOndersteundeElement?.Invoke() ?? 0;
+        public double LengteOndersteundeElement => BerekenLengteOndersteundeElement?.Invoke() ?? 8000;
 
 
         /// <summary>
@@ -301,13 +301,13 @@ namespace Eurocode.BetonConstructies
             results.Add($"Oplegtype: {OplegType.GetDisplayName().ToLower()} op {OplegMateriaal.GetDisplayName().ToLower()}.");
             results.Add($"De detaillering van de wapening is met {DetailleringWapening.GetDisplayName().ToLower()}.");
             results.Add($"Het element is een {OpleggingElementType.GetDisplayName().ToLower()}, met een lengte van {LengteOndersteundeElement:0 mm}.");
-            results.Add($"De netto oplegbreedte b~1~ = {OplegBreedteNetto:0 mm}");
-            results.Add($"De netto opleglengte a~1~ = {OplegLengteNetto: 0 mm}");
-            results.Add($"De randafstand dragende element a~2~ = {AfstandA2: 0 mm}");
+            results.Add($"De netto oplegbreedte b~1~ = {OplegBreedteNetto:0 mm}.");
+            results.Add($"De netto opleglengte a~1~ = {OplegLengteNetto: 0 mm}.");
+            results.Add($"De randafstand dragende element a~2~ = {AfstandA2: 0 mm}.");
 
-            results.Add($"De randafstand ondersteunde element a~3~ = {AfstandA3: 0 mm}");
-            results.Add($"De tolerantie Δa~2~ = {AfstandDeltaA2: 0 mm}");
-            results.Add($"De tolerantie Δa~3~ = {AfstandDeltaA3: 0 mm}");
+            results.Add($"De randafstand ondersteunde element a~3~ = {AfstandA3: 0 mm}.");
+            results.Add($"De tolerantie Δa~2~ = {AfstandDeltaA2: 0 mm}.");
+            results.Add($"De tolerantie Δa~3~ = {AfstandDeltaA3: 0 mm}.");
 
             if (OplegType == OplegTypeEnum.GECONCENTREERD)
             {
@@ -323,15 +323,15 @@ namespace Eurocode.BetonConstructies
 
 
 
-            results.Add($"De rekenwaarde van de oplegsterkte f~Rd~ = {OplegSterkteRekenwaarde:0.00 MPa}");
-            results.Add($"De laagste rekenwaarde van de sterkte van ondersteunde en ondersteunende element f~cd~ = {LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement:0.00 MPa}");
-            results.Add($"De rekenwaarde van de oplegspanning σ~Ed~ = {OplegSpanningRekenwaarde:0.00 MPa}");
-            results.Add($"De relatieve oplegspanning σ~Ed~/f~cd~ = {RelatieveOplegspanning:P2}");
+            results.Add($"De rekenwaarde van de oplegsterkte f~Rd~ = {OplegSterkteRekenwaarde:0.00 N/mm²}.");
+            results.Add($"De laagste rekenwaarde van de sterkte van ondersteunde en ondersteunende element f~cd~ = {LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement:0.00 N/mm²}.");
+            results.Add($"De rekenwaarde van de oplegspanning σ~Ed~ = {OplegSpanningRekenwaarde:0.00 N/mm²}.");
+            results.Add($"De relatieve oplegspanning σ~Ed~/f~cd~ = {RelatieveOplegspanning:P2}.");
             results.Add($"De nominale opleglengte a = a~1~+a~2~+a~3~+≤√(Δa~2~²+Δa~3~²) {(AfzonderlijkeElementen ? "+20" : "")} " +
                 $"= {OplegLengteNetto:0.#}+{AfstandA2:0.#}+{AfstandA3:0.#}+√({AfstandDeltaA2:0.#}²+{AfstandDeltaA3:0.#}²)  {(AfzonderlijkeElementen ? "+20" : "")}" +
-                $"= {OplegLengteNominaal:0 mm}");
+                $"= {OplegLengteNominaal:0 mm}.");
 
-            results.Add($"Uitgaande van een voegbreedte van {Voegbreedte:0 mm} dient de tandlengte minimaal {(Voegbreedte + OplegLengteNominaal): 0 mm} te zijn");
+            results.Add($"Uitgaande van een voegbreedte van {Voegbreedte:0 mm} dient de tandlengte minimaal {(Voegbreedte + OplegLengteNominaal): 0 mm} te zijn.");
 
             return string.Join("<br />", results);
         }

@@ -127,6 +127,8 @@
         public const string ScheurwijdteK3 = "Scheurwijdte.K3";
         public const string ScheurwijdteK4 = "Scheurwijdte.K4";
         public const string ScheurwijdteK5 = "Scheurwijdte.K5";
+        public const string ScheurwijdteSrMax = "Scheurwijdte.SrMax";
+        public const string ScheurwijdteEpsilonSmMinusEpsilonCm = "Scheurwijdte.EpsilonSmMinusEpsilonCm";
 
         // T
         public const string TandLengte = "Tand.Lengte";

@@ -91,7 +91,10 @@ namespace ExportFactory.Extensions
 
 
             // controleer of de lijst alleen unieke contexten zijn, of groepeer ze
-            var groupedList = list.GroupBy(x => x.GetType()).ToList();
+            var groupedList = list
+                .Where(x => x != null)
+                .GroupBy(x => x.GetType())
+                .ToList();
 
             foreach (var grouped in groupedList)
             {

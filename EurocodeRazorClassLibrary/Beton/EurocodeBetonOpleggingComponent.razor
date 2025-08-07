@@ -31,7 +31,7 @@
     <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaA2" Key="AfstandDeltaA2" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
     <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandA3" Key="AfstandA3" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
     <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaA3" Key="AfstandDeltaA3" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
-    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaElementType" Key="AfstandDeltaElementType" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
+    @* <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaElementType" Key="AfstandDeltaElementType" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" /> *@
     <EurocodeInputNumber ReadOnly=true Value="@Model.OplegLengteNominaal" Key="OplegLengteNominaal" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
 
    
@@ -151,8 +151,7 @@
     }
 
 
-    <h6>Samenvatting</h6>
-    <p>@Model.ToSamenvatting()</p>
+    
 
 
 
@@ -161,6 +160,14 @@
 
 
 </FluentGrid>
+
+<div>
+    <br />
+    <h6>Samenvatting</h6>
+
+</div>
+
+<div>@Model.ToSamenvatting()</div>
 
 
 

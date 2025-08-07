@@ -288,12 +288,13 @@ namespace ExportFactory.Services
             // 7.3.2 Oppervlaktes van de minimumwapening
             // 7.3.4 Scheurwijdte
             // 
-            { "SrMax", new(sym: "s~r,max~",desc: "maximale scheurafstand", norm:"EC2", art: "7.3.4", vgl: "(7.11)\r\n(7.14)\r\n(7.15)",format: "0.##" )},
+            { K.ScheurwijdteSrMax, new(sym: "s~r,max~",desc: "maximale scheurafstand", norm:"EC2", art: "7.3.4", vgl: "(7.11)\r\n(7.14)\r\n(7.15)",format: "0.##" )},
+
             { K.MomentScheurmoment, new("M~cr~", "scheurmoment", "", _kNm, "") },
             { K.MomentFrequent, new(sym: "M~E,freq~", desc : "moment frequente combinatie", norm: "", art : "", format: _kNm) },
             //{ K.MomentRekenwaarde, new(sym: "M~Ed~", desc : "moment rekenwaarde", norm: "", art : "", format: _kNm) },
 
-            { "EpsSmMinusEpsCm", new(sym:"|epsilon|~sm~ - |epsilon|~cm~", desc:"gemiddelde rek wapening minus gemiddelde betonrek",norm:"EC2",art:"7.3.4 (2)",vgl: "(7.9)", format:"e2")  },
+            { K.ScheurwijdteEpsilonSmMinusEpsilonCm, new(sym:"|epsilon|~sm~-|epsilon|~cm~", desc:"gemiddelde rek wapening minus gemiddelde betonrek",norm:"EC2",art:"7.3.4 (2)",vgl: "(7.9)", format:"e2")  },
             { "FactorKt", new(sym: "k~t~",desc:  "factor belastingsduur",norm:"EC2",art: "7.3.4 (2)", format: _formatVerhouding) },
             { "StaalspanningOptredend", new(sym: "|sigma|~s~", desc: "spanning trekwapening",norm: "EC2",art: "7.3.4 (2)",format: _mpa)},
             { "RhoPeff", new(sym: "|rho|~p,eff~",desc: "= (A~s~ + |xi|~1~ A~p~')/A~c,eff~", norm: "EC2", art: "7.3.4 (2)" , vgl: "(7.10)", format : _formatVerhouding) },
