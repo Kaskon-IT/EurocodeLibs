@@ -2,6 +2,7 @@
     text-align: left; 
     max-width: 1400px;
     padding-right: 20px;
+    vertical-align: top;
 }
 
 
@@ -79,8 +80,12 @@
 }
 
 .tab-simulated {
-    display: inline-block;
+    /*display: inline-block;*/
     min-width: 75px; /* De breedte van de "tab" */
+}
+
+.tab-simulated:after{
+    content: " ";
 }
 
 .ec-th-right {
@@ -94,21 +99,33 @@
 
 .ec-th-pivot {
     text-align: left;
-    padding: 0.5em;
+    padding: 0.05em;
+    padding-right: 0.5em;
     /*border-right: solid 1px gray;*/
     /*width: 40%;*/
     font-weight: normal;
+    vertical-align: top;
     /*font-style: italic;*/
 }
 
 .ec-td {
-    padding: 0.5em;
+    padding: 0.0em;
+    padding-right: 0.5em;
+}
+
+.ec-td-pivot {
+    vertical-align: top;
+    min-width: 140px;
+    padding: 0px;
+    padding-right:0.5em;
 }
 
 .ec-th {
     font-weight: normal;
     font-style: italic;
-    padding: 0.5em;
+    padding: 0.05em;
+    padding-right: 0.5em;
+    
 }
 
 
@@ -152,15 +169,25 @@
 
 .ec-symbol{
     font-style: italic;
+    /*width: 1cm !important;*/
 }
 
 .ec-description{
     font-weight: 100;
+    font-size: small;
+    text-align: right !important;
+    width: 8cm;
+    /*width: 6cm;*/
 }
+
+    .ec-description:after{
+        content: " =";
+    }
 
 .ec-article{
     color: gray;
     font-size: smaller;
+    display:none;
 }
 
 .ec-par{

@@ -4,14 +4,60 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Eurocode.BetonConstructies</RootNamespace>
+	
+	<!-- NuGet-package instellingen -->
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageId>Kaskon.Eurocode2.BetonConstructies</PackageId>
+	<Version>1.1.703</Version>
+	<Authors>Bart van der Linden</Authors>
+	<Company>Kaskon</Company>
+	<Description>Eurocode 2 Betonconstructies</Description>
+
+	  <PackageLicenseFile>license.md</PackageLicenseFile>
+	  <PackageReadmeFile>readme.md</PackageReadmeFile>
+	  <PackageIcon>kaskon.png</PackageIcon>
+
+	<!-- Lokale map voor .nupkg -->
+	<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
+	<Copyright>Copyright © 2025 Kaskon</Copyright>
+	<PackageTags>Kaskon;Blazor;FluentUI;Eurocode;EC2;Betonconstructies;Beton</PackageTags>
+	<IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  
+	  
   </PropertyGroup>
+
+	<ItemGroup>
+		<None Include="Icons/kaskon.png" Pack="true" PackagePath="/" />
+		<None Include="Docs/license.md" Pack="true" PackagePath="/" />
+		<None Include="Docs/readme.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
+	
+	
   <ItemGroup>
     <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
-    <PackageReference Include="Kaskon.BetonProfielen" Version="1.0.0" />
-    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.1" />
+    <PackageReference Include="Kaskon.BetonProfielen" Version="1.1.500" />
+    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Docs\license.md">
+      <PackagePath>/</PackagePath>
+      <Pack>true</Pack>
+    </None>
+    <None Update="Docs\readme.md">
+      <PackagePath>/</PackagePath>
+      <Pack>true</Pack>
+    </None>
+    <None Update="Icons\kaskon.png">
+      <PackagePath>/</PackagePath>
+      <Pack>true</Pack>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Algemeen\" />
   </ItemGroup>
 
 

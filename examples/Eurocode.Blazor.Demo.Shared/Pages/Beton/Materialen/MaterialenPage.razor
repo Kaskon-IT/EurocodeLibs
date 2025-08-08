@@ -15,11 +15,35 @@
     Title="Met opgave enums" 
     Component="@typeof(BetonMaterialenMetOpgaveEnums)"></DemoSection>
 
+<BaseEurocodeContextComponent TContext="BetonContext" @bind-Model="@SampleProject.Beton" />
+
 <ApiDocumentation Component="typeof(EurocodeBetonMaterialen)" />
 
+<FluentButton OnClick="RunTest">TEST</FluentButton>
+<ExportDocumentComponent Document="@mdd" />
+
+
 @code{
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
     private Dictionary<string, object> _componentParameters1 = new(){
         {"Disabled", !true }
     };
+
+
+    public MigraDoc.DocumentObjectModel.Document mdd = new();
+
+    private void RunTest()
+    {
+        var mdt = SampleProject?.Beton.ToMigraDocTable();
+        mdd.AddSection();
+        mdd.LastSection.AddTable();
+
+        Console.WriteLine("Test uitgevoerd");
+
+            
+
+    }
 }
 

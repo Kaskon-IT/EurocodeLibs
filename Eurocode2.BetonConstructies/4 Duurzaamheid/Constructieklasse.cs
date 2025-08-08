@@ -1,7 +1,21 @@
-﻿namespace Eurocode.BetonConstructies
+﻿using CommonLibrary.Helpers;
+using CommonLibrary.Interfaces;
+using Microsoft.AspNetCore.Components;
+
+namespace Eurocode.BetonConstructies
 {
-    public class Constructieklasse
+    public class Constructieklasse : IMarkupConvertible
     {
+        public override string ToString()
+        {
+            return $"S{Klasse} = ({ConstructieKlasseBasis} + Δ~levensduur~ ({CorrectieLevensduur}) + Δ~beton~ ({CorrectieBeton}) + Δ~kwaliteit~ ({CorrectieKwaliteitsBeheersting}) + Δ~geometrie~ ({CorrectiePlaatGeometrie}))";
+        }
+
+        public MarkupString ToMarkupString()
+        {
+            return MarkupHelper.ToMarkupString(ToString());
+        }
+
         public Constructieklasse(BetonDekkingContext dekking, BetonContext beton)
         {
             this.Initialiseer(dekking, beton);

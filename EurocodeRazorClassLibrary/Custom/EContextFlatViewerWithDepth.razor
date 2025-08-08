@@ -1,0 +1,417 @@
+﻿@using System.Reflection
+@using System.Runtime.CompilerServices
+@using System.Collections
+@using CommonLibrary
+
+@typeparam TModel
+
+<div class="context-tree-viewer">
+    <h4>Gevonden BaseEurocodeContext in @nameof(TModel) (MaxDepth = @MaxDepth):</h4>
+
+    <div style="margin-bottom:0.5rem;">
+        <label>
+            <span>MaxDepth:&nbsp;</span>
+            <select @bind="MaxDepth">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+
+            </select>
+        </label>
+    </div>
+
+    @if (Nodes.Count == 0)
+    {
+        <p><em>Geen BaseEurocodeContext-properties gevonden binnen de opgegeven diepte.</em></p>
+    }
+    else
+    {
+        <ul class="context-list">
+            @foreach (var node in Nodes)
+            {
+                <li class="context-item"
+                data-depth="@node.Depth">
+
+
+                    <strong>@node.Path</strong> (laag @node.Depth)
+
+                    @if (node.Context == null)
+                    {
+                        <span class="null-value">NULL</span>
+                    }
+                    else
+                    {
+                        <span>@((MarkupString)node.Context.ToMarkupString())</span>
+                        @*  <div class="context-detail">
+                            @((MarkupString)node.Context.ToMarkupString())
+                        </div> *@
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+<FluentTreeView Items="@Items" LazyLoadItems="true">
+
+    <ItemTemplate>
+
+
+        @((MarkupString)context.Text)
+        @* <span style="color: var(--accent-fill-rest); margin: 0 4px;">
+            @(context.Items == null ? "" : $"[{context.Items.Count()}]")
+        </span> *@
+    </ItemTemplate>
+</FluentTreeView>
+
+<div>
+    <b>Total items:</b> @(Items.Count)
+</div>
+
+<style>
+
+
+    /* 1) Geen standaard bullets en geen padding op de UL */
+    .context-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    }
+
+    /* 2) Elk LI relatief positioneren, zodat pseudo-elementen absoluut ten opzichte van li kunnen */
+    .context-list .context-item {
+    position: relative;
+    margin-bottom: 0.5rem; /* ruimte onder elke node */
+    padding-left:1rem;
+    /* let op: de inline margin-left (data-depth x 1.25rem) blijft voor inspringen */
+    }
+
+    /* 3) Verticale lijn for alle li’s behalve depth="0" */
+    .context-list .context-item[data-depth]:not([data-depth="0"])::before {
+    content: "";
+    position: absolute;
+    top: 0.25em;            /* begin halverwege de regel (0.5em) */
+    bottom: 0;             /* tot onderkant van de li */
+    left: 0;               /* helemaal links van het li */
+    width: 1px;
+    background: #0b0;      /* kleur van de verticale lijn */
+    }
+
+    /* 4) Horizontale lijn: verbind verticale lijn met de tekst */
+    .context-list .context-item[data-depth]:not([data-depth="0"])::after {
+    content: "";
+    position: absolute;
+    top: 0.5em;            /* horizontale lijn op exact hetzelfde hoogtepunt */
+    left: 0;               /* begin aan dezelfde x-coördinaat als de verticale lijn */
+    width: 0.75rem;        /* loopt naar rechts, onder de tekst (past bij 1rem inspring) */
+    height: 1px;
+    background: #b0b;      /* kleur van de horizontale lijn */
+    }
+
+    .context-list .context-item[data-depth="0"] {
+    margin-left: 0;
+    }
+
+    .context-list .context-item[data-depth="1"] {
+    margin-left: 1.25rem;
+    }
+
+    .context-list .context-item[data-depth="2"] {
+    margin-left: 2.5rem;
+    }
+
+    .context-list .context-item[data-depth="3"] {
+    margin-left: 3.75rem;
+    }
+
+
+    /* 5) Root‐nodes (data-depth="0") krijgen géén pseudo-elementen */
+    .context-list .context-item[data-depth="0"]::before,
+    .context-list .context-item[data-depth="0"]::after {
+    content: none;
+    }
+
+    /* 6) Basisstijl voor de viewer en tekst */
+    .context-tree-viewer {
+    font-family: Segoe UI, Verdana, sans-serif;
+    font-size: 0.95rem;
+    color: #333;
+    }
+
+    .null-value {
+    color: #c00; /* rood voor “NULL” */
+    font-style: italic;
+    margin-left: 0.25rem;
+    }
+
+    .context-detail {
+    margin-top: 0.25rem;
+    margin-left: 1rem;   /* Zorg dat details net iets verder inspringen */
+    color: #444;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    }
+
+    /* 7) Dropdown styling (optioneel) */
+    select {
+    margin-left: 0.5rem;
+    padding: 0.2rem;
+    }
+
+</style>
+
+
+
+@code {
+
+    private Icon IconCollapsed = new Icons.Regular.Size20.Folder();
+    private Icon IconExpanded = new Icons.Regular.Size20.FolderOpen();
+    private List<TreeViewItem> Items = new List<TreeViewItem>();
+
+
+
+    [Parameter] public TModel? Model { get; set; }
+    [Parameter] public bool ToonDetails { get; set; } = false;
+    [Parameter] public bool ToonVoorbeeldTekst { get; set; } = true;
+
+    // 1) Maak van MaxDepth een property met setter die RebuildNodes() aanroept
+    private int _maxDepth = 5;
+    private int MaxDepth
+    {
+        get => _maxDepth;
+        set
+        {
+            if (_maxDepth != value)
+            {
+                _maxDepth = value;
+                RebuildNodes();
+            }
+        }
+    }
+
+    private readonly List<EContextNodeInfo> Nodes = new();
+
+    protected override void OnParametersSet()
+    {
+        // Bij het (her)toekennen van Model vanuit de parent doen we sowieso de build
+        RebuildNodes();
+    }
+
+    private void RebuildNodes()
+    {
+        Nodes.Clear();
+        Items.Clear();
+        if (Model == null)
+            return;
+
+
+        // voorkom cirkelverwijzingen
+        var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+
+        // vul 
+        ScanObject(
+            obj: Model!, 
+            parentItems: Items,
+            path: string.Empty,
+            currentDepth: 1, 
+            visited);
+
+
+        StateHasChanged();
+    }
+
+    private void ScanObject(
+        object obj, 
+        List<TreeViewItem> parentItems,
+        string path, 
+        int currentDepth, 
+        HashSet<object> visited)
+    {
+        if (obj == null || currentDepth > MaxDepth || visited.Contains(obj))
+            return;
+
+        visited.Add(obj);
+        var type = obj.GetType();
+
+        foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (prop.GetIndexParameters().Length > 0)
+                continue;
+
+            object? val;
+            try { val = prop.GetValue(obj); }
+            catch { continue; }
+
+
+            // Bepaal een unieke ID en een label voor deze node
+            var thisPath = string.IsNullOrEmpty(path) ? prop.Name : $"{path}.{prop.Name}";
+            var label = prop.Name;
+
+
+            // 1) De waarde is een BaseEurocodeContext
+            if (val is BaseEurocodeContext ctxValue)
+            {
+                if (ToonVoorbeeldTekst)
+                {
+                    label += $" ({ctxValue.ToMarkupString().Value})";
+                }
+
+                // maak direct een item aan met children (lege lijst)
+
+
+
+                var nodeItem = new TreeViewItem(id: thisPath, text: label, items: new List<TreeViewItem>())
+                {
+                    Expanded = !true
+                };
+                parentItems.Add(nodeItem);
+
+                Nodes.Add(new EContextNodeInfo(thisPath, ctxValue, currentDepth));
+
+
+                if (ToonVoorbeeldTekst)
+                {
+
+                }
+                else
+                {
+                    // ① ── Voeg direct *een leaf* toe met ToMarkupString() van deze context
+                    //     Deze child toont de eigenlijke inhoud (HTML/tekst) van de context
+                    var leafText = ctxValue.ToMarkupString().Value;
+                    var leafItem = new TreeViewItem(
+                        id: $"{thisPath}.ToMarkup",
+                        text: leafText ?? ""
+                    );
+                    // Voeg de leaf echt *onder* de nodeItem
+                    ((List<TreeViewItem>)nodeItem.Items!).Add(leafItem);
+                }
+
+               
+
+
+                // Recursief verder kijken in de properties
+                if (currentDepth < MaxDepth)
+                {
+                    ScanObject(
+                        obj: ctxValue, 
+                        parentItems:(List<TreeViewItem>)nodeItem.Items!, 
+                        path: thisPath,
+                        currentDepth: currentDepth + 1, 
+                        visited: visited);
+                }
+                continue;
+            }
+
+            // 2) PropertyType is een subclass van BaseEurocodeContext, maar waarde null
+            if (typeof(BaseEurocodeContext).IsAssignableFrom(prop.PropertyType))
+            {
+                // Voeg een TreeViewItem toe met Context = null
+                var nodeItem = new TreeViewItem(id: thisPath, text: $"{label} (NULL)", items: new List<TreeViewItem>())
+                    {
+                        Expanded = !true
+                    };
+                parentItems.Add(nodeItem);
+
+
+                Nodes.Add(new EContextNodeInfo(thisPath, null, currentDepth));
+                continue;
+            }
+
+            // 3) Is het een collectie (IEnumerable) en geen string?
+            if (val is IEnumerable enumerable && val is not string)
+            {
+                int idx = 0;
+                foreach (var item in enumerable)
+                {
+                    if (item != null)
+                    {
+                        var itemPath = $"{thisPath}[{idx}]";
+                        if (item is BaseEurocodeContext itemCtx)
+                        {
+                            var nodeItem = new TreeViewItem(id: itemPath, text: $"{prop.Name}[{idx}]", items: new List<TreeViewItem>())
+                                {
+                                    Expanded = false
+                                };
+                            parentItems.Add(nodeItem);
+
+
+                            Nodes.Add(new EContextNodeInfo(itemPath, itemCtx, currentDepth));
+
+                            // Recursief
+                            if (currentDepth < MaxDepth)
+                            {
+                                ScanObject(
+                                    itemCtx,  
+                                    parentItems: (List<TreeViewItem>)nodeItem.Items!,
+                                    path: itemPath, 
+                                    currentDepth: currentDepth + 1,
+                                    visited: visited);
+                            }
+
+                        }
+                        else if (currentDepth < MaxDepth)
+                        {
+                            // Item zelf is geen context, maar kan wél geneste contexten hebben
+                            // We maken een “tussenknop” (zonder eigen context) die alleen dient om geneste children te groeperen:
+                            var groupNode = new TreeViewItem(id: itemPath, text: $"{prop.Name}[{idx}]", items: new List<TreeViewItem>())
+                                {
+                                    Expanded = false
+                                };
+                            parentItems.Add(groupNode);
+
+
+                            ScanObject(item, 
+                                parentItems: (List<TreeViewItem>)groupNode.Items!,
+                                path: itemPath,
+                                currentDepth: currentDepth + 1, 
+                                visited: visited);
+                        }
+                    }
+                    idx++;
+                }
+                continue;
+            }
+
+            // 2d) Anders (gewoon object), duik een laagje dieper als we niet bij MaxDepth zijn
+            if (currentDepth < MaxDepth && val != null)
+            {
+                ScanObject(val, 
+                    parentItems: parentItems,
+                    path:thisPath, currentDepth: currentDepth + 1, 
+                    visited);
+            }
+
+            bool showPOCO = false;
+
+            // voeg één TreeViewItem toe met “PropertyNaam: Waarde”
+            if (val != null && showPOCO)
+            {
+                // Gebruik val.ToString() om de representatie van dit object te tonen
+                var displayText = $"{prop.Name}: {val}";
+
+                // Maak een nieuwe TreeViewItem zonder verdere children
+                var leafNode = new TreeViewItem(
+                    id: thisPath,      // uniëk ID, bv. “Parent.Child.Property”
+                    text: displayText  // bv. “Hoogte: 300” of “Naam: BetonC40/50”
+                );
+                parentItems.Add(leafNode);
+
+                // WÉL erop letten dat we niet recursief verdergaan in een POCO
+                // (dus géén ScanObject-aanroep meer)
+            }
+
+        }
+    }
+
+    private class ReferenceEqualityComparer : IEqualityComparer<object>
+    {
+        public static readonly ReferenceEqualityComparer Instance = new();
+        public new bool Equals(object? x, object? y) => ReferenceEquals(x, y);
+        public int GetHashCode(object obj) => RuntimeHelpers.GetHashCode(obj);
+    }
+}

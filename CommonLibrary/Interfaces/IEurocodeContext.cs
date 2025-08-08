@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.AspNetCore.Components;
+using System.Collections.ObjectModel;
 
 namespace CommonLibrary.Interfaces
 {
@@ -13,6 +14,15 @@ namespace CommonLibrary.Interfaces
 
         // Eventueel: een methode om meldingen toe te voegen
         void AddMelding(Melding melding);
+    }
+
+    public interface IContext
+    {
+        // interface voor context
+        public MarkupString ToMarkupString() => Helpers.MarkupHelper.ToMarkupString(this.ToString());
+
+
+
     }
 
 

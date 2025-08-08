@@ -1,4 +1,5 @@
-﻿using ExportFactory.Shared;
+﻿using CommonLibrary;
+using ExportFactory.Shared;
 using System.ComponentModel;
 using System.Data;
 using System.Reflection;
@@ -8,9 +9,26 @@ namespace ExportFactory.Extensions
     public static class ListExtensions
     {
 
-        // Extensiemethode om een List<T> om te zetten naar een DataTable, inclusief kolominstellingen zoals header, uitlijning en zichtbaarheid
-        public static DataTable ToDataTable<T>(this List<T> list) where T : class
+
+
+
+
+        // Extensiemethode om een IEnumerable<BaseEurocodeContext> om te zetten naar een DataTable
+        public static DataTable ToDataTable<T>(this IEnumerable<T> list) where T : BaseEurocodeContext
         {
+            // Maak een lijst van T om de extensiemethode te gebruiken
+            return ToDataTableInternal(list.ToList());
+        }
+
+        // Extensiemethode om een List<T> om te zetten naar een DataTable, inclusief kolominstellingen zoals header, uitlijning en zichtbaarheid
+        private static DataTable ToDataTableInternal<T>(List<T> list) where T : BaseEurocodeContext
+        {
+            ArgumentNullException.ThrowIfNull(list);
+            ArgumentNullException.ThrowIfNull(list.FirstOrDefault());
+
+            var type = list.FirstOrDefault()?.GetType();
+            ArgumentNullException.ThrowIfNull(type);
+
             var dataTable = new DataTable();
 
             if (list.Count == 0)
@@ -21,7 +39,9 @@ namespace ExportFactory.Extensions
             try
             {
                 // Verkrijg de eigenschappen van T (de kolommen)
-                var properties = typeof(T).GetProperties();
+                //var myType = typeof(T);
+                var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
 
                 // Voeg kolommen toe aan de DataTable op basis van de eigenschappen van T
                 foreach (var prop in properties)
@@ -40,7 +60,7 @@ namespace ExportFactory.Extensions
 
                     var column = new DataColumn();
                     // Maak een nieuwe DataColumn voor elke eigenschap
-                    Console.WriteLine($"Adding column: {prop.Name} of type {prop.PropertyType}");
+                    //Console.WriteLine($"Adding column: {prop.Name} of type {prop.PropertyType}");
 
                     // check if nullable enum (not supported in datatable)
                     if (IsNullableEnum(prop) || IsEnum(prop) || IsNullable(prop))
@@ -89,10 +109,6 @@ namespace ExportFactory.Extensions
                     foreach (var prop in properties)
                     {
                         // Assign the property value to the corresponding column in the DataRow
-                        Console.WriteLine($"Setting value for {prop.Name}: {prop.GetValue(item)}");
-
-
-
                         row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
 
                         // description
@@ -101,11 +117,9 @@ namespace ExportFactory.Extensions
                             row[prop.Name] = description;
                         }
                     }
-
                     // Add the populated row to the DataTable
                     dataTable.Rows.Add(row);
                 }
-
             }
             catch (Exception ex)
             {
@@ -116,23 +130,23 @@ namespace ExportFactory.Extensions
         }
 
 
-        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument<T>(this List<T> list, Type type, bool isPivotTable = true) where T : class
+        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument<T>(this List<T> list, Type type, bool isPivotTable = true, bool hideHeader = false) where T : BaseEurocodeContext
         {
             // step 1: make a datatable
             var dataTable = list.ToDataTable();
 
             // step 2: make a migradoc table
-            return dataTable.ToMigraDocDocument(type, isPivotTable);
+            return dataTable.ToMigraDocDocument(type, isPivotTable, hideHeader);
         }
 
 
-        public static MigraDoc.DocumentObjectModel.Tables.Table? ToMigraDocTable<T>(this List<T> list, Type type, bool isPivotTable = false) where T : class
+        public static MigraDoc.DocumentObjectModel.Tables.Table? ToMigraDocTable<T>(this List<T> list, Type type, bool isPivotTable = false, bool hideHeader = false) where T : BaseEurocodeContext
         {
             // step 1: make a datatable
             var dataTable = list.ToDataTable();
 
             // step 2: make a migradoc table
-            return dataTable.ToMigraDocTable(type, isPivotTable);
+            return dataTable.ToTable(type, isPivotTable, hideHeader);
         }
 
 
@@ -277,8 +291,6 @@ namespace ExportFactory.Extensions
 
 
     }
-
-
 
 
 }

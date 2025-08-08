@@ -1,7 +1,15 @@
-﻿using MigraDoc.DocumentObjectModel;
+﻿using System.Text.Json.Serialization;
 
 namespace ExportFactory.MigraDocContentModels
 {
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+    [JsonDerivedType(typeof(HeadingContent), "HeadingContent")]
+    [JsonDerivedType(typeof(TableContent), "TableContent")]
+    //[JsonDerivedType(typeof(SectionContent), "SectionContent")]
+    [JsonDerivedType(typeof(ParagraphContent), "ParagraphContent")]
+    [JsonDerivedType(typeof(MigraDocElement), "MigraDocElement")]
+    [JsonDerivedType(typeof(MigraDocTable), "MigraDocTable")]
+
     public abstract class SectionElement
     {
         public int Order { get; set; }
@@ -43,61 +51,6 @@ namespace ExportFactory.MigraDocContentModels
         public int Level { get; set; } = 1; // default h1
 
 
-
-    }
-
-    public class ParagraphContent : SectionElement
-    {
-        public ParagraphContent() { }
-
-        public ParagraphContent(string markdown)
-        {
-            Markdown = markdown;
-        }
-
-        public ParagraphContent(string markdown, string style)
-        {
-            Markdown = markdown;
-            Style = style;
-        }
-        public string Markdown { get; set; } = ""; // Markdown string for formatting
-        public string Style { get; set; } = "Normal"; // Default style
-    }
-
-
-    public class TableContent : SectionElement
-    {
-        public string Title { get; set; } = "";
-        public TableAlignment Alignment { get; set; } = TableAlignment.Left;
-        public List<TableCellHeaderContent> Headers { get; set; } = new List<TableCellHeaderContent>();
-        public List<double> ColumnWidths { get; set; } = new List<double>();
-        public List<List<TableCellContent>> Rows { get; set; } = new List<List<TableCellContent>>();
-    }
-
-    /// <summary>
-    /// Gebruik dit om direct een MigraDoc.Table in de documentContent te plaatsen.
-    /// </summary>
-    public class MigraDocTable : SectionElement
-    {
-        public MigraDoc.DocumentObjectModel.Tables.Table Table { get; set; } = new();
-    }
-
-    /// <summary>
-    /// Universele class voor Paragraph, Chart, Image, Table of TextFrame van MigraDoc rechtstreeks te plaatsen in de document bouwstenen.
-    /// </summary>
-    public class MigraDocElement : SectionElement
-    {
-        public MigraDoc.DocumentObjectModel.DocumentObject? DocumentObject { get; set; }
-
-        public MigraDocElement()
-        {
-
-        }
-
-        public MigraDocElement(DocumentObject documentObject)
-        {
-            DocumentObject = documentObject;
-        }
 
     }
 

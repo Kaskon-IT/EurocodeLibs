@@ -1,6 +1,8 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Helpers;
 using ExportFactory.Shared;
 using System.ComponentModel;
+using K = CommonLibrary.EurocodeKeys;
 
 namespace Eurocode.BetonConstructies
 {
@@ -9,28 +11,36 @@ namespace Eurocode.BetonConstructies
 
     public class BendingResults : BaseEurocodeContext
     {
+
+        public override string Heading { get; set; } = "Momentwapening";
+
         private double _asApplied;
         private BerekeningTypeEnum? _berekeningType = BerekeningTypeEnum.ControleerWapening;
         private Schematisering.ConstructiefModelEnum? _constructiefModel = Schematisering.ConstructiefModelEnum.Balk;
         private double _breedte = 300;
         private double _hoogte = 400;
         private double _moment = 80.80;
-
+        private Snedekrachten? _snedekrachten;
+        private VerankeringLangswapeningContext? _verankeringsLengte;
 
         public override string ToString()
         {
             var result = "";
-            result += $"M~Ed~ = {Moment: 0.##} kNm, ";
+            result += $"M~Ed~ = {Moment: 0.#} kNm, ";
             result += $"afm. {Breedte}×{Hoogte}/{D} mm, ";
             result += "\r\n";
-            result += $"A~s,ben~ = {AsRequired: 0} mm², ";
-            result += $"A~s,toe~ = {AsApplied: 0} mm², ";
+            result += $"A~s,req~ = {AsRequired: 0} mm², ";
+
+
+
+            if (BerekeningType == BerekeningTypeEnum.ControleerWapening)
+            {
+                result += $"A~s,prov~ = {AsApplied: 0} mm², ";
+                result += $"(UC = {(AsRequired / AsApplied):0.00}), ";
+
+            }
 
             if (MinimaleWapeningToegepast) result += $"minimale wapening van toepassing, ";
-            if (BerekeningType == BerekeningTypeEnum.ControleerWapening) result += $"(UC = {(AsRequired / AsApplied):0.##}), ";
-
-
-
 
             return result.TrimEnd(',', ' ');
         }
@@ -40,6 +50,7 @@ namespace Eurocode.BetonConstructies
             Beton = new();
             Wapening = new();
             Wapening.PropertyChanged += OnWapeningChanged;
+            _verankeringsLengte = new VerankeringLangswapeningContext() { Beton = Beton };
             BerekenEnValideer();
         }
 
@@ -51,20 +62,17 @@ namespace Eurocode.BetonConstructies
             Snedekrachten = snedekrachten;
             //ZRef = zRef;
             Wapening = wapening;
+            _verankeringsLengte = new VerankeringLangswapeningContext()
+            {
+                Beton = Beton,
+                StaafType = VerankeringLangswapeningContext.StaafTypeEnum.Trekstaaf,
+                GoedeAanhechtingOmstandigheden = true,
+                Diameter = wapening.GemiddeldeDiameter
+            };
             BerekenEnValideer();
         }
 
-        public BendingResults(BetonContext beton, double b, double h, double zRef, double m)
-        {
-            Beton = beton;
-            Breedte = b;
-            Hoogte = h;
-            ZRef = zRef;
-            Moment = m;
-            Wapening = new();
-            Wapening.PropertyChanged += OnWapeningChanged;
-            BerekenEnValideer();
-        }
+
 
         private void OnWapeningChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -73,12 +81,31 @@ namespace Eurocode.BetonConstructies
             {
                 BerekenEnValideer();
             }
+            if (e.PropertyName == nameof(WapeningContext.Dekking))
+            {
+                // ? 
+
+                BerekenEnValideer();
+            }
+
+
 
             Console.WriteLine($"Wapening (context) gewijzigd: {e.PropertyName}");
             // Hier kun je aanvullende acties uitvoeren, zoals andere properties bijwerken.
         }
 
-
+        public VerankeringLangswapeningContext? VerankeringsLengte
+        {
+            get => _verankeringsLengte;
+            set
+            {
+                if (_verankeringsLengte != value)
+                {
+                    _verankeringsLengte = value;
+                    OnPropertyChanged(nameof(VerankeringsLengte));
+                }
+            }
+        }
 
         public BerekeningTypeEnum? BerekeningType
         {
@@ -110,42 +137,93 @@ namespace Eurocode.BetonConstructies
 
         public BetonContext Beton { get; set; }
         public ParametrischeProfielen.ParametrischProfielContext? Profiel { get; set; } // als geen profiel, dan rechthoek BxH
-        public Snedekrachten? Snedekrachten { get; set; } // als er geen snedekrachten opgegeven dan Moment opgave.
+        public Snedekrachten? Snedekrachten
+        {
+            get => _snedekrachten;
+            set
+            {
+                if (_snedekrachten != value)
+                {
+                    _snedekrachten = value;
+                    OnPropertyChanged(nameof(Snedekrachten));
+
+                    // Automatisch Moment bijwerken als Snedekrachten verandert
+                    if (_snedekrachten != null)
+                    {
+                        Moment = _snedekrachten.My.Ed;
+                    }
+                }
+            }
+        } // als er geen snedekrachten opgegeven dan Moment opgave.
 
 
-        [TableColumn("Positie", order: 0)]
-        public string Name { get; set; } = "";
+        [TableColumn("positie", order: 0, Weergave = WeergaveEnum.StandaardTabel)]
+        public string Name { get; set; } = "Schil";
 
 
-        [TableColumn("M~Ed~", StringFormat = "0.0 kNm", Order = 1)]
+        [TableColumn("M~Ed~ [kNm]", StringFormat = "0.0", Order = 1,
+            Key = K.MomentRekenwaarde,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Moment
         {
-            get => Snedekrachten != null ? Snedekrachten.My : _moment;
-            set => _moment = value;
+            get => Snedekrachten != null ? Snedekrachten.My.Ed : _moment;
+            set
+            {
+                if (Snedekrachten != null)
+                {
+                    // Als Snedekrachten niet null is, zet _moment gelijk aan Snedekrachten.My
+                    _moment = Snedekrachten.My.Ed;
+                }
+                else
+                {
+                    // Als Snedekrachten null is, gebruik de gegeven waarde
+                    _moment = value;
+                }
+            }
         }
 
 
-        [TableColumn("Breedte", order: 2, StringFormat = "0 mm")]
+        [TableColumn("b [mm]", order: 2,
+            Weergave = WeergaveEnum.DraaiTabel,
+            Key = K.ProfielBreedte,
+            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Breedte
         {
             get => Profiel != null ? Profiel.Breedte : _breedte;
             set => _breedte = value;
         }
 
-        [TableColumn("Hoogte", order: 3, StringFormat = "0 mm")]
+        [TableColumn("h [mm]", order: 3,
+            Weergave = WeergaveEnum.DraaiTabel,
+            Key = K.ProfielHoogte,
+            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Hoogte
         {
             get => Profiel != null ? Profiel.Hoogte : _hoogte;
             set => _hoogte = value;
         }
 
-        public double ZRef { get; set; } = 50;
+        public double ZRef
+        {
+            get
+            {
+                if (Wapening == null) return 50;
+                else
+                {
 
-        [TableColumn("d", order: 4, StringFormat = "0 mm")]
+                    return Wapening.ZRef;
+                }
+            }
+        }
+        [TableColumn("d [mm]", order: 4,
+            Key = K.NuttigeHoogte,
+            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double D { get { return Hoogte - ZRef; } }
 
 
-        [TableColumn("x~u~", order: 5, StringFormat = "0.## mm")]
+        [TableColumn("x~u~ [mm]", order: 5,
+            Key = K.Xu,
+            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Xu
         {
             get
@@ -177,25 +255,120 @@ namespace Eurocode.BetonConstructies
             get { return Xu / D; }
         }
 
-        [TableColumn("z", order: 21, StringFormat = "0.# mm")]
+        [TableColumn("z [mm]", order: 21,
+            // Key = K.InwendigeHefboom,
+            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Z
         {
             get
             {
-                return D - Beton.GetBeta() * Xu;
+                if (IsGedrongenLigger)
+                {
+                    return Schematisering.GetGedrongenZ(LengteMaatBijGedrongenLiggerInMM, Hoogte, Gedrongen ?? Schematisering.GedrongenEnum.Uitkraging);
+                }
+                else
+                {
+                    return D - Beton.GetBeta() * Xu;
+                }
             }
         }
 
-        [TableColumn("A~s,ben~", Order = 40, StringFormat = "0 mm²")]
+        private bool _isGedrongenLigger;
+
+        public bool IsGedrongenLigger
+        {
+            get => _isGedrongenLigger;
+            set
+            {
+                if (_isGedrongenLigger != value)
+                {
+                    _isGedrongenLigger = value;
+                    OnPropertyChanged(nameof(IsGedrongenLigger));
+                    BerekenEnValideer();
+                }
+            }
+        }
+
+
+        private bool IsGedrongenMaarSlankIsMaatgevend
+        {
+            get; set;
+        }
+
+
+        public string LengteMaatBijGedrongenLiggerSymbool
+        {
+            get
+            {
+                switch (Gedrongen)
+                {
+                    default:
+                    case null:
+                    case Schematisering.GedrongenEnum.Uitkraging:
+                        return "a";
+                    case Schematisering.GedrongenEnum.StatischBepaald:
+                        return "l";
+                    case Schematisering.GedrongenEnum.StatischOnbepaald:
+                        return "l~0~";
+
+                }
+            }
+        }
+
+
+
+        /// <summary>
+        /// De overspanning van de ligger.
+        /// In millimeters!
+        /// Dit afstand tussen momenten-nulpunten wordt hiermee bedoeld.
+        /// </summary>
+        public double LengteMaatBijGedrongenLiggerInMM { get; set; } = 400;
+        public bool Uitkraging = false;
+
+
+        public bool StatischBepaald { get; set; } = true;
+
+
+
+
+        public Schematisering.GedrongenEnum? Gedrongen
+        {
+            get; set;
+        }
+
+
+
+        [TableColumn("A~s,req~ [mm²]", Order = 40,
+            Key = K.AsBen,
+            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsRequired
         {
             get
             {
-                return Math.Max(AsMin, AsBerekend);
+                var asBenodigdZuivereBuiging = Math.Max(AsMin, AsBerekend);
+                if (IsGedrongenLigger)
+                {
+                    var asBenodigdGedrongen = Moment * 1e6 / Z / Beton.BetonStaal.Fyd;
+                    if (asBenodigdZuivereBuiging > asBenodigdGedrongen)
+                    {
+                        AddMelding(StandaardMeldingenCatalogus.GedrongenLiggerNietMaatgevend);
+                        // melding 
+                        // OPMERKING Bij relatief slanke constructies en/ of bij de toepassing van grote hoeveelheden wapening is het
+                        // mogelijk dat bij de uitgangspunten geformuleerd in (1)P een lagere waarde van de momentweerstand wordt
+                        // gevonden.Deze lagere waarde is dan bepalend voor de momentweerstand van de beschouwde constructie.
+
+                        // (1)P maatgevend
+                    }
+                    return Math.Max(asBenodigdGedrongen, asBenodigdZuivereBuiging);
+                }
+
+                return asBenodigdZuivereBuiging;
             }
         }
 
-        [TableColumn("A~s,toe~", Order = 41, StringFormat = "0 mm²")]
+        [TableColumn("A~s,toe~ [mm²]", Order = 41,
+            Key = K.AsToe,
+            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsApplied
         {
             get => _asApplied;
@@ -221,6 +394,8 @@ namespace Eurocode.BetonConstructies
                 BerekeningTypeEnum.ControleerWapening => Wapening.As,
                 _ => Math.Ceiling(AsRequired),
             };
+
+
 
         }
 
@@ -251,8 +426,6 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
-
-
 
 
 
@@ -294,6 +467,29 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        /// <summary>
+        /// Gebruik artikel 7.3.1 minimale wapening voor gecontroleerde scheurbeheersing.
+        /// </summary>
+        public bool MinimaleWapeningScheurbeheersingToepassen { get; set; } = true;
+        public double AsMinScheurbeheersing
+        {
+            get
+            {
+                if (MinimaleWapeningScheurbeheersingToepassen)
+                {
+                    Scheurbeheersing.ScheurwijdteMinimumWapening ScheurwijdteAsMin = new()
+                    {
+                        Beton = Beton,
+
+                    };
+                    return ScheurwijdteAsMin.AsMin;
+                }
+                else return double.MaxValue; // geen minimale wapening voor scheurbeheersing toepassen
+
+            }
+        }
+
+
         public double AsMax
         {
             get
@@ -326,8 +522,6 @@ namespace Eurocode.BetonConstructies
 
 
 
-
-
         public bool MinimaleWapeningToegepast
         {
             get
@@ -336,49 +530,99 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+
+        //private List<int> _meldingCodes = [];
+
+        [TableColumn("opm.", Order = 9999)]
+        public string MeldingNummers
+        {
+            get
+            {
+                return string.Join(", ",
+                    Meldingen
+                        .Where(m => m.Code.HasValue)
+                        .Select(m => m.Code!.Value % 1000)
+                        .OrderBy(n => n)
+                        .Select(n => n.ToString())
+                );
+
+                //return string.Join(", ", MeldingCodes.Select(code => $"{code % 1000}"));
+            }
+        }
+
+
         public override bool IsAkkoord()
         {
             return Valideer();
-
-
         }
 
         protected override void Bereken()
         {
+            Wapening.SetZRef();
             VerwerkAsApplied();
+
+            // als de wapening wijzigt, dan ook
+            if (_verankeringsLengte != null)
+            {
+                _verankeringsLengte.Diameter = Wapening.GemiddeldeDiameter;
+            }
+
+            // controleer of slank maatgevend 
+            if (_isGedrongenLigger)
+            {
+                if (AsRequired == AsBerekend)
+                {
+
+                }
+            }
 
             // volgens mij gaat dit volledig automatisch...
         }
 
         protected override bool Valideer()
         {
+            //_meldingCodes?.Clear();
+            bool returnVal = true;
+
+            if (double.IsNaN(Xu))
+            {
+                AddMelding(StandaardMeldingenCatalogus.BerekeningNietAkkoord);
+            }
 
             if (Xu > XuMax)
             {
-                AddMeldingWaarschuwing("hoogte drukzone niet akkoord");
-                //Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
-                return false;
+                AddMelding(StandaardMeldingenCatalogus.OverschrijdingDrukzone);
+                returnVal = false;
             }
             if (AsApplied < AsRequired)
             {
-                AddMeldingWaarschuwing("onvoldoende wapening");
-                //Meldingen.Add(new(MeldingType.Waarschuwing, "overschrijding maximale hoogte drukzone"));
-                return false;
+                AddMelding(StandaardMeldingenCatalogus.OnvoldoendeLangsWapening);
+                returnVal = false;
             }
-
-
 
 
             if (AsApplied > this.AsMax)
             {
-                AddMeldingWaarschuwing("overschrijding maximale wapening (voor balk)");
-                return false;
+                AddMelding(StandaardMeldingenCatalogus.OverschrijdingMaximaleWapening);
+                returnVal = false;
             }
 
 
-            return true;
+            // OPMERKINGEN (do not return false)
+            if (MinimaleWapeningToegepast)
+            {
+                AddMelding(StandaardMeldingenCatalogus.MinimaleWapening);
+            }
+
+            if (IsGedrongenLigger)
+                AddMelding(StandaardMeldingenCatalogus.GedrongenLigger);
+
+
+            return returnVal;
 
         }
+
+
     }
 
 

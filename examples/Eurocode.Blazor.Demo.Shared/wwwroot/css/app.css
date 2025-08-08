@@ -9,6 +9,10 @@ blockquote p:last-child {
     margin-bottom: 0;
 }
 
+td, th {
+    padding-right: 0.5em;
+}
+
 .home div[sm="4"], .home div[sm="6"], .home div[sm="8"] {
     border-bottom: 1px solid var(--neutral-stroke-divider-rest) !important;
 }

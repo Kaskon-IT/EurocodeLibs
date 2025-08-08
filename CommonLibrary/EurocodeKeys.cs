@@ -6,15 +6,49 @@
 
 
         public const string My = "My";
+        public const string MyEd = "MyEd";
+        public const string MyBGT = "MyBGT";
+        public const string MyKar = "MyKar";
+        public const string MyFreq = "MyFreq";
+
         public const string Mz = "Mz";
+        public const string MzEd = "MzEd";
+        public const string MzBGT = "MzBGT";
+
 
         public const string Vz = "Vz";
+        public const string VzEd = "VzEd";
+
         public const string Vy = "Vy";
+        public const string VyEd = "VyEd";
+
 
         public const string Tx = "Tx";
+        public const string TxEd = "TxEd";
+
+
         public const string Nx = "Nx";
+        public const string NxEd = "NxEd";
 
 
+        public const string Slankheid_Slankheid = "Slankheid.Slankheid";
+        public const string Slankheid_Grenswaarde = "Slankheid.Grenswaarde";
+        public const string Slankheid_FactorK = "Slankheid.FactorK";
+
+        public const string Slankheid_LengteOverspanning = "Slankheid.LengteOverspanning";
+        public const string Slankheid_EffectieveDikte = "Slankheid.EffectieveDikte";
+
+        public const string Slankheid_WapeningsVerhoudingReferentiewaarde = "Slankheid.WapeningsVerhoudingReferentiewaarde";
+        public const string Slankheid_WapeningsVerhoudingTrekVereist = "Slankheid.WapeningsVerhoudingTrekVereist";
+        public const string Slankheid_WapeningsVerhoudingDrukVereist = "Slankheid.WapeningsVerhoudingDrukVereist";
+        public const string Slankheid_Fck = "Slankheid.Fck";
+
+
+
+
+        public const string DwarskrachtBreedte = "Dwarskracht.Breedte";
+
+        public const string TrapBreedte = "Trap.Breedte";
         public const string TrapOptredeMaat = "Trap.OptredeMaat";
         public const string TrapAantredeMaat = "Trap.AantredeMaat";
         public const string TrapOptredeAantal = "Trap.OptredeAantal";
@@ -93,11 +127,14 @@
         public const string ScheurwijdteK3 = "Scheurwijdte.K3";
         public const string ScheurwijdteK4 = "Scheurwijdte.K4";
         public const string ScheurwijdteK5 = "Scheurwijdte.K5";
+        public const string ScheurwijdteSrMax = "Scheurwijdte.SrMax";
+        public const string ScheurwijdteEpsilonSmMinusEpsilonCm = "Scheurwijdte.EpsilonSmMinusEpsilonCm";
 
         // T
         public const string TandLengte = "Tand.Lengte";
         public const string TandHoogte = "Tand.Hoogte";
         public const string TandNuttigeHoogte = "Tand.NuttigeHoogte";
+        public const string HalsDikte = "Hals.Dikte";
 
 
         public const string Wapening = "Wapening";

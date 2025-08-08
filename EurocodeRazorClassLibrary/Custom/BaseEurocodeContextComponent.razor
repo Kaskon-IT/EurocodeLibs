@@ -1,14 +1,92 @@
 ﻿@using CommonLibrary
-@using Eurocode.Grondslagen
+@using ExportFactory.Extensions
+@using Microsoft.Extensions.Hosting
+@using System.ComponentModel
+@inject IHostEnvironment Env
+@typeparam TContext where TContext : BaseEurocodeContext
 
-<p>
-    @Model.ToString();
-</p>
+
+@if (Model != null && Env.IsDevelopment())
+{
+    
+    <FluentSwitch @bind-Value="IsDraaiTabel" CheckedMessage="draaitabel voorbeeld" UncheckedMessage="tabel voorbeeld" />
+    <FluentCard>
+        
+        @Model.ToHtmlTable(IsDraaiTabel)
+    </FluentCard>
+    @* <br/>
+    <FluentCard>
+        <h5>Info</h5>
+        <table>
+            <tr>
+                <td><strong>type:</strong></td>
+                <td>@Model.GetType().ToString()</td>
+            </tr>
+            <tr>
+                <td><strong>tekst:</strong></td>
+                <td>@Model.ToMarkupString()</td>
+            </tr>
+            <tr>
+                <td><strong>aangemaakt op:</strong></td>
+                <td>@Model.AangemaaktOp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
+            </tr>
+            @if ((Model.GewijzigdOp - Model.AangemaaktOp).TotalSeconds > 1)
+            {
+                <tr>
+                    <td><strong>gewijzigd op:</strong></td>
+                    <td>@Model.GewijzigdOp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
+                </tr>
+            }
+        </table>
+    </FluentCard> *@
+}
 
 
 @code {
     [Parameter, EditorRequired]
-    public GrondslagenContext Model { get; set; }
+    public TContext? Model { get; set; } 
 
+    [Parameter]
+    public EventCallback<TContext> ModelChanged{ get; set; }
+
+    [Parameter] public bool IsDraaiTabel{ get; set; }
+
+
+
+    protected async Task OnValueChanged()
+    {
+        if (ModelChanged.HasDelegate)
+            await ModelChanged.InvokeAsync(Model);
+    }
    
+    private INotifyPropertyChanged? _oldNotify;
+
+    protected override void OnParametersSet()
+    {
+        // Ontkoppel oude event handler
+        if (_oldNotify != null)
+            _oldNotify.PropertyChanged -= OnModelPropertyChanged;
+
+        if (Model is INotifyPropertyChanged newNotify)
+        {
+            newNotify.PropertyChanged += OnModelPropertyChanged;
+            _oldNotify = newNotify;
+        }
+    }
+
+    private async void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // Update parent component via @bind-Model
+        await ModelChanged.InvokeAsync(Model);
+
+        // En herteken deze component
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        if (_oldNotify != null)
+            _oldNotify.PropertyChanged -= OnModelPropertyChanged;
+    }
+
 }

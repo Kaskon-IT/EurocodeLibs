@@ -1,0 +1,39 @@
+﻿@using Plotly.Blazor.LayoutLib
+@using Plotly.Blazor.LayoutLib.ShapeLib
+@using Plotly.Blazor.Traces.ScatterLib
+@using CommonLibrary
+
+
+
+@if (SampleProject !=null)
+{
+
+    @* <FluentButton OnClick="StateHasChanged">StateHasChanged</FluentButton> *@
+
+    <EurocodeSlankheidComponent 
+        @bind-Model="SampleProject.GrenswaardeSlankheidDemo" 
+        ReadOnly=false
+        OnStateChanged="StateHasChanged"></EurocodeSlankheidComponent>
+
+    
+}
+
+
+
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+   
+   
+
+    protected override void OnInitialized()
+    {
+        if (SampleProject == null) return;
+
+    }
+
+
+
+}

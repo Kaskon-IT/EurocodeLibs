@@ -1,22 +1,95 @@
 ﻿@using CommonLibrary
 @using K = CommonLibrary.EurocodeKeys
-
-<h3>SnedekrachtenComponent</h3>
-
-
-<EurocodeInputNumber Key="My" @bind-Value="@Model.My" StringFormat="0.##"/>
-<EurocodeInputNumber Key="Vz" @bind-Value="@Model.Vz" StringFormat="0.##" />
+@inherits Custom.EurocodeComponentBase
 
 
-<EurocodeInputNumber Key="Mz" @bind-Value="@Model.Mz" StringFormat="0.##" />
-<EurocodeInputNumber Key="Vy" @bind-Value="@Model.Vz" StringFormat="0.##" />
 
 
-<EurocodeInputNumber Key="Tx" @bind-Value="@Model.Tx" StringFormat="0.##" />
-<EurocodeInputNumber Key="Nx" @bind-Value="@Model.Nx" StringFormat="0.##" />
+@* <p>@Model.ToMarkupString()</p> *@
+
+<!--Momenten-->
+@if (ToonMy)
+{
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="@K.MyBGT" @bind-Value="@Model.My.Kar" StringFormat="0.##" Unit="kNm" OnStateChanged="NotifyParentAsync" />
+    }
+    else
+    {
+        <EurocodeInputNumber Key="@K.MyEd" @bind-Value="@Model.My.Ed" StringFormat="0.##" Unit="kNm" OnStateChanged="NotifyParentAsync" />
+    }
+}
+
+@if (ToonMz)
+{
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="@K.MzBGT" @bind-Value="@Model.Mz.Kar" StringFormat="0.##" Unit="kNm" OnStateChanged="NotifyParentAsync" />
+    }
+    else
+    {
+        <EurocodeInputNumber Key="@K.MzEd" @bind-Value="@Model.Mz.Ed" StringFormat="0.##" Unit="kNm" OnStateChanged="NotifyParentAsync" />
+    }
+}
 
 
-<p>@Model.ToMarkupString()</p>
+<!--Dwarskrachten-->
+@if (ToonVz)
+{
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="@K.VzEd" @bind-Value="@Model.Vz.Kar" StringFormat="0.##" Unit="kN" OnStateChanged="NotifyParentAsync" />
+    }
+    else
+    {
+        <EurocodeInputNumber Key="@K.VzEd" @bind-Value="@Model.Vz.Ed" StringFormat="0.##" Unit="kN" OnStateChanged="NotifyParentAsync" />
+    }
+}
+@if (ToonVy)
+{
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="@K.VyEd" @bind-Value="@Model.Vy.Kar" StringFormat="0.##" Unit="kN" OnStateChanged="NotifyParentAsync" />
+    }
+    else
+    {
+        <EurocodeInputNumber Key="@K.VyEd" @bind-Value="@Model.Vy.Ed" StringFormat="0.##" Unit="kN" OnStateChanged="NotifyParentAsync" />
+    }
+}
+
+
+
+
+<!--Normaalkracht-->
+@if (ToonNormaalkracht)
+{
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="@K.NxEd" @bind-Value="@Model.Nx.Kar" StringFormat="0.##" Unit="kN" OnStateChanged="NotifyParentAsync" />
+    }
+    else
+    {
+        <EurocodeInputNumber Key="@K.NxEd" @bind-Value="@Model.Nx.Ed" StringFormat="0.##" Unit="kN" OnStateChanged="NotifyParentAsync" />
+
+    }
+}
+
+<!--Torsie-->
+@if (ToonTorsie)
+{
+    @if (ToonWaardeBruiksbaarheidsGrensToestand)
+    {
+        <EurocodeInputNumber Key="@K.TxEd" @bind-Value="@Model.Tx.Kar" StringFormat="0.##" Unit="kNm" OnStateChanged="NotifyParentAsync" />
+    }
+    else
+    {
+        <EurocodeInputNumber Key="@K.TxEd" @bind-Value="@Model.Tx.Ed" StringFormat="0.##" Unit="kNm" OnStateChanged="NotifyParentAsync" />
+    }
+}
+
+
+
+
 
 
 
@@ -26,5 +99,19 @@
 
     [Parameter]
     public EventCallback<Snedekrachten> ModelChanged{ get; set; }
+
+    private bool toonHoofdRichting = true;
+
+    [Parameter] public bool ToonMy { get; set; } = true; // primaire richting (meestal verticaal)
+    [Parameter] public bool ToonVz { get; set; } = true; // primaire richting (meestal verticaal)
+
+    [Parameter] public bool ToonMz { get; set; } = !true; // secundaire richting (meestal horizontaal)
+    [Parameter] public bool ToonVy { get; set; } = !true; // secundaire richting (meestal horizontaal)
+
+    //[Parameter] public bool ToonSecundaireRichting { get; set; } = !true;
+    [Parameter] public bool ToonNormaalkracht { get; set; } = !true;
+    [Parameter] public bool ToonTorsie { get; set; } = !true;
+    [Parameter] public bool ToonWaardeBruiksbaarheidsGrensToestand { get; set; } = !true;
+
 
 }

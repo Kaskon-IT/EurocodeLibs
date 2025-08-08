@@ -7,4 +7,8 @@
     <RootNamespace>Eurocode.Aardbevingen</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ExportFactory\ExportFactory.csproj" />
+  </ItemGroup>
+
 </Project>

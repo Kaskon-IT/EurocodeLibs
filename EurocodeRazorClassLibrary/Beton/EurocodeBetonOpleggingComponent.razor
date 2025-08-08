@@ -1,11 +1,17 @@
 ﻿@using Eurocode.BetonConstructies
 
+@* <p>@Model.ToMarkupString()</p> *@
+
+@* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@
+
+
+
 <FluentGrid Spacing="0">
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <EurocodeInputNumber @bind-Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN"
+        <EurocodeInputNumber Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN"
         LabelPosition="@LabelPosition" LabelType="@LabelType" 
-        ReadOnly="IsFieldReadOnly(nameof(Model.OplegReactieRekenwaarde))"  />
+        ReadOnly=true  />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
@@ -20,22 +26,21 @@
         />
     </FluentGridItem>
 
+
     <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandA2" Key="AfstandA2" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
     <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaA2" Key="AfstandDeltaA2" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
     <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandA3" Key="AfstandA3" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
-    
     <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaA3" Key="AfstandDeltaA3" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
-    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaElementType" Key="AfstandDeltaElementType" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
-
+    @* <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaElementType" Key="AfstandDeltaElementType" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" /> *@
     <EurocodeInputNumber ReadOnly=true Value="@Model.OplegLengteNominaal" Key="OplegLengteNominaal" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
 
    
 
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
-        <EurocodeInputNumber @bind-Value="@Model.LengteOndersteundeElement" Key="LengteOndersteundeElement" Unit="mm"
+        <EurocodeInputNumber Value="@Model.LengteOndersteundeElement" Key="LengteOndersteundeElement" Unit="mm"
         LabelPosition="@LabelPosition" LabelType="@LabelType"
-        ReadOnly=IsFieldReadOnly(nameof(Model.LengteOndersteundeElement)) />
+        ReadOnly=true />
     </FluentGridItem>
 
 </FluentGrid>
@@ -146,6 +151,7 @@
     }
 
 
+    
 
 
 
@@ -154,6 +160,14 @@
 
 
 </FluentGrid>
+
+<div>
+    <br />
+    <h6>Samenvatting</h6>
+
+</div>
+
+<div>@Model.ToSamenvatting()</div>
 
 
 

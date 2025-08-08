@@ -2,17 +2,20 @@
 @using Eurocode.Grondslagen
 @using K = CommonLibrary.EurocodeKeys
 
+@inherits Custom.EurocodeComponentBase
 
+@* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@
 
 <EurocodeMeldingenComponent Meldingen="Model.Meldingen"></EurocodeMeldingenComponent>
 
+<p>@Model.ToMarkupString()</p>
 
 
 <p>
-    <table>
+    <table style="width:100%">
         <colgroup>
             <col style="width: 200px;"> 
-            <col style="width: 40px;"> 
+            <col> 
 
 
         </colgroup>
@@ -22,19 +25,19 @@
 
             <tr>
                 <td>ontwerplevensduur</td>
-                <td style="font-weight:bold;">@Model.Grondslagen.OntwerpLevensduur.GetOntwerplevensduurTekst()</td>
+                <td>@Model.Grondslagen.OntwerpLevensduur.GetOntwerplevensduurTekst()</td>
             </tr>
             <tr style="height:32px;">
                 <td>betonsterkteklasse</td>
-                <td style="font-weight:bold;">@Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</td>
+                <td>@Model.Beton.BetonSterkteKlasseGebruiksvriendelijkeNaam</td>
             </tr>
             <tr>
                 <td>constructieklasse</td>
-                <td style="font-weight:bold;">@Model.Constructieklasse.UserFriendlyName</td>
+                <td>@Model.Constructieklasse.UserFriendlyName</td>
             </tr>
             <tr>
                 <td>milieuklasse(n)</td>
-                <td style="font-weight:bold;">@(String.Join(", ", Model.Milieuklassen.OrderBy(i => i).Select(i => i.ToString())))</td> 
+                <td>@(String.Join(", ", Model.Milieuklassen.OrderBy(i => i).Select(i => i.ToString())))</td>
 
             </tr>
 
@@ -45,7 +48,7 @@
                     <FluentAutocomplete TOption="Eurocode.BetonConstructies.MilieuklasseEnum"
                                         AutoComplete="on"
                                         MaxAutoHeight="200px"
-                                        Width="250px"
+                                        Width="300px"
                                         Placeholder="kies milieuklasse(n)"
                                         OnOptionsSearch="@OnSearchEnum"
                                         MaximumOptionsSearch="24"
@@ -61,7 +64,7 @@
             <tr>
                 <td></td>
                 <td>
-                    <div style="width:250px;">
+                    <div style="width:300px;">
                         <FluentMenuButton @ref=menuButtonMilieuklasse 
                                           Text="snelkeuze milieu-omstandigheden"
                                           OnMenuChanged="HandleOnMenuChanged"
@@ -105,43 +108,15 @@
 </p>
 
 
-@* <EurocodeInputNumber ReadOnly=true Key="OntwerpLevensduur" Value="Model.Grondslagen.OntwerpLevensduur"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Key="DekkingToe" Value="Model.Beton.DemoString"></EurocodeInputNumber> *@
-
-<div>
-
-</div>
-<div>
-
-</div>
-
-
-
-
-
-
-
-
 <EurocodeInputNumber Key="DekkingNom" ReadOnly="true" Value="Model.DekkingNom" Unit="mm"></EurocodeInputNumber>
-<EurocodeInputNumber Key="DekkingToe" @bind-Value="Model.DekkingToe" MinValue="Model.DekkingNom" MaxValue=100 Unit="mm"></EurocodeInputNumber>
-
+<EurocodeInputNumber Key="DekkingToe" @bind-Value="Model.DekkingToe" MinValue="Model.DekkingNom" MaxValue=100 Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
 
 <EurocodeInputNumber Key="GrootsteKorrelDiameter" @bind-Value="Model.GrootsteKorrelDiameter" MinValue=0 MaxValue=63 Unit="mm"></EurocodeInputNumber>
 <EurocodeInputNumber Key="WapeningDiameterGelijkwaardig" @bind-Value="Model.WapeningDiameterGelijkwaardig" MaxValue=69.3 Unit="mm"></EurocodeInputNumber>
 
-
 <EurocodeInputNumber Key="DekkingMin" ReadOnly="true" Value="Model.DekkingMin" Unit="mm"></EurocodeInputNumber>
 <EurocodeInputNumber Key="DekkingMinDuurzaamheid" ReadOnly="true" Value="Model.DekkingMinDuurzaamheid" Unit="mm"></EurocodeInputNumber>
 <EurocodeInputNumber Key="DekkingMinAanhechting" ReadOnly="true" Value="Model.DekkingMinAanhechting" Unit="mm"></EurocodeInputNumber>
-
-
-
-
-
-
-
-
-
 
 
 

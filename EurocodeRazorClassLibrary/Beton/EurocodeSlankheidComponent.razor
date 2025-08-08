@@ -1,0 +1,82 @@
+﻿@inherits Custom.EurocodeComponentBase
+@using K = CommonLibrary.EurocodeKeys
+@using Eurocode.BetonConstructies
+
+<h5>7.4 Doorbuigingscontrole</h5>
+<h5>7.4.2 Gevallen waarin berekeningen achterwege mogen blijven</h5>
+
+@if (Model != null)
+{
+    if (ReadOnly)
+    {
+        <EurocodeInputNumber ReadOnly=true Value="Model.LengteOverspanning" Key="@K.Slankheid_LengteOverspanning" Unit="mm" MinValue="1" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+
+        <FluentSelectEnum Label="schematisering"
+        ReadOnly=true
+        @bind-EnumSelectedValue="@Model.ConstructiefSysteem"
+        TEnum="Eurocode.BetonConstructies.GrenswaardeSlankheidContext.ConstructiefSysteemEnum" />
+    }
+    else
+    {
+        <EurocodeInputNumber @bind-Value="Model.LengteOverspanning" Key="@K.Slankheid_LengteOverspanning" Unit="mm" MinValue="1" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+        <FluentSelectEnum Label="schematisering"
+        @bind-EnumSelectedValue="@Model.ConstructiefSysteem"
+        TEnum="Eurocode.BetonConstructies.GrenswaardeSlankheidContext.ConstructiefSysteemEnum" />
+    }
+
+
+
+
+
+
+
+
+    <EurocodeInputNumber ReadOnly=true Value="Model.BendingResults.Beton.Fck" Key="@K.Slankheid_Fck"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.EffectieveDikte" Key="@K.Slankheid_EffectieveDikte" Unit="mm" ></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.Profiel.Area" Key="@K.BetonDoorsnedeOppervlak" StringFormat="0" Unit="mm²"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.BendingResults.AsRequired" Key="@K.AsBen" StringFormat="0" Unit="mm²"></EurocodeInputNumber>
+
+
+
+    <EurocodeInputNumber ReadOnly=true Value="Model.Rho0" Key="@K.Slankheid_WapeningsVerhoudingReferentiewaarde" StringFormat="0.####"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.Rho" Key="@K.Slankheid_WapeningsVerhoudingTrekVereist" StringFormat="0.####"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.RhoDrukwapening" Key="@K.Slankheid_WapeningsVerhoudingDrukVereist" StringFormat="0.####"></EurocodeInputNumber>
+
+    <EurocodeInputNumber ReadOnly=true Value="Model.Slankheid" Key="@K.Slankheid_Slankheid" StringFormat="0.#"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.GrenswaardeSlankheid" Key="@K.Slankheid_Grenswaarde" StringFormat="0.#"></EurocodeInputNumber>
+
+
+    <p style="margin-left:3.5px;">
+        slankheid = @Model.LengteOverspanning.ToString("0") / @Model.EffectieveDikte.ToString("0") = @Model.Slankheid.ToString("0.#")<br />
+        grenswaarde = @Model.Formule = @Model.GrenswaardeSlankheid.ToString("0.#")
+    </p>
+
+
+
+    <p style="margin-left:3.5px;">@Model.ToMarkupString()</p>
+
+    @if (!Model.IsAkkoord())
+    {
+        <p style="margin-left:3.5px; color:red; ">LET OP, berekening doorbuigingscontrole kan niet achterwege blijven.</p>
+    }
+   
+
+}
+
+
+
+<BaseEurocodeContextComponent TContext="GrenswaardeSlankheidContext" @bind-Model="@Model" />
+
+
+@code {
+    [Parameter, EditorRequired] 
+    public required Eurocode.BetonConstructies.GrenswaardeSlankheidContext Model { get; set; }
+
+    [Parameter]
+    public EventCallback<Eurocode.BetonConstructies.GrenswaardeSlankheidContext> ModelChanged { get; set; }
+
+    [Parameter] public bool ReadOnly { get; set; } = true;
+
+
+
+}

@@ -4,8 +4,11 @@
 
 @if(SampleProject != null)
 {
+
+
     @* Component *@
-    <EurocodeGrondslagen @bind-Model="@SampleProject.Grondslagen"  />
+    <EurocodeGrondslagen @bind-Model="@SampleProject.Grondslagen"
+                         ToonGevolgEigenschappen=@ToonReadOnlyFields  />
 }
 
 
@@ -15,6 +18,9 @@
 
     //private string html { get; set; } = "";
     private MigraDoc.DocumentObjectModel.Document document = new();
+
+
+    private bool ToonReadOnlyFields { get; set; } = !false;
 
 
     private void HandelModelChanged(){
@@ -37,6 +43,10 @@
         var table = list.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext));
         document.LastSection.AddParagraph("Grondslagen", "TableHeading");
         document.LastSection.Add(table);
+
+
+
+
 
         var pivotTable = list.ToMigraDocTable(typeof(Eurocode.Grondslagen.GrondslagenContext), true);
         document.LastSection.AddParagraph("Grondslagen (Pivot-table)", "TableHeading");

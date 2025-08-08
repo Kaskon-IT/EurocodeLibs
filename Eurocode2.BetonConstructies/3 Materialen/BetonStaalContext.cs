@@ -9,6 +9,12 @@ namespace Eurocode.BetonConstructies
     /// </summary>
     public class BetonStaalContext
     {
+        public override string ToString()
+        {
+            return $"{BetonStaalKwaliteit}";
+        }
+
+
         #region constructors
 
         /// <summary>

@@ -8,6 +8,9 @@ namespace Eurocode.BetonConstructies
 
     public partial class BetonDekkingContext : BaseEurocodeContext
     {
+
+        public override string Heading { get; set; } = "Dekking en duurzaamheid";
+
         /// <summary>
         /// Referentie naar de context uit de Eurocode1
         /// </summary>
@@ -25,6 +28,7 @@ namespace Eurocode.BetonConstructies
             Grondslagen = grondslagen;
             Beton = beton;
             Constructieklasse = new(this, Beton);
+            BerekenEnValideer();
         }
 
         public BetonDekkingContext(BetonDekkingContext context)
@@ -52,7 +56,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("Constructieklasse", Order = 20)]
+        [TableColumn("constructieklasse", Order = 20, Weergave = WeergaveEnum.DraaiTabel)]
         public string ConstructieklasseUserFriendlyName
         {
             get
@@ -65,7 +69,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Naam van de betondekking context, bijvoorbeeld 'bovenzijde' of 'onderzijde' 
         /// </summary>
-        [TableColumn("Dekking (positie)", order: 0)]
+        [TableColumn("positie", order: 0, Weergave = WeergaveEnum.StandaardTabel)]
         public string Naam { get; set; } = "Bovenzijde";
 
 
@@ -80,8 +84,14 @@ namespace Eurocode.BetonConstructies
             get => _dekkingToe;
             set
             {
-                _dekkingToe = value;
-                BerekenEnValideer();
+                if (_dekkingToe != value)
+                {
+                    _dekkingToe = value;
+                    OnPropertyChanged(nameof(DekkingToe));
+                    BerekenEnValideer();
+                }
+
+
             }
         }
 
@@ -103,7 +113,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien plaatgeometrie van toepassing dan een vermindering van 1 op de constructieklasse.
         /// </summary>
-        [TableColumn("Plaatgeometrie?", Order = 2)]
+        [TableColumn("plaatgeometrie?", headerTextPivot: "-", Order = 2, Weergave = WeergaveEnum.DraaiTabel)]
         public bool IsPlaatGeometrie
         {
             get => _isPlaatGeometrie;
@@ -113,7 +123,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien specifieke kwaliteitsbeheersing (bijvoorbeeld bij prefab beton) vermindering met 1 op constructieklasse.
         /// </summary>
-        [TableColumn("Kwaliteitsbeheersing?", Order = 3)]
+        [TableColumn("kwaliteitsbeheersing?", Order = 3, Weergave = WeergaveEnum.DraaiTabel)]
         public bool IsKwaliteitsBeheersing
         {
             get => _isKwaliteitsBeheersing;
@@ -146,7 +156,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("Milieuklasse", Order = 1)]
+        [TableColumn("milieuklasse", Order = 1)]
         public string MilieuklassenUserFriendlyName
         {
             get
@@ -168,9 +178,9 @@ namespace Eurocode.BetonConstructies
         /// De nominale betondekking (c,nom) is de minimale betondekking inclusief uitvoeringstoleranties (Δc,dev)
         /// </summary>
         [TableColumn(
-            headerText: "c~nom~ ",
+            headerText: "c~nom~ [mm]",
             HeaderTextPivot = "c~nom~\tnominale dekking art. 4.4.1.1",
-            Order = 1, StringFormat = "0 mm")]
+            Order = 1, StringFormat = "0")]
         public double DekkingNom
         {
             get => _dekkingNom;
@@ -181,9 +191,9 @@ namespace Eurocode.BetonConstructies
         /// Is de minimumdekking op basis van de milieu-omstandigheden, zie 4.4.1.2 (5)
         /// </summary>
         [TableColumn(
-            headerText: "c~min,dur~",
+            headerText: "c~min,dur~ [mm]",
             headerTextPivot: "c~min,dur~\tminimumdekking duurzaamheid art. 4.4.1.2 (5)",
-            order: 41, StringFormat = "0 mm")]
+            order: 41, StringFormat = "0")]
         public double DekkingMinDuurzaamheid
         {
             get { return this.GetCminDur(); }
@@ -197,9 +207,9 @@ namespace Eurocode.BetonConstructies
         /// zie 4.4.1.2
         /// </summary>
         [TableColumn(
-            headerText: "c~min~",
+            headerText: "c~min~ [mm]",
             headerTextPivot: "c~min~\tminimale dekking art.4.4.1.2",
-            order: 39, StringFormat = "0 mm")]
+            order: 39, StringFormat = "0")]
         public double DekkingMin
         {
             get { return this.GetMinimaleBetondekking(); }
@@ -210,9 +220,9 @@ namespace Eurocode.BetonConstructies
         /// Minimale dekking tbv aanhechting betonstaal
         /// </summary>
         [TableColumn(
-            headerText: "c~min,b~",
+            headerText: "c~min,b~ [mm]",
             headerTextPivot: "c~min,b~\tminimumdekking aanhechting art. 4.4.1.2 (3)",
-            order: 40, StringFormat = "0 mm")]
+            order: 40, StringFormat = "0")]
         public double DekkingMinAanhechting
         {
             get
@@ -228,8 +238,8 @@ namespace Eurocode.BetonConstructies
         /// Verhoging van de dekking tbv uitvoeringstoleranties (Δc,dev) volgens 4.4.1.3 (1)
         /// </summary>
         [TableColumn(
-            headerText: "|Delta|c~dev~",
-            headerTextPivot: "|Delta|c~dev~\t toeslag uitvoeringstoleranties art. 4.4.1.3(1)", order: 50, StringFormat = "0 mm")]
+            headerText: "|Delta|c~dev~ [mm]",
+            headerTextPivot: "|Delta|c~dev~\t toeslag uitvoeringstoleranties art. 4.4.1.3(1)", order: 50, StringFormat = "0")]
         public double DekkingToeslagUitvoeringsToleranties { get { return this.Grondslagen.NationaleBijlage.GetUitvoeringstoleraties(); } }
 
         /// <summary>
@@ -278,7 +288,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             headerText: "Ø~eq~",
             headerTextPivot: "Ø~eq~\tgelijkwaardige diameter",
-            Order = 24, StringFormat = "Ø0.##")]
+            Order = 24, StringFormat = "0.##")]
         public double WapeningDiameterGelijkwaardig
         {
             get => _wapeningDiameterGelijkwaardig;
@@ -298,7 +308,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             headerText: "korrel",
             headerTextPivot: "Grootste korrel",
-            Order = 5, StringFormat = "≤ 0 mm")]
+            Order = 5, StringFormat = "≤ 0 mm", Weergave = WeergaveEnum.DraaiTabel)]
         public double GrootsteKorrelDiameter
         {
             get => _grootsteKorrelDiameter;
@@ -312,7 +322,16 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-
+        public string GrootsteKorrelDiameterUserFriendlyName
+        {
+            get
+            {
+                if (GrootsteKorrelDiameter <= 32)
+                    return "≤ 32 mm";
+                else
+                    return "> 32 mm";
+            }
+        }
 
         public BetonAfwerkingOppervlakEnum? BetonAfwerkingOppervlak { get; set; } = BetonAfwerkingOppervlakEnum.Glad;
 
@@ -341,13 +360,82 @@ namespace Eurocode.BetonConstructies
 
         public override string? ToString()
         {
-            return $"c~nom~ = {DekkingNom}mm, " +
-                $"({ConstructieklasseUserFriendlyName}, " +
-                $"{MilieuklassenUserFriendlyName}, " +
-                $"{(IsKwaliteitsBeheersing ? "kwaliteitsbeheersting" : "")}, " +
-                $"{(IsPlaatGeometrie ? "plaatgeometrie" : "")})";
-            //return base.ToString();
+            List<string> results = [];
+
+            results.Add($"c~nom~ = c~min~ + Δ~c,dev~ = {DekkingMin} + {DekkingToeslagUitvoeringsToleranties} = {DekkingNom: 0 mm}");
+            results.Add($"{ConstructieklasseUserFriendlyName}");
+            results.Add($"{MilieuklassenUserFriendlyName}");
+            if (IsKwaliteitsBeheersing) results.Add($"kwaliteitsbeheersing");
+            if (IsPlaatGeometrie) results.Add($"plaatgeometrie");
+            if (GrootsteKorrelDiameter <= 32)
+                results.Add("korrel ≤ 32mm");
+            else
+                results.Add("korrel > 32mm");
+            results.Add($"c~toe~ = {DekkingToe: 0 mm}");
+
+
+            return string.Join(", ", results);
         }
+
+
+
+        [Flags]
+        public enum ToStringTypeEnum
+        {
+            [Description("c~nom~ = c~min~ + Δ~c,dev~ = {DekkingMin} + {DekkingToeslagUitvoeringsToleranties} = {DekkingNom: 0 mm}")]
+            Cnom = 1,
+            [Description("c~min~ = {DekkingMin}")]
+            Cmin = 2,
+            [Description("c~toe~ = {DekkingToe: 0 mm}")]
+            Ctoe = 4,
+            [Description("kwaliteitsbeheersing")]
+            Kwaliteitsbeheersing = 8,
+            [Description("plaatgeometrie")]
+            Plaatgeometrie = 16,
+            [Description("korrel ≤ 32mm")]
+            Korrel32 = 32,
+            [Description("milieuklasse")]
+            Milieuklasse = 64,
+            [Description("constructieklasse")]
+            Constructieklasse = 128,
+        }
+
+        public List<string>? ToStrings(ToStringTypeEnum stringType)
+        {
+            List<string> results = [];
+            if (stringType.HasFlag(ToStringTypeEnum.Cnom))
+                results.Add($"c~nom~ = c~min~ + Δ~c,dev~ = {DekkingMin} + {DekkingToeslagUitvoeringsToleranties} = {DekkingNom: 0 mm}");
+            if (stringType.HasFlag(ToStringTypeEnum.Cmin))
+                results.Add($"c~min~ = {DekkingMin}");
+            if (stringType.HasFlag(ToStringTypeEnum.Ctoe))
+                results.Add($"c~toe~ = {DekkingToe: 0 mm}");
+            if (stringType.HasFlag(ToStringTypeEnum.Kwaliteitsbeheersing))
+            {
+                if (IsKwaliteitsBeheersing)
+                    results.Add($"✅ kwaliteitsbeheersing");
+
+            }
+            if (stringType.HasFlag(ToStringTypeEnum.Plaatgeometrie))
+            {
+                if (IsPlaatGeometrie)
+                    results.Add($"✅ plaatgeometrie");
+
+            }
+            if (stringType.HasFlag(ToStringTypeEnum.Korrel32))
+            {
+                if (GrootsteKorrelDiameter <= 32)
+                    results.Add($"✅ korreldiameter ≤ 32mm");
+                else
+                    results.Add($"korreldiameter > 32mm");
+            }
+            if (stringType.HasFlag(ToStringTypeEnum.Milieuklasse))
+                results.Add($"milieuklasse: {MilieuklassenUserFriendlyName}");
+            if (stringType.HasFlag(ToStringTypeEnum.Constructieklasse))
+                results.Add($"constructieklasse: {ConstructieklasseUserFriendlyName}");
+
+            return results;
+        }
+
 
         protected override void Bereken()
         {
@@ -375,5 +463,11 @@ namespace Eurocode.BetonConstructies
             return true;
 
         }
+
+
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    return this.ToHtmlTable(isDraaiTabel);
+        //}
     }
 }

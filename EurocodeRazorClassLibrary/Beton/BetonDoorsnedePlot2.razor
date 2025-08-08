@@ -1,0 +1,214 @@
+﻿@using Plotly.Blazor
+@using Plotly.Blazor.LayoutLib
+@using SL = Plotly.Blazor.LayoutLib.ShapeLib
+
+<PlotlyChart @ref="chart"
+             Data="@PlotData"
+             Layout="@PlotLayout"
+             Config="@PlotConfig"
+             Style="width: 600px; height: 600px;" />
+
+@code {
+    private PlotlyChart chart;
+
+    private double breedte = 300; // mm
+    private double hoogte = 500;  // mm
+    private double dekking = 30;  // mm
+    private double wapeningsDiameter = 16; // mm
+
+    // Beton rechthoek
+    private List<(double x, double y)> betonHoekpunten => new()
+    {
+        (0, 0), (breedte, 0), (breedte, hoogte), (0, hoogte), (0, 0)
+    };
+
+    // Wapeningspunten
+    private List<(double x, double y)> wapeningsPosities => new()
+    {
+        (dekking, dekking),
+        (breedte - dekking, dekking),
+        (breedte - dekking, hoogte - dekking),
+        (dekking, hoogte - dekking)
+    };
+
+    // Betoncontour als dikkere lijn
+    private List<ITrace> PlotData => new()
+    {
+        new Plotly.Blazor.Traces.Scatter
+        {
+            Mode = Plotly.Blazor.Traces.ScatterLib.ModeFlag.Lines,
+            X = betonHoekpunten.Select(p => (object)p.x).ToList(),
+            Y = betonHoekpunten.Select(p => (object)p.y).ToList(),
+            Line = new Plotly.Blazor.Traces.ScatterLib.Line { Color = "gray", Width = 3 },
+            ShowLegend = false
+        }
+    };
+
+    private Layout PlotLayout => new Layout
+    {
+        Title = new Title { Text = "Betondoorsnede met wapening" },
+        ShowLegend = false,
+        XAxis = new List<XAxis>
+        {
+            new XAxis { ShowGrid = false, ZeroLine = false, Visible = false }
+        },
+        YAxis = new List<YAxis>
+        {
+            new YAxis
+            {
+                ShowGrid = false, ZeroLine = false, Visible = false,
+                ScaleAnchor = "x", ScaleRatio = 1
+            }
+        },
+        Shapes = CreateShapes(),
+        Annotations = new List<Plotly.Blazor.LayoutLib.Annotation>
+        {
+            // Tekst boven horizontale maatlijn
+            new()
+            {
+                X = breedte / 2, Y = -dekking * 1.4,
+                Text = $"{breedte} mm", ShowArrow = false
+            },
+            // Tekst links van verticale maatlijn
+            new()
+            {
+                X = -dekking * 2.6, Y = hoogte / 2,
+                Text = $"{hoogte} mm", ShowArrow = false, TextAngle = -90
+            }
+        }
+    };
+
+    private List<Shape> CreateShapes()
+    {
+        var shapes = new List<Shape>();
+
+        // Instellingen
+        double maatlijnOffset = dekking * 2;
+        double uitsteken = 10; // maatlijn mag iets uitsteken
+        double schuineStreepLengte = 10; // voor schuine streepjes
+        decimal maatlijnDikte = 1M;
+        //double betonlijnDikte = 3;
+
+        // --- Breedte maatlijn onder beton ---
+        double yMaatlijn = -maatlijnOffset;
+
+        // Aanhaallijnen (dot)
+        shapes.AddRange(new[]
+        {
+            new Shape  // Links aanhaal
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = 0, Y0 = 0, X1 = 0, Y1 = yMaatlijn,
+                Line = new SL.Line { Color = "black", Dash = "dot", Width = maatlijnDikte }
+            },
+            new Shape  // Rechts aanhaal
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = breedte, Y0 = 0, X1 = breedte, Y1 = yMaatlijn,
+                Line = new SL.Line { Color = "black", Dash = "dot", Width = maatlijnDikte }
+            }
+        });
+
+        // Maatlijn zelf (met uitsteken)
+        shapes.Add(new Shape
+        {
+            Type = SL.TypeEnum.Line,
+            X0 = -uitsteken,
+            Y0 = yMaatlijn,
+            X1 = breedte + uitsteken,
+            Y1 = yMaatlijn,
+            Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+        });
+
+        // Schuine streepjes breedte
+        shapes.AddRange(new[]
+        {
+            new Shape  // Linker schuine
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = 0 , Y0 = yMaatlijn - schuineStreepLengte / 2,
+                X1 = 0 , Y1 = yMaatlijn + schuineStreepLengte / 2,
+                Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+            },
+            new Shape  // Rechter schuine
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = breedte , Y0 = yMaatlijn - schuineStreepLengte / 2,
+                X1 = breedte , Y1 = yMaatlijn + schuineStreepLengte / 2,
+                Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+            }
+        });
+
+        // --- Hoogte maatlijn links beton ---
+        double xMaatlijn = -maatlijnOffset;
+
+        // Aanhaallijnen
+        shapes.AddRange(new[]
+        {
+            new Shape  // Onder aanhaal
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = 0, Y0 = 0, X1 = xMaatlijn, Y1 = 0,
+                Line = new SL.Line { Color = "black", Dash = "dot", Width = maatlijnDikte }
+            },
+            new Shape  // Boven aanhaal
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = 0, Y0 = hoogte, X1 = xMaatlijn, Y1 = hoogte,
+                Line = new SL.Line { Color = "black", Dash = "dot", Width = maatlijnDikte }
+            }
+        });
+
+        // Maatlijn hoogte (met uitsteken)
+        shapes.Add(new Shape
+        {
+            Type = SL.TypeEnum.Line,
+            X0 = xMaatlijn,
+            Y0 = -uitsteken,
+            X1 = xMaatlijn,
+            Y1 = hoogte + uitsteken,
+            Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+        });
+
+        // Schuine streepjes hoogte
+        shapes.AddRange(new[]
+        {
+            new Shape  // Onder schuine
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = xMaatlijn - schuineStreepLengte / 2, Y0 = 0 ,
+                X1 = xMaatlijn + schuineStreepLengte / 2, Y1 = 0 ,
+                Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+            },
+            new Shape  // Boven schuine
+            {
+                Type = SL.TypeEnum.Line,
+                X0 = xMaatlijn - schuineStreepLengte / 2, Y0 = hoogte ,
+                X1 = xMaatlijn + schuineStreepLengte / 2, Y1 = hoogte ,
+                Line = new SL.Line { Color = "black", Width = maatlijnDikte }
+            }
+        });
+
+        // Wapening als cirkels
+        shapes.AddRange(
+            wapeningsPosities.Select(p => new Shape
+            {
+                Type = SL.TypeEnum.Circle,
+                X0 = p.x - wapeningsDiameter / 2,
+                Y0 = p.y - wapeningsDiameter / 2,
+                X1 = p.x + wapeningsDiameter / 2,
+                Y1 = p.y + wapeningsDiameter / 2,
+                FillColor = "red",
+                Line = new SL.Line { Color = "red" }
+            })
+        );
+
+        return shapes;
+    }
+
+    private Config PlotConfig => new Config
+    {
+        DisplayModeBar = Plotly.Blazor.ConfigLib.DisplayModeBarEnum.False,
+        ScrollZoom = Plotly.Blazor.ConfigLib.ScrollZoomFlag.False
+    };
+}

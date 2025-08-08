@@ -4,8 +4,53 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Eurocode.Grondslagen</RootNamespace>
+
+	<!-- NuGet-package instellingen -->
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageId>Kaskon.Eurocode0.Grondslagen</PackageId>
+	<Version>1.1.205</Version>
+	<Authors>Bart van der Linden</Authors>
+	<Company>Kaskon</Company>
+	<Description>Eurocode 0 | Grondslagen</Description>
+	  <PackageLicenseFile>license.md</PackageLicenseFile>
+	  <PackageReadmeFile>readme.md</PackageReadmeFile>
+	  <PackageIcon>kaskon.png</PackageIcon>
+
+	<!-- Lokale map voor .nupkg -->
+	<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
+	<Copyright>Copyright © 2025 Kaskon</Copyright>
+	<PackageTags>Kaskon;Blazor;FluentUI;Eurocode;Grondslagen</PackageTags>
+	<IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  
+	  
+	  
   </PropertyGroup>
+	<ItemGroup>
+		<None Include="Icons/kaskon.png" Pack="true" PackagePath="/" />
+		<None Include="Docs/license.md" Pack="true" PackagePath="/" />
+		<None Include="Docs/readme.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
+	
+	
   <ItemGroup>
     <ProjectReference Include="..\ExportFactory\ExportFactory.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Docs\license.md">
+      <PackagePath>/</PackagePath>
+      <Pack>true</Pack>
+    </None>
+    <None Update="Docs\readme.md">
+      <PackagePath>/</PackagePath>
+      <Pack>true</Pack>
+    </None>
+    <None Update="Icons\kaskon.png">
+      <PackagePath>/</PackagePath>
+      <Pack>true</Pack>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 </Project>

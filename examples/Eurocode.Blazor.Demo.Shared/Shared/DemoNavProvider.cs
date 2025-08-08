@@ -88,6 +88,7 @@ public class DemoNavProvider
                             new NavLink(href: "/beton/dwarskracht",icon: new Icons.Regular.Size20.ClipboardMathFormula(),title: "Dwarskracht"),
                             new NavLink(href: "/beton/prefab/oplegging", icon: new Icons.Regular.Size20.Pin(), title: "Oplegging"),
                             new NavLink(href: "/beton/prefab/uitkraging", icon: new Icons.Regular.Size20.Calculator(), title: "Uitkraging (TEST)"),
+                            new NavLink(href: "/beton/slankheid", icon: new Icons.Regular.Size20.Calculator(), title: "Slankheid (TEST)"),
 
                         ]
                     ),
@@ -136,7 +137,11 @@ public class DemoNavProvider
                 gap: "10px",
                 children:
                 [
-
+                     new NavLink(
+                        href: "/lab/snedekrachten",
+                        icon: new Icons.Regular.Size20.Class(),
+                        title: "Snedekrachten"
+                    ),
 
                     new NavLink(
                         href: "/lab/datagrid-test-lab",

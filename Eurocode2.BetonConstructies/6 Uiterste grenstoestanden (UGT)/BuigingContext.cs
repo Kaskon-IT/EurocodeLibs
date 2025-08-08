@@ -56,6 +56,19 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        // 5.3.1 (3) Een balk is een element waarvan de overspanning niet kleiner is dan driemaal de totale hoogte van de 
+        // doorsnede.In andere gevallen behoort deze te zijn beschouwd als een gedrongen ligger.
+        public static bool IsGedrongen(double overspanning, double totaleHoogteVanDeDoorsnede)
+        {
+            // een balk is een element waarvan de overspanning niet kleiner is dan driemaal de totale hoogte van de doorsnede.
+            // In andere gevallen behoort deze te zijn beschouwd als een gedrongen ligger.
+            return overspanning >= 3 * totaleHoogteVanDeDoorsnede;
+        }
+
+
+
+
+
         // (10) Voor gedrongen constructies, zoals de in (1)P beschreven discontinue gebieden, mag de grootte van 
         // de inwendige hefboomarm zijn afgeleid uit de volgende relaties:
         /// <summary>

@@ -1,10 +1,15 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Models;
 using ExportFactory.MigraDocContentModels;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using MigraDoc.DocumentObjectModel.Tables;
+using PdfSharp.Fonts;
+using System.Globalization;
 using System.Reflection;
+using System.Text;
+
 
 
 //using System.Reflection.Metadata;
@@ -26,8 +31,15 @@ namespace ExportFactory.Services
         /// </summary>
         /// <param name="content">DocumentContent for creating the document</param>
         /// <returns>A Migradoc Document</returns>
-        public static Document GenerateDocument(DocumentContent content)
+        public static Document GenerateDocument(DocumentContent content, bool includeToc = false)
         {
+            // Font resolver mag maar 1x gedaan worden!
+            if (GlobalFontSettings.FontResolver is not CustomFontResolver)
+            {
+                GlobalFontSettings.FontResolver = new CustomFontResolver();
+            }
+
+
             var document = new Document();
             SetDocumentInfo(document, content);
             DefineStyles(document, content);
@@ -38,22 +50,23 @@ namespace ExportFactory.Services
                 AddCoverPage(document, content.CoverPage);
             }
 
-            //if (content.Revisions != null)
-            //{
-            //    AddRevisionPage(document, content.Revisions);
-            //}
-
-
 
             // empty Tabel of Contents (TOC)
             // gebruik een aparte section zodat later deze section kan worden gevuld.
-            AddTableOfContents(document, out Section tocSection);
+            Section tocSection = new();
+            if (includeToc)
+            {
+                AddTableOfContents(document, out tocSection);
+            }
+            else
+            {
+                // not included, but we need a new section
+                document.AddSection(); // anders komt het titelblad niet apart!
+            }
 
 
             // Add header and footer
             DefineHeaderAndFooter(document.LastSection, content);
-
-
 
 
             // save bookmarks to be used later in the TOC
@@ -61,7 +74,8 @@ namespace ExportFactory.Services
 
 
             // Add new section 
-            document.AddSection();
+            if (includeToc)
+                document.AddSection(); // alleen nodig indien we een TOC hebben
 
             // Add sections (iterate through all contents)
             foreach (var sectionContent in content.Sections.OrderBy(sc => sc.Order))
@@ -70,10 +84,70 @@ namespace ExportFactory.Services
             }
 
             // Bookmarks bijwerken (with saved bookmarks)
-            UpdateTableOfContent(tocSection, bookmarks);
+            if (includeToc)
+                UpdateTableOfContent(tocSection, bookmarks);
 
             return document;
         }
+
+
+        /// <summary>
+        /// Exports the document to a RTF file.
+        /// </summary>
+        /// <param name="document">Migradoc document</param>
+        /// <param name="filename">Filename</param>
+        public static void ExportToRtf(Document document, string filename)
+        {
+            // Save the document as RTF
+            var rtfRenderer = new MigraDoc.RtfRendering.RtfDocumentRenderer();
+
+            // Check whether the filename ends with ".rtf" and add it if not
+            if (!filename.EndsWith(".rtf"))
+            {
+                filename += ".rtf";
+            }
+            rtfRenderer.Render(document, filename, null);
+        }
+
+        public static string ExportToRtfString(Document document)
+        {
+            // Save the document as RTF
+            var rtfRenderer = new MigraDoc.RtfRendering.RtfDocumentRenderer();
+            return rtfRenderer.RenderToString(document, null);
+        }
+
+        public static void ExportToPdf(Document document, string filename)
+        {
+            // Save the document as PDF
+            var pdfRenderer = new MigraDoc.Rendering.PdfDocumentRenderer(true);
+            pdfRenderer.Document = document;
+            // Check whether the filename ends with ".pdf" and add it if not
+            if (!filename.EndsWith(".pdf"))
+            {
+                filename += ".pdf";
+            }
+            pdfRenderer.RenderDocument();
+            pdfRenderer.PdfDocument.Save(filename);
+        }
+
+
+        public static void ExportToPdf(Document document, Stream stream)
+        {
+            // Save the document as PDF
+            var pdfRenderer = new MigraDoc.Rendering.PdfDocumentRenderer(true);
+            pdfRenderer.Document = document;
+            pdfRenderer.RenderDocument();
+            pdfRenderer.PdfDocument.Save(stream, false);
+        }
+
+        public static byte[] ExportToPdfBytes(Document document)
+        {
+            using var stream = new MemoryStream();
+            ExportToPdf(document, stream);
+            return stream.ToArray();
+        }
+
+
 
         private static readonly Dictionary<string, string> GreekLetters = new()
         {
@@ -170,6 +244,7 @@ namespace ExportFactory.Services
                 TopMargin = Unit.FromMillimeter(15),
                 BottomMargin = Unit.FromMillimeter(10),
                 RightMargin = Unit.FromMillimeter(25), // outer
+
             };
 
             if (content.PageMarginSetting != null)
@@ -222,13 +297,17 @@ namespace ExportFactory.Services
 
 
             // Sort elements by order
-            var sortedElements = sectionContent.Elements.OrderBy(e => e.Order);
+            var sortedElements = sectionContent.Elements
+                .Where(e => e != null)
+                .OrderBy(e => e.Order);
 
             foreach (var element in sortedElements)
             {
                 // Check if the element is a TableModel<T> where T is derived from BaseClass
                 if (IsTableModelDerivedFromBaseClass(element))
                 {
+                    // todo mogelijk herstellen (of hebben we dit niet meer nodig????)
+
                     var tableModel = (TableModel<DemoDataClass>)element; // Cast to TableModel<BaseClass>
                     HandleTableModel(section, tableModel); // Handle the TableModel<BaseClass> case
                 }
@@ -268,6 +347,7 @@ namespace ExportFactory.Services
 
                                 if (migraDocElement.DocumentObject is MigraDoc.DocumentObjectModel.Tables.Table table)
                                 {
+                                    table.KeepTogether = true;
                                     target.Add(table);
                                 }
                                 else if (migraDocElement.DocumentObject is Paragraph paragraph)
@@ -355,50 +435,6 @@ namespace ExportFactory.Services
             // Add logic for adding a table to the section
             AddTable(section, tableModel, $"{typeof(T).Name} Table");
         }
-
-        //private static void HandleTableModel<T>(Section target, TableModel<T> tableModel)
-        //{
-        //    // Check the actual type of TableModel<T> and handle accordingly
-        //    var elementType = tableModel.GetType();
-
-        //    // If the element is a TableModel<T>, check its generic type argument
-        //    if (elementType.IsGenericType && elementType.GetGenericTypeDefinition() == typeof(TableModel<>))
-        //    {
-        //        // Get the actual type of T in TableModel<T>
-        //        var genericArgument = elementType.GetGenericArguments()[0];
-
-        //        if (genericArgument == typeof(object) ||
-        //            typeof(object).IsAssignableFrom(genericArgument))
-        //        {
-
-
-        //            var tableModelObj = (TableModel<object>)tableModel;
-        //            AddTable(target, tableModelObj, "Hoi");
-        //        }
-        //        else if (genericArgument == typeof(int))
-        //        {
-        //            var tableModelInt = (TableModel<int>)tableModel;
-        //            AddTable(target, tableModelInt, "Integer Table");
-        //        }
-        //        else if (genericArgument == typeof(string))
-        //        {
-        //            var tableModelString = (TableModel<string>)tableModel;
-        //            AddTable(target, tableModelString, "String Table");
-        //        }
-        //        else
-        //        {
-        //            // Handle other types of TableModel<T> as needed
-        //            Console.WriteLine($"Unhandled TableModel type: {genericArgument.Name}");
-        //        }
-        //    }
-
-
-
-
-
-        //}
-
-
 
 
 
@@ -554,6 +590,12 @@ namespace ExportFactory.Services
         }
 
 
+        /// <summary>
+        /// Dit is de procedure voor eigen tabelContent om te plaatsen in een MigraDoc.DocumentObject.
+        /// Plaats bijvoorbeeld in een sectie, paragraaf of textframe of een cell, maakt niet uit.
+        /// </summary>
+        /// <param name="target">het doel</param>
+        /// <param name="tableContent">de inhoud.</param>
         private static void AddTable(DocumentObject target, TableContent tableContent)
         {
             // title?
@@ -565,7 +607,7 @@ namespace ExportFactory.Services
             }
 
             // table
-            var table = AddTableToContainer(target);
+            var table = AddTableToContainer(target); // hier clone helpt niet..
             //var parent = target.Document.Styles;
             var defaultFont = target.Document.Styles["Normal"].Font;
 
@@ -576,6 +618,9 @@ namespace ExportFactory.Services
             // apply styling
 
             table.Borders.Width = 0.25; // todo apply formating with content
+            table.Borders.Visible = false;
+            table.KeepTogether = true; // keep the table together on one page // Added 26-5-2025
+            //table.Borders.Color = Colors.Transparent;
             //table.Borders.Left = new Border() { Visible = false };
 
 
@@ -583,7 +628,18 @@ namespace ExportFactory.Services
             foreach (var header in tableContent.Headers)
             {
                 //if (tableContent.)
-                var width = header.Width; // default
+                Unit width = "2cm";
+
+
+                //width = header.Width; // default
+
+                if (header.CellContent.Width > width)
+                {
+                    width = header.CellContent.Width; // 26-5-2025
+                }
+
+
+                // tenzij AutoSize is set
                 switch (header.CellContent.Style.AutoSize)
                 {
                     case AutoColumnSizeOption.None:
@@ -592,8 +648,18 @@ namespace ExportFactory.Services
                         break;
                     case AutoColumnSizeOption.ColumnHeader:
                         TextMeasurement tm = new(defaultFont);
-                        var size = tm.MeasureString(header.CellContent.Markdown);
-                        width = size.Width;
+
+                        List<string> words = header.CellContent.Markdown.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+                        if (words.Count > 0)
+                        {
+                            // Get the longest word
+                            string longestWord = words.OrderByDescending(w => w.Length).First();
+                            var longestWordSize = tm.MeasureString(longestWord);
+                            width = longestWordSize.Width;
+                        }
+
+                        //var size = tm.MeasureString(header.CellContent.Markdown);
+                        //width = size.Width;
                         break;
 
                 }
@@ -602,40 +668,79 @@ namespace ExportFactory.Services
             }
 
             // Align table
-            table.Format.Alignment = tableContent.Alignment == TableAlignment.Center
-                ? ParagraphAlignment.Center
-                : ParagraphAlignment.Left;
-
-            // Add header row
-            var headerRow = table.AddRow();
-            headerRow.Shading.Color = Colors.LightGray;
-            for (int i = 0; i < tableContent.Headers.Count; i++)
+            switch (tableContent.Alignment)
             {
-                var cell = headerRow.Cells[i];
-                var headerPar = cell.AddParagraph();
-                AddMarkdownToParagraph(headerPar, tableContent.Headers[i].CellContent.Markdown);
-                //cell.Style = "TableHeader";
+                case TableAlignment.Left: table.Format.Alignment = ParagraphAlignment.Left; break;
+                case TableAlignment.Center: table.Format.Alignment = ParagraphAlignment.Center; break;
+
             }
 
+
+            // Add header row
+            if (tableContent.HideHeaders)
+            {
+                // vroeg gebruikte we Tag om aan te geven dat de 1e rij niet getoond moet worden.
+                // dit is niet meer nodig!
+                // omzetten naar !HideHeaders indien gecontroleerd is of alles nog werkt.
+                table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om aan te geven dat de 1e rij niet getoond moet worden.
+            }
+            else
+            {
+                // maak de header rij aan
+                var headerRow = table.AddRow();
+                //headerRow.Shading.Color = Colors.LightGray; 
+                for (int i = 0; i < tableContent.Headers.Count; i++)
+                {
+                    var cell = headerRow.Cells[i];
+                    var headerPar = cell.AddParagraph();
+
+                    headerPar.Style = "TableHeader";
+                    //headerPar.Format.Alignment = tableContent.Headers[i].CellContent.Style.Alignment; // added 26-5-2025
+
+                    cell.Format.Alignment = tableContent.Headers[i].CellContent.Style.Alignment; // added 26-5-2025
+
+                    AddMarkdownToParagraph(headerPar, tableContent.Headers[i].CellContent.Markdown);
+                }
+            }
+
+
+
+
+
+
+
             // Add rows
-            foreach (var row in tableContent.Rows)
+            foreach (var rowCells in tableContent.Rows)
             {
                 var tableRow = table.AddRow();
-                for (int i = 0; i < row.Count; i++)
+                for (int i = 0; i < rowCells.Count; i++)
                 {
                     var cell = tableRow.Cells[i];
-                    if (!string.IsNullOrEmpty(row[i].SvgImage))
+
+                    // alignmet
+                    cell.Format.Alignment = rowCells[i].Style.Alignment; // added 26-5-2025
+
+
+                    // controleer of een override op de width is
+                    var currentWidth = table.Columns[i].Width;
+                    var newWidth = rowCells[i].Width;
+                    if (newWidth > 0 && newWidth != currentWidth)
+                    {
+                        table.Columns[i].Width = newWidth;
+                    }
+
+                    if (!string.IsNullOrEmpty(rowCells[i].SvgImage))
                     {
                         try
                         {
-                            var svgContent = row[i].SvgImage;
+                            var svgContent = rowCells[i].SvgImage;
                             var imgStream = SvgService.ConvertSvgToPngStream(svgContent, out double width, out double height);
 
                             if (imgStream != null)
                             {
                                 Console.WriteLine($"SVG converted successfully. Width: {width}, Height: {height}");
                                 var parWithSvgImage = cell.AddParagraph();
-                                parWithSvgImage.Tag = row[i].SvgImage; // write svg to Tag for HtmlCreator.
+                                parWithSvgImage.Tag = rowCells[i].SvgImage; // write svg to Tag for HtmlCreator.
                                 AddImageFromStream(parWithSvgImage, imgStream);
                             }
                             else
@@ -643,28 +748,21 @@ namespace ExportFactory.Services
                                 Console.WriteLine("Failed to convert SVG.");
                             }
 
-
-
-
-
-
                         }
                         catch (Exception ex)
                         {
                             cell.AddParagraph($"Error rendering SVG: {ex.Message}");
                         }
 
-
-
                         //var image = cell.AddImage(CreateSvgImage(row[i].SvgImage));
                         //image.Width = "2cm"; // Adjust size as needed
                         //image.LockAspectRatio = true;
                     }
 
-                    if (!string.IsNullOrEmpty(row[i].Markdown))
+                    if (!string.IsNullOrEmpty(rowCells[i].Markdown))
                     {
                         var par = cell.AddParagraph();
-                        AddMarkdownToParagraph(par, row[i].Markdown);
+                        AddMarkdownToParagraph(par, rowCells[i].Markdown);
                     }
                 }
             }
@@ -776,8 +874,21 @@ namespace ExportFactory.Services
         private static void DefineStyles(Document document, DocumentContent content)
         {
             var baseStyle = document.Styles["Normal"];
-            baseStyle.Font = content.Font;
-            baseStyle.Font.Bold = false; // explicitly set to false (for rtf export!)
+
+            if (content.Font != null)
+            {
+                baseStyle.Font = content.Font;
+            }
+            else
+            {
+                content.Font = new("Segoe UI Emoji", 9);
+            }
+
+
+            baseStyle.Font.Bold = false; // explicitly set to false (for rtf export!) gebruik formattedText in plaats
+            baseStyle.Font.Color = Colors.Black; // expliciet voor pdf export!
+            //baseStyle.ParagraphFormat.SpaceAfter = "3mm"; // default space after paragraphs (niet doen, dit wordt ook gebruikt in tabellen namelijk)
+            // Vanaf kop 2 passen we SpaceBefore toe om afstand te creëren.
 
             // Table of content style
             var tocStyle = document.Styles.AddStyle("TOC", "Normal");
@@ -790,11 +901,14 @@ namespace ExportFactory.Services
             heading1.Font.Bold = !true;
             heading1.ParagraphFormat.PageBreakBefore = true;
             heading1.ParagraphFormat.SpaceAfter = "3mm";
+
+
             var kop1 = document.Styles.AddStyle("Kop 1", "Normal");
             kop1.Font.Size = 1.5 * content.Font.Size;
             kop1.Font.Bold = !true;
             kop1.ParagraphFormat.PageBreakBefore = true;
             kop1.ParagraphFormat.SpaceAfter = "3mm";
+
 
             // h2
             var heading2 = document.Styles.AddStyle("Heading2", "Normal");
@@ -802,10 +916,11 @@ namespace ExportFactory.Services
             heading2.Font.Bold = !true;
             heading2.ParagraphFormat.SpaceBefore = "2mm";
             heading2.ParagraphFormat.SpaceAfter = "2mm";
+
             var kop2 = document.Styles.AddStyle("Kop 2", "Normal");
             kop2.Font.Size = 1.25 * content.Font.Size;
             kop2.Font.Bold = !true;
-            kop2.ParagraphFormat.SpaceBefore = "2mm";
+            kop2.ParagraphFormat.SpaceBefore = "3mm";
             kop2.ParagraphFormat.SpaceAfter = "2mm";
 
 
@@ -813,20 +928,36 @@ namespace ExportFactory.Services
             var heading3 = document.Styles.AddStyle("Heading3", "Normal");
             heading3.Font.Size = 1.00 * content.Font.Size;
             heading3.Font.Bold = !true;
-            heading3.ParagraphFormat.SpaceBefore = "1mm";
+            heading3.ParagraphFormat.SpaceBefore = "3mm";
             heading3.ParagraphFormat.SpaceAfter = "1mm";
+
+
             var kop3 = document.Styles.AddStyle("Kop 3", "Normal");
             kop3.Font.Size = 1.00 * content.Font.Size;
-            kop3.Font.Bold = !true;
-            kop3.ParagraphFormat.SpaceBefore = "1mm";
+            kop3.Font.Bold = true;
+            kop3.ParagraphFormat.SpaceBefore = "3mm";
             kop3.ParagraphFormat.SpaceAfter = "1mm";
+            kop3.Font.Color = Colors.Black;
+
+            // h4
+            var kop4 = document.Styles.AddStyle("Kop 4", "Normal");
+            kop4.Font.Size = 1.00 * content.Font.Size;
+            kop4.Font.Bold = true;
+            kop4.ParagraphFormat.SpaceBefore = "3mm";
+            kop4.ParagraphFormat.SpaceAfter = "1mm";
+            kop4.Font.Color = Colors.Black;
+
+
 
             // table heading
             var tableHeading = document.Styles.AddStyle("TableHeading", "Normal");
             //tableHeading.Font.Size = 12;
-            tableHeading.Font.Italic = true;
+            tableHeading.Font.Italic = !true;
 
-
+            var tableHeader = document.Styles.AddStyle("TableHeader", "Normal");
+            tableHeader.Font.Italic = !true; // expliciet niet gebruiken, BUG in library. gebruik formatted text in plaats.
+            tableHeader.Font.Size = 0.9 * content.Font.Size;
+            tableHeader.Font.Color = Colors.DarkSlateGray;
 
 
             // Title style for the cover page
@@ -838,7 +969,7 @@ namespace ExportFactory.Services
             // Title style for the cover page
             var subTitle = document.Styles.AddStyle("Subtitle", "Normal");
             subTitle.Font.Size = 24;
-            subTitle.Font.Italic = true;
+            subTitle.Font.Italic = !true;
             subTitle.Font.Bold = !true;
             subTitle.ParagraphFormat.Alignment = ParagraphAlignment.Center;
 
@@ -1147,6 +1278,64 @@ namespace ExportFactory.Services
 
         }
 
+
+
+        private static void AddLabels(Section section, List<LabelWithStringValue> labels)
+        {
+            if (labels == null || labels.Count == 0) return;
+            var table = section.AddTable();
+            table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
+            table.Borders.Visible = false;
+            table.AddColumn(Unit.FromCentimeter(4)); // left column
+            table.AddColumn(Unit.FromCentimeter(10)); // right column
+            foreach (var item in labels)
+            {
+                var row = table.AddRow();
+                row.Cells[0].AddParagraph(item.Label);
+                row.Cells[1].AddParagraph(item.StringValue);
+            }
+        }
+
+        private static void AddLabeledValues(Section section, List<LabeledValue> labeledValues)
+        {
+            if (labeledValues == null || labeledValues.Count == 0) return;
+            var table = section.AddTable();
+            table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
+            table.Borders.Visible = false;
+            table.AddColumn(Unit.FromCentimeter(4)); // left column
+            table.AddColumn(Unit.FromCentimeter(10)); // right column
+            foreach (var item in labeledValues)
+            {
+                var row = table.AddRow();
+                row.Cells[0].AddParagraph(item.Label);
+                row.Cells[1].AddParagraph(item.ValueAsString);
+            }
+        }
+
+        private static void AddRevisionTable(Section section, RevisionContent content)
+        {
+            var table = section.AddTable();
+            table.Borders.Visible = false;
+            table.AddColumn(Unit.FromCentimeter(4));
+            table.AddColumn(Unit.FromCentimeter(4));
+            table.AddColumn(Unit.FromCentimeter(6));
+
+            var headerRow = table.AddRow();
+            headerRow.Cells[0].AddParagraph("versie");
+            headerRow.Cells[1].AddParagraph("datum");
+            headerRow.Cells[2].AddParagraph("beschrijving");
+
+
+
+            foreach (var revision in content.Revisions)
+            {
+                var row = table.AddRow();
+                row.Cells[0].AddParagraph(revision.Name);
+                row.Cells[1].AddParagraph($"{revision.Date?.ToShortDateString()}");
+                row.Cells[2].AddParagraph(revision.Description);
+            }
+        }
+
         /// <summary>
         /// Adds a cover page to a document
         /// </summary>
@@ -1172,19 +1361,38 @@ namespace ExportFactory.Services
 
             section.AddParagraph(coverPage.Title ?? "", "Title");
             section.AddParagraph(coverPage.Subtitle ?? "", "Subtitle");
-            section.AddParagraph($"Project Number: {coverPage.ProjectNumber}", "Normal").Format.Alignment = ParagraphAlignment.Center;
-            section.AddParagraph(coverPage.CompanyName, "Normal").Format.Alignment = ParagraphAlignment.Center;
+
+
+            // blank line
+            section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
+
+            // Project-labels
+            //AddLabeledValues(section, coverPage.ProjectLabeledValues);
+            AddLabels(section, coverPage.ProjectLabels);
+
+            // blank line
+            section.AddParagraph(); // Add a blank paragraph for spacing
+
+            // Document-labels
+            //AddLabeledValues(section, coverPage.DocumentLabeledValues);
+            AddLabels(section, coverPage.DocumentLabels);
+
+            section.AddParagraph(); // Add a blank paragraph for spacing
+
+            AddRevisionTable(section, coverPage.RevisionContent);
+
         }
 
 
-        public static void AddMarkdownToParagraph(Paragraph paragraph, string? markdown)
+        public static void AddMarkdownToParagraph(Paragraph paragraph, string? markdown, bool trim = false)
         {
             if (markdown == null) return;
             if (string.IsNullOrWhiteSpace(markdown))
                 return;
 
             // Trim whitespace
-            markdown = markdown.Trim();
+            if (trim)
+                markdown = markdown.Trim();
 
             // Determine if the markdown is a heading
             if (markdown.StartsWith("# "))
@@ -1235,8 +1443,281 @@ namespace ExportFactory.Services
 
 
 
+        private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown, Color? currentColor = null, int depth = 0)
+        {
+            const int maxDepth = 15;
+            if (depth > maxDepth || string.IsNullOrWhiteSpace(markdown))
+                return;
 
-        private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown)
+            // Preprocessing
+            markdown = markdown.Replace("<br />", "\n")
+                               .Replace("<br>", "\n")
+                               .Replace("×", "x")
+                               .Replace("³", "^3^")
+                               .Replace("²", "^2^")
+                               .Replace("¹", "^1^")
+                               .Replace("‰", "^0^/~00~");
+
+            var regex = new Regex(
+                @"(?<bold>\*\*(.*?)\*\*|<b>(.*?)</b>)|" +
+                @"(?<italic>\*(.*?)\*|<i>(.*?)</i>)|" +
+                @"(?<underline>__(.*?)__|<u>(.*?)</u>)|" +
+                @"(?<strike>~~(.*?)~~)|" +
+                @"(?<sup>\^(.*?)\^|<sup>(.*?)</sup>)|" +
+                @"(?<sub>~(.*?)~|<sub>(.*?)</sub>)|" +
+                @"(?<color>\{(.*?):(.*?)\})|" +
+                @"(?<br>\n)|" +
+                @"(?<text>[^*^~_<>{}\n]+)",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase
+            );
+
+            foreach (Match match in regex.Matches(markdown))
+            {
+                if (match.Groups["bold"].Success)
+                {
+                    var inner = StripTags(match.Value, "**", "<b>", "</b>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Bold = true;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["italic"].Success)
+                {
+                    var inner = StripTags(match.Value, "*", "<i>", "</i>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Italic = true;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["underline"].Success)
+                {
+                    var inner = StripTags(match.Value, "__", "<u>", "</u>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Underline = Underline.Single;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["strike"].Success)
+                {
+                    var inner = StripTags(match.Value, "~~");
+                    var text = paragraph.AddFormattedText(inner);
+                    text.Color = Colors.Red; // markeer als strike
+                }
+                else if (match.Groups["sup"].Success)
+                {
+                    var inner = StripTags(match.Value, "^", "<sup>", "</sup>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Superscript = true;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["sub"].Success)
+                {
+                    var inner = StripTags(match.Value, "~", "<sub>", "</sub>");
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        el.Subscript = true;
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["color"].Success)
+                {
+                    var parts = Regex.Match(match.Value, @"\{(.*?):(.*?)\}").Groups;
+                    var color = Color.Parse(parts[1].Value.Trim());
+                    var content = parts[2].Value.Trim();
+                    ApplyMarkdownStylesToParagraph(paragraph, content, color, depth + 1);
+                }
+                else if (match.Groups["br"].Success)
+                {
+                    paragraph.AddLineBreak();
+                }
+                else if (match.Groups["text"].Success)
+                {
+                    AddFormattedTextWithEmojiFont(paragraph, match.Value, currentColor);
+                }
+            }
+        }
+
+
+        private static void ApplyMarkdownStylesToParagraphBAK(Paragraph paragraph, string markdown)
+        {
+            if (string.IsNullOrWhiteSpace(markdown))
+                return;
+
+
+
+            // HTML entities & <br />
+            markdown = markdown.Replace("<br />", "\n");
+            markdown = markdown.Replace("<br>", "\n");
+            markdown = markdown.Replace("×", "x");   // want × is niet ondersteund in rtf
+            markdown = markdown.Replace("³", "^3^"); // want ³ is niet ondersteund in rtf
+            markdown = markdown.Replace("²", "^2^"); // want ² is niet ondersteund in rtf
+            markdown = markdown.Replace("¹", "^1^"); // want ¹ is niet ondersteund in rtf
+            markdown = markdown.Replace("‰", "^0^/~00~"); // want is niet ondersteund in rtf
+
+            // Combine both Markdown & basic HTML tags into tokens
+            var regex = new Regex(
+                @"(?<bold>\*\*(.*?)\*\*|<b>(.*?)</b>)|" +
+                @"(?<italic>\*(.*?)\*|<i>(.*?)</i>)|" +
+                @"(?<underline>__(.*?)__|<u>(.*?)</u>)|" +
+                @"(?<strike>~~(.*?)~~)|" +
+                @"(?<sup>\^(.*?)\^|<sup>(.*?)</sup>)|" +
+                @"(?<sub>~(.*?)~|<sub>(.*?)</sub>)|" +
+                @"(?<color>\{(.*?):(.*?)\})|" +
+                @"(?<br>\n)|" +
+                @"(?<text>[^*^~_<>{}\n]+)",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase
+            );
+
+            foreach (Match match in regex.Matches(markdown))
+            {
+                if (match.Groups["bold"].Success)
+                {
+                    var content = StripTags(match.Value, "**", "<b>", "</b>");
+                    paragraph.AddFormattedText(content, TextFormat.Bold);
+                }
+                else if (match.Groups["italic"].Success)
+                {
+                    var content = StripTags(match.Value, "*", "<i>", "</i>");
+                    paragraph.AddFormattedText(content, TextFormat.Italic);
+                }
+                else if (match.Groups["underline"].Success)
+                {
+                    var content = StripTags(match.Value, "__", "<u>", "</u>");
+                    var text = paragraph.AddFormattedText(content);
+                    text.Underline = Underline.Single;
+                }
+                else if (match.Groups["strike"].Success)
+                {
+                    var content = StripTags(match.Value, "~~");
+                    var text = paragraph.AddFormattedText(content);
+                    text.Color = Colors.Red; // MigraDoc heeft geen strikeout, dus markeer visueel
+                }
+                else if (match.Groups["sup"].Success)
+                {
+                    var content = StripTags(match.Value, "^", "<sup>", "</sup>");
+                    var text = paragraph.AddFormattedText(content);
+                    text.Superscript = true;
+                }
+                else if (match.Groups["sub"].Success)
+                {
+                    var content = StripTags(match.Value, "~", "<sub>", "</sub>");
+                    var text = paragraph.AddFormattedText(content);
+                    text.Subscript = true;
+                }
+                else if (match.Groups["color"].Success)
+                {
+                    var parts = Regex.Match(match.Value, @"\{(.*?):(.*?)\}").Groups;
+                    var color = parts[1].Value.Trim(); // linkerdeel is de kleur
+                    var content = parts[2].Value.Trim(); // rechterdeel is de tekst
+
+                    AddFormattedTextWithEmojiFont(paragraph, content, Color.Parse(color));
+
+                    //var text = paragraph.AddFormattedText(content); // TODO ook Emoji in kleur zetten.
+                    //text.Color = Color.Parse(color);
+                }
+                else if (match.Groups["br"].Success)
+                {
+                    paragraph.AddLineBreak();
+                }
+                else if (match.Groups["text"].Success)
+                {
+                    AddFormattedTextWithEmojiFont(paragraph, match.Value); // optie om Emoji te ondersteunen in pdf. 
+                    //paragraph.AddText(match.Value);
+                }
+            }
+        }
+
+        private static string StripTags(string input, string markdown = "", string htmlOpen = "", string htmlClose = "")
+        {
+            return input.Replace(markdown, "")
+                        .Replace(htmlOpen, "", StringComparison.OrdinalIgnoreCase)
+                        .Replace(htmlClose, "", StringComparison.OrdinalIgnoreCase);
+        }
+
+
+        private static void AddFormattedTextWithEmojiFont(Paragraph paragraph, string content, Color? color = null)
+        {
+            if (string.IsNullOrEmpty(content))
+                return;
+
+            var stringInfo = new StringInfo(content);
+            int count = stringInfo.LengthInTextElements;
+
+            for (int i = 0; i < count; i++)
+            {
+                string element = stringInfo.SubstringByTextElements(i, 1);
+                if (string.IsNullOrEmpty(element))
+                    continue;
+
+                // Gebruik de eerste rune om te bepalen of dit een emoji is
+                Rune rune = Rune.GetRuneAt(element, 0);
+                bool isEmoji = IsEmoji(rune);
+
+                var text = paragraph.AddFormattedText(element);
+                if (color != null)
+                    text.Color = color.Value;
+
+
+                if (isEmoji)
+                {
+                    text.Font.Name = "NotoEmoji"; // Of jouw emoji-font
+                    //text.Font.Size = (text.Font.Size > 0 ? text.Font.Size : 9) * 1.41; // gebruik bv. 9 als default
+                }
+            }
+
+            // hieronder oude code om alle runes te enumereren, maar dit is niet nodig omdat we met StringInfo werken.
+
+            //foreach (var rune in content.EnumerateRunes())
+            //{
+            //    var str = rune.ToString();
+            //    var isEmoji = IsEmoji(rune);
+
+            //    var text = paragraph.AddFormattedText(str);
+
+            //    if (isEmoji)
+            //    {
+            //        // Different font for emoji (alleen nodig voor PDF export)
+            //        text.Font.Name = "NotoEmoji";
+            //        text.Font.Size *= 1.41; // Increase size for better visibility
+            //    }
+            //}
+        }
+
+        private static bool IsEmoji(Rune rune)
+        {
+            int code = rune.Value;
+
+            return
+                (code >= 0x1F300 && code <= 0x1FAFF) || // Extended emoji
+                (code >= 0x1F600 && code <= 0x1F64F) || // Emoticons
+                (code >= 0x1F680 && code <= 0x1F6FF) || // Transport & map
+                (code >= 0x2600 && code <= 0x26FF) ||   // Misc symbols
+                (code >= 0x2700 && code <= 0x27BF) ||   // Dingbats
+                (code >= 0x1F1E6 && code <= 0x1F1FF) || // Regional flags
+                (code == 0x200D) ||                     // Zero Width Joiner
+                (code == 0xFE0F) ||                     // Variation Selector-16 (emoji style)
+                (code == 0x2139);                       // ℹ Information source
+        }
+
+
+
+
+        private static void ApplyMarkdownStylesToParagraphBAK2(Paragraph paragraph, string markdown)
         {
             if (string.IsNullOrEmpty(markdown))
             {

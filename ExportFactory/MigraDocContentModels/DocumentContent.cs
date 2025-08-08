@@ -28,14 +28,14 @@ namespace ExportFactory.MigraDocContentModels
         public Color FooterColor { get; set; } = Colors.Black;
 
         public RevisionContent Revisions { get; set; } = new();
-        public Font Font { get; set; } = new Font("Verdana", 9);
+        public Font Font { get; set; } = new Font("Segoe UI Emoji", 9);
         public CoverPageContent CoverPage { get; set; } = new CoverPageContent();
         public PageHeaderContent PageHeader { get; set; } = new PageHeaderContent();
         public PageFooterContent PageFooter { get; set; } = new PageFooterContent();
         public List<SectionContent> Sections { get; set; } = new List<SectionContent>();
         public TableOfContentsContent TableOfContents { get; set; }
 
-        public PageMarginAndPageNumberSettingsEnum? PageMarginSetting { get; set; } = PageMarginAndPageNumberSettingsEnum.EvenOnevenGespiegeld;
+        public PageMarginAndPageNumberSettingsEnum? PageMarginSetting { get; set; } = PageMarginAndPageNumberSettingsEnum.MargeLinks_PaginaNummerRechts;
 
 
         public enum PageMarginAndPageNumberSettingsEnum
@@ -52,23 +52,98 @@ namespace ExportFactory.MigraDocContentModels
     }
 
 
-    public class RevisionContent
+    public class RevisionContent : INotifyPropertyChanged
     {
-        public List<Revision> Revisions { get; set; } = [];
-        public Dictionary<string, string> ColumnNames { get; set; } = new Dictionary<string, string>()
+        private List<Revision> _revisions = new List<Revision>();
+
+
+        public List<Revision> Revisions
         {
-            { "Name", "Rev."},
-            { "Date", "Datum" },
-            { "Description", "Beschrijving" }
-        };
-       
+            get => _revisions;
+            set
+            {
+                _revisions = value;
+                OnPropertyChanged(nameof(Revisions));
+            }
+        }
+
+
+
+
+        //public Dictionary<string, string> ColumnNames { get; set; } = new Dictionary<string, string>()
+        //{
+        //    { "Name", "Rev."},
+        //    { "Date", "Datum" },
+        //    { "Description", "Beschrijving" }
+        //};
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
-    public class Revision
+    public class Revision : INotifyPropertyChanged
     {
-        public string Name { get; set; } = "";
-        public string Description { get; set; } = "";
-        public DateTime Date { get; set; } = DateTime.Now;
+        private string _name = "";
+        private string _description = "";
+        private DateTime? _date = DateTime.Now;
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        public string Description
+        {
+            get => _description;
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+                    OnPropertyChanged(nameof(Description));
+                }
+            }
+        }
+
+
+        public DateTime? Date
+        {
+            get => _date;
+            set
+            {
+                if (_date != value)
+                {
+                    _date = value;
+                    OnPropertyChanged(nameof(Date));
+                }
+            }
+        }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} - {Date?.ToShortDateString()} - {Description}";
+        }
+
+
     }
 
 

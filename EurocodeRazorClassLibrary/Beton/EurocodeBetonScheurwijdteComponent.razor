@@ -1,41 +1,77 @@
 ﻿@using Eurocode.BetonConstructies
 @using K = CommonLibrary.EurocodeKeys
+@using System.ComponentModel
+
+@* <EurocodeRefreshButton Model="@Model" OnUpdated="@OnUpdated" /> *@
+
+@* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@
 
 
-beton:@Model.Beton.ToString()
-dekking:@Model.Dekking.ToString()
+@if(Model != null)
+{
+    
 
-<EurocodeInputContainer Key="Wapening">
+
+
+
+
+
+
+@* <EurocodeInputContainer Key="Wapening">
     <FluentTextField @bind-Value="Model.Wapening.Tekst"></FluentTextField>
-</EurocodeInputContainer>
+</EurocodeInputContainer> *@
 
-<EurocodeInputNumber ReadOnly=true Value=Model.AsToe Key="@K.AsToe" Unit="mm²"></EurocodeInputNumber>
+@* <EurocodeInputNumber ReadOnly=true Value=Model.AsToe Key="@K.AsToe" Unit="mm²" ></EurocodeInputNumber> *@
 
-<EurocodeInputNumber ReadOnly=true Value="Model.MomentFrequent" Key="@K.MomentFrequent" Unit="kNm"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteAsMin" Key="@K.ScheurwijdteAsMin" Unit="mm²"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteMax" Key="@K.ScheurwijdteMax" Unit="mm"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value="Model.Wk" Key="@K.ScheurwijdteBerekend" Unit="mm" MaxValue="Model.ScheurwijdteMax"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value="Model.Mcr" Key="@K.MomentScheurmoment" Unit="kNm"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.MomentFrequent" Key="@K.MomentFrequent" Unit="kNm"></EurocodeInputNumber> 
+    <EurocodeInputNumber ReadOnly=true Value="Model.Mcr" Key="@K.MomentScheurmoment" StringFormat="0.#" Unit="kNm"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteAsMin" Key="@K.ScheurwijdteAsMin" StringFormat="0" Unit="mm²"></EurocodeInputNumber>
+
+    <EurocodeInputNumber ReadOnly=true Value="Model.SrMax" Key="@K.ScheurwijdteSrMax" StringFormat="0.##" Unit=""></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true Value="Model.EpsSmMinusEpsCm" Key="@K.ScheurwijdteEpsilonSmMinusEpsilonCm" StringFormat="0.####" Unit=""></EurocodeInputNumber>
+
+    <EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteGrenswaarde.Wmax" Key="@K.ScheurwijdteMax" Unit="mm"></EurocodeInputNumber>
+
+    <EurocodeInputNumber ReadOnly=true Value="Model.Wk" Key="@K.ScheurwijdteBerekend" Unit="mm" MaxValue="Model.ScheurwijdteMax"></EurocodeInputNumber>
+@* <EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteMinimumWapening.AsMin" Key="@K.ScheurwijdteAsMin" Unit="mm²"></EurocodeInputNumber> *@
 
 
-<EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteGrenswaarde.Wmax" Key="@K.ScheurwijdteMax" Unit="mm"></EurocodeInputNumber>
-<EurocodeInputNumber ReadOnly=true Value="Model.ScheurwijdteMinimumWapening.AsMin" Key="@K.ScheurwijdteAsMin" Unit="mm²"></EurocodeInputNumber>
+    @* <BaseEurocodeContextComponent TContext="ScheurwijdteContext" @bind-Model="@Model" /> *@
 
-
-
+}
 
 
 @code {
     [Parameter]
-    public ScheurwijdteContext Model { get; set; } = new();
+    public ScheurwijdteContext? Model { get; set; } 
+    
     [Parameter]
     public EventCallback<ScheurwijdteContext> ModelChanged { get; set; }
 
     protected override void OnInitialized()
     {
+        // Subscribe op wijzigingen binnen Wapening
+        if (Model!.Wapening is INotifyPropertyChanged observable)
+        {
+            observable.PropertyChanged += WapeningPropertyChanged;
+        }
         Model.BerekenEnValideer();
     }
 
+    private void WapeningPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // Bij elke wijziging binnen Wapening:
+        Model!.BerekenEnValideer();
+        StateHasChanged(); // Als je UI wilt hertekenen
+        ModelChanged.InvokeAsync(Model); // Als je twee-weg binding gebruikt
+    }
+
+    
+    private void OnUpdated()
+    {
+        StateHasChanged(); // Optioneel: extra hertekening
+    }
+    
    
 
 }

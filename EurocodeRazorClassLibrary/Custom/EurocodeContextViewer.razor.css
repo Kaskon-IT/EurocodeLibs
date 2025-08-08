@@ -1,0 +1,9 @@
+﻿.context-block {
+    margin-bottom: 0.5rem;
+}
+
+.context-detail {
+    margin-left: 1rem;
+    font-family: monospace;
+    white-space: pre-wrap;
+}

@@ -1,11 +1,12 @@
-﻿@using ExportFactory.Services
+﻿@using CommonLibrary
+@using ExportFactory.Services
 @using ExportFactory.Extensions
 @using System.Text
 @using MigraDoc.Rendering
 @using MigraDoc.RtfRendering
 
 
-@typeparam T where T : class
+@typeparam T where T : BaseEurocodeContext
 @inject MigraDocCreator MigraDocCreator
 @inject IJSRuntime JSRuntime
 
@@ -105,7 +106,7 @@
 
         // Convert Data to DataTable
         var dataTable = list.ToDataTable();
-        var table = dataTable.ToMigraDocTable(typeof(T));
+        var table = dataTable.ToTable(typeof(T));
         var document = new MigraDoc.DocumentObjectModel.Document();
         document.AddSection().Add(table);
 

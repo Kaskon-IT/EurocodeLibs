@@ -2,77 +2,52 @@
 @using ExportFactory.Services
 @using Eurocode.Grondslagen
 
-<h3>Grondslagen voor de berekening (EC 0)</h3>
 
 
 
+<FluentSelectEnum Label="nationale bijlage" 
+                  Placeholder="Selecteer..."
+                  TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
+                  ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
+
+<FluentSelectEnum Label="gevolgklasse (Consequence Class)"
+                  Placeholder="Selecteer..."
+                  TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
+                  ShowDescription="false"
+                  @bind-EnumSelectedValue="@Model.Gevolgklasse" />
+
+<FluentSelectEnum Label="ontwerplevensduur"
+                  TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum"
+                  @bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
 
 
-<FluentGrid>
-    <FluentGridItem xs="0">
-        <FluentSelectEnum Label="Nationale bijlage" Placeholder="Selecteer..." TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
-        ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
-      
-    </FluentGridItem>
-
-    <FluentGridItem xs="0">
-        <FluentSelectEnum Label="Gevolgklasse (Consequence Class)" 
-        Placeholder="Selecteer..." 
-        TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
-        ShowDescription="false"
-        @bind-EnumSelectedValue="@Model.Gevolgklasse" />
-    </FluentGridItem>
-
-    <FluentGridItem xs="0">
-        <FluentSelectEnum Label="Ontwerplevensduur" 
-        TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum" 
-        @bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
-    </FluentGridItem>
-
-</FluentGrid>
 
 @if (ToonGevolgEigenschappen)
 {
+    <br />
+    <EurocodeInputContainer ReadOnly=true Key="Betrouwbaarheidsklasse">
+        <ChildContent>
+           @(Model.Betrouwbaarheidsklasse.ToString())
+        </ChildContent>
+    </EurocodeInputContainer>
+
+    <EurocodeInputContainer ReadOnly=true Key="Kfi">
+        <ChildContent>
+            @(Model.Kfi.ToString("0.0"))
+        </ChildContent>
+    </EurocodeInputContainer>
+
+    <EurocodeInputContainer ReadOnly=true Disabled=true Key="Xi">
+        <ChildContent>
+            @(Model.Xi.ToString("0.00"))
+        </ChildContent>
+    </EurocodeInputContainer>
 
 
-    <FluentGrid>
-        <FluentGridItem xs="0">
-            <FluentTextField    Label="Betrouwbaarheidsklasse" 
-            Value="@Model.Betrouwbaarheidsklasse.ToString()" 
-            ReadOnly="true" 
-            Appearance="FluentInputAppearance.Filled" />
-        </FluentGridItem>
 
-        <FluentGridItem xs="0">
-            <FluentTextField    Label="K,FI" 
-            Value="@Model.Kfi.ToString("0.0")" 
-            ReadOnly="true" 
-            Appearance="FluentInputAppearance.Filled" />
-        </FluentGridItem>
-
-        <FluentGridItem xs="0">
-            <FluentTextField    Label="ξ (Xi)" 
-            Value="@Model.Xi.ToString("0.00")" 
-            ReadOnly="true" 
-            Appearance="FluentInputAppearance.Filled" />
-        </FluentGridItem>
-
-    </FluentGrid>
+   
 }
 
-@* <FluentButton OnClick="() => ExportCsv()">Export CSV</FluentButton> *@
-@* <FluentButton OnClick="() => ExportCsvAsync()">Export CSV Async</FluentButton> *@
-
-@* <FluentButton OnClick="() => ExportTable()">Export Table</FluentButton> *@
-
-
-@* <CopyToClipboard Title="Copy CSV" Text="@csvContent" /> *@
-
-@* <CopyRtfToClipboard rtfContent="@rtfContent"></CopyRtfToClipboard> *@
-
-@* <CopyToClipboard Title="Copy RTF" Text="@rtfContent" /> *@
-
-@* <FluentButton onclick="ExportPdf">Export PDF</FluentButton> *@
 
 
 

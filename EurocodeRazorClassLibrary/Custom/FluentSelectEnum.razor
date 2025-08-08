@@ -7,11 +7,12 @@
 {
 
 
-    <div style="display: flex; align-items: center; width: 100%;">
+    <div style="display: flex; align-items: center; width: calc(100% - 125px);">
         @* <div style="flex: 0 0 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> *@
         <div style="
-                width: 150px;
+                width: 200px;
                 display: -webkit-box;
+                margin-left:3.5px;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
@@ -30,7 +31,7 @@
         @bind-SelectedOption=_selectedIntOption
         Placeholder="@Placeholder"
         AdditionalAttributes="@AdditionalAttributes"
-                      Disabled="@DisabledOrReadOnly"
+        Disabled="@DisabledOrReadOnly"
         ReadOnly="@ReadOnly"
         Style="flex: 1;"
         Multiple="@Multiple" />
@@ -71,6 +72,7 @@ else if(LabelPosition == LabelPosition.Top)
     [Parameter] public LabelPosition LabelPosition { get; set; } = LabelPosition.Left;
     [Parameter] public TEnum? EnumSelectedValue { get; set; }
     [Parameter] public EventCallback<TEnum?> EnumSelectedValueChanged { get; set; }
+    [Parameter] public EventCallback OnStateChanged { get; set; }
     [Parameter] public TEnum[] ExcludeEnumItems { get; set; } = [];
     [Parameter] public TEnum[] DisabledEnumItems { get; set; } = [];
     [Parameter] public string? Placeholder { get; set; }
@@ -98,6 +100,7 @@ else if(LabelPosition == LabelPosition.Top)
             if (value is null || !Enum.TryParse<TEnum>(value, out var result)) return;
             EnumSelectedValue = result;
             EnumSelectedValueChanged.InvokeAsync(result);
+            OnStateChanged.InvokeAsync();
         }
     }
 

@@ -1,11 +1,15 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Eurocode.Belastingen
 {
     public enum BelastingCombinatieTypeEnum
     {
+        [Display(Name = "Fundamenteel (6.10a)")]
         [Description("Fundamenteel (6.10a)")]
         Fundamenteel_A = 1001,
+
+        [Display(Name = "Fundamenteel (6.10b)")]
         [Description("Fundamenteel (6.10b)")]
         Fundamenteel_B = 1002,
 

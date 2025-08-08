@@ -1,0 +1,27 @@
+﻿@using K = CommonLibrary.EurocodeKeys
+<h3>EurocodeBetonVerankeringslengteComponent</h3>
+
+<div>
+    <EurocodeInputNumber @bind-Value="@Model.RekenwaardeStaafspanning" Label="Staalspanning (fyd)" Unit="MPa" Key="@K.Staalspanning" />
+    <EurocodeInputNumber Value="@Model.BasisVerankeringsLengte" Label="Basis" Unit="mm" Key="" />
+    <EurocodeInputNumber Value="@Model.Fctd" Label="F~ctd~" Unit="MPa" Key="" />
+
+    
+
+
+</div>
+
+<div>
+    @Model.ToMarkupString() <br />
+
+    @Model.BasisVerankeringsLengte <br />
+    
+</div>
+
+
+@code {
+    [Parameter] public Eurocode.BetonConstructies.VerankeringLangswapeningContext Model { get; set; } = new();
+    [Parameter] public EventCallback<Eurocode.BetonConstructies.VerankeringLangswapeningContext> ModelChanged { get; set; }
+
+
+}

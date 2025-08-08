@@ -13,6 +13,8 @@
     [Parameter, EditorRequired]
     public MigraDoc.DocumentObjectModel.Document Document { get; set; } = new();
 
+    [Parameter] public EventCallback DocumentChanged{ get; set; }
+
     [Parameter] 
     public EventCallback OnGenerateNewDocument { get; set; }
 

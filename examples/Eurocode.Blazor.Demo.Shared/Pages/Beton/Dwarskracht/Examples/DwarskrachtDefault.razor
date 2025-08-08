@@ -1,39 +1,10 @@
 ﻿@if (SampleProject != null)
 {
-    <EurocodeBetonDwarskrachtComponent @bind-Model=@SampleProject.DwarskrachtDemo>
-
-    </EurocodeBetonDwarskrachtComponent>
-
-    <FluentButton Appearance=Appearance.Accent OnClick="Export">Bijwerken</FluentButton>
-
-    @if (!string.IsNullOrEmpty(html))
-    {
-        <div>@((MarkupString)html)</div>
-    }
-
-
+    <EurocodeBetonDwarskrachtComponent @bind-Model=@SampleProject.DwarskrachtDemo  />
+    <BaseEurocodeContextComponent TContext="DwarskrachtWapContext" @bind-Model="@SampleProject.DwarskrachtDemo" />
 }
 
-@code {
-    [CascadingParameter]
-    public SampleProject? SampleProject { get; set; }
-
-    private string html;
-
-    private void Export()
-    {
-        if (SampleProject == null) return;
-
-
-        SampleProject.DwarskrachtDemo.Update(); // todo automatisch updaten methode afstemmen.
-
-        List<Eurocode.BetonConstructies.DwarskrachtWapContext> list = [SampleProject.DwarskrachtDemo];
-        var dataTable = list.ToDataTable();
-        var table = dataTable.ToMigraDocTable(typeof(DwarskrachtWapContext));
-        MigraDoc.DocumentObjectModel.Document document = new();
-        document.AddSection().Add(table);
-        html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(document);
-    }
-
-
+@code
+{
+    [CascadingParameter] public SampleProject? SampleProject { get; set; }
 }

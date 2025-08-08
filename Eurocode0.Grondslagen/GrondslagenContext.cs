@@ -3,15 +3,18 @@
 //using CsvFactory.Interfaces;
 
 ///using CsvFactory;
+using CommonLibrary;
 using CommonLibrary.Interfaces;
+using ExportFactory.MigraDocContentModels;
 using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using MigraDoc.DocumentObjectModel;
 using System.ComponentModel;
 
+
 namespace Eurocode.Grondslagen
 {
-    public class GrondslagenContext : IMarkupConvertible, INotifyPropertyChanged
+    public class GrondslagenContext : BaseEurocodeContext, IMarkupConvertible, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -73,13 +76,25 @@ namespace Eurocode.Grondslagen
 
         public override string ToString()
         {
-            return $"{Betrouwbaarheidsklasse} | {Gevolgklasse} | {OntwerpLevensduur.GetOntwerplevensduurTekst()} | norm: {NationaleBijlage} | ξ: {Xi:0.###}";
+            return ToString(false);
         }
+
+        public string ToString(bool alleenFactoren)
+        {
+            if (alleenFactoren)
+                return $"{Betrouwbaarheidsklasse} → K<sub>FI</sub> = {Kfi:0.##}, {NationaleBijlage} → ξ = {Xi:0.##}";
+
+            else
+                return $"{Gevolgklasse} → {Betrouwbaarheidsklasse}, {OntwerpLevensduur.GetOntwerplevensduurTekst()}, norm: {NationaleBijlage} → ξ = {Xi:0.##}";
+        }
+
+
+        public override string Heading { get; set; } = "Grondslagen";
 
         //[TableColumn("Eurocode")]
         public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
 
-        [TableColumn("NB")]
+        //[TableColumn("NB")]
         public string FlagSvg
         {
             get
@@ -101,7 +116,7 @@ namespace Eurocode.Grondslagen
             }
         }
 
-        [TableColumn("Land")]
+        //[TableColumn("Land")]
         public string FlagEmoji
         {
             get
@@ -118,8 +133,25 @@ namespace Eurocode.Grondslagen
         }
 
 
+        public string NormPrefix
+        {
+            get
+            {
+                switch (NationaleBijlage)
+                {
+                    default:
+                    case NationaleBijlageEnum.EU: return "CEN";
+                    case NationaleBijlageEnum.NL: return "NEN";
+                    case NationaleBijlageEnum.BE: return "NBN";
+                    case NationaleBijlageEnum.DE: return "DIN";
+                }
+            }
+        }
+        public string NormTitel => $"{NormPrefix}-EN 1990 Grondslagen voor het ontwerp van constructies";
 
-        [TableColumn("Ontwerp Levensduur", order: 0)]
+
+
+        [TableColumn("ontwerplevensduur", order: 0)]
         public OntwerpLevensduurEnum? OntwerpLevensduur { get; set; } = OntwerpLevensduurEnum.Vijftig;
 
 
@@ -130,7 +162,7 @@ namespace Eurocode.Grondslagen
         /// constructie
         /// </summary>
         /// 
-        [TableColumn("Gevolgklasse (Consequence Class)", order: 1, width: 4)]
+        [TableColumn("gevolgklasse", order: 1, width: 4)]
         public GevolgklasseEnum? Gevolgklasse
         {
             get => _gevolgklasse;
@@ -147,7 +179,7 @@ namespace Eurocode.Grondslagen
 
 
 
-        [TableColumn("Betrouwbaarheidsklasse (Reliability Class)", order: 2, width: 5)]
+        [TableColumn("betrouwbaarheidsklasse", order: 2, width: 5)]
         public BetrouwbaarheidsklasseEnum Betrouwbaarheidsklasse
         {
             get { return this.Gevolgklasse.GetBetrouwbaarheidsklasse(); }
@@ -177,21 +209,21 @@ namespace Eurocode.Grondslagen
         /// <summary>
         /// Obsolete, use Custom Attributes 'TableColumn' for export
         /// </summary>
-        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>()
-        {
-            { "NationaleBijlage", "Eurocode [NB]"},
-            { "Gevolgklasse", "Gevolgklasse [CC]" },
-            { "OntwerpLevensduur", "Levensduur [jaren]"},
-            { "Betrouwbaarheidsklasse", "Reliability Class RC" },
-            { "Kfi", "K_FI~" },
-            { "Xi", "ξ" },
-        };
+        //public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>()
+        //{
+        //    { "NationaleBijlage", "Eurocode [NB]"},
+        //    { "Gevolgklasse", "Gevolgklasse [CC]" },
+        //    { "OntwerpLevensduur", "Levensduur [jaren]"},
+        //    { "Betrouwbaarheidsklasse", "Reliability Class RC" },
+        //    { "Kfi", "K_FI~" },
+        //    { "Xi", "ξ" },
+        //};
 
 
         /// <summary>
         /// Obsolete, generic DataTable with Custom Attributes.
         /// </summary>
-        public Dictionary<string, string> RowData { get { return this.GetRowData(); } }
+        //public Dictionary<string, string> RowData { get { return this.GetRowData(); } }
 
 
         public void AddToSection(Section section)
@@ -201,12 +233,41 @@ namespace Eurocode.Grondslagen
             throw new NotImplementedException();
         }
 
+
         public MarkupString ToMarkupString()
         {
-            return CommonLibrary.Helpers.MarkupHelper.ToMarkupString(this.ToString());
+            return ToMarkupString(false);
+        }
+
+        public MarkupString ToMarkupString(bool alleenFactoren)
+        {
+            return CommonLibrary.Helpers.MarkupHelper.ToMarkupString(this.ToString(alleenFactoren));
 
             //throw new NotImplementedException();
         }
+
+        public override bool IsAkkoord()
+        {
+            return true;
+        }
+
+        protected override void Bereken()
+        {
+            // kan niet berekend worden
+        }
+
+        protected override bool Valideer()
+        {
+            return true;
+        }
+
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    return this.ToHtmlTable(isDraaiTabel: isDraaiTabel);
+        //    throw new NotImplementedException();
+        //}
+
+
 
         //public string CreateCsv()
         //{

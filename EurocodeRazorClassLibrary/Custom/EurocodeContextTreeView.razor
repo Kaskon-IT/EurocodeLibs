@@ -1,0 +1,142 @@
+﻿@using CommonLibrary
+@using System.Reflection
+@using System.Collections
+
+<div>
+    <label>
+        <input type="checkbox" @bind="ToonHerhaling" />
+        Toon herhaalde contexten
+    </label>
+</div>
+
+@if (Model != null)
+{
+    <div class="context-tree">
+        @foreach (var node in RootNodes)
+        {
+            <ContextNode 
+                Node="node" 
+                OnToggle="OnToggleNode" 
+                Expanded="Expanded" />
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public object? Model { get; set; }
+
+    private List<ContextNodeWrapper> RootNodes = new();
+    private HashSet<ContextNodeWrapper> Expanded = new();
+    private bool ToonHerhaling = false;
+
+    protected override void OnParametersSet()
+    {
+        RootNodes.Clear();
+        Expanded.Clear();
+        var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+
+        if (Model != null)
+        {
+            FindContexts(Model, "", visited, RootNodes, 0);
+        }
+
+        // Open alle nodes op het eerste niveau automatisch
+        foreach (var node in RootNodes)
+        {
+            if (node.Depth == 0)
+                Expanded.Add(node);
+        }
+    }
+
+    private Task OnToggleNode(ContextNodeWrapper node)
+    {
+        if (!Expanded.Add(node))
+            Expanded.Remove(node);
+
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+
+
+    private static void FindContexts(
+    object obj,
+    string path,
+    HashSet<object> visited,
+    List<ContextNodeWrapper> result,
+    int depth)
+    {
+        if (obj == null || visited.Contains(obj)) return;
+        visited.Add(obj);
+
+        var type = obj.GetType();
+
+        // Check of het een BaseEurocodeContext is
+        if (obj is BaseEurocodeContext context)
+        {
+            result.Add(new ContextNodeWrapper(path, context, depth));
+        }
+
+        foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            // Sla indexers over
+            if (prop.GetIndexParameters().Length > 0) continue;
+
+            object? val;
+            try
+            {
+                val = prop.GetValue(obj);
+            }
+            catch
+            {
+                continue; // Sla foutgevoelige properties over
+            }
+
+            if (val == null) continue;
+
+            // Recursief zoeken
+            FindContexts(val, string.IsNullOrEmpty(path) ? prop.Name : $"{path}.{prop.Name}", visited, result, depth + 1);
+        }
+    }
+
+
+
+    private void FindContextsBAK(object obj, string path, HashSet<object> visited, List<ContextNodeWrapper> result, int depth)
+    {
+        if (obj == null) return;
+
+        if (obj is BaseEurocodeContext ctx)
+        {
+            if (!ToonHerhaling && visited.Contains(obj))
+                return;
+
+            var node = new ContextNodeWrapper(path, ctx, depth);
+            result.Add(node);
+        }
+
+        if (visited.Contains(obj)) return;
+        visited.Add(obj);
+
+        var type = obj.GetType();
+
+        if (typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string))
+        {
+            int idx = 0;
+            foreach (var item in (IEnumerable)obj)
+            {
+                FindContexts(item, $"{path}[{idx}]", visited, result, depth + 1);
+                idx++;
+            }
+            return;
+        }
+
+        foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (prop.GetIndexParameters().Length > 0) continue;
+            var val = prop.GetValue(obj);
+            if (val == null) continue;
+
+            FindContexts(val, string.IsNullOrEmpty(path) ? prop.Name : $"{path}.{prop.Name}", visited, result, depth + 1);
+        }
+    }
+}

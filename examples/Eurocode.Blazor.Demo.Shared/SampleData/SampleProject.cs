@@ -27,6 +27,7 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
         public BetonDekkingContext Dekking { get; set; }
 
         public BendingResults BendingResults { get; set; }
+        public GrenswaardeSlankheidContext GrenswaardeSlankheidDemo { get; set; }
 
         public BetonProfielen.BetonProfiel BetonProfiel { get; set; } = new();
 
@@ -34,9 +35,14 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
 
         public OpleggingContext OpleggingDemo { get; set; } = new();
         public UitkragingContext UitkragingDemo { get; set; } = new();
-        public ScheurwijdteContext ScheurwijdteDemo { get; set; } = new();
+        public ScheurwijdteContext ScheurwijdteDemo { get; set; }
         public WapeningContext WapeningContext { get; set; } = new();
-        public Snedekrachten Snedekrachten { get; set; } = new() { My = 80.808, Vz = 88.88 };
+        public Snedekrachten Snedekrachten { get; set; } = new() { My = new(80, 70), Vz = new(93) };
+
+
+        public BetonContext Beton2 { get; set; } = new();
+        public BendingResults BendingResults2 { get; set; }
+
 
         public SampleProject(GrondslagenContext grondslagen)
         {
@@ -44,11 +50,18 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
             Belastingen = new BelastingenContext(Grondslagen);
             Beton = new();
             Dekking = new BetonDekkingContext(Grondslagen, Beton);
+            WapeningContext = new WapeningContext("3R12", Dekking);
+
             BendingResults = new(Beton, BetonProfiel.Profiel, WapeningContext, Snedekrachten);
             //DwarskrachtDemo = new(Beton, new ParametrischeProfielen.ParametrischProfielContext(), 100);
-            DwarskrachtDemo = DwarskrachtWap.GetDwarskrachtWapContext(Beton, new ParametrischeProfielen.ParametrischProfielContext(), 21.8, 350, 102, 2, 8, [75, 150, 300]);
+            DwarskrachtDemo = DwarskrachtWap.GetDwarskrachtWapContext(Beton, BetonProfiel.Profiel, 21.8, 350, Snedekrachten, 2, 8, [75, 150, 300]);
             UitkragingDemo = new() { Beton = Beton };
-            ScheurwijdteDemo = new(75, 100, Beton, Dekking, Grondslagen.NationaleBijlage ?? NationaleBijlageEnum.NL);
+            ScheurwijdteDemo = new(Snedekrachten, Beton, Dekking, BetonProfiel.Profiel, WapeningContext, Grondslagen.NationaleBijlage ?? NationaleBijlageEnum.NL);
+            GrenswaardeSlankheidDemo = new() { Profiel = BetonProfiel.Profiel, BendingResults = BendingResults, LengteOverspanning = 2000, ConstructiefSysteem = GrenswaardeSlankheidContext.ConstructiefSysteemEnum.VrijOpgelegd };
+
+            Beton2 = new(BetonsterkteklasseEnum.C12_15);
+            BendingResults2 = new BendingResults(new(), BetonProfiel.Profiel, WapeningContext, Snedekrachten);
+
 
 
         }

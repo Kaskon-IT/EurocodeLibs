@@ -1,10 +1,10 @@
 ﻿@if (SampleProject != null)
 {
-    <EurocodeBetonMaterialen 
-        Disabled = "@Disabled"
-        @bind-Model="@SampleProject.Beton"></EurocodeBetonMaterialen>
+ 
+    <EurocodeBetonMaterialen Disabled="@Disabled" @bind-Model="@SampleProject.Beton"></EurocodeBetonMaterialen>
 
-    @* <ExportTableComponent T="Eurocode.BetonConstructies.BetonContext" Item="@SampleProject.Beton"></ExportTableComponent> *@
+   
+    @* <BaseEurocodeContextComponent TContext="BetonContext" @bind-Model="@SampleProject.Beton" /> *@
 }
 
 @code {

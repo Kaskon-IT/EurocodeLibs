@@ -4,19 +4,27 @@
 @using CommonLibrary
 
 
-<h3>BuigingBasisDefault</h3>
+<h3>Buiging zonder normaalkracht</h3>
 
 @if (SampleProject !=null)
 {
 
    
 
+    @* <BetonProfiel @bind-Model="SampleProject.BetonProfiel" OnStateChanged="StateHasChanged"></BetonProfiel> *@
 
-    <BuigingBasicComponent @bind-Model="SampleProject.BendingResults"
-                           ></BuigingBasicComponent>
+    @* <BuigingBasicComponent @bind-Model="SampleProject.BendingResults" OnStateChanged="StateHasChanged"></BuigingBasicComponent> *@
 
-    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="Snedekrachten" />
+    <h5>Snedekrachten</h5>
+    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false />
+    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false ToonWaardeBruiksbaarheidsGrensToestand=true />
 
+    <BuigingBasicComponent @bind-Model="SampleProject.BendingResults"></BuigingBasicComponent>
+
+    @* <EurocodeBetondoorsnedeComponent 
+        BuigingContext="SampleProject.BendingResults"
+        ScheurwijdteContext="SampleProject.ScheurwijdteDemo" />
+         *@
 
 
     @* <FluentButton OnClick="UpdateChart">Update</FluentButton> *@
@@ -39,6 +47,12 @@
     PlotlyChart chart;
     Config config = new Config();
     Layout layout = new Layout();
+
+
+    private void RunTest()
+    {
+        
+    }
 
     protected override void OnInitialized()
     {

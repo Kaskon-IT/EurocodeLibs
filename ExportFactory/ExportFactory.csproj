@@ -1,21 +1,70 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
 
-  <ItemGroup>
-    <PackageReference Include="MigraDoc.DocumentObjectModel.Core" Version="1.0.0" />
-    <PackageReference Include="MigraDoc.Rendering.Core" Version="1.0.0" />
-    <PackageReference Include="MigraDoc.RtfRendering.Core" Version="1.0.0" />
-    <PackageReference Include="SkiaSharp.Extended" Version="2.0.0" />
-    <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
-  </ItemGroup>
+		<!-- NuGet-package instellingen -->
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>Kaskon.ExportFactory</PackageId>
+		<Version>1.1.703</Version> <!-- Increment version for next release -->
+		<Authors>Bart van der Linden</Authors>
+		<Company>Kaskon</Company>
+		<Description>Library voor pdf, csv, word, html, svg exports.</Description>
+		<PackageLicenseFile>license.md</PackageLicenseFile>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageIcon>kaskon.png</PackageIcon>
+		<!-- Lokale map voor .nupkg -->
+		<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
+		<Copyright>Copyright © 2025 Kaskon</Copyright>
+		<PackageTags>Kaskon;Blazor;FluentUI;Eurocode;Beton;Constructies;Export;Pdf;Migradoc;Rtf;Word;Svg;Html</PackageTags>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  
+	  
+	  
+	  
+	  
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="Icons/kaskon.png" Pack="true" PackagePath="/" />
+		<None Include="Docs/license.md" Pack="true" PackagePath="/" />
+		<None Include="Docs/readme.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\Fonts\*.ttf" />
+	</ItemGroup>
+		
+
+	<ItemGroup>
+        <PackageReference Include="MigraDoc.DocumentObjectModel.Core" Version="1.0.0" />
+        <PackageReference Include="MigraDoc.Rendering.Core" Version="1.0.0" />
+        <PackageReference Include="MigraDoc.RtfRendering.Core" Version="1.0.0" />
+        <PackageReference Include="SkiaSharp.Extended" Version="2.0.0" />
+        <PackageReference Include="Svg.Skia" Version="3.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Docs\license.md">
+        <PackagePath>/</PackagePath>
+        <Pack>true</Pack>
+      </None>
+      <None Update="Docs\readme.md">
+        <PackagePath>/</PackagePath>
+        <Pack>true</Pack>
+      </None>
+      <None Update="Icons\kaskon.png">
+        <PackagePath>/</PackagePath>
+        <Pack>true</Pack>
+      </None>
+    </ItemGroup>
 
 </Project>

@@ -1,0 +1,42 @@
+﻿@using Eurocode.BetonConstructies
+@using ParametrischeProfielen
+@using Eurocode.Grondslagen
+
+
+
+<table>
+    <tr><td>grondslagen</td><td>@grondslagen.ToMarkupString()</td></tr>
+    <tr><td>beton</td><td>@beton.ToMarkupString()</td></tr>
+    <tr><td>profiel</td><td>@profiel.ToString()</td></tr>
+    <tr><td>wapening</td><td>@wapening.ToMarkupString()</td></tr>
+    <tr><td>snedekrachten</td><td>@snedekrachten.ToMarkupString()</td></tr>
+    <tr><td>dekking</td><td>@dekking.ToMarkupString()</td></tr>
+    <tr><td>buiging</td><td>@BuigingContext.ToMarkupString()</td></tr>
+
+</table>
+
+
+<BuigingBasicComponent @bind-Model="BuigingContext"  />
+
+@if(BuigingContext.BerekeningType == BerekeningTypeEnum.ControleerWapening)
+{
+    <EurocodeBetonScheurwijdteComponent @bind-Model="ScheurwijdteContext" />
+}
+
+
+@code {
+    [Parameter, EditorRequired] public required BendingResults BuigingContext { get; set; }
+    [Parameter, EditorRequired] public required ScheurwijdteContext ScheurwijdteContext { get; set; }
+
+
+
+
+    private GrondslagenContext grondslagen => ScheurwijdteContext.Dekking.Grondslagen;
+    private BetonDekkingContext dekking => ScheurwijdteContext.Dekking;
+    private BetonContext beton => BuigingContext.Beton;
+    private ParametrischProfielContext profiel => BuigingContext.Profiel ?? new();
+    private WapeningContext wapening => BuigingContext.Wapening;
+    private CommonLibrary.Snedekrachten snedekrachten => BuigingContext.Snedekrachten ?? new();
+
+
+}

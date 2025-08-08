@@ -14,7 +14,7 @@ namespace ExportFactory.Shared
         AlleTabellen = StandaardTabel | DraaiTabel,
     }
 
-    public class KeyValueMappingModel
+    public class KeyValueMappingModel : BaseEurocodeContext
     {
 
         [TableColumn("Key")]
@@ -45,8 +45,28 @@ namespace ExportFactory.Shared
         [TableColumn("Vergelijking")]
         public string? Vergelijking { get { return Mapping.Vergelijking; } }
 
+        public override bool IsAkkoord()
+        {
+            return true;
+        }
 
+        //public override MarkupString ToHtml(bool isDraaiTabel = true)
+        //{
+        //    var dt = this.ToDataTable(); // maak een DataTable van de context
+        //    var mdd = dt.ToMigraDocDocument(objectType: this.GetType(), isPivotTable: isDraaiTabel); // maak een MigraDocDocument
+        //    var html = HtmlCreator.GenerateHtmlFromDocument(mdd); // genereer HTML vanuit het MigraDocDocument
+        //    return new MarkupString(html); // retourneer als MarkupString
+        //}
 
+        protected override void Bereken()
+        {
+            // Geen specifieke berekening nodig voor deze context
+        }
+
+        protected override bool Valideer()
+        {
+            return true; // altijd akkoord, geen specifieke validatie nodig
+        }
     }
 
 
@@ -144,10 +164,10 @@ namespace ExportFactory.Shared
             string? headerText = null,
             string? headerTextPivot = null,
             string? stringFormat = null,
-            ParagraphAlignment alignment = ParagraphAlignment.Center,
+            ParagraphAlignment alignment = ParagraphAlignment.Left,
             bool visible = true,
             WeergaveEnum weergave = WeergaveEnum.AlleTabellen,
-            double width = 3.00,
+            double width = 2.00,
             int order = -1,
             string? key = null
             )

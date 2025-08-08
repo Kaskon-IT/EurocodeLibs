@@ -1,0 +1,36 @@
+@page "/lab/snedekrachten"
+
+@using EurocodeRazorClassLibrary.Shared
+
+
+<div style="width:600px;">
+
+
+    @if(SampleProject != null && SampleProject.Snedekrachten != null)
+    {
+        // UGT
+        <SnedekrachtenComponent @bind-Model="SampleProject.Snedekrachten"></SnedekrachtenComponent>
+
+        // BGT
+        <SnedekrachtenComponent @bind-Model="SampleProject.Snedekrachten" ToonVz=false
+            ToonWaardeBruiksbaarheidsGrensToestand=true></SnedekrachtenComponent>
+
+    }
+    else
+    {
+        <p>Niks gevonden.</p>
+    }
+
+</div>
+
+
+
+@code{
+    [CascadingParameter]
+    SampleProject? SampleProject { get; set; }
+
+
+
+
+
+}

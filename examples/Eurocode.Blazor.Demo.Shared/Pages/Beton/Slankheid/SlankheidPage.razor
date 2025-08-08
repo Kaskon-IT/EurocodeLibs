@@ -1,0 +1,19 @@
+﻿@page "/beton/slankheid"
+@using Eurocode.Blazor.Demo.Shared.Pages.Beton.Slankheid.Examples
+
+
+<h2>Voorbeelden</h2>
+<DemoSection Title="Basic" Component="typeof(SlankheidDefault)"/>
+<ApiDocumentation Component="typeof(EurocodeSlankheidComponent)" />
+
+
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+    public void ChangeState()
+        {
+        StateHasChanged();
+        }
+}

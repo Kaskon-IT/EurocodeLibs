@@ -4,19 +4,13 @@
 
 @if (SampleProject != null)
 {
-    <EurocodeBetonDuurzaamheid @bind-Model="@SampleProject.Dekking"></EurocodeBetonDuurzaamheid>
-    <FluentButton OnClick="Export">Export HTML</FluentButton>
+    <FluentCard>
+        <EurocodeBetonDuurzaamheid @bind-Model="@SampleProject.Dekking"></EurocodeBetonDuurzaamheid>
 
-   
-
-   @*  <ExportTableComponent 
-        Item="@SampleProject.Dekking"
-        T="BetonDekkingContext"></ExportTableComponent> *@
+    </FluentCard>
+    <BaseEurocodeContextComponent TContext="BetonDekkingContext" @bind-Model="@SampleProject.Dekking" />
 }
 
-@if (!string.IsNullOrEmpty(html)){
-    <div>@((MarkupString)html)</div>
-}
 
 
 
@@ -26,16 +20,6 @@
 
     [Parameter]
     public bool Disabled { get; set; }
-
-    private string html { get; set; } = "";
-    private void Export(){
-        if (SampleProject == null) return;
-        List<Eurocode.BetonConstructies.BetonDekkingContext> list = [SampleProject.Dekking];
-        var dataTable = list.ToDataTable();
-        var table = dataTable.ToMigraDocTable(typeof(BetonDekkingContext));
-        MigraDoc.DocumentObjectModel.Document document = new();
-        document.AddSection().Add(table);
-        html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(document);
-    }
+    
 
 }

@@ -15,24 +15,49 @@
         private static Dictionary<string, AttributesMapping> _mappingDict { get; } = _mappingService.Data;
 
 
-        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false)
+        public static MigraDoc.DocumentObjectModel.Document ToMigraDocDocument(this DataTable dataTable, Type objectType, bool isPivotTable = false, bool hideHeader = false, List<CommonLibrary.Melding>? meldingen = null)
         {
+
+
+
+            // deze methode wordt ALLEEN gebruikt voor een leeg document met 
+            // een ENKELE Tabel 
+            // bijvoorbeeld voor export of voorbeeld doeleinde
+
+
             MigraDoc.DocumentObjectModel.Document document = new();
-            var table = dataTable.ToMigraDocTable(objectType, isPivotTable);
+            var table = dataTable.ToTable(objectType, isPivotTable, hideHeader);
+
+
 
             if (table != null)
             {
                 document.AddSection();
                 document.LastSection.Add(table);
+
+                // voeg de opmerkingen toe 
+                if (meldingen != null && meldingen.Count != 0)
+                {
+                    var parMeldingen = document.LastSection.AddParagraph("Opmerkingen\r\n");
+                    foreach (var melding in meldingen)
+                    {
+                        var inspecteer = melding.ToMarkupString().Value;
+
+                        parMeldingen.AddText(melding.ToMarkupString().Value + "\r\n"); // Gebruik Markup (want gaat niet door markdown Parser)
+                    }
+                }
             }
             return document;
         }
 
-        public static Table? ToMigraDocTable(this DataTable dataTable, Type objectType, bool isPivotTable = true)
+        public static Table? ToTable(this DataTable dataTable, Type objectType, bool isPivotTable = true, bool hideHeader = false, bool vereenvoudigdeWeergave = true)
         {
             Table migraDocTable = new();
-            migraDocTable.Borders.Width = 0.25;
 
+            migraDocTable.Borders.Width = 0.25;
+            migraDocTable.Borders.Color = Colors.Transparent; // Mogelijk aanpassen voor debug
+            migraDocTable.Borders.Visible = false;
+            migraDocTable.KeepTogether = true; // Zorgt ervoor dat de tabel niet wordt gesplitst over pagina's
 
             // Check if the TableColumnAttribute is applied to any of the properties
             bool hasTableColumnAttribute = objectType.GetProperties()
@@ -45,14 +70,11 @@
             }
 
 
-
-
             WeergaveEnum weergave = WeergaveEnum.StandaardTabel;
             if (isPivotTable)
             {
                 weergave = WeergaveEnum.DraaiTabel;
             }
-
 
 
             // Get the properties of the object type and their associated ColumnAttribute
@@ -84,17 +106,59 @@
             {
                 // gebruik Tag om aan te geven dat het een gedraaide tabel is
                 migraDocTable.Tag = "pivot";
+
                 // Add description colum + data columns
                 int colIndex = 0;
-                Column descriptionColumn = migraDocTable.AddColumn();
 
-                for (int k = 0; k < dataTable.Rows.Count + 2; k++)   // col[0,1,2] zijn voor de header. 
-                                                                     // col[0]=Symbol
-                                                                     // col[1]=Description
-                                                                     // col[2]=Article
+                // col[0]
+                Column descriptionColumn = migraDocTable.AddColumn(); descriptionColumn.Width = "8cm";
+                Column symbolColumn = migraDocTable.AddColumn(); symbolColumn.Width = "2cm";
+
+                if (!vereenvoudigdeWeergave)
                 {
-                    migraDocTable.AddColumn();
+                    Column articleColumn = migraDocTable.AddColumn(); articleColumn.Width = "2cm";
                 }
+
+
+                Column valueColumn = migraDocTable.AddColumn(); valueColumn.Width = "6cm";
+
+
+
+                //for (int k = 0; k < dataTable.Rows.Count + 2; k++)   // col[0,1,2] zijn voor de header. 
+                //                                                     // col[0]=Symbol
+                //                                                     // col[1]=Description
+                //                                                     // col[2]=Article
+
+                //// of mogelijk [description][article][symbol][value]
+
+                //{
+
+
+                //    migraDocTable.AddColumn();
+                //}
+
+                int indexDescription = 0;
+                int indexArticle = 1;
+                int indexSymbol = 2;
+                int indexValue = 1; // data starts at 
+
+
+                if (vereenvoudigdeWeergave)
+                {
+                    indexDescription = 0;
+                    indexArticle = -1;
+                    indexSymbol = 1;
+                    indexValue = 2;
+                }
+                else
+                {
+                    indexDescription = 0;
+                    indexArticle = 1;
+                    indexSymbol = 2;
+                    indexValue = 3;
+                }
+
+
 
                 // Add rows
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
@@ -124,30 +188,57 @@
                     // mapping
                     if (mapping != null)
                     {
+                        if (vereenvoudigdeWeergave)
+                        {
+                            var parEenvoudigeTekst = row.Cells[indexDescription].AddParagraph();
+                            parEenvoudigeTekst.Tag = "description";
+                            parEenvoudigeTekst.Format.Alignment = ParagraphAlignment.Left;
+                            if (mapping.Description != null)
+                            {
+                                MigraDocCreator.AddMarkdownToParagraph(parEenvoudigeTekst, mapping.Description);
+                            }
 
+                            var parEenvoudgieSymbol = row.Cells[indexSymbol].AddParagraph();
+                            parEenvoudgieSymbol.Tag = "symbol";
+                            parEenvoudgieSymbol.Format.Alignment = ParagraphAlignment.Right;
+                            if (mapping.Symbol != null)
+                            {
 
-                        if (mapping.Symbol != null)
-                        {
-                            var parSymbol = row.Cells[0].AddParagraph();
-                            parSymbol.Tag = "symbol";
-                            MigraDocCreator.AddMarkdownToParagraph(parSymbol, mapping.Symbol);
-                        }
-                        if (mapping.Description != null)
-                        {
-                            var parDesc = row.Cells[1].AddParagraph();
-                            parDesc.Tag = "description";
-                            MigraDocCreator.AddMarkdownToParagraph(parDesc, mapping.Description);
-                        }
-                        if (mapping.Article != null)
-                        {
-                            var parArticle = row.Cells[2].AddParagraph();
-                            parArticle.Tag = "article";
-                            MigraDocCreator.AddMarkdownToParagraph(parArticle, mapping.Article);
-                        }
-                        if (mapping.Format != null)
-                        {
+                                //parEenvoudigeTekst.AddText(" ");
+                                MigraDocCreator.AddMarkdownToParagraph(parEenvoudgieSymbol, mapping.Symbol);
+                                parEenvoudgieSymbol.AddText(" =");
+                            }
 
                         }
+                        else
+                        {
+                            if (mapping.Symbol != null)
+                            {
+                                var parSymbol = row.Cells[indexSymbol].AddParagraph();
+                                parSymbol.Tag = "symbol";
+                                MigraDocCreator.AddMarkdownToParagraph(parSymbol, mapping.Symbol);
+                            }
+                            if (mapping.Description != null)
+                            {
+                                var parDesc = row.Cells[indexDescription].AddParagraph();
+                                parDesc.Tag = "description";
+                                MigraDocCreator.AddMarkdownToParagraph(parDesc, mapping.Description);
+                            }
+                            if (mapping.Article != null)
+                            {
+                                var parArticle = row.Cells[indexArticle].AddParagraph();
+                                parArticle.Tag = "article";
+                                MigraDocCreator.AddMarkdownToParagraph(parArticle, mapping.Article);
+                            }
+                            if (mapping.Format != null)
+                            {
+
+                            }
+                        }
+
+
+
+
 
 
                         //headerText = $"DICTIONARY{mapping.Symbol}";
@@ -155,6 +246,8 @@
                     else
                     {
                         // add a paragraph with and apply markdown (if any) to it.
+
+
                         var par = row.Cells[colIndex].AddParagraph();
                         MigraDocCreator.AddMarkdownToParagraph(par, headerText);
                     }
@@ -163,16 +256,28 @@
                 }
 
                 // Fill data column(s)
-                colIndex = 3; // start with index 3 when pivottable
+                colIndex = indexValue; // set the column index for data values
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
                     int rowIndex = 0;
+
+                    if (colIndex >= migraDocTable.Columns.Count)
+                    {
+                        // Add a new row for each data row in the DataTable
+                        Console.WriteLine($"Te weining kolommen in migradoc tabel. Gedraaide tabel maximum bereikt.");
+                        continue;
+
+                        //Row migraDocRow = migraDocTable.AddRow();
+                        //migraDocRow.Tag = "datarow"; // Optional: Tag for identification
+                    }
+
+
                     //Column dataColumn = migraDocTable.AddColumn();
                     foreach (var columnName in columnNames)
                     {
                         //var columnName = dataTable.Columns[i].ColumnName;
                         var value = dataRow[columnName];
-
+                        AttributesMapping? mapping = null;
 
 
 
@@ -183,19 +288,57 @@
 
                         var rowProperties = propertiesWithAttributes[i];
                         string? format = rowProperties.Attribute.StringFormat;
-                        if (_mappingDict.ContainsKey(columnName))
+
+                        bool formatGevonden = false;
+                        try
                         {
-                            var mapping = _mappingDict[columnName];
+                            var prop = propertiesWithAttributes.FirstOrDefault(p => p.Property?.Name == columnName);
 
-
-                            if (mapping.Format != null)
+                            if (prop != null)
                             {
-                                format = mapping.Format;
+                                _mappingDict.TryGetValue(prop.Attribute?.Key, out mapping);
 
+                                if (mapping != null && mapping.Format != null)
+                                {
+                                    formatGevonden = true;
+                                    format = mapping.Format;
+                                }
                             }
 
 
-                            //headerText = $"DICTIONARY{mapping.Symbol}";
+
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+
+
+                        if (!formatGevonden)
+                        {
+                            if (_mappingDict.ContainsKey(columnName))
+                            {
+                                var mapping3 = _mappingDict[columnName];
+
+
+                                if (mapping3.Format != null)
+                                {
+                                    format = mapping3.Format;
+
+                                }
+
+
+                                //headerText = $"DICTIONARY{mapping.Symbol}";
+                            }
+                        }
+
+
+
+
+
+                        if (value is bool myBool)
+                        {
+                            value = myBool ? "ja" : "nee";
                         }
 
 
@@ -269,9 +412,19 @@
             }
             else if (!isPivotTable)
             {
+
+                // header zichtbaar
+                if (hideHeader)
+                {
+                    migraDocTable.Tag = "hideheader";
+                }
+
                 // Add columns to the MigraDoc table based on the property attributes
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
                 {
+
+
+
                     Column migraDocColumn = migraDocTable.AddColumn();
                     migraDocColumn.Format.Alignment = propertyWithAttribute.Attribute.Alignment;
 
@@ -284,6 +437,8 @@
 
                 // Add the header row
                 Row headerRow = migraDocTable.AddRow();
+                headerRow.Style = "TableHeader";
+
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
                 {
                     ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
@@ -296,6 +451,9 @@
                     // set alignment
                     headerRow.Cells[propertiesWithAttributes.IndexOf(propertyWithAttribute)].Format.Alignment = alignment;
 
+                    // set style
+                    //headerRow.Cells[propertiesWithAttributes.IndexOf(propertyWithAttribute)].Format.Font.Italic = true;
+
 
 
                 }
@@ -304,31 +462,53 @@
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
                     Row row = migraDocTable.AddRow();
+                    //row.Format.Font.Italic = false;
+
                     foreach (var columnName in columnNames)
                     {
                         //var columnName = dataTable.Columns[i].ColumnName;
                         var value = dataRow[columnName];
+
+
+
 
                         // Get the column's custom string format if applied
                         int i = columnNames.IndexOf(columnName);
 
                         var rowProperties = propertiesWithAttributes[i];
 
-                        string? format = rowProperties.Attribute.StringFormat;
+                        string? format = rowProperties?.Attribute?.StringFormat;
 
-                        // Format the value if stringFormat exists
-                        if (!string.IsNullOrEmpty(format))
+                        // Alleen foratteren als value geen getal is
+                        if (value is IFormattable formattableValue)
                         {
+                            // Gebruik standaard "0.#" als er geen format is opgegeven
+                            if (string.IsNullOrEmpty(format))
+                            {
+                                format = "0.#";
+                            }
+
                             if (!format.StartsWith("{"))
                             {
                                 format = "{0:" + format + "}";
                             }
-                            value = string.Format(format, value);
+
+                            value = string.Format(format, formattableValue);
+
+
                         }
+
+                        if (value is bool myBool)
+                        {
+                            value = myBool ? "ja" : "nee";
+                        }
+
+
+
 
                         // Apply value to the cell (with markdown support)
                         var cellPar = row.Cells[i].AddParagraph();
-                        MigraDocCreator.AddMarkdownToParagraph(cellPar, value.ToString());
+                        MigraDocCreator.AddMarkdownToParagraph(cellPar, value?.ToString() ?? string.Empty);
                     }
                 }
             }

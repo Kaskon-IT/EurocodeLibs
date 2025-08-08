@@ -8,9 +8,8 @@
     <EurocodeBetonMaterialen 
     @bind-Model="@SampleProject.Beton" 
     BetonStaalKwaliteitEnumItems="@_betonstaalEnumItems"
-    BetonSterkteklasseEnumItems="@_betonsterkteklasseEnumItems"
-    Disabled ="@_disabled"
-    ToonBetonstaal="true"
+    BetonSterkteklasseEnumItems="@([BetonsterkteklasseEnum.C20_25])"
+    ToonBetonstaal="@_toonBetonstaal"
     ToonBetonSpanningRekDiagram="true" 
     ToonBetonStaalSpanningRekDiagram="true"></EurocodeBetonMaterialen>
 }
@@ -23,5 +22,6 @@
     private bool _disabled { get; set; } = false;
     private BetonStaalKwaliteitEnum[] _betonstaalEnumItems = [BetonStaalKwaliteitEnum.B400A, BetonStaalKwaliteitEnum.B400B];
     private BetonsterkteklasseEnum[] _betonsterkteklasseEnumItems = [BetonsterkteklasseEnum.C40_50, BetonsterkteklasseEnum.C50_60];
+    private bool _toonBetonstaal = true;
 
 }

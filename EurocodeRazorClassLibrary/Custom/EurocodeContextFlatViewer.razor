@@ -1,0 +1,80 @@
+﻿@using System.Reflection
+@using CommonLibrary
+@using System.Runtime.CompilerServices    @* Pas dit aan naar de namespace van ContextNodeInfo *@
+
+@typeparam TModel
+
+<div class="context-tree-viewer">
+    <h4>Gevonden BaseEurocodeContext-properties in @nameof(TModel):</h4>
+
+    @if (Nodes.Count == 0)
+    {
+        <p><em>Geen properties van type BaseEurocodeContext (of subtype) gevonden in dit model.</em></p>
+    }
+    else
+    {
+        <ul class="context-list">
+            @foreach (var node in Nodes)
+            {
+                <li class="context-item">
+                    <strong>@node.Path:</strong>
+                    @if (node.Context == null)
+                    {
+                        <span class="null-value">NULL</span>
+                    }
+                    else
+                    {
+                        <div class="context-detail">
+                            @((MarkupString)node.Context.ToMarkupString())
+                        </div>
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Het root-object (bijv. een TrapEntity). Kan null zijn.
+    /// </summary>
+    [Parameter] public TModel? Model { get; set; }
+
+    private readonly List<ContextNodeInfo> Nodes = new();
+
+    protected override void OnParametersSet()
+    {
+        Nodes.Clear();
+        if (Model == null)
+            return;
+
+        // Zoek alléén de directe properties van Model waarvan PropertyType
+        // afgeleid is van BaseEurocodeContext.
+        var type = Model!.GetType();
+        foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            // Sla indexers over
+            if (prop.GetIndexParameters().Length > 0)
+                continue;
+
+            var propType = prop.PropertyType;
+            // Controleer of propType BaseEurocodeContext is of daarvan afgeleid
+            if (typeof(BaseEurocodeContext).IsAssignableFrom(propType))
+            {
+                // Haal de waarde (kan null zijn)
+                BaseEurocodeContext? ctxValue;
+                try
+                {
+                    ctxValue = prop.GetValue(Model) as BaseEurocodeContext;
+                }
+                catch
+                {
+                    ctxValue = null;
+                }
+
+                // Bewaar Path = prop.Name, en de context of null
+                Nodes.Add(new ContextNodeInfo(prop.Name, ctxValue));
+            }
+        }
+    }
+}

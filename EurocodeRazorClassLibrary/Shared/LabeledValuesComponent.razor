@@ -1,0 +1,18 @@
+﻿@using ExportFactory.Shared
+@using CommonLibrary.Models
+
+
+@foreach(var labeledValue in Items)
+{
+    <p>@labeledValue.ToString()</p>
+}
+
+
+
+@code {
+    [Parameter, EditorRequired] public List<LabeledValue> Items { get; set; } = new List<LabeledValue>();
+    [Parameter] public EventCallback<List<LabeledValue>> ItemsChanged { get; set; }
+
+
+
+}

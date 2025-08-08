@@ -1,22 +1,39 @@
-﻿using ExportFactory.Shared;
+﻿using CommonLibrary.Extensions;
+using CommonLibrary.Interfaces;
+using ExportFactory.Shared;
+using Microsoft.AspNetCore.Components;
+using System.ComponentModel;
 
 namespace Eurocode.Belastingen
 {
-    public class BelastingGeval
+    public class BelastingGeval : IContext, IMarkupConvertible
     {
+        public override string ToString()
+        {
+            return $"{Naam,-8} {Type.GetDisplayName(),-12} {Gebruiksklasse.GetDisplayName()} {OpgelegdeBelasting,-12} {MomentaanFactorenUserFriendly}";
+        }
+
+        public MarkupString ToMarkupString()
+        {
+            return new MarkupString(ToString());
+        }
+
         public int Nr { get; set; }
 
-        [TableColumn("Naam", order: 0)]
-        public string Naam { get { return "BG" + Nr; } }
+        [TableColumn("naam", order: 0, width: 2.0)]
+        public string Naam { get { return "BG" + Nr.ToString("D1"); } }
         public string Omschrijving { get; set; } = "G";
 
-        [TableColumn("Type", order: 10)]
+        [TableColumn("type", order: 10, width: 4.0)]
         public BelastingGevalTypeEnum? Type { get; set; } = BelastingGevalTypeEnum.Permanent;
 
         public BelastOnbelastTypeEnum? BelastOnbelastType { get; set; } = BelastOnbelastTypeEnum.AllesTegelijk;
 
-        [TableColumn("Gebruiksklasse", order: 20)]
+        [TableColumn("gebruiksklasse", order: 20, width: 8.0)]
         public GebruiksklasseEnum? Gebruiksklasse { get; set; } = GebruiksklasseEnum.A_gemeenschappelijke_trappen;
+
+        [TableColumn("opm.", order: 9999, width: 8.0)]
+        public string Opmerking { get; set; } = "";
 
 
         public OpgelegdeBelastingen OpgelegdeBelastingen { get { return Gebruiksklasse.HasValue ? Gebruiksklasse.Value.GetOpgelegdeBelastingen() : new(); } }
@@ -28,7 +45,9 @@ namespace Eurocode.Belastingen
 
         public enum BelastingGevalTypeEnum
         {
+            [Description("Permanent")]
             Permanent,
+            [Description("Veranderlijk")]
             Veranderlijk,
         }
 
@@ -41,7 +60,7 @@ namespace Eurocode.Belastingen
 
 
         // userFriendlyHelpers
-        [TableColumn("Momentaan", order: 30)]
+        [TableColumn("momentaan factoren", order: 30, width: 4.0, weergave: WeergaveEnum.Geen)]
         public string MomentaanFactorenUserFriendly
         {
             get
@@ -52,7 +71,38 @@ namespace Eurocode.Belastingen
         }
 
 
-        [TableColumn("Opgelegde belasting", order: 40)]
+        [TableColumn("|psi|~0~", order: 40, width: 1.0)]
+        public string Mom0
+        {
+            get
+            {
+                if (Type == BelastingGevalTypeEnum.Permanent) return "";
+                else return MomentaanFactoren.Mom0.ToString("0.##");
+            }
+        }
+
+        [TableColumn("|psi|~1~", order: 41, width: 1.0)]
+        public string Mom1
+        {
+            get
+            {
+                if (Type == BelastingGevalTypeEnum.Permanent) return "";
+                else return MomentaanFactoren.Mom1.ToString("0.##");
+            }
+        }
+
+        [TableColumn("|psi|~2~", order: 42, width: 1.0)]
+        public string Mom2
+        {
+            get
+            {
+                if (Type == BelastingGevalTypeEnum.Permanent) return "";
+                else return MomentaanFactoren.Mom2.ToString("0.##");
+            }
+        }
+
+
+
         public string OpgelegdeBelasting
         {
             get
