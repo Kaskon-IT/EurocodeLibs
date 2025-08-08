@@ -28,7 +28,7 @@
         }
     }
 
-    <div style="width:100px;">
+    <div style="width:100px; align-items:center">
         @ChildContent
     </div>
 
@@ -56,8 +56,17 @@
     }
 
 
+    .input-containerXX {
+        display: flex;
+        align-items: center; /* verticaal centreren */
+        gap: 4px; /* optioneel ruimte ertussen */
+    }
+
+
     .input-container {
     display: flex;
+    align-items: center; /* verticaal centreren */
+    gap: 4px; /* optioneel ruimte ertussen */
     /* flex-direction:row; */
     /* align-items: start; */
     margin-right: 5px;
@@ -264,7 +273,7 @@
         LabelType == LabelType.SymbolAndDescription ? "label-left label-longX truncateX" : "label-left";
 
     private string GetContainerClass() =>
-        LabelPosition == LabelPosition.Top ? "input-container align-end" : "input-container align-start";
+        LabelPosition == LabelPosition.Top ? "input-container align-end" : "input-container align-startX";
 
 
 

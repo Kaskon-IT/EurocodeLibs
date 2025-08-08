@@ -4,8 +4,11 @@
 
 @if(SampleProject != null)
 {
+
+
     @* Component *@
-    <EurocodeGrondslagen @bind-Model="@SampleProject.Grondslagen"  />
+    <EurocodeGrondslagen @bind-Model="@SampleProject.Grondslagen"
+                         ToonGevolgEigenschappen=@ToonReadOnlyFields  />
 }
 
 
@@ -15,6 +18,9 @@
 
     //private string html { get; set; } = "";
     private MigraDoc.DocumentObjectModel.Document document = new();
+
+
+    private bool ToonReadOnlyFields { get; set; } = !false;
 
 
     private void HandelModelChanged(){
