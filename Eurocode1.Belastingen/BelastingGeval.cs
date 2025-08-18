@@ -1,4 +1,5 @@
-﻿using CommonLibrary.Extensions;
+﻿using CommonLibrary;
+using CommonLibrary.Extensions;
 using CommonLibrary.Interfaces;
 using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
@@ -6,7 +7,7 @@ using System.ComponentModel;
 
 namespace Eurocode.Belastingen
 {
-    public class BelastingGeval : IContext, IMarkupConvertible
+    public class BelastingGeval : BaseEurocodeContext, IContext, IMarkupConvertible
     {
         public override string ToString()
         {
@@ -16,6 +17,21 @@ namespace Eurocode.Belastingen
         public MarkupString ToMarkupString()
         {
             return new MarkupString(ToString());
+        }
+
+        public override bool IsAkkoord()
+        {
+            return true;
+        }
+
+        protected override void Bereken()
+        {
+            return;
+        }
+
+        protected override bool Valideer()
+        {
+            return true;
         }
 
         public int Nr { get; set; }
@@ -31,6 +47,22 @@ namespace Eurocode.Belastingen
 
         [TableColumn("gebruiksklasse", order: 20, width: 8.0)]
         public GebruiksklasseEnum? Gebruiksklasse { get; set; } = GebruiksklasseEnum.A_gemeenschappelijke_trappen;
+
+        public string GebruiksklasseUserFriendly
+        {
+            get
+            {
+                if (Gebruiksklasse.HasValue)
+                {
+                    return Gebruiksklasse.Value.GetDisplayName();
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+
 
         [TableColumn("opm.", order: 9999, width: 8.0)]
         public string Opmerking { get; set; } = "";

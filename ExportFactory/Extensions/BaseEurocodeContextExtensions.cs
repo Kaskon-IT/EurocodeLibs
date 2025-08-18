@@ -158,6 +158,12 @@ namespace ExportFactory.Extensions
 
         public static void AddToSection<T>(this T obj, SectionContent section, bool isDraaiTabel = true, string title = "", string style = "") where T : BaseEurocodeContext
         {
+            if (obj is null)
+                return;
+
+            if (section is null)
+                return;
+
             // heading
             if (!string.IsNullOrEmpty(title))
             {

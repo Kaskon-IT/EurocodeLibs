@@ -3,13 +3,14 @@
 namespace CommonLibrary
 {
 
+    [Flags]
     public enum MeldingType
     {
-        Opmerking,
-        Waarschuwing,
-        Neutraal,
-        Hint,
-        Error,
+        Opmerking = 1,
+        Waarschuwing = 2,
+        Neutraal = 4,
+        Hint = 8,
+        Error = 16,
     }
 
 

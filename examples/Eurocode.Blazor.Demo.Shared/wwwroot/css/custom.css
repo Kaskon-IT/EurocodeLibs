@@ -181,7 +181,7 @@
 }
 
     .ec-description:after{
-        content: " =";
+        /*content: " =";*/
     }
 
 .ec-article{

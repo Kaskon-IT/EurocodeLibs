@@ -206,7 +206,7 @@
 
                                 //parEenvoudigeTekst.AddText(" ");
                                 MigraDocCreator.AddMarkdownToParagraph(parEenvoudgieSymbol, mapping.Symbol);
-                                parEenvoudgieSymbol.AddText(" =");
+                                //parEenvoudgieSymbol.AddText(" =");
                             }
 
                         }

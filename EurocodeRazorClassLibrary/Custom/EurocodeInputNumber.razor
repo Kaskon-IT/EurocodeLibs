@@ -27,7 +27,7 @@
         {
             @* <span class="label-left">@GetLabel()</span> *@
             <span class="label-left label-long truncate-3">@GetDescription()</span>
-            <span class="symbol-prefix truncate">@GetLabel() =</span>
+            <span class="symbol-prefix truncate">@GetLabel()</span>
         }
     }
 
@@ -223,9 +223,12 @@
     -webkit-box-orient: vertical;
     overflow: hidden; /* Verbergt de rest van de tekst */
 
-    /* font-size: clamp(6px, 1vw, 14px); /* Krimpt naar 4% van de viewport of 16px */ */
+    /* font-size: clamp(6px, 1vw, 14px); /* Krimpt naar 4% van de viewport of 16px */ 
     line-height: 1.3; /* Regelafstand */
     }
+
+
+
 
 
 
@@ -249,8 +252,9 @@
     [Parameter] public EventCallback<T?> ValueChanged { get; set; } // Terugkoppeling van waarde
     [Parameter] public double MinValue { get; set; } = double.MinValue;
     [Parameter] public double MaxValue { get; set; } = double.MaxValue;
-    [Parameter] public string Label { get; set; } = string.Empty;
-    [Parameter] public string Unit { get; set; } = string.Empty;
+    [Parameter] public string Description { get; set; } = string.Empty; // Omschrijving
+    [Parameter] public string Label { get; set; } = string.Empty; // Label voor het invoerveld
+    [Parameter] public string Unit { get; set; } = string.Empty; // Suffix
     [Parameter] public string? Id { get; set; } = Guid.NewGuid().ToString(); // Standaard unieke Id
 
 
@@ -402,7 +406,7 @@
                     await NotifyParentAsync();
                 }
 
-               
+
             }
             else
             {
@@ -574,6 +578,12 @@
 
     public MarkupString? GetLabel(bool withDescription = false)
     {
+
+        if (Mapping == null)
+        {
+            return GetMarkupString(Label, true);
+        }
+
         string markup = $"{Key}";
         if (Mapping != null)
         {
@@ -589,6 +599,12 @@
 
     public MarkupString? GetDescription()
     {
+        if (Mapping == null)
+        {
+            return GetMarkupString(Description, false);
+        }
+
+
         string markup = "";
         if (Mapping != null && Mapping.Description != null)
         {
