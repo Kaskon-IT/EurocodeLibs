@@ -17,7 +17,6 @@ namespace CommonLibrary
         public Guid Id { get; private set; } = Guid.NewGuid();
         public virtual string Heading { get; set; } = "Onbekend";
 
-        //public StandaardMeldingenCatalogus MeldingenCatalogus = new();
         public virtual void Init() { } // Init methode om de context te initialiseren, kan overschreven worden in child-classes
 
         public DateTime AangemaaktOp { get; private set; } = DateTime.UtcNow;
@@ -26,7 +25,6 @@ namespace CommonLibrary
 
         public ObservableCollection<Melding> Meldingen { get; private set; } = [];
         public ObservableCollection<int> MeldingCodes { get; private set; } = [];
-
 
 
         public event Action? OnUpdated; // 🔥 Event voor automatische UI-updates
@@ -115,27 +113,5 @@ namespace CommonLibrary
         public MarkupString ToMarkupString(bool withUnityCheck) => Helpers.MarkupHelper.ToMarkupString(this.ToString(), withUnityCheck);
 
 
-
-        // ❌ Geen ToHtml() hier!
-        // Dit gebeurt in de ExportFactory. Deze common library is bedoeld voor de basisfunctionaliteit van de Eurocode contexten.
-        // en heeft geen directe afhankelijkheid van de ExportFactory of HTML-generatie.
-        // en ook geen referentie naar de MigraDoc library.
-
-        //public virtual MarkupString ToHtml() => ToHtml(true);
-
-        //public virtual MarkupString ToHtml(bool isDraaiTabel)
-        //{
-        //    return ExportFactory.Extensions.BaseEurocodeContextExtensions.ToHtmlTable(this, isDraaiTabel);
-
-        //    return this.ToHtmlTable(isDraaiTabel);
-
-        //    this.ToHtmlTable(isDraaiTabel);
-        //}
-
-
-
-
-        //public abstract MarkupString ToHtml(bool isDraaiTabel = true);
-        //public abstract MarkupString ToHtml(bool isDraaiTabel = true);
     }
 }

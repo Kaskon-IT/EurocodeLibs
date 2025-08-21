@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Helpers;
 using CommonLibrary.Models;
 using ExportFactory.MigraDocContentModels;
 using MigraDoc.DocumentObjectModel;
@@ -26,6 +27,10 @@ namespace ExportFactory.Services
 {
     public class MigraDocCreator
     {
+        private static readonly CustomTempFileCollection _tempFiles = new();
+
+
+
         /// <summary>
         /// Create a document.
         /// </summary>
@@ -38,6 +43,13 @@ namespace ExportFactory.Services
             {
                 GlobalFontSettings.FontResolver = new CustomFontResolver();
             }
+
+
+
+
+            // 1. Maak een TempFileCollection aan. keepFiles: true zorgt dat bestanden niet automatisch verwijderd worden.
+            //var tempFiles = new TempFileCollection(Path.GetTempPath(), keepFiles: true);
+
 
 
             var document = new Document();
@@ -126,6 +138,7 @@ namespace ExportFactory.Services
             {
                 filename += ".pdf";
             }
+
             pdfRenderer.RenderDocument();
             pdfRenderer.PdfDocument.Save(filename);
         }
@@ -1357,7 +1370,61 @@ namespace ExportFactory.Services
                 var logo = section.Headers.Primary.AddImage(coverPage.CompanyLogoPath);
                 logo.Width = "5cm";
                 logo.LockAspectRatio = true;
+
             }
+
+            // Voeg een afbeelding toe via de CustomTempFileCollection
+            string tempImagePath = _tempFiles.AddFile(coverPage.CompanyLogoPath);
+
+            Image image = section.AddImage(tempImagePath);
+            image.LockAspectRatio = true;
+            image.Width = "16cm";  // pas aan naar wens
+            image.Top = ShapePosition.Center;
+            image.Left = ShapePosition.Center;
+
+
+            //var tempFiles = new System.IO.Internal.TempFileCollection(keepFiles: true);
+
+            // Genereer zelf het temp-bestandspad
+            //string tempLogo = Path.Combine(Path.GetTempPath(), $"logo_{Guid.NewGuid()}.png");
+            //File.Copy(originalLogoPath, tempLogo, overwrite: true);
+
+            // Voeg toe aan de collection zodat het bij cleanup wordt beheerd
+            //tempFiles.AddFile(tempLogo, keepFile: true);
+
+            // Voeg het toe aan je MigraDoc document
+            //section.AddImage(tempLogo);
+
+
+
+
+            //var tempFiles = new TempFileCollection(Path.GetTempPath(), keepFiles: true);
+
+            if (!string.IsNullOrEmpty(coverPage.CompanyLogoPath))
+            {
+                // Kopieer het logo naar een tijdelijke file
+                //string tempLogo = tempFiles.AddFile(coverPage.CompanyLogoPath,true);
+                //var tempLogoPath = tempFiles.AddFile(, true);
+
+                var logo = section.Headers.Primary.AddImage(coverPage.CompanyLogoPath);
+                logo.Width = "8cm";
+                logo.LockAspectRatio = true;
+            }
+
+
+
+
+
+
+
+            if (File.Exists(coverPage.CompanyLogoPath))
+            {
+                var logo = section.Headers.Primary.AddImage(coverPage.CompanyLogoPath);
+                logo.Width = "5cm";
+                logo.LockAspectRatio = true;
+            }
+
+
 
             section.AddParagraph(coverPage.Title ?? "", "Title");
             section.AddParagraph(coverPage.Subtitle ?? "", "Subtitle");
