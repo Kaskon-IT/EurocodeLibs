@@ -1,0 +1,30 @@
+﻿@typeparam TModel 
+@using System.Reflection
+@using ExportFactory.Services
+
+<div class="space-y-2">
+    @foreach (var prop in TableColumnAttributeHelper.GetTableColumns<TModel>())
+    {
+        if (Item == null) continue;
+
+        var info = TableColumnAttributeHelper.GetColumnInfo(prop, Item);
+
+        <div class="table-grid" @key="Guid.NewGuid()">
+            <div class="header">@info.Header</div>
+            <div>@info.Symbol</div>
+            <div>@info.Value</div>
+            <div class="article">@info.Article</div>
+            @if (!string.IsNullOrEmpty(info.Formula))
+            {
+                <div><KaTexFormula Value="@info.Formula"/></div>
+            }
+            @* <div><KaTexFormula Value="@info.Article"/></div>  *@
+        </div>
+    }
+</div>
+
+@code
+{ 
+    [Parameter, EditorRequired] public TModel Item { get; set; } = default!; 
+    [Parameter] public EventCallback<TModel> ItemChanged { get; set; }
+}

@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using ExportFactory.Shared;
+using System.Text.Json.Serialization;
+using GREEK = ExportFactory.Services.GreekLetters;
 
 namespace Eurocode.BetonConstructies
 {
@@ -12,7 +14,7 @@ namespace Eurocode.BetonConstructies
         // grootte van de belasting.
 
 
-
+        [TableColumn(HeaderText = "tangentmodulus", Symbol = "<i>E</i><sub>c</sub>", StringFormat = "{0:0.00 GPa}", Article = "3.1.4 (2)", Formula = @"E_{c} = 1.05 \cdot E_{cm}")]
         public double TangentModulus
         {
             get
@@ -31,6 +33,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// (B.1)
         /// </summary>
+        /// 
+        [TableColumn(HeaderText = "kruipcoëfficiënt", Symbol = $"{GREEK.phi}<sub>(t,t<sub>0</sub>)</sub>", StringFormat = "{0:0.0000}", Article = "(B.1)", Formula = @"\varphi(t,t_0) = \varphi_0 \cdot \beta_c(t,t_0)")]
         public double KruipCoefficient
         {
             get
@@ -39,22 +43,13 @@ namespace Eurocode.BetonConstructies
                     return TheoretischeKruipCoefficient * VergelijkingB7;
                 else
                     return KruipEigenWaarde.Value;
-
-
-                //if (string.IsNullOrEmpty(KruipEigenWaarde))
-                //    return TheoretischeKruipCoefficient * VergelijkingB7;
-                //else
-                //{
-                //    double.TryParse(KruipEigenWaarde, out double kruip);
-                //    return kruip;
-                //}
-
             }
         }
 
         /// <summary>
         /// (B.2)
         /// </summary>
+        [TableColumn(HeaderText = "theoretische kruipcoëfficiënt", Symbol = $"{GREEK.phi}<sub>0</sub>", Article = "(B.2)", Formula = @"\varphi_0 = \varphi_{RH} \cdot \beta(f_{cm}) \cdot \beta(t_0)")]
         public double TheoretischeKruipCoefficient
         {
             get
@@ -66,6 +61,9 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// (B.3a) en (B.3b)
         /// </summary>
+        [TableColumn(HeaderText = "factor relatieve vochtigheid", Symbol = $"{GREEK.phi}<sub>RH</sub>",
+                        Article = "(B.3)", Formula = @"\varphi_{RH} = ")]
+
         public double FactorRelatieveVochtigheid
         {
             get
@@ -131,6 +129,8 @@ namespace Eurocode.BetonConstructies
         /// een factor die rekening houdt met het effect van de betonsterkte op de theoretische kruipcoefficient.
         /// = 16,8 / Wortel(fcm)  
         /// </summary>
+        /// 
+        [TableColumn(HeaderText = "factor betonsterkte", Symbol = $"<i>{GREEK.beta}</i>(<i>f</i><sub>cm</sub>)", Article = "(B.4)", Formula = @"\beta(f_{cm}) = \frac{16.8}{\sqrt{f_{cm}}}")]
         public double BetaFcm
         {
             get
@@ -143,6 +143,7 @@ namespace Eurocode.BetonConstructies
         /// (B.5)
         /// een factor die rekening houdt met het effect van de ouderdom van het beton op het tijdstip van belasten op de theoretische kruipcoefficient.
         /// </summary>
+        [TableColumn(HeaderText = "factor ouderdom", Symbol = $"<i>{GREEK.beta}</i>(t<sub>0</sub>)", StringFormat = "{0:0.0000}", Article = "(B.5)", Formula = @"\beta(t_{0}) = \frac{1}{0,1 + t_{0}^{0,20}}")]
         public double BetaOuderdom
         {
             get
@@ -154,6 +155,8 @@ namespace Eurocode.BetonConstructies
 
 
 
+        [TableColumn(
+            HeaderText = "relatieve vochtigheid", Symbol = $"RH", StringFormat = "{0:0 %}")]
         public int RelatieveVochtigheid { get; set; } = 50;
 
 
@@ -164,16 +167,48 @@ namespace Eurocode.BetonConstructies
         [JsonIgnore]
         public int OuderdomBeton_t { get; set; } = 18250;
 
-
+        [TableColumn(HeaderText = "ouderdom beton bij belasten", Symbol = $"<i>t</i><sub>0</sub>", StringFormat = "{0:0}", Article = "")]
         public int OuderdomBetonOpMomentVanBelasten_t0 { get; set; } = 30;
 
+
+        /// <summary>
+        /// (B.10)
+        /// </summary>
+        [TableColumn(HeaderText = "ouderdom beton", Symbol = $"<i>t</i><sub>0T</sub>", StringFormat = "{0:0.0}", Article = "(B.10)")]
+        public double OuderdomBeton_t0T
+        {
+            get
+            {
+                if (TemperatuurPeriodes == null || TemperatuurPeriodes.Count == 0)
+                    return OuderdomBetonOpMomentVanBelasten_t0;
+                else
+                {
+                    double totaal = 0;
+                    foreach (var item in TemperatuurPeriodes)
+                    {
+                        totaal += item.GecorigeerdeOuderdom_tT;
+                    }
+                    return totaal;
+                }
+            }
+        }
+
+
+
+        public List<TemperatuurPeriode> TemperatuurPeriodes { get; set; } = [];
+
+        /// <summary>
+        /// (B.9)
+        /// </summary>
+        /// 
+        [TableColumn(HeaderText = "belastingduur (effect cementsoort)", Symbol = $"<i>t</i><sub>0</sub>", StringFormat = "{0:0.0}",
+            Article = "(B.9)", Formula = "t_0 = t_{0,T} \\cdot \\left( \\frac{9}{2 + t_{0,T}^{1.2}} + 1 \\right)^{\\alpha} \\geq 0.5")]
         public double OuderdomInclusiefCement
         {
             get
             {
-                // NB. (B.10) is niet voorzien, gebruik t0 voor t0T.
-                double t0T = OuderdomBetonOpMomentVanBelasten_t0;
-                return this.GetOuderdomVergelijkingB9(t0T);
+                // NB. (B.10) is WEL voorzien. Indien niet gewenst geen temperatuur-periodes opgeven.
+                return this.GetOuderdomVergelijkingB9(OuderdomBeton_t0T);
             }
         }
 
@@ -227,6 +262,8 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        // \beta_c(t, t_{0}) = \left[ \frac{t - t_{0}}{\beta_H + t - t_{0}} \right]^{0,3}
+
         public double VergelijkingB7
         {
             get
@@ -262,6 +299,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Vergelijking (3.8)
         /// </summary>
+        /// 
+        [TableColumn(HeaderText = "totale krimpverkorting", Symbol = "?", StringFormat = "{0:0.00}", Article = "(3.8)")]
         public double TotaleKrimpverkorting
         {
             get
@@ -274,6 +313,7 @@ namespace Eurocode.BetonConstructies
         /// Vergelijking (3.9)
         /// 
         /// </summary>
+        [TableColumn(HeaderText = "uitdrogingskrimpverkorting", Symbol = "?", StringFormat = "{0:0.00}", Article = "(3.9)")]
         public double UitdrogingsKrimpverkorting
         {
             get
@@ -288,6 +328,7 @@ namespace Eurocode.BetonConstructies
         /// Wordt gebruikt in vergelijking (3.9)
         /// Factor gebruikt bij bepalen van de uitdrogingskrimpverkorting
         /// </summary>
+        [TableColumn(HeaderText = "factor uitdrogingskrimpverkorting", Symbol = $"{GREEK.beta}<sub>ds</sub>", StringFormat = "{0:0.0000}", Article = "(3.10)")]
         public double BetaDs
         {
             get
@@ -375,6 +416,7 @@ namespace Eurocode.BetonConstructies
         /// Vergelijking (B.11)
         /// 
         /// </summary>
+        [TableColumn(HeaderText = "basis verkorting uitdrogingskrimp", Symbol = $"<i>{GREEK.Epsilon}</i><sub>cd,0</sub>", StringFormat = "{0:0.0000}", Article = "(B.11)")]
         public double BasisVerkortingUitdrogingskrimp
         {
             get
@@ -391,6 +433,8 @@ namespace Eurocode.BetonConstructies
         /// Wordt gebruikt in vergelijking (B.11)
         /// Bijlage B.2
         /// </summary>
+        /// 
+        [TableColumn(HeaderText = "?", Symbol = $"{GREEK.beta}<sub>RH</sub>", StringFormat = "{0:0.0000}", Article = "(B.12)")]
         public double BetaRH
         {
             get
@@ -401,6 +445,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        [TableColumn(HeaderText = "", Symbol = $"<i>RH</i><sub>0</sub>", StringFormat = "{0:0 %}", Article = "")]
         public double RH0
         {
             get
@@ -413,6 +458,7 @@ namespace Eurocode.BetonConstructies
         /// Gebruikt in vergelijking (B.11)
         /// Bijlage B.2 Basisvergelijkingen voor het bepalen van de verkorting ten gevolge van uitdrogingskrimp
         /// </summary>
+        [TableColumn(HeaderText = "", Symbol = $"<i>f</i><sub>cmo</sub>", StringFormat = "{0:0}", Article = "")]
         public double Fcmo
         {
             get
@@ -426,6 +472,7 @@ namespace Eurocode.BetonConstructies
         /// Gebruikt in vergelijking (B.11) 
         /// Bijlage B.2 Basisvergelijkingen voor het bepalen van de verkorting ten gevolge van uitdrogingskrimp
         /// </summary>
+        [TableColumn(HeaderText = "", Symbol = $"<i>α</i><sub>ds1</sub>", StringFormat = "{0:0}", Article = "")]
         public double AlphaDs1
         {
             get
@@ -449,6 +496,7 @@ namespace Eurocode.BetonConstructies
         /// Gebruikt in vergelijking (B.11)
         /// Bijlage B.2 Basisvergelijkingen voor het bepalen van de verkorting ten gevolge van uitdrogingskrimp
         /// </summary>
+        [TableColumn(HeaderText = "", Symbol = $"<i>α</i><sub>ds2</sub>", StringFormat = "{0:0.00}", Article = "")]
         public double AlphaDs2
         {
             get
@@ -470,6 +518,7 @@ namespace Eurocode.BetonConstructies
         /// De effectieve elasticiteitsmodulus van beton. (inclusief kruip)
         /// Ec,eff = Ecm / (1 + KruipCoefficient)
         /// </summary>
+        [TableColumn(HeaderText = "effectieve elasticiteitsmodulus", Symbol = $"<i>E</i><sub>c,eff</sub>", StringFormat = "{0:0.00}", Article = "?")]
         public double EcEff
         {
             get
@@ -478,6 +527,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        [TableColumn(HeaderText = "verhouding staal/beton", Symbol = $"<i>α</i><sub>e</sub>", StringFormat = "{0:0.0000}", Article = "?")]
         public double Alphae
         {
             get
@@ -490,6 +540,18 @@ namespace Eurocode.BetonConstructies
 
 
     }
+
+
+    public class TemperatuurPeriode
+    {
+        public int AantalDagen { get; set; } = 1;
+        public double TemperatuurGedurendeDezeDagen { get; set; } = 20;
+
+        // =EXP(-(4000/(273+ Temperatuur ) - 13,65 )) * Dagen
+        public double GecorigeerdeOuderdom_tT => Math.Exp(-(4000 / (273 + TemperatuurGedurendeDezeDagen) - 13.65)) * AantalDagen;
+
+    }
+
 
     public static class KruipEnKrimpExtensions
     {

@@ -1,0 +1,68 @@
+﻿@using Eurocode.BetonConstructies
+@using ExportFactory.MigraDocContentModels
+@using System.Reflection
+@using ExportFactory.Services
+@using ExportFactory.Shared
+@using EurocodeRazorClassLibrary.Shared
+<h3>BetonKruipComponent</h3>
+
+@if(Model != null)
+{
+   
+
+    <ListFor TModel="BetonContext" @bind-Item="Model"></ListFor>
+   
+
+@* <div class="space-y-2">
+    @foreach (var prop in TableColumnAttributeHelper.GetTableColumns<BetonContext>())
+        {
+            var info = TableColumnAttributeHelper.GetColumnInfo(prop, Model);
+
+            <div class="grid grid-cols-4 gap-2 border-b pb-1">
+                <div class="font-semibold">@info.Header</div>
+                <div>@info.Symbol</div>
+                <div>@info.Value</div>
+                <div class="text-gray-500 italic">@info.Article</div>
+            </div>
+        }
+</div>
+
+
+
+
+
+    <div>
+        Hier info over kruip.
+        @foreach (var prop in typeof(BetonContext).GetProperties())
+        {
+            var tableColumn = prop.GetCustomAttribute<TableColumnAttribute>();
+            if (tableColumn is not null)
+            {
+                <p>@((MarkupString)(tableColumn.HeaderText ?? prop.Name)): @(prop.GetValue(Model) ?? "-")</p>
+
+            }
+
+
+           
+           
+        }
+    </div> *@
+
+
+}
+else
+{
+    <p>Model is not set.</p>
+}
+
+
+
+
+
+@code {
+
+    [Parameter] public Eurocode.BetonConstructies.BetonContext? Model { get; set; }
+    [Parameter] public EventCallback<Eurocode.BetonConstructies.BetonContext> ModelChanged { get; set; }
+
+
+}

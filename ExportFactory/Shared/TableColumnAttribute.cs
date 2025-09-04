@@ -148,6 +148,14 @@ namespace ExportFactory.Shared
         public string? HeaderText { get; set; } = null;
         public string? HeaderTextPivot { get; set; } = null;
         public string? StringFormat { get; set; } = null;
+
+
+        // aanvulling
+        public string? Symbol { get; set; } = null;
+        public string? Article { get; set; } = null;
+        public string? Formula { get; set; } = null;
+
+
         public ParagraphAlignment Alignment { get; set; } = ParagraphAlignment.Center;
         public WeergaveEnum Weergave { get; set; } = WeergaveEnum.AlleTabellen;
         public bool Visible { get; set; } = true;
@@ -169,7 +177,10 @@ namespace ExportFactory.Shared
             WeergaveEnum weergave = WeergaveEnum.AlleTabellen,
             double width = 2.00,
             int order = -1,
-            string? key = null
+            string? key = null,
+            string? symbol = null,
+            string? article = null,
+            string? formula = null
             )
         {
             Key = key;
@@ -181,6 +192,9 @@ namespace ExportFactory.Shared
             Weergave = weergave;
             Width = width;
             Order = order;
+            Symbol = symbol;
+            Article = article;
+            Formula = formula;
         }
 
 

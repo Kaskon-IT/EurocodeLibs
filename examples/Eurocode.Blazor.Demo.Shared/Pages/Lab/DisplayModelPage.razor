@@ -1,0 +1,16 @@
+﻿@page "/lab/displaymodel"
+
+<p>Demo voor display van attributen</p>
+
+<h6>Beton</h6>
+<EurocodeRazorClassLibrary.Shared.ListFor TModel="BetonContext" Item="SampleProject.Beton" />
+
+<h6>Dekking en duurzaamheid</h6>
+<EurocodeRazorClassLibrary.Shared.ListFor TModel="BetonDekkingContext" Item="SampleProject.Dekking" />
+
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+}

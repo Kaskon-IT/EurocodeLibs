@@ -1,0 +1,28 @@
+﻿@inject IJSRuntime JS
+
+<div id="@Id" @ref="formulaDiv">@((MarkupString)("$" + Formula + "$"))</div>
+
+@code {
+    [Parameter] public string Formula { get; set; } = string.Empty;
+    [Parameter] public string Id { get; set; } = "formulaDiv";
+
+    private ElementReference formulaDiv;
+
+    /// <summary>
+    /// Render de formule via MathJax
+    /// </summary>
+    public async Task RenderAsync()
+    {
+        // Wacht tot element in DOM staat
+        await Task.Yield();
+
+        try
+        {
+            await JS.InvokeVoidAsync("MathJax.typesetPromise", new[] { formulaDiv });
+        }
+        catch (JSDisconnectedException)
+        {
+            // Veilig negeren als SignalR nog niet connected
+        }
+    }
+}

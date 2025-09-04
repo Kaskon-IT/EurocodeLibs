@@ -1,0 +1,18 @@
+﻿@using EurocodeRazorClassLibrary.Shared
+@page "/katex-demo"
+
+<h3>KaTeX Component Full Demo</h3>
+
+<label>Formule:</label>
+<input @bind="Formula" placeholder="Typ TeX hier..." class="mt-1 p-1 border w-full" />
+
+<p>Inline KaTeX:</p>
+<KaTexFormula @bind-Value="Formula" DisplayMode="false" />
+
+
+<p>Blok KaTeX:</p>
+<KaTexFormula @bind-Value="Formula" DisplayMode="true" />
+
+@code {
+    private string Formula = @"\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}";
+}

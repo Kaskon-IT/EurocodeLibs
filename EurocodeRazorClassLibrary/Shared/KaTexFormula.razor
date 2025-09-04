@@ -1,0 +1,63 @@
+﻿<div @ref="Container"></div>
+
+@code {
+    private ElementReference Container;
+
+    private string _value = string.Empty;
+
+    [Parameter]
+    public string Value
+    {
+        get => _value;
+        set
+        {
+            if (_value != value)
+            {
+                _value = value ?? string.Empty;
+                _ = RenderMathAsync();
+                ValueChanged.InvokeAsync(value);
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public bool DisplayMode { get; set; } = true; // true = blokweergave, false = inline
+
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await RenderMathAsync();
+        }
+    }
+
+    private async Task RenderMathAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_value))
+        {
+            // Leegmaken bij geen content
+            await JS.InvokeVoidAsync("eval", $"document.querySelector('#{Container.Id}').innerHTML = '';");
+            return;
+        }
+
+        try
+        {
+            await JS.InvokeVoidAsync("katex.render", _value, Container, new
+            {
+                throwOnError = false,
+                displayMode = DisplayMode
+            });
+        }
+        catch
+        {
+            // fallback: toon gewoon de tekst
+            await JS.InvokeVoidAsync("eval", $"document.querySelector('#{Container.Id}').innerText = `{_value}`;");
+        }
+    }
+}

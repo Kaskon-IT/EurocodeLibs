@@ -1,0 +1,60 @@
+﻿@inject IJSRuntime JS
+
+<div id="@Id" @ref="formulaDiv">@((MarkupString)("$" + Formula + "$"))</div>
+
+@code {
+    [Parameter] public string Formula { get; set; } = string.Empty;
+    [Parameter] public EventCallback<string> FormulaChanged { get; set; }
+    [Parameter] public string Id { get; set; } = "formulaDiv";
+
+    private ElementReference formulaDiv;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SafeTypesetAsync();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (formulaDiv.Context != null)
+        {
+            await SafeTypesetAsync();
+        }
+    }
+
+    private async Task SafeTypesetAsync()
+    {
+        try
+        {
+            // Kleine delay helpt bij SignalR connect
+            await Task.Delay(50);
+            await JS.InvokeVoidAsync("MathJax.typesetPromise", new[] { formulaDiv });
+        }
+        catch (JSDisconnectedException)
+        {
+            // Veilig negeren als SignalR nog niet connected
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"MathJax render fout: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Haal de SVG-string van deze formule op (voor export, PDF, enz.)
+    /// </summary>
+    public async Task<string?> GetSvgAsync()
+    {
+        try
+        {
+            return await JS.InvokeAsync<string>("formulaHelper.getSvg", Id);
+        }
+        catch (JSDisconnectedException)
+        {
+            return null;
+        }
+    }
+}

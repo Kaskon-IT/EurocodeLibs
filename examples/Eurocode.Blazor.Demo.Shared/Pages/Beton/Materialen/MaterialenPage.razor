@@ -1,7 +1,34 @@
 ﻿@page "/beton/materialen"
 @using Eurocode.Blazor.Demo.Shared.Pages.Beton.Materialen.Examples
+@using EurocodeRazorClassLibrary.Shared
 
 <PageTitle>@App.PageTitle("BetonMaterialen")</PageTitle>
+
+
+
+@* <LaTexSimple /> *@
+@* <LaTexFormula /> *@
+
+
+
+@* <h3>KaTeX Component Demo</h3> *@
+
+@* <KaTexComponent @bind-Value="Formula" /> *@
+
+@* <input @bind="Formula" placeholder="Typ hier een TeX-formule" class="mt-2 p-1 border" /> *@
+
+@* <p>De huidige formule: @Formula</p> *@
+
+<Eurocode.Blazor.Demo.Shared.Pages.Lab.KaTexFormulaDemo />
+
+
+
+@* <LaTexWeergave /> *@
+
+@* 
+<FluentTextField @bind-Value="@LaTex" Label="LaTeX invoer" Placeholder="E=mc^2" /> 
+<div>waarde : @LaTex</div> 
+<FormulaRenderer @bind-Formula="@LaTex" Id="latexDisplay" />  *@ 
 
 <h2>Voorbeelden</h2>
 <DemoSection 
@@ -15,21 +42,61 @@
     Title="Met opgave enums" 
     Component="@typeof(BetonMaterialenMetOpgaveEnums)"></DemoSection>
 
-<BaseEurocodeContextComponent TContext="BetonContext" @bind-Model="@SampleProject.Beton" />
 
-<ApiDocumentation Component="typeof(EurocodeBetonMaterialen)" />
+@* <DemoSection Title="Formule" Component="@typeof(FormulaRenderer)" ComponentParameters="_formuleParameters"/> *@
+@* <DemoSection Title="FormulaTester" Component="@typeof(FormulaTester)" /> *@
 
-<FluentButton OnClick="RunTest">TEST</FluentButton>
-<ExportDocumentComponent Document="@mdd" />
+<DemoSection Title="Kruip" Component="@typeof(BetonKruipComponent)" ComponentParameters="_kruipParameters"/>
 
 
-@code{
-    [CascadingParameter]
+
+
+
+
+
+
+
+@* <BaseEurocodeContextComponent TContext="BetonContext" @bind-Model="@SampleProject.Beton" /> *@
+
+@* <ApiDocumentation Component="typeof(EurocodeBetonMaterialen)" /> *@
+
+@* <FluentButton OnClick="RunTest">TEST</FluentButton> *@
+@* <ExportDocumentComponent Document="@mdd" /> *@
+
+
+    @code{
+        [CascadingParameter]
     public SampleProject? SampleProject { get; set; }
+
+
+        private string LaTex { get; set; } = "E=mc^2";
+    private string Formula = @"\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}";
+
 
     private Dictionary<string, object> _componentParameters1 = new(){
         {"Disabled", !true }
     };
+
+    private Dictionary<string, object> _formuleParameters = new(){
+        {"Formula", "E=mc^2" }
+    };
+
+    protected override void OnInitialized()
+    {
+        if (SampleProject == null)
+        {
+            throw new InvalidOperationException("SampleProject is not set.");
+        }
+
+        _kruipParameters = new()
+        {
+            {"Model", SampleProject.Beton }
+        };  
+    }
+
+    private Dictionary<string, object> _kruipParameters { get; set; } = new();
+
+
 
 
     public MigraDoc.DocumentObjectModel.Document mdd = new();

@@ -46,5 +46,72 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <!-- highlight -->
     <script type="text/javascript" src="_content/Eurocode.Blazor.Demo.Shared/js/highlight-extensions.js"></script>
+
+    <!-- MathJax voor weergave LaTeX/MathML -->
+    <script>
+        window.MathJax = {
+          tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+          svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <script>
+        window.renderLatex = (id, formula) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = formula; // gebruik textContent
+            MathJax.typesetPromise([el]).catch(err => console.error(err.message));
+        };
+    </script>
+    <script>
+        window.formulaHelper = {
+            getSvg: function (id) {
+                return new Promise((resolve, reject) => {
+                    const el = document.getElementById(id);
+                    if (!el) {
+                        reject("Element niet gevonden: " + id);
+                        return;
+                    }
+
+                    try {
+                        // MathJax rendert de formule als <svg> binnen het element
+                        const svg = el.querySelector("svg");
+                        if (!svg) {
+                            reject("SVG niet gevonden in element: " + id);
+                            return;
+                        }
+
+                        // Haal de outerHTML van de SVG
+                        resolve(svg.outerHTML);
+                    } catch (err) {
+                        reject(err.message);
+                    }
+                });
+            }
+        };
+    </script>
+
+    <!-- KaTex voor wiskundige rendering -->
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <!-- KaTeX JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script>
+        window.renderMath = (selector) => {
+          renderMathInElement(document.querySelector(selector), {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false }
+            ]
+          });
+        };
+    </script>
+
+
+
+
+
 </body>
 </html>

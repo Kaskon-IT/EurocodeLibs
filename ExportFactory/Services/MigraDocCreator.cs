@@ -25,6 +25,10 @@ using static ExportFactory.MigraDocContentModels.ExampleDocumentContent;
 
 namespace ExportFactory.Services
 {
+
+
+
+
     public class MigraDocCreator
     {
         private static readonly CustomTempFileCollection _tempFiles = new();
@@ -159,6 +163,8 @@ namespace ExportFactory.Services
             ExportToPdf(document, stream);
             return stream.ToArray();
         }
+
+
 
 
 
