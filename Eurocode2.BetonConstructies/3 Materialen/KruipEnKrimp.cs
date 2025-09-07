@@ -40,7 +40,7 @@ namespace Eurocode.BetonConstructies
             get
             {
                 if (KruipEigenWaarde == null)
-                    return TheoretischeKruipCoefficient * VergelijkingB7;
+                    return TheoretischeKruipCoefficient * BetaC;
                 else
                     return KruipEigenWaarde.Value;
             }
@@ -156,7 +156,7 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(
-            HeaderText = "relatieve vochtigheid", Symbol = $"RH", StringFormat = "{0:0 %}")]
+            HeaderText = "relatieve vochtigheid", Symbol = $"RH", StringFormat = "{0:0 }%")]
         public int RelatieveVochtigheid { get; set; } = 50;
 
 
@@ -174,7 +174,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// (B.10)
         /// </summary>
-        [TableColumn(HeaderText = "ouderdom beton", Symbol = $"<i>t</i><sub>0T</sub>", StringFormat = "{0:0.0}", Article = "(B.10)")]
+        [TableColumn(HeaderText = "ouderdom beton", Symbol = $"<i>t</i><sub>0T</sub>", StringFormat = "{0:0.0}", Article = "(B.10)",
+            Formula = @"t_{T}=\sum\limits_{i=1}^n e^{-(4000/[273 + T(\Delta t_i )] - 13,65)} \cdot \Delta t_i")]
         public double OuderdomBeton_t0T
         {
             get
@@ -193,6 +194,13 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+
+        [TableColumn(HeaderText = "periodes", Symbol = "<i>Δ</i><sub>ti</sub>,<i>T</i>")]
+        public string PeriodesSamenvatting => TemperatuurPeriodes == null || TemperatuurPeriodes.Count == 0
+            ? "geen opgave periodes"
+            : string.Join(", ",
+            TemperatuurPeriodes.Select(p =>
+                $"{p.AantalDagen} dagen {p.TemperatuurGedurendeDezeDagen}°C"));
 
 
         public List<TemperatuurPeriode> TemperatuurPeriodes { get; set; } = [];
@@ -264,13 +272,34 @@ namespace Eurocode.BetonConstructies
 
         // \beta_c(t, t_{0}) = \left[ \frac{t - t_{0}}{\beta_H + t - t_{0}} \right]^{0,3}
 
-        public double VergelijkingB7
+        [TableColumn(HeaderText = "coefficient", Symbol = "<i>β</i><sub>c</sub>(t,t<sub>0</sub>)",
+            Article = "(B.7)",
+            Formula = @"\beta_{c}(t,t_0) = "
+            )]
+        public double BetaC
         {
             get
             {
                 return Math.Pow((double)(OuderdomBeton_t - OuderdomBetonOpMomentVanBelasten_t0) / (double)(BetaH + OuderdomBeton_t - OuderdomBetonOpMomentVanBelasten_t0), 0.3);
             }
         }
+
+
+        public Formula BetaCFormula
+        {
+            get
+            {
+                return new()
+                {
+                    StaticValue = @"\beta_{c}(t,t_0) = ",
+                    DynamicValue = @$"\beta_c({OuderdomBeton_t:0.#},{OuderdomBetonOpMomentVanBelasten_t0:0.#}) = \left[ \frac{{({OuderdomBeton_t:0.#}-{OuderdomBetonOpMomentVanBelasten_t0:0.#})}} {{({BetaH:0.###}+{OuderdomBeton_t:0.#}-{OuderdomBetonOpMomentVanBelasten_t0:0.#})}} \right]^{{0.3}} = {BetaC:0.###}",
+                    Name = "(B.7)"
+                };
+            }
+        }
+
+
+
 
         public double BetaH
         {
@@ -300,7 +329,10 @@ namespace Eurocode.BetonConstructies
         /// Vergelijking (3.8)
         /// </summary>
         /// 
-        [TableColumn(HeaderText = "totale krimpverkorting", Symbol = "?", StringFormat = "{0:0.00}", Article = "(3.8)")]
+        [TableColumn(HeaderText = "totale krimpverkorting",
+            Symbol = "<i>ε</i><sub>cs</sub>", StringFormat = "{0:0.00}",
+            Article = "(3.8)",
+            Formula = @"\epsilon_{cs} = \epsilon_{cd} + \epsilon_{ca}")]
         public double TotaleKrimpverkorting
         {
             get
@@ -313,7 +345,8 @@ namespace Eurocode.BetonConstructies
         /// Vergelijking (3.9)
         /// 
         /// </summary>
-        [TableColumn(HeaderText = "uitdrogingskrimpverkorting", Symbol = "?", StringFormat = "{0:0.00}", Article = "(3.9)")]
+        [TableColumn(HeaderText = "uitdrogingskrimpverkorting", Symbol = "<i>ε</i><sub>cd</sub>(t)", StringFormat = "{0:0.00}",
+            Article = "(3.9)", Formula = @"\epsilon_{cd}(t)= \beta_{ds}(t,t_s) \cdot k_h \cdot \epsilon_{cd,0}")]
         public double UitdrogingsKrimpverkorting
         {
             get
@@ -328,7 +361,11 @@ namespace Eurocode.BetonConstructies
         /// Wordt gebruikt in vergelijking (3.9)
         /// Factor gebruikt bij bepalen van de uitdrogingskrimpverkorting
         /// </summary>
-        [TableColumn(HeaderText = "factor uitdrogingskrimpverkorting", Symbol = $"{GREEK.beta}<sub>ds</sub>", StringFormat = "{0:0.0000}", Article = "(3.10)")]
+        [TableColumn(HeaderText = "factor uitdrogingskrimpverkorting", Symbol = $"{GREEK.beta}<sub>ds</sub>(t,t<sub>s</sub>)", StringFormat = "{0:0.0000}",
+            Article = "(3.10)",
+            Formula = @"\beta_{ds}(t,t_s)=\frac{(t-t_s)}{(t-t_s) + 0.04 \sqrt{h_0^3} }",
+            DynamicFormulaProperty = nameof(BetaDsDynamicFormula)
+            )]
         public double BetaDs
         {
             get
@@ -338,6 +375,9 @@ namespace Eurocode.BetonConstructies
                 return deltaT / (deltaT + hulp);
             }
         }
+        public string BetaDsDynamicFormula => @$"\beta_{{ds}}({OuderdomBeton_t:0.#},{OuderdomBetonBeginUitdrogingsKrimpOfZwelling_ts:0.#})=\frac{{({OuderdomBeton_t:0.#}-{OuderdomBetonBeginUitdrogingsKrimpOfZwelling_ts:0.#})}}{{({OuderdomBeton_t:0.#}-{OuderdomBetonBeginUitdrogingsKrimpOfZwelling_ts:0.#}) + 0.04 \sqrt{{{TheoretischeDikteBeton_h0:0.###}^3}} }} = {BetaDs:0.##}";
+
+
 
         /// <summary>
         /// Tabel 3.3
@@ -375,6 +415,14 @@ namespace Eurocode.BetonConstructies
         /// De autogene krimpverkorting
         /// Is BetaAS * EpsilonCaOneindig
         /// </summary>
+        [TableColumn(
+            HeaderText = "autogene krimpverkorting",
+            Symbol = "<i>ε</i><sub>ca</sub>(t)",
+            StringFormat = "{0:0.000E+00}",
+            Article = "(3.11)",
+            Formula = @"\epsilon_{ca} (t) = \beta_{as}(t) \cdot \epsilon_{ca}(\infty)",
+            DynamicFormulaProperty = nameof(AutogeneKrimpverkortingDynamicFormula)
+            )]
         public double AutogeneKrimpverkorting
         {
             get
@@ -384,11 +432,20 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        public string AutogeneKrimpverkortingDynamicFormula => @$"\epsilon_{{ca}} (t) = {BetaAS:E2} \cdot {EpsilonCaOneindig:E2} = {AutogeneKrimpverkorting:E2}";
+
+
+
         /// <summary>
         /// Vergelijking (3.12)
         /// Deze wordt gebruikt in vergelijking (3.11)
         /// = 2,5 (fck – 10) ×10-6
         /// </summary>
+        [TableColumn(HeaderText = "", Symbol = "<i>ε</i><sub>ca</sub>(∞)",
+            StringFormat = "{0:0.000E0}",
+            Article = "(3.12)",
+            Formula = @"\epsilon_{ca}(\infty) = 2.5 (f_{ck}-10) 10^{-6})"
+            )]
         public double EpsilonCaOneindig
         {
             get
@@ -402,6 +459,11 @@ namespace Eurocode.BetonConstructies
         /// Vergelijking (3.13)
         /// = 1 – exp (– 0,2 t ^0,5)
         /// </summary>
+        [TableColumn(HeaderText = "", Symbol = "<i>β</i><sub>as</sub>(t)",
+            StringFormat = "{0:0.000E0}",
+            Article = "(3.13)",
+            Formula = @"\beta_{as}(t)=1- exp (- 0.2 t^{0.5})"
+            )]
         public double BetaAS
         {
             get
@@ -416,7 +478,10 @@ namespace Eurocode.BetonConstructies
         /// Vergelijking (B.11)
         /// 
         /// </summary>
-        [TableColumn(HeaderText = "basis verkorting uitdrogingskrimp", Symbol = $"<i>{GREEK.Epsilon}</i><sub>cd,0</sub>", StringFormat = "{0:0.0000}", Article = "(B.11)")]
+        [TableColumn(HeaderText = "basis verkorting uitdrogingskrimp", Symbol = $"<i>{GREEK.Epsilon}</i><sub>cd,0</sub>",
+            StringFormat = "{0:0.000E0}",
+            Article = "(B.11)",
+            Formula = @"\epsilon_{cd,0}=0.85 \left[ (220+110 \cdot \alpha_{ds1}) \cdot exp(-\alpha_{ds2} \cdot \frac{f_{cm}}{f_{cmo}}) \right] \cdot 10^{-6} \cdot \beta_{RH}")]
         public double BasisVerkortingUitdrogingskrimp
         {
             get
@@ -445,7 +510,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(HeaderText = "", Symbol = $"<i>RH</i><sub>0</sub>", StringFormat = "{0:0 %}", Article = "")]
+        [TableColumn(HeaderText = "", Symbol = $"<i>RH</i><sub>0</sub>", StringFormat = "{0:0}%", Article = "")]
         public double RH0
         {
             get
@@ -572,6 +637,11 @@ namespace Eurocode.BetonConstructies
 
 
 
+
+    }
+
+    public class FormulaDelete
+    {
 
     }
 

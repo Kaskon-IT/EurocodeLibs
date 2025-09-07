@@ -154,6 +154,8 @@ namespace ExportFactory.Shared
         public string? Symbol { get; set; } = null;
         public string? Article { get; set; } = null;
         public string? Formula { get; set; } = null;
+        public string? DynamicFormulaProperty { get; set; } = null;
+        public Formula? Vergelijking { get; set; } = null;
 
 
         public ParagraphAlignment Alignment { get; set; } = ParagraphAlignment.Center;
@@ -180,7 +182,8 @@ namespace ExportFactory.Shared
             string? key = null,
             string? symbol = null,
             string? article = null,
-            string? formula = null
+            string? formula = null,
+            string? dynamicFormulaProperty = null
             )
         {
             Key = key;
@@ -195,6 +198,7 @@ namespace ExportFactory.Shared
             Symbol = symbol;
             Article = article;
             Formula = formula;
+            DynamicFormulaProperty = dynamicFormulaProperty;
         }
 
 

@@ -1,8 +1,119 @@
 ﻿@typeparam TModel 
 @using System.Reflection
+@using CommonLibrary
 @using ExportFactory.Services
+@using ExportFactory.Shared
 
 <div class="space-y-2">
+    @foreach (var prop in TableColumnAttributeHelper.GetTableColumns<TModel>())
+    {
+        if (Item == null) continue;
+
+        // filter op properties nader toe te voegen
+
+        var info = TableColumnAttributeHelper.GetColumnInfo(prop, Item);
+
+        // Formules bepalen
+        var hasStatic = !string.IsNullOrWhiteSpace(info.Formula);
+        var hasDynamic = !string.IsNullOrWhiteSpace(info.DynamicFormula);
+
+        var hasFormula = info.Vergelijking != null;
+        var tooltipIcon = info.Vergelijking?.Name ?? "?";
+
+        @* Alleen tooltip renderen als er minstens één formule is *@
+        if (hasStatic || hasDynamic || hasFormula)
+        {
+            <div class="table-grid"
+                 style="display:grid; gap:.5rem; grid-template-columns:@GridTemplateColumns"
+                 @key="prop.Name">
+
+                @if (VisibleParts.HasFlag(ColumnPart.Header))
+                {
+                    <div class="header">@info.Header</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Symbol))
+                {
+                    <div>@info.Symbol</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Value))
+                {
+                    <div>@info.Value</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Article))
+                {
+                    <div class="article">@info.Article</div>
+                }
+
+                @* Tooltip voor beide formules *@
+                <div class="tooltip-container">
+                    <span class="tooltip-icon">@tooltipIcon</span>
+                    <div class="tooltip-content">
+                        @if (hasStatic)
+                        {
+                            <div><strong>Statisch:</strong> <KaTexFormula Value="@info.Formula" /></div>
+
+                        }
+                        @if (hasDynamic)
+                        {
+                            <div><strong>Dynamisch:</strong> <KaTexFormula Value="@info.DynamicFormula" /></div>
+                        }
+                        @if (hasFormula)
+                        {
+                            tooltipIcon = info.Vergelijking?.Name;
+                            
+                            <div><strong>vgl. @info.Vergelijking?.Name:</strong> 
+                                @if (info.Vergelijking?.StaticValue != null)
+                                {
+                                    <KaTexFormula Value="@info.Vergelijking?.StaticValue" />
+                                    
+                                }
+                                @if(info.Vergelijking?.DynamicValue != null)
+                                {
+                                    <KaTexFormula Value="@info.Vergelijking?.DynamicValue" />
+                                    
+                                }
+                                </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="table-grid"
+                 style="display:grid; gap:.5rem; grid-template-columns:@GridTemplateColumns"
+                 @key="prop.Name">
+
+                @if (VisibleParts.HasFlag(ColumnPart.Header))
+                {
+                    <div class="header">@info.Header</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Symbol))
+                {
+                    <div>@info.Symbol</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Value))
+                {
+                    <div>@info.Value</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Article))
+                {
+                    <div class="article">@info.Article</div>
+                }
+            </div>
+        }
+    }
+</div>
+
+
+
+@* <div class="space-y-2">
     @foreach (var prop in TableColumnAttributeHelper.GetTableColumns<TModel>())
     {
         if (Item == null) continue;
@@ -18,13 +129,65 @@
             {
                 <div><KaTexFormula Value="@info.Formula"/></div>
             }
-            @* <div><KaTexFormula Value="@info.Article"/></div>  *@
+            else if (!string.IsNullOrEmpty(info.DynamicFormula))
+            {
+                <div><KaTexFormula Value="@info.DynamicFormula" /></div>
+            }
+
         </div>
     }
-</div>
+</div> *@
 
 @code
 { 
     [Parameter, EditorRequired] public TModel Item { get; set; } = default!; 
     [Parameter] public EventCallback<TModel> ItemChanged { get; set; }
+    
+    // zichtbaarheidsmasker voor kolommen
+    [Parameter] public ColumnPart VisibleParts { get; set; } =
+        ColumnPart.Header | ColumnPart.Symbol | ColumnPart.Value | ColumnPart.Article | ColumnPart.Formula;
+
+    private static readonly ColumnPart[] _partsOrder = new[]
+    {
+    ColumnPart.Header, ColumnPart.Symbol, ColumnPart.Value, ColumnPart.Article, ColumnPart.Formula
+    };
+
+    private string GridTemplateColumns =>
+        string.Join(" ",
+            _partsOrder
+               .Where(p => VisibleParts.HasFlag(p))
+            .Select(_ => "1fr")); // i.p.v. auto vs 1fr → altijd 1fr
+
+
+    private BaseEurocodeContext? _previousContext;
+
+    protected override void OnParametersSet()
+    {
+        // afmelden van vorige context
+        if (_previousContext is not null)
+        {
+            _previousContext.OnUpdated -= StateHasChanged;
+        }
+
+        // als Item een BaseEurocodeContext is → aanmelden
+        if (Item is BaseEurocodeContext ctx)
+        {
+            _previousContext = ctx;
+            ctx.OnUpdated += StateHasChanged;
+        }
+        else
+        {
+            _previousContext = null;
+        }
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (_previousContext is not null)
+        {
+            _previousContext.OnUpdated -= StateHasChanged;
+        }
+    }
 }

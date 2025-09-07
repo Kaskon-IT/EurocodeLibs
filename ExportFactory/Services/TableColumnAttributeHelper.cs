@@ -14,13 +14,18 @@ namespace ExportFactory.Services
                 .Where(p => p.GetCustomAttribute<TableColumnAttribute>() != null);
         }
 
-        public static (MarkupString Header, string Value, MarkupString Symbol, string? Article, string? Formula)
+        public static (MarkupString Header, string Value, MarkupString Symbol, string? Article, string? Formula, string? DynamicFormula, Formula? Vergelijking)
             GetColumnInfo(PropertyInfo prop, object model)
         {
             var attr = prop.GetCustomAttribute<TableColumnAttribute>();
+
+
+
             var header = (MarkupString)(attr?.HeaderText ?? prop.Name);
             var symbol = (MarkupString)(attr?.Symbol ?? "");
-            var formula = attr?.Formula;
+            //var formula = attr?.Formula;
+            string? dynamicFormula = null;
+            Formula? vergelijking = null;
 
             var rawValue = prop.GetValue(model);
             string value = "-";
@@ -33,7 +38,32 @@ namespace ExportFactory.Services
                     value = rawValue.ToString() ?? "-";
             }
 
-            return (header, value, symbol, attr?.Article, attr?.Formula);
+            if (attr?.DynamicFormulaProperty != null)
+            {
+                var dynamicProp = model.GetType().GetProperty(attr.DynamicFormulaProperty);
+                if (dynamicProp != null)
+                {
+                    dynamicFormula = dynamicProp.GetValue(model)?.ToString();
+                }
+            }
+
+            var formulaProp = model.GetType().GetProperty(prop.Name + "Formula");
+            if (formulaProp != null)
+            {
+                var formulaValue = formulaProp.GetValue(model);
+                if (formulaValue is Formula f)
+                {
+                    vergelijking = f;
+                }
+            }
+
+
+
+
+
+
+
+            return (header, value, symbol, attr?.Article, attr?.Formula, dynamicFormula, vergelijking);
         }
 
 
