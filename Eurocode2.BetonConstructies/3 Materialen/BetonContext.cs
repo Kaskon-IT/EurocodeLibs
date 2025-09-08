@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Extensions;
 using ExportFactory.Extensions;
 using ExportFactory.Shared;
 using System.ComponentModel;
@@ -203,8 +204,10 @@ namespace Eurocode.BetonConstructies
         /// gemiddelde waarde van de cilinderdruksterkte van beton 
         /// </summary>
         [TableColumn("gem. cilinderdruksterkte", Symbol = "<i>f</i><sub>cm</sub>", HeaderTextPivot = "f~cm~\tgemiddelde cilinderdruksterkte", StringFormat = "{0:0.## N/mm²}", Weergave = WeergaveEnum.DraaiTabel,
-            Article = "Tabel 3.1", Formula = @"f_{cm} = f_{ck} + 8")]
+            Article = "3.1.2", Formula = @"f_{cm} = f_{ck} + 8")]
         public double Fcm { get { return Fck + 8; } }
+        public Formula FcmFormula => new("Tabel 3.1", @"f_{cm} = f_{ck} + 8", @$"f_{{cm}} = {Fck.ToEng()} + 8 = {Fcm.ToEng(3, "N/mm²", isTeX: true)} ");
+
 
         /// <summary>
         /// gemiddelde waarde van de axiale treksterkte van beton 
@@ -227,6 +230,21 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
+        public Formula FctmFormula
+        {
+            get
+            {
+                if (Fck <= 50)
+                {
+                    return new("Tabel 3.1", @"f_{ctm} = 0.3 × f_{ck}^{2/3}", null);
+                }
+                else
+                {
+                    return new("Tabel 3.1", @"f_{ctm} = 2.12 × \ln(1+(f_{cm}/10))", null);
+                }
+            }
+        }
+
 
         public int Tijdstip { get; set; } = 28;
 
@@ -240,11 +258,17 @@ namespace Eurocode.BetonConstructies
         //        return 
         //    }
         //}
-        [TableColumn("5% fractiel", Symbol = "<i>f<i><sub>ctk,0.05</sub>", StringFormat = "{0:0.00 N/mm²}", Article = "Tabel 3.1", Formula = @"f_{ctk,0.05} = 0.7×f_{ctm}")]
+        [TableColumn("5% fractiel", Symbol = "<i>f<i><sub>ctk,0.05</sub>", StringFormat = "{0:0.00 N/mm²}", Article = "3.1", Formula = @"f_{ctk,0.05} = 0.7×f_{ctm}")]
         public double FctkVijfProcent { get { return 0.7 * Fctm; } }    // 5% fractiel
+        public Formula FctkVijfProcentFormula => new("Tabel 3.1", @"f_{ctk,0.05} = 0.7×f_{ctm}", @$"f_{{ctk,0.05}} = 0.7×{Fctm.ToEng()} = {FctkVijfProcent.ToEng(3, "N/mm²", isTeX: true)}");
 
-        [TableColumn("95% fractiel", Symbol = "<i>f<i><sub>ctk,0.95</sub>", StringFormat = "{0:0.00 N/mm²}", Article = "Tabel 3.1", Formula = @"f_{ctk,0.95} = 1.3×f_{ctm}")]
+
+
+
+        [TableColumn("95% fractiel", Symbol = "<i>f<i><sub>ctk,0.95</sub>", StringFormat = "{0:0.00 N/mm²}", Article = "3.1", Formula = @"f_{ctk,0.95} = 1.3×f_{ctm}")]
         public double FctkVijfEnNegentigProcent { get { return 1.3 * Fctm; } } // 95% fractiel
+        public Formula FctkVijfEnNegentigProcentFormula => new("Tabel 3.1", @"f_{ctk,0.95} = 1.3×f_{ctm}", @$"f_{{ctk,0.95}} = 1.3×{Fctm.ToEng()} = {FctkVijfEnNegentigProcent.ToEng(3, "N/mm²", isTeX: true)}");
+
 
         public bool IsOntwerpSituatieBuitenGewoon = false;  // default Blijvend en tijdelijk conform art. 2.4.2.4 (1) Partiële factoren voor materialen 
 
@@ -364,8 +388,11 @@ namespace Eurocode.BetonConstructies
         /// Let op! Ecm is in GPa 
         /// </summary>
         [TableColumn("secans-elasticiteitsmodulus", Symbol = "<i>E</i><sub>cm</sub>", HeaderTextPivot = "E~cm~\tsecans-elasticiteitsmodulus van beton", StringFormat = "{0:0.## GPa}",
-            Article = "Tabel 3.1", Formula = @"E_{cm}=22[f_{cm}/10]^{0.3}")]
+            Article = "3.1")]
         public double Ecm { get { return this.GetEcm(); } }
+        public Formula EcmFormula => new("Tabel 3.1", @"E_{cm}=22[f_{cm}/10]^{0.3}", $@"E_{{cm}}=22[{Fcm.ToEng()}/10]^{{{0.3}}}= {Ecm.ToEng(3, "×10³N/mm²", isTeX: true)}");
+
+
 
         [JsonIgnore]
         [TableColumn("poissonfactor", "\tpoisson factor")]

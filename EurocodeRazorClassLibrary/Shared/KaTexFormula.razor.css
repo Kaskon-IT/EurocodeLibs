@@ -1,0 +1,36 @@
+﻿.formula-container {
+    display: flex;
+    justify-content: space-between; /* links formule, rechts label */
+    align-items: center; /* of use flex-start als je label bovenaan wilt uitlijnen */
+    width: 100%;
+    gap: 0.75rem;
+}
+
+/* de formule neemt beschikbare ruimte en mag krimpen */
+.formula {
+    flex: 1 1 auto;
+    min-width: 0; /* heel belangrijk: laat de formule kruimpen binnen flex */
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: left;
+}
+
+    /* Override KaTeX centering voor display mode en inline */
+    .formula .katex,
+    .formula .katex-display,
+    .formula .katex * {
+        /* forceren dat KaTeX niet centreert */
+        text-align: left !important;
+        margin: 0 !important;
+        width: 100%;
+    }
+
+/* label rechts, niet flex-growen */
+.formula-label {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    font-style: italic;
+    color: #555;
+}

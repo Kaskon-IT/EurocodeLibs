@@ -15,35 +15,54 @@
         font-style: italic;
     }
 
+    .table-grid .symbol {
+        font-family: "KaTeX_Main", "Times New Roman", serif;
+    }
+
+
+.formula-name {
+    margin-left: 0.5rem; /* ruimte tussen formule en naam */
+    font-style: italic; /* optioneel */
+    color: #666; /* optioneel */
+}
+
+
 .tooltip-container {
     position: relative;
     display: inline-block;
     cursor: pointer;
 }
 
+
+
 .tooltip-icon {
-    background: #0078D4;
-    color: white;
-    border-radius: 50%;
+    background: none;
+    color: darkblue;
+    border-radius: 5px;
     padding: 0 6px;
-    font-size: 0.8rem;
+    font-family: "KaTeX_Main", "Times New Roman", serif;
     line-height: 1.2rem;
 }
 
+
+
 .tooltip-content {
     visibility: hidden;
+    
+    /*width: max-content;*/
+    min-width: 11cm;
     width: max-content;
-    max-width: 700px;
+    max-width: 95vw;
     background-color: ghostwhite;
     color: black;
     text-align: left;
     border: 1px solid gray;
-    padding: 0.5rem;
+    padding: 1rem 3rem;
     border-radius: 4px;
     position: absolute;
     z-index: 100;
     top: 120%;
-    left: 50%;
+    left: -25%;
     transform: translateX(-50%);
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }

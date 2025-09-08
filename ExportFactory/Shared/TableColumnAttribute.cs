@@ -147,14 +147,23 @@ namespace ExportFactory.Shared
         public string? Key { get; init; }
         public string? HeaderText { get; set; } = null;
         public string? HeaderTextPivot { get; set; } = null;
+
+
+        // deze grotendeels obsolete maken. Gebruik 1 methode voor ALLE getalnotaties
         public string? StringFormat { get; set; } = null;
 
 
         // aanvulling
         public string? Symbol { get; set; } = null;
         public string? Article { get; set; } = null;
+
+        [Obsolete("use formula instead")]
         public string? Formula { get; set; } = null;
+        [Obsolete("Use formula class instead")]
         public string? DynamicFormulaProperty { get; set; } = null;
+
+        public string? Unit { get; set; } = "?";
+
         public Formula? Vergelijking { get; set; } = null;
 
 

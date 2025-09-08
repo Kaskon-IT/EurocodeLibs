@@ -1,7 +1,14 @@
-﻿<div @ref="Container"></div>
+﻿<div class="formula-container">
+    <div @ref="Container" id="@ContainerId" class="formula"></div>
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <div class="formula-label">@Label</div>
+    }
+</div>
 
 @code {
     private ElementReference Container;
+    private string ContainerId = $"katex-{Guid.NewGuid():N}";
 
     private string _value = string.Empty;
 
@@ -23,8 +30,14 @@
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
 
+
+
+
     [Parameter]
     public bool DisplayMode { get; set; } = true; // true = blokweergave, false = inline
+
+    [Parameter] public string? Label { get; set; }   // <--- nieuw
+
 
     [Inject]
     private IJSRuntime JS { get; set; } = default!;

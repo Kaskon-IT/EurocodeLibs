@@ -14,14 +14,14 @@
         var info = TableColumnAttributeHelper.GetColumnInfo(prop, Item);
 
         // Formules bepalen
-        var hasStatic = !string.IsNullOrWhiteSpace(info.Formula);
-        var hasDynamic = !string.IsNullOrWhiteSpace(info.DynamicFormula);
+        //var hasStatic = !string.IsNullOrWhiteSpace(info.Formula);
+        //var hasDynamic = !string.IsNullOrWhiteSpace(info.DynamicFormula);
 
         var hasFormula = info.Vergelijking != null;
         var tooltipIcon = info.Vergelijking?.Name ?? "?";
 
         @* Alleen tooltip renderen als er minstens één formule is *@
-        if (hasStatic || hasDynamic || hasFormula)
+        if (hasFormula)
         {
             <div class="table-grid"
                  style="display:grid; gap:.5rem; grid-template-columns:@GridTemplateColumns"
@@ -34,7 +34,7 @@
 
                 @if (VisibleParts.HasFlag(ColumnPart.Symbol))
                 {
-                    <div>@info.Symbol</div>
+                    <div class="symbol">@info.Symbol</div>
                 }
 
                 @if (VisibleParts.HasFlag(ColumnPart.Value))
@@ -51,24 +51,18 @@
                 <div class="tooltip-container">
                     <span class="tooltip-icon">@tooltipIcon</span>
                     <div class="tooltip-content">
-                        @if (hasStatic)
-                        {
-                            <div><strong>Statisch:</strong> <KaTexFormula Value="@info.Formula" /></div>
-
-                        }
-                        @if (hasDynamic)
-                        {
-                            <div><strong>Dynamisch:</strong> <KaTexFormula Value="@info.DynamicFormula" /></div>
-                        }
+                        
                         @if (hasFormula)
                         {
                             tooltipIcon = info.Vergelijking?.Name;
                             
-                            <div><strong>vgl. @info.Vergelijking?.Name:</strong> 
+                            <div>
                                 @if (info.Vergelijking?.StaticValue != null)
                                 {
-                                    <KaTexFormula Value="@info.Vergelijking?.StaticValue" />
-                                    
+
+
+                                        <KaTexFormula Value="@info.Vergelijking?.StaticValue" Label="@info.Vergelijking?.Name" />
+
                                 }
                                 @if(info.Vergelijking?.DynamicValue != null)
                                 {
@@ -94,7 +88,7 @@
 
                 @if (VisibleParts.HasFlag(ColumnPart.Symbol))
                 {
-                    <div>@info.Symbol</div>
+                    <div class="symbol">@info.Symbol</div>
                 }
 
                 @if (VisibleParts.HasFlag(ColumnPart.Value))

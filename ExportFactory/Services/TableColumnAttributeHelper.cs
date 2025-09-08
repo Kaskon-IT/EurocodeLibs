@@ -1,5 +1,7 @@
-﻿using ExportFactory.Shared;
+﻿using CommonLibrary.Extensions;
+using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
+using System.Globalization;
 using System.Reflection;
 
 namespace ExportFactory.Services
@@ -33,9 +35,26 @@ namespace ExportFactory.Services
             if (rawValue != null)
             {
                 if (!string.IsNullOrEmpty(attr?.StringFormat))
+                {
                     value = string.Format(attr.StringFormat, rawValue);
+                }
                 else
-                    value = rawValue.ToString() ?? "-";
+                {
+                    TypeCode code = Type.GetTypeCode(rawValue.GetType());
+                    if (code == TypeCode.Int32 || code == TypeCode.Double || code == TypeCode.Single || code == TypeCode.Decimal)
+                    {
+                        double d = Convert.ToDouble(rawValue, CultureInfo.InvariantCulture);
+                        value = d.ToEng(unit: attr?.Unit, isTeX: !true);
+                    }
+                    else
+                    {
+                        value = rawValue.ToString() ?? "-";
+                    }
+                }
+
+
+
+
             }
 
             if (attr?.DynamicFormulaProperty != null)

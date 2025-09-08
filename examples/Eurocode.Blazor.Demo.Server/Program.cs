@@ -3,6 +3,7 @@ using Eurocode.Blazor.Demo.Shared.SampleData;
 using Eurocode.Grondslagen;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.FluentUI.AspNetCore.Components;
+using System.Globalization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +39,10 @@ builder.Services.AddCascadingValue(sp =>
 
 
 //builder.WebHost.UseStaticWebAssets(); // < -- nodig voor wwwroot?
+
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("nl-NL");
+
 
 var app = builder.Build();
 
