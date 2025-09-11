@@ -13,7 +13,21 @@ namespace CommonLibrary.Extensions
 
 
 
-        // ----- Interne DRY-methode -----
+        // ---- Universele helper ----
+        public static double TruncateToSignificantDigits(double value, int digits)
+        {
+            if (value == 0.0 || double.IsNaN(value) || double.IsInfinity(value))
+                return value;
+
+            double abs = Math.Abs(value);
+            int exponent = (int)Math.Floor(Math.Log10(abs));    // orde van grootte
+            double scale = Math.Pow(10, exponent - digits + 1);
+
+            double truncated = Math.Truncate(value / scale) * scale;
+            return truncated;
+        }
+
+        // ---- Formatter ----
         private static string FormatNumber(double? value, int sig, string? unit, bool isTeX)
         {
             if (!value.HasValue)
@@ -24,29 +38,36 @@ namespace CommonLibrary.Extensions
             if (double.IsNaN(v) || double.IsInfinity(v))
                 return v.ToString(_culture);
 
-            double abs = Math.Abs(v);
+            // Eerst trunceren
+            double truncated = TruncateToSignificantDigits(v, sig);
+            double abs = Math.Abs(truncated);
+
             string formatted;
 
             // Wetenschappelijke notatie voor grote of kleine waarden
             if ((abs >= 1000.0) || (abs > 0 && abs < 0.001))
             {
+                int exponent = (int)Math.Floor(Math.Log10(abs));
+                double mantisse = truncated / Math.Pow(10, exponent);
+
                 if (isTeX)
                 {
-                    int exponent = (int)Math.Floor(Math.Log10(abs));
-                    double mantisse = v / Math.Pow(10, exponent);
-                    formatted = mantisse.ToString($"G{sig}", _culture) + $"\\cdot 10^{{{exponent}}}";
+                    formatted = mantisse.ToString($"0.{new string('#', sig - 1)}", _culture)
+                                + $"\\cdot 10^{{{exponent}}}";
                 }
                 else
                 {
-                    formatted = v.ToString($"G{sig}", _culture);
+                    formatted = mantisse.ToString($"0.{new string('#', sig - 1)}", _culture)
+                                + $"E{exponent}";
                 }
             }
             else
             {
                 int decimals = Math.Max(0, sig - (int)Math.Floor(Math.Log10(abs)) - 1);
-                formatted = v.ToString($"0.{new string('#', decimals)}", _culture);
+                formatted = truncated.ToString("0." + new string('#', decimals), _culture);
             }
 
+            // Eenheid toevoegen
             if (!string.IsNullOrEmpty(unit))
             {
                 if (isTeX)
@@ -57,6 +78,8 @@ namespace CommonLibrary.Extensions
 
             return formatted;
         }
+
+
 
         // ----- Double -----
         public static string ToEng(this double value, int? sig = null, string? unit = null, bool isTeX = false)

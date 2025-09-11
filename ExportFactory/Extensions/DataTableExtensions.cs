@@ -165,7 +165,7 @@
                 {
                     Row row = migraDocTable.AddRow();
                     ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
-                    string headerText = propertyWithAttribute.Attribute.HeaderTextPivot ?? propertyWithAttribute.Attribute.HeaderText ?? propertyWithAttribute.Property.Name;
+                    string headerText = propertyWithAttribute.Attribute.Description ?? propertyWithAttribute.Attribute.Label ?? propertyWithAttribute.Property.Name;
 
                     string? format = null;
 
@@ -442,7 +442,7 @@
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
                 {
                     ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
-                    string headerText = propertyWithAttribute.Attribute.HeaderText ?? propertyWithAttribute.Property.Name;
+                    string headerText = propertyWithAttribute.Attribute.Label ?? propertyWithAttribute.Property.Name;
 
                     // add a paragraph with and apply markdown (if any) to it.
                     var par = headerRow.Cells[propertiesWithAttributes.IndexOf(propertyWithAttribute)].AddParagraph();

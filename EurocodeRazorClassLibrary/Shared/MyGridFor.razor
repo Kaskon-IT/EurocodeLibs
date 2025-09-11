@@ -1,0 +1,343 @@
+﻿@typeparam TModel
+@using System.Globalization
+@using System.Reflection
+@using CommonLibrary.Extensions
+@using ExportFactory.Services
+@using ExportFactory.Shared
+
+<table class="fixed-header">
+    <thead>
+        <tr>
+            @if (IsVisible("Label"))
+            {
+                <th>Label</th>
+            }
+            @if (IsVisible("Symbol"))
+            {
+                <th style="text-align:end;">Symbol</th>
+            }
+            @if (IsVisible("Value"))
+            {
+                <th style="text-align:end;">Waarde</th>
+            }
+            @if (IsVisible("Unit"))
+            {
+                <th style="text-align:start;">Eenheid</th>
+            }
+            @if (IsVisible("Article"))
+            {
+                <th>Art.</th>
+            }
+            @if (IsVisible("Formula"))
+            {
+                <th>Formule</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in _rows)
+        {
+            <tr>
+                @if (IsVisible("Label"))
+                {
+                    <td class="custom-tooltip">
+                        @((MarkupString)row.Label)
+                        <div class="tooltip-content">
+
+                            @if (row.Label != null)
+                            {
+                                <b>@row.Label</b><hr />
+                            }
+
+                            @if (row.Description != null)
+                            {
+                            
+                                @((MarkupString)(row.Description ?? "")) <hr />
+                                
+                            }
+
+
+                            <span>
+                                @if (row.Symbol != null)
+                                {
+                                    <span>
+                                        @((MarkupString)@row.Symbol) =
+                                    </span>
+                                }
+                               
+
+                                @row.DisplayValue
+                                @row.Unit
+                                
+                            </span>
+                            @if (row.Formula != null)
+                            {
+                                <hr />
+                                <i>formule</i>
+                                <KaTexFormula Label="@row.Formula.Name"  Value="@row.Formula.GetValue" Small="false" />
+
+                                @if(row.Formula.DynamicValue != null)
+                                {
+                                    @* <KaTexFormula Label="@row.Formula.Name" Value="@row.Formula.DynamicValue" Small="false"/> *@
+                                } 
+                            }
+
+
+                        </div>
+                    </td>
+
+                }
+                @if (IsVisible("Symbol"))
+                {
+                    <td style="text-align:end;">@((MarkupString)(row.Symbol ?? ""))</td>
+
+                }
+                @if (IsVisible("Value"))
+                {
+                  
+                    <td style="text-align:end;">
+                        @if (row.Editable)
+                        {
+                            @RenderInput(row.Property)
+
+                        }
+                        else
+                        {
+                            @row.DisplayValue
+                        }
+                    </td>
+                    
+
+
+                   @*  <td>
+                        @if (row.Editable)
+                        {
+                            <input value="@row.DisplayValue"
+                                   @onchange="(ChangeEventArgs e) => OnValueChanged(row.Property, e?.Value?.ToString())" />
+                        }
+                        else
+                        {
+                           
+                        }
+                    </td> *@
+                }
+                @if (IsVisible("Unit"))
+                {  
+                    <td style="text-align:start;">@row.Unit</td>
+                }
+                @if (IsVisible("Article"))
+                {
+                    <td>@row.Article</td>
+                }
+                @if (IsVisible("Formula")) 
+                {
+                    @if (row.Formula != null)
+                    {
+                        <td>
+                           @row.Formula?.Name
+                           @*  <KaTexFormula Value="@row.Formula?.StaticValue" DisplayMode=true Label ="@row.Formula?.Name" />
+                            @if (row.Formula?.DynamicValue != null)
+                            {
+                                <KaTexFormula Value="@row.Formula?.DynamicValue" DisplayMode=true />
+                            } *@
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                   
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
+    [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
+
+
+
+    // Geef parent de mogelijkheid runtime kolommen te tonen/verbergen.
+    [Parameter] public HashSet<string> VisibleColumns { get; set; } = new();
+    [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
+
+    private bool IsVisible(string col) => VisibleColumns.Contains(col);
+
+    private async Task ToggleColumn(string col)
+    {
+        if (VisibleColumns.Contains(col))
+            VisibleColumns.Remove(col);
+        else
+            VisibleColumns.Add(col);
+
+        await VisibleColumnsChanged.InvokeAsync(VisibleColumns);
+    }
+
+
+
+    private List<PropertyRow> _rows = new();
+
+    protected override void OnParametersSet()
+    {
+        VisibleColumns ??= new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
+        // caching zodat we stabiel itereren en makkelijk kunnen refreshen na set
+        _rows = TableColumnAttributeHelper.GetRows(Model!)
+        .OrderByNatural(r=>r.Article)
+        .ThenByNatural(r=>r.Formula?.Name)
+        .ToList();
+    }
+
+
+    private async void OnValueChanged(PropertyInfo property, string? newValue)
+    {
+        if (newValue is null) return;
+
+        var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+        if (TryConvertStringToType(newValue, targetType, out var converted))
+        {
+            property.SetValue(Model, converted);
+            // refresh rows cache to reflect the new value
+            _rows = TableColumnAttributeHelper.GetRows(Model!).ToList();
+
+            if (ModelChanged.HasDelegate)
+                await ModelChanged.InvokeAsync(Model);
+            StateHasChanged();
+        }
+        else
+        {
+            // fallback / validation: nu doen we niets; je kan hier een foutmelding tonen
+        }
+    }
+
+    private bool TryConvertStringToType(string s, Type targetType, out object? result)
+    {
+        result = null;
+
+        if (targetType.IsEnum)
+        {
+            try
+            {
+                result = Enum.Parse(targetType, s, ignoreCase: true);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        if (targetType == typeof(string))
+        {
+            result = s;
+            return true;
+        }
+
+        var nfi = CultureInfo.InvariantCulture;
+
+        if (targetType == typeof(int))
+        {
+            if (int.TryParse(s, NumberStyles.Integer, nfi, out var v)) { result = v; return true; }
+            return false;
+        }
+        if (targetType == typeof(long))
+        {
+            if (long.TryParse(s, NumberStyles.Integer, nfi, out var v)) { result = v; return true; }
+            return false;
+        }
+        if (targetType == typeof(double))
+        {
+            if (double.TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands, nfi, out var v)) { result = v; return true; }
+            return false;
+        }
+        if (targetType == typeof(float))
+        {
+            if (float.TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands, nfi, out var v)) { result = v; return true; }
+            return false;
+        }
+        if (targetType == typeof(decimal))
+        {
+            if (decimal.TryParse(s, NumberStyles.Number, nfi, out var v)) { result = v; return true; }
+            return false;
+        }
+        if (targetType == typeof(bool))
+        {
+            if (bool.TryParse(s, out var v)) { result = v; return true; }
+            return false;
+        }
+
+        try
+        {
+            result = Convert.ChangeType(s, targetType, CultureInfo.InvariantCulture);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private RenderFragment RenderInput(PropertyInfo property) => builder =>
+    {
+        var value = property.GetValue(Model);
+        var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+        // Enum → select
+        if (targetType.IsEnum)
+        {
+            builder.OpenElement(0, "select");
+            builder.AddAttribute(1, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
+                e => OnValueChanged(property, e?.Value?.ToString())));
+
+            int seq = 2;
+            foreach (var enumVal in Enum.GetValues(targetType))
+            {
+                builder.OpenElement(seq++, "option");
+                builder.AddAttribute(seq++, "value", enumVal);
+                builder.AddAttribute(seq++, "selected", value?.ToString() == enumVal.ToString());
+                builder.AddContent(seq++, enumVal.ToString());
+                builder.CloseElement();
+            }
+
+            builder.CloseElement();
+        }
+        // Boolean → checkbox
+        else if (targetType == typeof(bool))
+        {
+            builder.OpenElement(0, "input");
+            builder.AddAttribute(1, "type", "checkbox");
+            builder.AddAttribute(2, "checked", (bool)(value ?? false));
+            builder.AddAttribute(3, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
+                e => OnValueChanged(property, e?.Value?.ToString())));
+            builder.CloseElement();
+        }
+        // Alles anders → input type afhankelijk van TypeCode
+        else
+        {
+            string typeAttr = Type.GetTypeCode(targetType) switch
+            {
+                TypeCode.Int32 or TypeCode.Double or TypeCode.Single or TypeCode.Decimal => "number",
+                TypeCode.DateTime => "date",
+                _ => "text"
+            };
+
+            string valueAttr = TypeCode.DateTime == Type.GetTypeCode(targetType) && value is DateTime dt
+                ? dt.ToString("yyyy-MM-dd")
+                : value?.ToString() ?? "";
+
+            builder.OpenElement(0, "input");
+            builder.AddAttribute(1, "type", typeAttr);
+            builder.AddAttribute(2, "value", valueAttr);
+            builder.AddAttribute(3, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
+                e => OnValueChanged(property, e?.Value?.ToString())));
+            builder.CloseElement();
+        }
+    };
+
+
+
+    
+
+
+}

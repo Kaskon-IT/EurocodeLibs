@@ -1,10 +1,20 @@
-﻿<div class="formula-container">
+﻿@* <div class="formula-container">
     <div @ref="Container" id="@ContainerId" class="formula"></div>
     @if (!string.IsNullOrWhiteSpace(Label))
     {
         <div class="formula-label">@Label</div>
     }
+</div> *@
+
+<div class="formula-container">
+    <div @ref="Container" id="@ContainerId" class="@GetCssClass()"></div>
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <div class="formula-label">@Label</div>
+    }
 </div>
+
+
 
 @code {
     private ElementReference Container;
@@ -37,6 +47,10 @@
     public bool DisplayMode { get; set; } = true; // true = blokweergave, false = inline
 
     [Parameter] public string? Label { get; set; }   // <--- nieuw
+    [Parameter] public bool Small { get; set; } = true;
+
+    private string GetCssClass() => Small ? "katex-small" : "katex";
+
 
 
     [Inject]
@@ -54,10 +68,17 @@
     {
         if (string.IsNullOrWhiteSpace(_value))
         {
-            // Leegmaken bij geen content
-            await JS.InvokeVoidAsync("eval", $"document.querySelector('#{Container.Id}').innerHTML = '';");
+            // nieuw, betere aanpak:
+            await JS.InvokeVoidAsync("setInnerHtml", Container, "");
             return;
+
+            // Leegmaken bij geen content
+            // oude mogelijk foutieve aanpak:
+            //await JS.InvokeVoidAsync("eval", $"document.querySelector('#{Container.Id}').innerHTML = '';");
+            //return;
         }
+
+        var cssClass = Small ? "katex-small" : "katex";
 
         try
         {

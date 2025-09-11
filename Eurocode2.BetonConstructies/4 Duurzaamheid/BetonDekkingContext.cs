@@ -56,7 +56,12 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("constructieklasse", Order = 20, Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("constructieklasse",
+            Order = 20,
+            Weergave = WeergaveEnum.DraaiTabel,
+            Article = "4.4.1.2 (5)"
+
+            )]
         public string ConstructieklasseUserFriendlyName
         {
             get
@@ -113,7 +118,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien plaatgeometrie van toepassing dan een vermindering van 1 op de constructieklasse.
         /// </summary>
-        [TableColumn("plaatgeometrie?", headerTextPivot: "-", Order = 2, Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("plaatgeometrie?", description: "-", Order = 2, Weergave = WeergaveEnum.DraaiTabel)]
         public bool IsPlaatGeometrie
         {
             get => _isPlaatGeometrie;
@@ -156,7 +161,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("milieuklasse", Order = 1)]
+        [TableColumn(Label = "milieuklassen", Article = "4.2 (2)")]
         public string MilieuklassenUserFriendlyName
         {
             get
@@ -177,23 +182,34 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// De nominale betondekking (c,nom) is de minimale betondekking inclusief uitvoeringstoleranties (Δc,dev)
         /// </summary>
-        [TableColumn(
-            headerText: "c~nom~ [mm]",
-            HeaderTextPivot = "c~nom~\tnominale dekking art. 4.4.1.1",
-            Order = 1, StringFormat = "0")]
+        [TableColumn(Label = "nominale dekking",
+            Symbol = "<i>c</i><sub>nom</sub>",
+            Description = "nominale dekking",
+            Article = "4.4.1.1",
+            Unit = "mm"
+            )]
         public double DekkingNom
         {
             get => _dekkingNom;
             private set => _dekkingNom = value;
         }
+        public Formula DekkingNomFormula
+        {
+            get
+            {
+                return new()
+                {
+                    Name = "(4.1)",
+                    StaticValue = @"c_{nom} = c_{min} + \Delta c_{dev}",
+                    DynamicValue = @$"c_{{nom}} = {DekkingMin} + {DekkingToeslagUitvoeringsToleranties} = {DekkingNom} \;mm"
+                };
+            }
+        }
 
         /// <summary>
         /// Is de minimumdekking op basis van de milieu-omstandigheden, zie 4.4.1.2 (5)
         /// </summary>
-        [TableColumn(
-            headerText: "c~min,dur~ [mm]",
-            headerTextPivot: "c~min,dur~\tminimumdekking duurzaamheid art. 4.4.1.2 (5)",
-            order: 41, StringFormat = "0")]
+        [TableColumn(Label = "dekking duurzaamheid", Symbol = "<i>c</i><sub>min,dur</sub>", Unit = "mm", Article = "4.4.1.2 (5)")]
         public double DekkingMinDuurzaamheid
         {
             get { return this.GetCminDur(); }
@@ -207,22 +223,43 @@ namespace Eurocode.BetonConstructies
         /// zie 4.4.1.2
         /// </summary>
         [TableColumn(
-            headerText: "c~min~ [mm]",
-            headerTextPivot: "c~min~\tminimale dekking art.4.4.1.2",
-            order: 39, StringFormat = "0")]
+            Label = "minimale dekking",
+            Symbol = "<i>c</i><sub>min</sub>",
+            Unit = "mm",
+            Description = "minimale dekking art.4.4.1.2",
+            Article = "4.4.1.2"
+            )]
         public double DekkingMin
         {
             get { return this.GetMinimaleBetondekking(); }
         }
+        public Formula DekkingMinFormula
+        {
+            get
+            {
+                return new()
+                {
+                    Name = "(4.2)",
+                    StaticValue = @"c_\text{min} = \max \{ c_{\text{min},b} \; ; \; c_{\text{min},dur} + \Delta c_{dur,\gamma} - \Delta c_{dur,st} - \Delta c_{dur,add} \; ; \; 10 \, \}",
+                    DynamicValue = $@"c_\text{{min}} = \max \{{ {DekkingMinAanhechting} \; ; \; {DekkingMinDuurzaamheid} + {BetondekkingMinVeiligheidsmarge} - {BetondekkingMinRoestvastStaal} - {BetondekkingMinBescherming} \; ; \; 10  \}} = {DekkingMin}"
+
+                };
+            }
+        }
+
+
+
 
 
         /// <summary>
         /// Minimale dekking tbv aanhechting betonstaal
         /// </summary>
-        [TableColumn(
-            headerText: "c~min,b~ [mm]",
-            headerTextPivot: "c~min,b~\tminimumdekking aanhechting art. 4.4.1.2 (3)",
-            order: 40, StringFormat = "0")]
+        [TableColumn(Label = "dekking aanhechting",
+            Symbol = "<i>c</i><sub>min,b</sub>",
+            Unit = "mm",
+            Description = "minimumdekking aanhechting op basis van aanhechtingseisen",
+            Article = "4.4.1.2 (3)"
+            )]
         public double DekkingMinAanhechting
         {
             get
@@ -237,9 +274,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Verhoging van de dekking tbv uitvoeringstoleranties (Δc,dev) volgens 4.4.1.3 (1)
         /// </summary>
-        [TableColumn(
-            headerText: "|Delta|c~dev~ [mm]",
-            headerTextPivot: "|Delta|c~dev~\t toeslag uitvoeringstoleranties art. 4.4.1.3(1)", order: 50, StringFormat = "0")]
+        [TableColumn(Label = "toeslag tolerantie",
+            Symbol = "Δc<sub>dev</sub>",
+            Unit = "mm",
+            Description = "Voor het berekenen van de nominale dekking, <i>c</i><sub>nom</sub>, moet de minimumdekking bij het ontwerp zijn vermeerderd om rekening te houden met uitvoeringstoleranties (Δc<sub>dev</sub>).",
+            Article = "4.4.1.3 (1)P"
+
+            )]
         public double DekkingToeslagUitvoeringsToleranties { get { return this.Grondslagen.NationaleBijlage.GetUitvoeringstoleraties(); } }
 
         /// <summary>
@@ -285,10 +326,12 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// De diameter van de staaf of gelijkwaardige diameter van de staafbundel.
         /// </summary>
-        [TableColumn(
-            headerText: "Ø~eq~",
-            headerTextPivot: "Ø~eq~\tgelijkwaardige diameter",
-            Order = 24, StringFormat = "0.##")]
+        [TableColumn(Label = "staafdiameter",
+            Symbol = "Ø<sub>eq</sub>",
+            Description = "gelijkwaardige diameter, gebruikt voor bepalen van de minimumdekking met betrekking tot aanhechting",
+            Article = "4.4.1.2 (3)",
+            Unit = "mm",
+            Order = 24)]
         public double WapeningDiameterGelijkwaardig
         {
             get => _wapeningDiameterGelijkwaardig;
@@ -306,9 +349,13 @@ namespace Eurocode.BetonConstructies
         /// De grootste korreldiameter. Heeft invloed op de dekking c,min,b 
         /// </summary>
         [TableColumn(
-            headerText: "korrel",
-            headerTextPivot: "Grootste korrel",
-            Order = 5, StringFormat = "≤ 0 mm", Weergave = WeergaveEnum.DraaiTabel)]
+            label: "korrelafmeting",
+            description: "de nominale maximale korrelafmeting",
+            Symbol = "<i>d</i><sub>g</sub>",
+            Order = 5,
+            Unit = "mm",
+            Article = "4.4.1.2 (3)",
+            Weergave = WeergaveEnum.DraaiTabel)]
         public double GrootsteKorrelDiameter
         {
             get => _grootsteKorrelDiameter;

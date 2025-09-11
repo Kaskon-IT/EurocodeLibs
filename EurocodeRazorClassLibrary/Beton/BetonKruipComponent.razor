@@ -4,11 +4,23 @@
 @using ExportFactory.Services
 @using ExportFactory.Shared
 @using EurocodeRazorClassLibrary.Shared
+
 <h3>BetonKruipComponent</h3>
 
 @if(Model != null)
 {
    
+    // Gebruiker moet kunnen instellen:
+    // - Cementsoort
+    // - tijd van belasten
+    // 
+    //
+    <FluentSelectEnum TEnum="CementklasseEnum" @bind-EnumSelectedValue="Model.CementKlasse" Label="Cementklasse"></FluentSelectEnum>
+    <FluentNumberField @bind-Value="Model.OuderdomBeton_t" />
+    <FluentNumberField @bind-Value="Model.OuderdomBetonOpMomentVanBelasten_t0" />
+
+
+
 
     <ListFor TModel="BetonContext" @bind-Item="Model"></ListFor>
    

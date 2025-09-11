@@ -1,6 +1,7 @@
 ﻿using CommonLibrary;
 using ExportFactory.Services;
 using MigraDoc.DocumentObjectModel;
+using System.Reflection;
 
 
 namespace ExportFactory.Shared
@@ -71,9 +72,6 @@ namespace ExportFactory.Shared
 
 
 
-
-
-
     public class AttributesMapping
     {
         public AttributesMapping()
@@ -141,20 +139,64 @@ namespace ExportFactory.Shared
     }
 
 
+    public record TableColumnDto(
+        string Label,
+        string Value,
+        string? Description,
+        string? Symbol,
+        string? Article,
+        string? Unit,
+        Formula? Formula
+    );
+
+    public record PropertyRow(
+        string Label,
+        string? Symbol,
+        string? Unit,
+        object? RawValue,
+        string DisplayValue,
+        string? Description,
+        string? Article,
+        Formula? Formula,
+        bool Editable,
+        PropertyInfo Property
+    );
+
+
+
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
     public class TableColumnAttribute : Attribute
     {
+        [Obsolete("vervang door de info uit deze attribute zelf te halen en niet extern")]
         public string? Key { get; init; }
-        public string? HeaderText { get; set; } = null;
-        public string? HeaderTextPivot { get; set; } = null;
 
 
-        // deze grotendeels obsolete maken. Gebruik 1 methode voor ALLE getalnotaties
+        /// <summary>
+        /// Korte label voor de kolomkop of voor het inputveld en dergelijke.
+        /// </summary>
+        public string? Label { get; set; } = null;
+
+        /// <summary>
+        /// Langere omschrijving voor de property. Te gebruiken in tooltips en dergelijke.
+        /// </summary>
+        public string? Description { get; set; } = null;
+
+
+        /// <summary>
+        /// Optie om een eigen stringformat op te geven. 
+        /// Indien leeg (null) gelaten wordt de globale standaard gebruikt voor getalnotatie.
+        /// </summary>
         public string? StringFormat { get; set; } = null;
 
 
-        // aanvulling
+        /// <summary>
+        /// Een symbool in Markdown notatie (kan ook LaTeX zijn)
+        /// </summary>
         public string? Symbol { get; set; } = null;
+
+        /// <summary>
+        /// Mogelijke verwijzing naar een artikel in de norm
+        /// </summary>
         public string? Article { get; set; } = null;
 
         [Obsolete("use formula instead")]
@@ -162,15 +204,32 @@ namespace ExportFactory.Shared
         [Obsolete("Use formula class instead")]
         public string? DynamicFormulaProperty { get; set; } = null;
 
-        public string? Unit { get; set; } = "?";
+        /// <summary>
+        /// De mogelijkheid om een eenheid op te geven die achter het getal komt.
+        /// Standaard lege string (geen eenheid).
+        /// </summary>
+        public string? Unit { get; set; } = "";
 
-        public Formula? Vergelijking { get; set; } = null;
+
+        // niet nodig, Formules worden buiten deze attribute om afgehandeld
+        // De regel is, dat een property met de naam <prop.Name>Formula gezocht wordt
+        // bijvoorbeeld bij een property "ScheurwijdteBerekend" wordt gezocht naar "ScheurwijdteBerekendFormula"
+        //public Formula? Vergelijking { get; set; } = null;
 
 
+        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public ParagraphAlignment Alignment { get; set; } = ParagraphAlignment.Center;
+
+        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public WeergaveEnum Weergave { get; set; } = WeergaveEnum.AlleTabellen;
+
+        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public bool Visible { get; set; } = true;
+
+        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public double Width { get; set; } = 3.00;
+
+        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public int Order { get; set; } = -1;
 
 
@@ -180,8 +239,8 @@ namespace ExportFactory.Shared
         }
 
         public TableColumnAttribute(
-            string? headerText = null,
-            string? headerTextPivot = null,
+            string? label = null,
+            string? description = null,
             string? stringFormat = null,
             ParagraphAlignment alignment = ParagraphAlignment.Left,
             bool visible = true,
@@ -190,14 +249,12 @@ namespace ExportFactory.Shared
             int order = -1,
             string? key = null,
             string? symbol = null,
-            string? article = null,
-            string? formula = null,
-            string? dynamicFormulaProperty = null
+            string? article = null
             )
         {
             Key = key;
-            HeaderText = headerText;
-            HeaderTextPivot = headerTextPivot;
+            Label = label;
+            Description = description;
             StringFormat = stringFormat;
             Alignment = alignment;
             Visible = visible;
@@ -206,8 +263,6 @@ namespace ExportFactory.Shared
             Order = order;
             Symbol = symbol;
             Article = article;
-            Formula = formula;
-            DynamicFormulaProperty = dynamicFormulaProperty;
         }
 
 

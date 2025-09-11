@@ -38,11 +38,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Klasse N (Normal)
         /// </summary>
-        [Description("Klasse N (Normal)")] N = 2,
+        [Description("Klasse N (Normal)")]
+        N = 2,
         /// <summary>
         /// Klasse S (Slow)
         /// </summary>
-        [Description("Klasse S (Slow")] S = 3,
+        [Description("Klasse S (Slow)")]
+        S = 3,
     }
 
 

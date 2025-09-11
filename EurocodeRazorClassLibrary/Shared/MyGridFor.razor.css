@@ -1,0 +1,40 @@
+﻿.fixed-header {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed; /* voorkomt verspringen van kolommen */
+}
+
+    .fixed-header th {
+        position: sticky;
+        top: 0; /* plakt bovenaan */
+        background: #f2f2f2; /* achtergrond zodat tekst leesbaar blijft */
+        z-index: 2; /* boven andere cellen */
+    }
+
+    .fixed-header td,
+    .fixed-header th {
+        border: 1px solid #ccc;
+        padding: 8px;
+    }
+
+.custom-tooltip {
+    position: relative;
+}
+
+.tooltip-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #f0f0f0;
+    color: #000000;
+    border: 1px solid;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: wrap;
+    z-index: 10;
+}
+
+.custom-tooltip:hover .tooltip-content {
+    display: block;
+}

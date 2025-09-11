@@ -107,7 +107,21 @@
             ]
           });
         };
+
     </script>
+    
+    <!-- Gebruikt in KaTeX voor leegmaken element -->
+    <script>
+    window.setInnerHtml = (el, html) => {
+        if (el) el.innerHTML = html;
+    };
+
+    window.setInnerText = (el, text) => {
+        if (el) el.innerText = text;
+    };
+    </script>
+
+
 
 
 

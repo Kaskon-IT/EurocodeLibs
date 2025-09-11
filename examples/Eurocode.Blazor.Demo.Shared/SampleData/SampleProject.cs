@@ -18,6 +18,9 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
         public string Number { get; set; } = "3-TXZ-46";
 
 
+
+
+
         public DocumentInfo DocumentInfo { get; set; } = new();
 
 
@@ -77,7 +80,25 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
 
 
 
-
+        public List<BaseEurocodeContext> DemoContexten
+        {
+            get
+            {
+                return new List<BaseEurocodeContext>()
+                {
+                    Grondslagen,
+                    Belastingen,
+                    Beton,
+                    Dekking,
+                    WapeningContext,
+                    BendingResults,
+                    DwarskrachtDemo,
+                    OpleggingDemo,
+                    ScheurwijdteDemo,
+                    GrenswaardeSlankheidDemo
+                };
+            }
+        }
 
 
 

@@ -215,7 +215,7 @@ namespace ExportFactory.Services
             { "GammaC",             new(sym : "|gamma|~C~",     desc : "partiële factor voor beton",        norm : "EC2",   art : "2.4.2.4 (1)",    vgl : "tabel 2.1N",     format : null) },
             { "GammaS",             new(sym : "|gamma|~S~",     desc : "partiële factor voor betonstaal",   norm : "EC2",   art : "2.4.2.4 (1)",    vgl : "tabel 2.1N",     format : null) },
             // K
-            { "Kruipfactor",        new(sym : "|phi|(t,t~0~)",  desc : "kruipcoëfficiënt",                  norm : "EC2",   art : "Bijlage B.1",      vgl : "(B.1)",          format: null) },
+            { "Kruipfactor",        new(sym : "|phi|(t,t~0~)",  desc : "kruipcoëfficiënt",                  norm : "EC2",   art : "Bijlage B",      vgl : "(B.1)",          format: null) },
 
 
             // Dekking en duurzaamheid
@@ -313,17 +313,17 @@ namespace ExportFactory.Services
             { "e", new() },
 
 
-            { "BijlageB1", new(sym : "|phi|(t,t~0~)", desc : "kruipcoëfficiënt", norm : "EC2", art : "Bijlage B.1", vgl: "(B.1)", format : "") },
-            { "BijlageB2", new(sym : "|phi|~0~", desc : "theoretische kruipcoëfficiënt", norm : "EC2", art : "Bijlage B.1", vgl: "(B.2)", format : "") },
-            { "BijlageB3", new(sym : "|phi|~RH~", desc : "factor relatieve vochtigheid", norm : "EC2", art : "Bijlage B.1", vgl: "(B.3)", format : "") },
-            { "BijlageB4", new(sym : "|beta|(f~cm~)", desc : "factor betonsterkte", norm : "EC2", art : "Bijlage B.1", vgl: "(B.4)", format : "") },
-            { "BijlageB5", new(sym : "|beta|(t~0~)", desc : "factor ouderdom beton", norm : "EC2", art : "Bijlage B.1", vgl: "(B.5)", format : "") },
+            { "BijlageB1", new(sym : "|phi|(t,t~0~)", desc : "kruipcoëfficiënt", norm : "EC2", art : "Bijlage B", vgl: "(B.1)", format : "") },
+            { "BijlageB2", new(sym : "|phi|~0~", desc : "theoretische kruipcoëfficiënt", norm : "EC2", art : "Bijlage B", vgl: "(B.2)", format : "") },
+            { "BijlageB3", new(sym : "|phi|~RH~", desc : "factor relatieve vochtigheid", norm : "EC2", art : "Bijlage B", vgl: "(B.3)", format : "") },
+            { "BijlageB4", new(sym : "|beta|(f~cm~)", desc : "factor betonsterkte", norm : "EC2", art : "Bijlage B", vgl: "(B.4)", format : "") },
+            { "BijlageB5", new(sym : "|beta|(t~0~)", desc : "factor ouderdom beton", norm : "EC2", art : "Bijlage B", vgl: "(B.5)", format : "") },
 
-            { "BijlageB6", new(sym : "h~0~", desc : "theoretische dikte", norm : "EC2", art : "Bijlage B.1", vgl: "(B.6)", format : "") },
-            { "BijlageB7", new(sym : "|beta|~c~(t,t~0~)", desc : "coëfficiënt ontwikkeling kruip in de tijd na belasten", norm : "EC2", art : "Bijlage B.1", vgl: "(B.7)", format : "") },
-            { "BijlageB8", new(sym : "", desc : "", norm : "EC2", art : "Bijlage B.1", vgl: "(B.8)", format : "") },
-            { "BijlageB9", new(sym : "t~0~", desc : "ouderdom in dagen", norm : "EC2", art : "Bijlage B.1", vgl: "(B.9)", format : "0\tdagen") },
-            { "BijlageB10", new(sym : "t~T~", desc : "voor temperatuur gecorrigeerde ouderdom van het beton", norm : "EC2", art : "Bijlage B.1", vgl: "(B.10)", format : "0\tdagen") },
+            { "BijlageB6", new(sym : "h~0~", desc : "theoretische dikte", norm : "EC2", art : "Bijlage B", vgl: "(B.6)", format : "") },
+            { "BijlageB7", new(sym : "|beta|~c~(t,t~0~)", desc : "coëfficiënt ontwikkeling kruip in de tijd na belasten", norm : "EC2", art : "Bijlage B", vgl: "(B.7)", format : "") },
+            { "BijlageB8", new(sym : "", desc : "", norm : "EC2", art : "Bijlage B", vgl: "(B.8)", format : "") },
+            { "BijlageB9", new(sym : "t~0~", desc : "ouderdom in dagen", norm : "EC2", art : "Bijlage B", vgl: "(B.9)", format : "0\tdagen") },
+            { "BijlageB10", new(sym : "t~T~", desc : "voor temperatuur gecorrigeerde ouderdom van het beton", norm : "EC2", art : "Bijlage B", vgl: "(B.10)", format : "0\tdagen") },
 
             { "BijlageB11", new(sym : "|epsilon|~cd,0~", desc : "basisverkorting ten gevolge van uitdrogingskrimp", norm : "EC2", art : "Bijlage B.2", vgl: "(B.11)", format : "") },
             { "BijlageB12", new(sym : "|beta|~RH~", desc : "factor relatieve vochtigheid", norm : "EC2", art : "Bijlage B.2", vgl: "(B.12)", format : "") },

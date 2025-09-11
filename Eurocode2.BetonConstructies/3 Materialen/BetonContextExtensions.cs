@@ -428,8 +428,8 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public static double GetEcm(this BetonContext beton) { return GetEcm(beton.Fcm); }
-        public static double GetEcm(double fcm)
+        public static double GetEcm(this BetonContext beton) { return GetEcmInGPa(beton.Fcm) * 1000; }
+        public static double GetEcmInGPa(double fcm)
         {
             double returnVal;
             returnVal = 22 * Math.Pow((fcm / 10), 0.3);
@@ -489,6 +489,8 @@ namespace Eurocode.BetonConstructies
             if (beton.SpanningRekDiagram == SpanningRekDiagramType.Parabolisch) return beton.EpsilonC2;
             else return beton.EpsilonC3;
         }
+
+
 
     }
 

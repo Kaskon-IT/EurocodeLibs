@@ -34,3 +34,7 @@
     font-style: italic;
     color: #555;
 }
+
+.katex-small {
+    font-size: 0.8em; /* schaal de KaTeX tekst */
+}

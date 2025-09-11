@@ -155,6 +155,18 @@ public class DemoNavProvider
                         title: "Symbolen (TEST)"
                     ),
 
+                     new NavLink(
+                        href: "/lab/displaymodel",
+                        icon: new Icons.Regular.Size20.Symbols(),
+                        title: "ListFor(Model)"
+                    ),
+
+                    new NavLink(
+                        href: "/lab/gridforpage",
+                        icon: new Icons.Regular.Size20.Table(),
+                        title: "GridFor demonstratie"
+                    ),
+
                 ]
             )
         ];

@@ -29,6 +29,23 @@
         /// Naam bijvoorbeeld (B.3)
         /// </summary>
         public string Name { get; set; } = "";
+
+
+        public string GetValue
+        {
+            get
+            {
+                var part2 = "";
+                if (DynamicValue != null)
+                {
+                    int index = DynamicValue.IndexOf('=');
+                    string result = index >= 0 ? DynamicValue.Substring(index) : string.Empty;
+                    part2 = result;
+                }
+                return $"{StaticValue}{part2}";
+            }
+        }
+
     }
 
 }

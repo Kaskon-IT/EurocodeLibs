@@ -286,7 +286,7 @@ namespace Eurocode.BetonConstructies
 
         public double NEd { get { return Snedekrachten.Nx.Ed; } } // N~Ed~
 
-        [TableColumn("|sigma|~cp~", HeaderTextPivot = "|sigma|~cp~ = N~Ed~ / A~c~", StringFormat = "0.## N/mm²")]
+        [TableColumn("|sigma|~cp~", Description = "|sigma|~cp~ = N~Ed~ / A~c~", StringFormat = "0.## N/mm²")]
         public double SigmaCp { get { return Math.Min(NEd * 1000 / Profiel.Area, 0.2 * this.Beton.Fcd); } } // sigma~cp~ = N~Ed~ / Ac < 0,2 fcd   volgens art. 6.2.2 (1) 
 
 

@@ -1,0 +1,124 @@
+﻿@page "/Lab/gridforpage"
+@using System.Collections.Generic
+@using CommonLibrary
+@using EurocodeRazorClassLibrary.Shared
+
+
+@if (SampleProject == null)
+{
+    <p>Geen model geladen</p>
+}
+else
+{
+
+   
+
+
+    <div>
+        <label><input type="checkbox" @bind="showLabel" @bind:after="UpdateVisibility"/> Label</label>
+        <label><input type="checkbox" @bind="showSymbol" @bind:after="UpdateVisibility" /> Symbol</label>
+        <label><input type="checkbox" @bind="showValue" @bind:after="UpdateVisibility" /> Value</label>
+        <label><input type="checkbox" @bind="showUnit" @bind:after="UpdateVisibility" /> Unit</label>
+        <label><input type="checkbox" @bind="showArticle" @bind:after="UpdateVisibility" /> Article</label>
+        <label><input type="checkbox" @bind="showFormula" @bind:after="UpdateVisibility" /> Formula</label>
+    </div>
+
+    <button @onclick="ToggleAll">Toggle All</button>
+
+    @* <MyGridFor @bind-Model="@SampleProject.Beton" @bind-VisibleColumns="@visibleCols" /> *@
+
+
+   @*  @for (int i = 0; i < MyContexts.Count; i++)
+    {
+        <h6>@MyContexts[i].Id</h6>
+        <MyGridFor @bind-Model="MyContexts[i]" @key="MyContexts[i].Id" @bind-VisibleColumns="@visibleCols" />
+       
+    } *@
+
+    <p>Count: @MyContexts.Count</p>
+
+    @for (int i = 0; i < MyContexts.Count; i++)
+    {
+        var idx = i; // <-- nog steeds nodig om closure te fixen
+
+
+        <MyGridFor @bind-Model="MyContexts[idx]"
+                   @bind-VisibleColumns="visibleCols"
+                   @key="MyContexts[idx].Id" />
+    }
+
+  
+
+
+    <pre>@modelDump</pre>
+}
+
+
+
+@code {
+
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+
+    private List<BaseEurocodeContext> MyContexts { get; set; } = [];
+
+
+
+    //private SampleModel model = new();
+    private HashSet<string> visibleCols = new();
+    private string modelDump => System.Text.Json.JsonSerializer.Serialize(SampleProject?.Beton, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+
+    private bool showLabel = true;
+    private bool showSymbol = true;
+    private bool showValue = true;
+    private bool showUnit = true;
+    private bool showArticle = true;
+    private bool showFormula = !false;
+
+    protected override void OnInitialized()
+    {
+        visibleCols = new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
+        MyContexts.Add(SampleProject?.Beton);
+        MyContexts.Add(SampleProject?.Dekking);
+
+        SampleProject?.ScheurwijdteDemo.BerekenEnValideer(); // wacht eens even, dit moet net als alle andere automatisch gaan!
+        MyContexts.Add(SampleProject?.ScheurwijdteDemo);
+        MyContexts.Add(SampleProject?.Belastingen);
+
+
+        UpdateVisibility();
+    }
+
+    private void ToggleAll()
+    {
+        UpdateVisibility();
+
+        
+
+        //if (visibleCols.Count > 0) visibleCols.Clear();
+        //else visibleCols = new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Description", "Formula" });
+    }
+
+    // bind checkboxes to update visibleCols
+    private void UpdateVisibility()
+    {
+        visibleCols.Clear();
+        if (showLabel) visibleCols.Add("Label");
+        if (showSymbol) visibleCols.Add("Symbol");
+        if (showValue) visibleCols.Add("Value");
+        if (showUnit) visibleCols.Add("Unit");
+        if (showArticle) visibleCols.Add("Article");
+        if (showFormula) visibleCols.Add("Formula");
+    }
+
+    // hook checkboxes so changing them updates visibleCols immediately
+    // simplest approach: use property setters that call UpdateVisibility,
+    // but here call UpdateVisibility from UI events or two-way bind with onchange.
+    // for brevity, call UpdateVisibility in OnParametersSet of parent as needed
+    private Task OnModelChanged(BetonContext m)
+    {
+        // model bijgewerkt door GridFor
+        return Task.CompletedTask;
+    }
+}

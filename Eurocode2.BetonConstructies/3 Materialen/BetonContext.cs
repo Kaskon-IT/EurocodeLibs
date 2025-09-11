@@ -49,7 +49,9 @@ namespace Eurocode.BetonConstructies
         //public bool IsParabolischSpanningsRekDiagram { get; set; } = !true;
 
 
-        [TableColumn("Diagram", Order = 1, HeaderTextPivot = "\tspanning-rekdiagram")]
+        [TableColumn("spanning-rekrelatie", Order = 1,
+            Description = "Voor het berekenen van dwarsdoorsneden mag een parabool-rechthoekdiagram of bi-lineaire spanning-rekrelatie worden gebruikt",
+            Article = "3.1.7")]
         public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.BiLineair;
         public enum SpanningRekDiagramType
         {
@@ -60,12 +62,81 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        [TableColumn(Label = "betonrek",
+            Symbol = "<i>ε</i><sub>c</sub>",
+            Article = "3.1.7",
+            Description = "De optredende betonrek"
+            )]
+        public double RekEpsilonC { get; set; }
+
+
+        [TableColumn(Label = "betonspanning",
+            Symbol = "<i>σ</i><sub>c</sub>",
+            Description = "De optredende betonspanning is afhankelijk van het gebruikte spanning-rekrelatie en de optredende rek (<i>ε</i><sub>c</sub>)",
+            Article = "3.1.7",
+            Unit = "N/mm²")]
+        public double SpanningSigmaC
+        {
+            get
+            {
+                return this.GetSigmaCd(RekEpsilonC);
+            }
+        }
+        public Formula SpanningSigmaCFormula
+        {
+            get
+            {
+                switch (SpanningRekDiagram)
+                {
+                    default:
+                        return new() { };
+
+                    case SpanningRekDiagramType.Parabolisch:
+                        if (RekEpsilonC >= 0 && RekEpsilonC <= EpsilonCu)
+                        {
+                            return new()
+                            {
+                                Name = "(3.17)",
+                                StaticValue = @$"\sigma_c=f_{{cd}}\left[ 1 - \left( 1 - \frac{{\epsilon_c}}{{\epsilon_{{c2}} \right)^n  \right]",
+                                DynamicValue = @$"\sigma_c={Fcd.ToTeX()} \left[ 1 - \left( 1 - \frac{{{RekEpsilonC.ToTeX()}}}{{{EpsilonC2.ToTeX()}}} \right)^{{{FactorN.ToTeX()}}}  \right]"
+                            };
+                        }
+                        else if (RekEpsilonC >= EpsilonCu)
+                        {
+                            return new()
+                            {
+                                Name = "(3.18)",
+                                StaticValue = @$"\sigma_c=f_{{cd}}",
+                                DynamicValue = @$"\sigma_c={Fcd.ToTeX()}"
+                            };
+                        }
+                        else
+                        {
+                            return new() { Name = "error", StaticValue = @"rek \epsilon_c ligt buiten de grenswaarde van het parabool-rechthoekdiagram onder druk." };
+                        }
+
+
+                    case SpanningRekDiagramType.BiLineair:
+                        return new() { Name = "", };
+
+
+
+
+                }
+            }
+        }
+
+
+
 
 
         /// <summary>
         /// 3.1.2 (6) Het soort cement.
         /// </summary>
-        [TableColumn("cementklasse", Order = 21, HeaderTextPivot = "cement klasse")]
+        [TableColumn("cementklasse",
+            Order = 21,
+            Description = "cement klasse",
+            Article = "3.1.2 (6)")]
         public CementklasseEnum? CementKlasse { get; set; } = CementklasseEnum.N;
 
 
@@ -102,7 +173,11 @@ namespace Eurocode.BetonConstructies
 
         private BetonsterkteklasseEnum? _betonsterkteklasse = BetonsterkteklasseEnum.C40_50;
 
-        [TableColumn("Betonsterkteklasse", Order = -20)]
+        [TableColumn("betonsterkteklasse",
+            Article = "3.1.2",
+            Description = "Aanduiding sterkteklasse van beton met de letter C{cilinderdruksterkte}/{kubusdruksterkte}"
+
+            )]
         public BetonsterkteklasseEnum? Betonsterkteklasse
         {
             get => _betonsterkteklasse;
@@ -119,7 +194,6 @@ namespace Eurocode.BetonConstructies
 
 
 
-        //[TableColumn("Betonsterkteklasse", HeaderTextPivot = "&nbsp;\tbetonsterkteklasse", Order = -10)]
         public string BetonSterkteKlasseGebruiksvriendelijkeNaam
         {
             get
@@ -129,13 +203,6 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public double DemoDouble
-        {
-            get
-            {
-                return Fck;
-            }
-        }
 
 
 
@@ -144,7 +211,11 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// De representieve cilinder druksterkte in N/mm²
         /// </summary>
-        [TableColumn("cilinderdruksterkte", Symbol = "<i>f</i><sub>ck</sub>", HeaderTextPivot = "karakteristieke cilinderdruksterkte van beton na 28 dagen", StringFormat = "{0:0.## N/mm²}")]
+        [TableColumn("cilinderdruksterkte",
+            Symbol = "<i>f</i><sub>ck</sub>",
+            Article = "3.1.2",
+            Description = "karakteristieke cilinderdruksterkte van beton na 28 dagen",
+            Unit = "N/mm²")]
         public double Fck
         {
             get
@@ -173,7 +244,11 @@ namespace Eurocode.BetonConstructies
 
 
         //(MPa)
-        [TableColumn("kubusdruksterkte", Symbol = "<i>f</i><sub>ck,cube</sub>", HeaderTextPivot = "karakteristieke kubusdruksterkte van beton na 28 dagen", StringFormat = "{0:0.## N/mm²}")]
+        [TableColumn("kubusdruksterkte",
+            Symbol = "<i>f</i><sub>ck,cube</sub>",
+            Description = "karakteristieke kubusdruksterkte van beton na 28 dagen", Unit = "N/mm²",
+            Article = "3.1.2 (3)"
+            )]
         public double FckCube
         {
             get
@@ -203,8 +278,9 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// gemiddelde waarde van de cilinderdruksterkte van beton 
         /// </summary>
-        [TableColumn("gem. cilinderdruksterkte", Symbol = "<i>f</i><sub>cm</sub>", HeaderTextPivot = "f~cm~\tgemiddelde cilinderdruksterkte", StringFormat = "{0:0.## N/mm²}", Weergave = WeergaveEnum.DraaiTabel,
-            Article = "3.1.2", Formula = @"f_{cm} = f_{ck} + 8")]
+        [TableColumn("gem. cilinderdruksterkte", Symbol = "<i>f</i><sub>cm</sub>", Unit = "N/mm²",
+            Description = "<i>f</i><sub>cm</sub> is de gemiddelde druksterkte op 28 dagen volgens tabel 3.1", Weergave = WeergaveEnum.DraaiTabel,
+            Article = "3.1.2 (3)")]
         public double Fcm { get { return Fck + 8; } }
         public Formula FcmFormula => new("Tabel 3.1", @"f_{cm} = f_{ck} + 8", @$"f_{{cm}} = {Fck.ToEng()} + 8 = {Fcm.ToEng(3, "N/mm²", isTeX: true)} ");
 
@@ -212,7 +288,11 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// gemiddelde waarde van de axiale treksterkte van beton 
         /// </summary>
-        [TableColumn("gem. axiale treksterkte", Symbol = "<i>f</i><sub>ctm</sub>", HeaderTextPivot = "gemiddelde axiale treksterkte", StringFormat = "{0:0.00 N/mm²}", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("gem. axiale treksterkte",
+            Symbol = "<i>f</i><sub>ctm</sub>",
+            Article = "3.1.2 (3)",
+            Unit = "N/mm²",
+            Description = "gemiddelde axiale treksterkte", Weergave = WeergaveEnum.DraaiTabel)]
 
         public double Fctm
         {
@@ -258,14 +338,20 @@ namespace Eurocode.BetonConstructies
         //        return 
         //    }
         //}
-        [TableColumn("5% fractiel", Symbol = "<i>f<i><sub>ctk,0.05</sub>", StringFormat = "{0:0.00 N/mm²}", Article = "3.1", Formula = @"f_{ctk,0.05} = 0.7×f_{ctm}")]
+        [TableColumn("5% fractiel",
+            Symbol = "<i>f<i><sub>ctk,0.05</sub>",
+            Article = "3.1.2 (3)",
+            Unit = "N/mm²")]
         public double FctkVijfProcent { get { return 0.7 * Fctm; } }    // 5% fractiel
         public Formula FctkVijfProcentFormula => new("Tabel 3.1", @"f_{ctk,0.05} = 0.7×f_{ctm}", @$"f_{{ctk,0.05}} = 0.7×{Fctm.ToEng()} = {FctkVijfProcent.ToEng(3, "N/mm²", isTeX: true)}");
 
 
 
 
-        [TableColumn("95% fractiel", Symbol = "<i>f<i><sub>ctk,0.95</sub>", StringFormat = "{0:0.00 N/mm²}", Article = "3.1", Formula = @"f_{ctk,0.95} = 1.3×f_{ctm}")]
+        [TableColumn("95% fractiel",
+            Symbol = "<i>f<i><sub>ctk,0.95</sub>",
+            Unit = "N/mm²",
+            Article = "3.1.2 (3)")]
         public double FctkVijfEnNegentigProcent { get { return 1.3 * Fctm; } } // 95% fractiel
         public Formula FctkVijfEnNegentigProcentFormula => new("Tabel 3.1", @"f_{ctk,0.95} = 1.3×f_{ctm}", @$"f_{{ctk,0.95}} = 1.3×{Fctm.ToEng()} = {FctkVijfEnNegentigProcent.ToEng(3, "N/mm²", isTeX: true)}");
 
@@ -273,17 +359,29 @@ namespace Eurocode.BetonConstructies
         public bool IsOntwerpSituatieBuitenGewoon = false;  // default Blijvend en tijdelijk conform art. 2.4.2.4 (1) Partiële factoren voor materialen 
 
         [JsonIgnore]
-        [TableColumn("partiële veiligheidsfactor", Symbol = "<i>ɣ</i><sub>c</sub>", HeaderTextPivot = "|gamma|~c~\tpartiële veiligheidsfactor", StringFormat = "{0:0.0}", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("partiële veiligheidsfactor",
+            Symbol = "<i>ɣ</i><sub>c</sub>",
+            Description = "|gamma|~c~\tpartiële veiligheidsfactor",
+            Article = "2.4.2.4",
+            Weergave = WeergaveEnum.DraaiTabel)]
         public double GammaC { get; set; } = 1.5;
 
 
-        [TableColumn("druksterkte", Symbol = "<i>f</i><sub>cd</sub>", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "{0:0.## N/mm²}",
-            Article = "(3.15)", Formula = @"f_{cd}=\alpha_{cc}f_{ck} / \gamma_{c}")]
+        [TableColumn("druksterkte", Symbol = "<i>f</i><sub>cd</sub>", Weergave = WeergaveEnum.DraaiTabel,
+            Description = "De rekenwaarde van de druksterkte",
+            Article = "3.1.6 (1)P", Unit = "N/mm²")]
         public double Fcd { get { return AlphaCC * Fck / GammaC; } }
+        public Formula FcdFormula => new("(3.15)",
+            @"f_{cd}=\alpha_{cc}f_{ck} / \gamma_{c}",
+            @$"f_{{cd}}={AlphaCC}×{Fck.ToEng()}/ {GammaC} = {Fcd.ToEng(3, "N/mm²", isTeX: true)}");
 
-        [TableColumn("treksterkte", Symbol = "<i>f</i><sub>ctd</sub>", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "{0:0.## N/mm²}",
-            Article = "(3.16)", Formula = @"f_{ctd}=\alpha_{ct}f_{ctk,0.05} / \gamma_{c}")]
+        [TableColumn("treksterkte", Symbol = "<i>f</i><sub>ctd</sub>", Weergave = WeergaveEnum.DraaiTabel,
+            Description = "De rekenwaarde van de treksterkte",
+            Article = "3.1.6 (2)P", Unit = "N/mm²")]
         public double Fctd { get { return AlphaCT * FctkVijfProcent / GammaC; } }
+        public Formula FctdFormula => new("(3.16)",
+            @"f_{ctd}=\alpha_{ct}f_{ctk,0.05} / \gamma_{c}",
+            @$"f_{{ctd}}={AlphaCT}×{FctkVijfProcent.ToEng()}/ {GammaC} = {Fctd.ToEng(3, "N/mm²", isTeX: true)}");
 
 
         public const double AlphaCT = 1; // 3.1.6 Dit is de coëfficiënt die rekening houdt met langeduureffecten op de treksterkte en met ongunstige effecten als gevolg van de manier waarop de belasting aangrijpt.
@@ -387,21 +485,29 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Let op! Ecm is in GPa 
         /// </summary>
-        [TableColumn("secans-elasticiteitsmodulus", Symbol = "<i>E</i><sub>cm</sub>", HeaderTextPivot = "E~cm~\tsecans-elasticiteitsmodulus van beton", StringFormat = "{0:0.## GPa}",
-            Article = "3.1")]
+        [TableColumn("secans-elasticiteitsmodulus",
+            Symbol = "<i>E</i><sub>cm</sub>",
+            Description = "E~cm~\tsecans-elasticiteitsmodulus van beton",
+            Unit = "N/mm²",
+            Article = "3.1.2 (3)")]
         public double Ecm { get { return this.GetEcm(); } }
-        public Formula EcmFormula => new("Tabel 3.1", @"E_{cm}=22[f_{cm}/10]^{0.3}", $@"E_{{cm}}=22[{Fcm.ToEng()}/10]^{{{0.3}}}= {Ecm.ToEng(3, "×10³N/mm²", isTeX: true)}");
+        public Formula EcmFormula => new("Tabel 3.1",
+            @"E_{cm}=22[f_{cm}/10]^{0.3} ×10^3",
+            $@"E_{{cm}}=22[{Fcm.ToEng()}/10]^{{{0.3}}} ×10^3 = {Ecm.ToEng(3, "N/mm²", isTeX: true)}");
 
 
 
         [JsonIgnore]
-        [TableColumn("poissonfactor", "\tpoisson factor")]
+        [TableColumn(label: "poissonverhouding",
+            Article = "3.1.3 (4)",
+            Symbol = "<i>ν</i>",
+            Description = "De Poissonverhouding mag zijn gelijkgenomen aan 0,2 voor ongescheurd beton en aan 0 voor gescheurd beton")]
         public double PoissonFactor { get; set; } = 0.2;
 
 
         public string Betonstuik
         {
-            get { return EpsilonC.GetFormattedStringPromille(); }
+            get { return EpsilonBetonStuik.GetFormattedStringPromille(); }
         }
 
         public string BetonstuikGrens
@@ -410,8 +516,18 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("betonstuik", Symbol = "<i>ε</i><sub>c</sub>", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "{0:0.## ‰}", Article = "Tabel 3.1")]
-        public double EpsilonC
+        [TableColumn("betonstuik", Symbol = "<i>ε</i><sub>c,stuik</sub>",
+            Weergave = WeergaveEnum.DraaiTabel,
+            StringFormat = "{0:0.## ‰}",
+            Article = "3.1.7",
+            Description = "is de vervorming bij het bereiken van de maximale sterkte volgens tabel 3.1" +
+            "<br />Deze waarde is afhankelijk van de gekozen spanning-rekrelatie:" +
+            "<ul>" +
+            "<li> <i>ε</i><sub>c2</sub> voor parabool-rechthoek</li>" +
+            "<li> <i>ε</i><sub>c3</sub> voor bi-lineair </li>"
+
+            )]
+        public double EpsilonBetonStuik
         {
             get
             {
@@ -423,8 +539,73 @@ namespace Eurocode.BetonConstructies
                 };
             }
         }
+        public Formula EpsilonBetonStuikFormula
+        {
+            get
+            {
+                if (SpanningRekDiagram == null) return new() { Name = "error", StaticValue = @"Onbekend spanning-rekdiagram" };
+                if (SpanningRekDiagram == SpanningRekDiagramType.Parabolisch)
+                {
+                    if (Fck < 50)
+                    {
+                        return new()
+                        {
+                            Name = "Tabel 3.1",
+                            StaticValue = @"\epsilon_{c2} = 2.0‰",
+                            DynamicValue = @"\epsilon_{c2} = 2.0‰"
+                        };
+                    }
+                    else
+                    {
+                        return new()
+                        {
+                            Name = "Tabel 3.1",
+                            StaticValue = @"\epsilon_{c2} = 2.0+0.085(f_{ck-50})^{0.53}"
+                        };
+                    }
 
-        [TableColumn("betonstuik grens", Symbol = "<i>ε</i><sub>cu</sub>", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "{0:0.## ‰}", Article = "Tabel 3.1")]
+                }
+                if (SpanningRekDiagram == SpanningRekDiagramType.BiLineair)
+                {
+                    if (Fck < 50)
+                    {
+                        return new()
+                        {
+                            Name = "Tabel 3.1",
+                            StaticValue = @"\epsilon_{c3} = 1.75‰",
+                            DynamicValue = @"\epsilon_{c3} = 1.75‰"
+                        };
+                    }
+                    else
+                    {
+                        return new()
+                        {
+                            Name = "Tabel 3.1",
+                            StaticValue = @"\epsilon_{c3} = 1.75+0.55[(f_{ck}-50)/40]"
+                        };
+                    }
+
+                }
+
+                // niets gevonden
+                return new() { Name = "error", StaticValue = @"Onbekend spanning-rekdiagram" };
+
+
+            }
+        }
+
+
+
+        [TableColumn("betonstuik grens", Symbol = "<i>ε</i><sub>cu</sub>",
+            Weergave = WeergaveEnum.DraaiTabel,
+            StringFormat = "{0:0.## ‰}",
+            Article = "3.1.7",
+            Description = "is de grenswaarde van de rek volgens tabel 3.1" +
+            "<br />Deze waarde is afhankelijk van de gekozen spanning-rekrelatie:" +
+            "<ul>" +
+            "<li> <i>ε</i><sub>cu2</sub> voor parabool-rechthoek</li>" +
+            "<li> <i>ε</i><sub>cu3</sub> voor bi-lineair </li>"
+            )]
 
         public double EpsilonCu
         {
@@ -438,6 +619,60 @@ namespace Eurocode.BetonConstructies
                 };
             }
         }
+        public Formula EpsilonCuFormula
+        {
+            get
+            {
+                if (SpanningRekDiagram == null) return new() { Name = "error", StaticValue = @"Onbekend spanning-rekdiagram" };
+                if (SpanningRekDiagram == SpanningRekDiagramType.Parabolisch)
+                {
+                    if (Fck < 50)
+                    {
+                        return new()
+                        {
+                            Name = "Tabel 3.1",
+                            StaticValue = @"\epsilon_{cu2} = 3.5‰",
+                            DynamicValue = @"\epsilon_{cu2} = 3.5‰"
+                        };
+                    }
+                    else
+                    {
+                        return new()
+                        {
+                            Name = "Tabel 3.1",
+                            StaticValue = @"\epsilon_{cu2} = 2.6+35[(90-f_{ck}/100)]^4"
+                        };
+                    }
+                }
+                if (SpanningRekDiagram == SpanningRekDiagramType.BiLineair)
+                {
+                    if (Fck < 50)
+                    {
+                        return new()
+                        {
+                            Name = "Tabel 3.1",
+                            StaticValue = @"\epsilon_{cu3} = 3.5‰",
+                            DynamicValue = @"\epsilon_{cu3} = 3.5‰"
+                        };
+                    }
+                    else
+                    {
+                        return new()
+                        {
+                            Name = "Tabel 3.1",
+                            StaticValue = @"\epsilon_{cu3} = 2.6+35[(90-f_{ck})/100]^4"
+                        };
+                    }
+                }
+                // niets gevonden
+
+                return new() { Name = "error", StaticValue = @"Onbekend spanning-rekdiagram" };
+            }
+        }
+
+
+
+
 
         [Obsolete("Mag verwijderd worden?")]
         public double SigmaCd { get; set; }
@@ -455,6 +690,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Alleen van toepassing bij parabool.
         /// </summary>
+        /// 
+
         public double FactorN { get { return this.GetFactorN(); } }
 
         public double EpsilonC3 { get { return this.GetEpsilonC3(); } }

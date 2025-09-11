@@ -11,17 +11,28 @@
 
         // filter op properties nader toe te voegen
 
-        var info = TableColumnAttributeHelper.GetColumnInfo(prop, Item);
+        //var info = TableColumnAttributeHelper.GetColumnInfo(prop, Item);
+
+        TableColumnDto meta = TableColumnAttributeHelper.GetMetaDto(prop, Item);
+
+        Console.WriteLine("Meta-label:" + meta.Symbol);
+
 
         // Formules bepalen
         //var hasStatic = !string.IsNullOrWhiteSpace(info.Formula);
         //var hasDynamic = !string.IsNullOrWhiteSpace(info.DynamicFormula);
 
-        var hasFormula = info.Vergelijking != null;
-        var tooltipIcon = info.Vergelijking?.Name ?? "?";
+        //var hasFormula = info.Vergelijking != null;
+        var tooltipIcon = meta.Formula?.Name ?? "?";
+
+        var label = (MarkupString)meta.Label;
+        var symbol = (MarkupString)(meta.Symbol ?? "");
+        var value = (MarkupString)(meta.Value ?? "-");
+        var article = (MarkupString)(meta.Article ?? "");
+
 
         @* Alleen tooltip renderen als er minstens één formule is *@
-        if (hasFormula)
+        if (meta.Formula != null)
         {
             <div class="table-grid"
                  style="display:grid; gap:.5rem; grid-template-columns:@GridTemplateColumns"
@@ -29,45 +40,44 @@
 
                 @if (VisibleParts.HasFlag(ColumnPart.Header))
                 {
-                    <div class="header">@info.Header</div>
+                    <div class="header">@label</div>
                 }
 
                 @if (VisibleParts.HasFlag(ColumnPart.Symbol))
                 {
-                    <div class="symbol">@info.Symbol</div>
+                    <div class="symbol">@symbol</div>
                 }
 
                 @if (VisibleParts.HasFlag(ColumnPart.Value))
                 {
-                    <div>@info.Value</div>
+                    <div>@value</div>
                 }
 
                 @if (VisibleParts.HasFlag(ColumnPart.Article))
                 {
-                    <div class="article">@info.Article</div>
+                    <div class="article">@article</div>
                 }
 
                 @* Tooltip voor beide formules *@
                 <div class="tooltip-container">
                     <span class="tooltip-icon">@tooltipIcon</span>
                     <div class="tooltip-content">
-                        
-                        @if (hasFormula)
+
+                        @if (meta.Formula != null)
                         {
-                            tooltipIcon = info.Vergelijking?.Name;
-                            
+                            tooltipIcon = meta.Formula?.Name;
+    
                             <div>
-                                @if (info.Vergelijking?.StaticValue != null)
+                                @if (meta.Formula?.StaticValue != null)
                                 {
 
-
-                                        <KaTexFormula Value="@info.Vergelijking?.StaticValue" Label="@info.Vergelijking?.Name" />
+                                    <KaTexFormula Value="@meta.Formula?.StaticValue" Label="@meta.Formula?.Name" />
 
                                 }
-                                @if(info.Vergelijking?.DynamicValue != null)
+                                @if(meta.Formula?.DynamicValue != null)
                                 {
-                                    <KaTexFormula Value="@info.Vergelijking?.DynamicValue" />
-                                    
+                                    <KaTexFormula Value="@meta.Formula?.DynamicValue" />
+    
                                 }
                                 </div>
                         }
@@ -83,22 +93,22 @@
 
                 @if (VisibleParts.HasFlag(ColumnPart.Header))
                 {
-                    <div class="header">@info.Header</div>
+                    <div class="header">@label</div>
                 }
 
                 @if (VisibleParts.HasFlag(ColumnPart.Symbol))
                 {
-                    <div class="symbol">@info.Symbol</div>
+                    <div class="symbol">@symbol</div>
                 }
 
                 @if (VisibleParts.HasFlag(ColumnPart.Value))
                 {
-                    <div>@info.Value</div>
+                    <div>@value</div>
                 }
 
                 @if (VisibleParts.HasFlag(ColumnPart.Article))
                 {
-                    <div class="article">@info.Article</div>
+                    <div class="article">@article</div>
                 }
             </div>
         }
