@@ -1,40 +1,176 @@
-﻿.fixed-header {
-    border-collapse: collapse;
+﻿.table-input {
     width: 100%;
-    table-layout: fixed; /* voorkomt verspringen van kolommen */
-}
-
-    .fixed-header th {
-        position: sticky;
-        top: 0; /* plakt bovenaan */
-        background: #f2f2f2; /* achtergrond zodat tekst leesbaar blijft */
-        z-index: 2; /* boven andere cellen */
-    }
-
-    .fixed-header td,
-    .fixed-header th {
-        border: 1px solid #ccc;
-        padding: 8px;
-    }
-
-.custom-tooltip {
-    position: relative;
-}
-
-.tooltip-content {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: #f0f0f0;
-    color: #000000;
-    border: 1px solid;
-    padding: 4px 8px;
+    padding: 4px 6px;
+    border: 1px solid #d1d1d1;
     border-radius: 4px;
-    white-space: wrap;
-    z-index: 10;
+    font-size: 0.9rem;
+    min-width: 0; /* ← dit is cruciaal */
+    box-sizing: border-box;
 }
 
-.custom-tooltip:hover .tooltip-content {
+    .table-input:focus {
+        border-color: #0078d4; /* FluentUI blauw */
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0,120,212,0.2);
+    }
+
+.table-checkbox {
     display: block;
+    margin: auto;
+}
+
+
+
+
+
+.mijn-component {
+    --border-color: #cfcfcf;
+    --odd-bg: #f8f8fb;
+    --even-bg: #ffffff;
+    --hover-bg: #e6f2ff;
+}
+
+    .mijn-component .striped-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        border: 1px solid var(--border-color);
+    }
+
+
+    /* standaard verborgen */
+    .mijn-component .extra-info {
+        display: none;
+    }
+
+    /* zichtbaar bij hover op de hele rij */
+    .mijn-component tr:hover .extra-info {
+        display: inline;
+    }
+
+    .space-before{
+        margin-left: 0.25em;
+    }
+
+dl {
+    display: grid;
+    grid-template-columns: max-content auto;
+    gap: 0.5rem 1rem;
+}
+
+dt {
+    font-weight: lighter;
+}
+
+dd {
+    margin: 0;
+}
+
+
+
+        .mijn-component .striped-table th,
+        .mijn-component .striped-table td {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+            .mijn-component .striped-table th:first-child,
+            .mijn-component .striped-table td:first-child {
+                width: auto;
+            }
+
+            .mijn-component .striped-table th:nth-child(2) {
+                width: 100px; 
+            }
+
+            .mijn-component .striped-table th:nth-child(3) {
+                width: 150px;
+            }
+
+            .mijn-component .striped-table th:nth-child(4) {
+                width: 100px;
+            }
+
+            .mijn-component .striped-table th:nth-child(5) {
+                width: 40px;
+            }
+
+            .mijn-component .striped-table td:nth-child(3) {
+                text-align: right; /* kolom 3 rechts */
+            }
+
+            .mijn-component .striped-table td:nth-child(4) {
+                text-align: left; /* kolom 4 links */
+            }
+
+        /* striping */
+        .mijn-component .striped-table tbody tr:nth-child(odd) {
+            background: var(--odd-bg);
+        }
+
+        .mijn-component .striped-table tbody tr:nth-child(even) {
+            background: var(--even-bg);
+        }
+
+        /* hover */
+        .mijn-component .striped-table tbody tr:hover {
+            background: var(--hover-bg);
+        }
+
+    /* info-cell styling */
+    .mijn-component .info-cell {
+        text-align: center;
+        position: relative;
+    }
+
+        /* knop standaard verbergen */
+        .mijn-component .info-cell .fluent-button {
+            display: none;
+            padding: 2px;
+            min-width: 0; /* compacte button */
+        }
+
+    .mijn-component .striped-table tbody tr:hover .info-cell .fluent-button {
+        display: inline-flex; /* toon bij hover */
+    }
+
+/* responsive cards */
+@media (max-width: 700px) {
+    .mijn-component .responsive-table thead {
+        display: none;
+    }
+
+    .mijn-component .responsive-table,
+    .mijn-component .responsive-table tbody,
+    .mijn-component .responsive-table tr,
+    .mijn-component .responsive-table td {
+        display: block;
+        width: 100%;
+    }
+
+        .mijn-component .responsive-table tr {
+            margin-bottom: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 8px;
+        }
+
+        .mijn-component .responsive-table td:first-child {
+            grid-column: 1 / -1;
+            font-weight: 600;
+        }
+
+        .mijn-component .responsive-table td.info-cell {
+            grid-column: 1 / -1;
+            text-align: right;
+        }
+
+    .mijn-component .info-cell .fluent-button {
+        display: inline-flex; /* op mobiel altijd tonen */
+    }
 }

@@ -5,163 +5,247 @@
 @using ExportFactory.Services
 @using ExportFactory.Shared
 
-<table class="fixed-header">
-    <thead>
-        <tr>
-            @if (IsVisible("Label"))
-            {
-                <th>Label</th>
-            }
-            @if (IsVisible("Symbol"))
-            {
-                <th style="text-align:end;">Symbol</th>
-            }
-            @if (IsVisible("Value"))
-            {
-                <th style="text-align:end;">Waarde</th>
-            }
-            @if (IsVisible("Unit"))
-            {
-                <th style="text-align:start;">Eenheid</th>
-            }
-            @if (IsVisible("Article"))
-            {
-                <th>Art.</th>
-            }
-            @if (IsVisible("Formula"))
-            {
-                <th>Formule</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var row in _rows)
-        {
+
+@using Microsoft.FluentUI.AspNetCore.Components
+
+
+
+
+
+<div class="mijn-component">
+    
+    <span>
+        <b>@Model?.GetType().Name</b>
+
+        <button @onclick="() => ToggleHidden(Hidden)">
+            @(Hidden ? "..." : "Verberg")
+        </button>
+    </span>
+   
+    @if (!Hidden)
+    {
+        
+    
+    <table class="striped-table responsive-table">
+        <thead>
             <tr>
-                @if (IsVisible("Label"))
-                {
-                    <td class="custom-tooltip">
-                        @((MarkupString)row.Label)
-                        <div class="tooltip-content">
+                <th>Label</th>
+                <th>Symbol</th>
+                <th>Value</th>
+                <th>Unit</th>
 
-                            @if (row.Label != null)
-                            {
-                                <b>@row.Label</b><hr />
-                            }
+               @*  @if (IsVisible("Label"))        {<th>Label</th>}
+                @if (IsVisible("Symbol"))       {<th>Symbol</th>}
+                @if (IsVisible("Value"))        {<th>Waarde</th>}
+                @if (IsVisible("Unit"))         {<th>Eenheid</th>}
+                @if (IsVisible("Article"))      {<th>Art.</th>}
+                @if (IsVisible("Formula"))      {<th>Formule</th>} *@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in _rows)
+            {
+                <tr>
+                    <td>
+                        <span>@((MarkupString)row.Label)</span>
+                        <span class="space-before">@((MarkupString)(row.Symbol ?? ""))</span>
+                        <button @onclick="() => ToggleRowDetails(row)">
+                            @(openRows.Contains(row) ? "Verberg" : "...")
+                        </button>
 
-                            @if (row.Description != null)
-                            {
-                            
-                                @((MarkupString)(row.Description ?? "")) <hr />
-                                
-                            }
-
-
-                            <span>
-                                @if (row.Symbol != null)
-                                {
-                                    <span>
-                                        @((MarkupString)@row.Symbol) =
-                                    </span>
-                                }
+                        <div>
                                
 
-                                @row.DisplayValue
-                                @row.Unit
-                                
-                            </span>
-                            @if (row.Formula != null)
-                            {
-                                <hr />
-                                <i>formule</i>
-                                <KaTexFormula Label="@row.Formula.Name"  Value="@row.Formula.GetValue" Small="false" />
-
-                                @if(row.Formula.DynamicValue != null)
+                                @if (openRows.Contains(row))
                                 {
-                                    @* <KaTexFormula Label="@row.Formula.Name" Value="@row.Formula.DynamicValue" Small="false"/> *@
-                                } 
-                            }
+                                    <div>
+                                    @if (row.Article != null || row.Description != null || row.Formula != null)
+                                    {
+                                        <hr />
 
 
+
+                                        <dl>
+                                            @if (row.Article != null)
+                                            {
+                                                <dt>artikel</dt>
+                                                <dd>@row.Article</dd>
+                                            }
+                                            <dt>@((MarkupString)(row.Symbol ?? ""))</dt>
+                                            <dd>
+                                                @((MarkupString)(row.Description ?? ""))
+                                            </dd>
+
+
+                                        </dl>
+
+
+
+
+                                        @if (row.Formula != null)
+                                        {
+
+                                            <KaTexFormula Value="@row.Formula?.GetValue()" Label="@row.Formula?.Name" />
+
+
+
+
+
+
+
+
+                                        }
+                                    }
+
+                                </div>
+                                }
+    
+                                
+
+
+                                       
                         </div>
+
+                       
+
+                       
+
+
+                       
                     </td>
 
-                }
-                @if (IsVisible("Symbol"))
-                {
-                    <td style="text-align:end;">@((MarkupString)(row.Symbol ?? ""))</td>
+                    <td>@((MarkupString)(row.Symbol?? ""))</td>
 
-                }
-                @if (IsVisible("Value"))
-                {
-                  
-                    <td style="text-align:end;">
-                        @if (row.Editable)
+
+
+
+                    
+                        @if (row.Editable && !ReadOnly)
                         {
                             @RenderInput(row.Property)
-
                         }
                         else
                         {
+                            <td>
                             @row.DisplayValue
+                            </td>
                         }
-                    </td>
                     
+                    <td>@((MarkupString)(row.Unit ?? ""))</td>
+                </tr>
 
 
-                   @*  <td>
-                        @if (row.Editable)
-                        {
-                            <input value="@row.DisplayValue"
-                                   @onchange="(ChangeEventArgs e) => OnValueChanged(row.Property, e?.Value?.ToString())" />
-                        }
-                        else
-                        {
-                           
-                        }
-                    </td> *@
-                }
-                @if (IsVisible("Unit"))
-                {  
-                    <td style="text-align:start;">@row.Unit</td>
-                }
-                @if (IsVisible("Article"))
-                {
-                    <td>@row.Article</td>
-                }
-                @if (IsVisible("Formula")) 
-                {
-                    @if (row.Formula != null)
+
+
+                @* <tr>
+                    @if (IsVisible("Label"))
                     {
+                        <td class="custom-tooltip">
+                            @((MarkupString)row.Label)
+
+
+                            @* <div class="tooltip-content">
+
+                                @if (row.Label != null)
+                                {
+                                    <b>@row.Label</b><hr />
+                                }
+
+                                @if (row.Description != null)
+                                {
+                            
+                                    @((MarkupString)(row.Description ?? "")) <hr />
+                                
+                                }
+
+
+                                <span>
+                                    @if (row.Symbol != null)
+                                    {
+                                        <span>
+                                            @((MarkupString)@row.Symbol) =
+                                        </span>
+                                    }
+                               
+
+                                    @row.DisplayValue
+                                    @row.Unit
+                                
+                                </span>
+                                @if (row.Formula != null)
+                                {
+                                    <hr />
+                                    <i>formule</i>
+                                    <KaTexFormula Label="@row.Formula.Name"  Value="@row.Formula.GetValue" Small="false" />
+
+                                    @if(row.Formula.DynamicValue != null)
+                                    {
+                                         <KaTexFormula Label="@row.Formula.Name" Value="@row.Formula.DynamicValue" Small="false"/> 
+                                     }  
+                                } 
+
+
+                            </div> 
+                        </td> 
+                    }
+                    @if (IsVisible("Symbol"))  { <td>@((MarkupString)(row.Symbol ?? ""))</td>                    }
+                    @if (IsVisible("Value"))   
+                    { 
                         <td>
-                           @row.Formula?.Name
-                           @*  <KaTexFormula Value="@row.Formula?.StaticValue" DisplayMode=true Label ="@row.Formula?.Name" />
-                            @if (row.Formula?.DynamicValue != null)
-                            {
-                                <KaTexFormula Value="@row.Formula?.DynamicValue" DisplayMode=true />
-                            } *@
+                        @if (row.Editable && !ReadOnly)  { @RenderInput(row.Property) } 
+                        else { @row.DisplayValue }
                         </td>
                     }
-                    else
+                    @if (IsVisible("Unit"))   {    <td>@row.Unit</td>     }
+                    @if (IsVisible("Article"))      {  <td>@row.Article</td>        }
+                    @if (IsVisible("Formula")) 
                     {
-                        <td></td>
+                        @if (row.Formula != null)
+                        {
+                            <td>
+                               @row.Formula?.Name
+                               @*  <KaTexFormula Value="@row.Formula?.StaticValue" DisplayMode=true Label ="@row.Formula?.Name" />
+                                @if (row.Formula?.DynamicValue != null)
+                                {
+                                    <KaTexFormula Value="@row.Formula?.DynamicValue" DisplayMode=true />
+                                } 
+                            </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
                     }
-                   
-                }
-            </tr>
-        }
-    </tbody>
-</table>
+                </tr> *@
+            }
+        </tbody>
+    </table>
+    }
+</div>
+
 
 @code {
     [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
     [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
-
+    [Parameter] public bool ReadOnly { get; set; } = false;
 
 
     // Geef parent de mogelijkheid runtime kolommen te tonen/verbergen.
     [Parameter] public HashSet<string> VisibleColumns { get; set; } = new();
     [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
+
+    private HashSet<PropertyRow> openRows = new();
+    private void ToggleRowDetails(PropertyRow row)
+    {
+        if (!openRows.Add(row))
+            openRows.Remove(row);
+    }
+
+    private bool Hidden { get; set; }
+    private void ToggleHidden(bool hidden)
+    {
+        Hidden = !hidden;
+    }
 
     private bool IsVisible(string col) => VisibleColumns.Contains(col);
 
@@ -278,7 +362,79 @@
         }
     }
 
+
     private RenderFragment RenderInput(PropertyInfo property) => builder =>
+{
+    var value = property.GetValue(Model);
+    var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+    // Wrappen in <td>
+    builder.OpenElement(0, "td");
+
+    string style = "width:100%; min-width:0; padding:4px 6px; " +
+                   "border:1px solid #d1d1d1; border-radius:4px; " +
+                   "box-sizing:border-box; font-size:0.9rem;";
+
+    // Enum → select
+    if (targetType.IsEnum)
+    {
+        builder.OpenElement(1, "select");
+        builder.AddAttribute(2, "style", style);
+        builder.AddAttribute(3, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
+            e => OnValueChanged(property, e?.Value?.ToString())));
+
+        int seq = 4;
+        foreach (var enumVal in Enum.GetValues(targetType))
+        {
+            builder.OpenElement(seq++, "option");
+            builder.AddAttribute(seq++, "value", enumVal);
+            builder.AddAttribute(seq++, "selected", value?.ToString() == enumVal.ToString());
+            builder.AddContent(seq++, enumVal.ToString());
+            builder.CloseElement();
+        }
+
+        builder.CloseElement();
+    }
+    // Boolean → checkbox
+    else if (targetType == typeof(bool))
+    {
+        builder.OpenElement(1, "input");
+        builder.AddAttribute(2, "type", "checkbox");
+        builder.AddAttribute(3, "class", "table-checkbox");
+        builder.AddAttribute(4, "checked", (bool)(value ?? false));
+        builder.AddAttribute(5, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
+            e => OnValueChanged(property, e?.Value?.ToString())));
+        builder.CloseElement();
+    }
+    // Alles anders → input type afhankelijk van TypeCode
+    else
+    {
+        string typeAttr = Type.GetTypeCode(targetType) switch
+        {
+            TypeCode.Int32 or TypeCode.Double or TypeCode.Single or TypeCode.Decimal => "number",
+            TypeCode.DateTime => "date",
+            _ => "text"
+        };
+
+        string valueAttr = TypeCode.DateTime == Type.GetTypeCode(targetType) && value is DateTime dt
+            ? dt.ToString("yyyy-MM-dd")
+            : value?.ToString() ?? "";
+
+        builder.OpenElement(1, "input");
+        builder.AddAttribute(2, "type", typeAttr);
+        builder.AddAttribute(3, "style", style);
+        builder.AddAttribute(4, "value", valueAttr);
+        builder.AddAttribute(5, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
+            e => OnValueChanged(property, e?.Value?.ToString())));
+        builder.CloseElement();
+    }
+
+    builder.CloseElement(); // td sluiten
+};
+
+
+
+    private RenderFragment RenderInputBAK(PropertyInfo property) => builder =>
     {
         var value = property.GetValue(Model);
         var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;

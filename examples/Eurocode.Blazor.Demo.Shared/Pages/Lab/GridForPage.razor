@@ -2,6 +2,7 @@
 @using System.Collections.Generic
 @using CommonLibrary
 @using EurocodeRazorClassLibrary.Shared
+@using System.Reflection
 
 
 @if (SampleProject == null)
@@ -21,6 +22,8 @@ else
         <label><input type="checkbox" @bind="showUnit" @bind:after="UpdateVisibility" /> Unit</label>
         <label><input type="checkbox" @bind="showArticle" @bind:after="UpdateVisibility" /> Article</label>
         <label><input type="checkbox" @bind="showFormula" @bind:after="UpdateVisibility" /> Formula</label>
+        <label><input type="checkbox" @bind="readOnly" /> ReadOnly</label>
+
     </div>
 
     <button @onclick="ToggleAll">Toggle All</button>
@@ -37,20 +40,49 @@ else
 
     <p>Count: @MyContexts.Count</p>
 
+    List<Guid> guids = [];
+
     @for (int i = 0; i < MyContexts.Count; i++)
     {
         var idx = i; // <-- nog steeds nodig om closure te fixen
 
+        guids.Add(MyContexts[idx].Id);
 
         <MyGridFor @bind-Model="MyContexts[idx]"
                    @bind-VisibleColumns="visibleCols"
+                   ReadOnly = "@readOnly"
                    @key="MyContexts[idx].Id" />
+
+
+         // haal de nested context op
+         // toon de nested
+        var nestedCtxen = GetNestedContexts(MyContexts[idx]).ToList();
+        @* Recursief nested contexten tonen *@
+
+        @* for(int j = 0; j < nestedCtxen.Count; j++)
+        {
+            var nidx = j; // fix closure
+
+            // voorkom dubbele keys
+            if (!guids.Contains(nestedCtxen[nidx].Id))
+            {
+                <MyGridFor @bind-Model="nestedCtxen[nidx]"
+                           @bind-VisibleColumns="visibleCols"
+                           ReadOnly="@readOnly"
+                           @key="nestedCtxen[nidx].Id" />
+            }
+          
+        } *@
+
+   
+
+        
     }
 
   
 
 
-    <pre>@modelDump</pre>
+    @* <pre>@modelDump</pre> *@
 }
 
 
@@ -64,6 +96,33 @@ else
     private List<BaseEurocodeContext> MyContexts { get; set; } = [];
 
 
+    private IEnumerable<BaseEurocodeContext> GetNestedContexts(object obj)
+    {
+        if (obj == null)
+            yield break;
+
+        var type = obj.GetType();
+
+        foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (typeof(BaseEurocodeContext).IsAssignableFrom(prop.PropertyType))
+            {
+                var value = prop.GetValue(obj) as BaseEurocodeContext;
+                if (value != null)
+                    yield return value;
+            }
+
+            if (typeof(IEnumerable<BaseEurocodeContext>).IsAssignableFrom(prop.PropertyType))
+            {
+                var collection = prop.GetValue(obj) as IEnumerable<BaseEurocodeContext>;
+                if (collection != null)
+                {
+                    foreach (var item in collection)
+                        yield return item;
+                }
+            }
+        }
+    }
 
     //private SampleModel model = new();
     private HashSet<string> visibleCols = new();
@@ -75,16 +134,25 @@ else
     private bool showUnit = true;
     private bool showArticle = true;
     private bool showFormula = !false;
+    private bool readOnly = true;
 
     protected override void OnInitialized()
     {
         visibleCols = new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
-        MyContexts.Add(SampleProject?.Beton);
-        MyContexts.Add(SampleProject?.Dekking);
 
-        SampleProject?.ScheurwijdteDemo.BerekenEnValideer(); // wacht eens even, dit moet net als alle andere automatisch gaan!
-        MyContexts.Add(SampleProject?.ScheurwijdteDemo);
-        MyContexts.Add(SampleProject?.Belastingen);
+        MyContexts.Add(SampleProject?.DoorbuigingDemo);
+        MyContexts.Add(SampleProject?.DoorbuigingDemo.KruipKrimp);
+        MyContexts.Add(SampleProject?.DoorbuigingDemo.Doorbuiging);
+        //MyContexts.Add(SampleProject?.DoorbuiDemoging.Beton);
+
+
+        // MyContexts.Add(SampleProject?.Grondslagen);
+        MyContexts.Add(SampleProject?.Beton);
+        // MyContexts.Add(SampleProject?.Dekking);
+
+        // SampleProject?.ScheurwijdteDemo.BerekenEnValideer(); // wacht eens even, dit moet net als alle andere automatisch gaan!
+        // MyContexts.Add(SampleProject?.ScheurwijdteDemo);
+        // MyContexts.Add(SampleProject?.Belastingen);
 
 
         UpdateVisibility();

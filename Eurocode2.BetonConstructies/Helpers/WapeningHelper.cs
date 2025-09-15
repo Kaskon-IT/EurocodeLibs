@@ -172,6 +172,8 @@
 
 
 
+
+
             return hohMaten.Min();
 
         }

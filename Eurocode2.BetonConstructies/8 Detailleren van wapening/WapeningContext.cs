@@ -203,9 +203,16 @@ namespace Eurocode.BetonConstructies
         public List<WapeningContext> _subgroepen { get; set; } = new();
 
 
-        public double HohMaat { get { return WapeningHelper.GetKleinsteHohMaat(_wapgroepen); } }
+        public double HohMaat
+        {
+            get
+            {
+                return OpgaveGrootsteHohMaatTenBehoeveVanControleScheurwijdte ?? WapeningHelper.GetKleinsteHohMaat(_wapgroepen);
+            }
+        }
 
 
+        public double? OpgaveGrootsteHohMaatTenBehoeveVanControleScheurwijdte { get; set; } = 80;
 
 
 

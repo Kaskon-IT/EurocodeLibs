@@ -27,6 +27,23 @@ namespace CommonLibrary.Extensions
             return truncated;
         }
 
+        // ---- Verbeterde universele helper met afronding ----
+        public static double RoundToSignificantDigits(double value, int digits)
+        {
+            if (value == 0.0 || double.IsNaN(value) || double.IsInfinity(value))
+                return value;
+
+            double abs = Math.Abs(value);
+            int exponent = (int)Math.Floor(Math.Log10(abs)); // orde van grootte
+            double scale = Math.Pow(10, exponent - digits + 1);
+
+            double rounded = Math.Round(value / scale, 0, MidpointRounding.AwayFromZero) * scale;
+            return rounded;
+        }
+
+
+
+
         // ---- Formatter ----
         private static string FormatNumber(double? value, int sig, string? unit, bool isTeX)
         {
@@ -39,8 +56,12 @@ namespace CommonLibrary.Extensions
                 return v.ToString(_culture);
 
             // Eerst trunceren
-            double truncated = TruncateToSignificantDigits(v, sig);
-            double abs = Math.Abs(truncated);
+            //double truncated = TruncateToSignificantDigits(v, sig);
+            //double abs = Math.Abs(truncated);
+
+            // Eerst afronden
+            double rounded = RoundToSignificantDigits(v, sig);
+            double abs = Math.Abs(rounded);
 
             string formatted;
 
@@ -48,7 +69,7 @@ namespace CommonLibrary.Extensions
             if ((abs >= 1000.0) || (abs > 0 && abs < 0.001))
             {
                 int exponent = (int)Math.Floor(Math.Log10(abs));
-                double mantisse = truncated / Math.Pow(10, exponent);
+                double mantisse = rounded / Math.Pow(10, exponent);
 
                 if (isTeX)
                 {
@@ -64,7 +85,7 @@ namespace CommonLibrary.Extensions
             else
             {
                 int decimals = Math.Max(0, sig - (int)Math.Floor(Math.Log10(abs)) - 1);
-                formatted = truncated.ToString("0." + new string('#', decimals), _culture);
+                formatted = rounded.ToString("0." + new string('#', decimals), _culture);
             }
 
             // Eenheid toevoegen

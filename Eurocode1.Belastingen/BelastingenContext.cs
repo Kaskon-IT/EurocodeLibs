@@ -34,6 +34,9 @@ namespace Eurocode.Belastingen
 
         public GrondslagenContext Grondslagen { get; set; }
 
+
+
+
         public List<BelastingGeval> BelastingGevallen { get; set; } =
             [
                 new BelastingGeval(){
@@ -67,6 +70,10 @@ namespace Eurocode.Belastingen
             BelastingCombinatieTypeEnum.Karakteristiek
 
             ];
+
+
+
+
 
 
         public List<BelastingCombinatie> BelastingCombinaties { get; set; } = [];

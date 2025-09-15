@@ -47,6 +47,10 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
         public BendingResults BendingResults2 { get; set; }
 
 
+        public DoorbuigingStudie DoorbuigingDemo { get; set; } = new();
+
+
+
         public SampleProject(GrondslagenContext grondslagen)
         {
             Grondslagen = grondslagen;

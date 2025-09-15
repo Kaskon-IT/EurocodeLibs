@@ -5,7 +5,7 @@ using GREEK = ExportFactory.Services.GreekLetters;
 
 namespace Eurocode.BetonConstructies
 {
-    public partial class BetonContext
+    public partial class BetonContextKruipEnKrimpCalculator
     {
         // 3.1.4 Kruip en krimp
 
@@ -14,13 +14,20 @@ namespace Eurocode.BetonConstructies
         // het beton op het moment dat de belasting voor het eerst is aangebracht en hangt af van de duur en de
         // grootte van de belasting.
 
+        private readonly BetonContext _beton;
+        public BetonContextKruipEnKrimpCalculator(BetonContext beton)
+        {
+            _beton = beton;
+        }
+
+
 
         [TableColumn(Label = "tangentmodulus", Symbol = "<i>E</i><sub>c</sub>", Article = "3.1.4 (2)", Unit = "N/mm²")]
         public double TangentModulus
         {
             get
             {
-                return 1.05 * Ecm;
+                return 1.05 * _beton.Ecm;
             }
         }
 
@@ -35,7 +42,11 @@ namespace Eurocode.BetonConstructies
         /// (B.1)
         /// </summary>
         /// 
-        [TableColumn(Label = "kruipcoëfficiënt", Symbol = $"{GREEK.phi}<sub>(t,t<sub>0</sub>)</sub>", Article = "Bijlage B")]
+        [TableColumn(Label = "kruipcoëfficiënt",
+            Symbol = $"{GREEK.phi}<sub>(t,t<sub>0</sub>)</sub>",
+            Article = "Bijlage B",
+            Description = "is de kruipcoëfficiënt die mag worden berekend uit vergelijking (B.1)"
+            )]
         public double KruipCoefficient
         {
             get
@@ -54,7 +65,11 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// (B.2)
         /// </summary>
-        [TableColumn(Label = "theoretische kruipcoëfficiënt", Symbol = $"{GREEK.phi}<sub>0</sub>", Article = "Bijlage B")]
+        [TableColumn(Label = "theoretische kruipcoëfficiënt",
+            Symbol = $"{GREEK.phi}<sub>0</sub>",
+            Article = "Bijlage B",
+            Description = "is de theoretische kruipcoëfficiënt die mag worden berekend uit vergelijking (B.2)"
+            )]
         public double TheoretischeKruipCoefficient
         {
             get
@@ -81,7 +96,7 @@ namespace Eurocode.BetonConstructies
             {
                 double hulp = (1 - (double)RelatieveVochtigheid / 100) / (0.1 * Math.Pow(TheoretischeDikteBeton_h0, 1.0 / 3.0));
 
-                if (Fcm <= 35)
+                if (_beton.Fcm <= 35)
                 {
                     // f_cm kleiner of gelijk aan 35 MPa (B.3a)
                     return 1 + hulp;
@@ -101,7 +116,7 @@ namespace Eurocode.BetonConstructies
                 string h0 = $"{TheoretischeDikteBeton_h0.ToTeX()}";
                 string waarde = $"{FactorRelatieveVochtigheid.ToTeX()}";
 
-                if (Fcm <= 35)
+                if (_beton.Fcm <= 35)
                 {
                     return new Formula("(B.3a)",
                         @"\varphi_{RH} = 1 + \frac{1 - RH / 100} {0.1 \cdot h_0^{1/3}}",
@@ -126,7 +141,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return Math.Pow(35 / Fcm, 0.7);
+                return Math.Pow(35 / _beton.Fcm, 0.7);
             }
         }
 
@@ -136,7 +151,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return Math.Pow(35 / Fcm, 0.2);
+                return Math.Pow(35 / _beton.Fcm, 0.2);
             }
         }
 
@@ -144,18 +159,19 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return Math.Pow(35 / Fcm, 0.5);
+                return Math.Pow(35 / _beton.Fcm, 0.5);
             }
         }
 
 
 
-        [TableColumn("macht cementsoort", Symbol = "α", Article = "Bijlage B")]
+        [TableColumn("macht cementsoort", Symbol = "<i>α</i>", Article = "Bijlage B", Description = "is een macht die afhangt van de cementsoort:" +
+            "<ul><li><i>α</i> = –1 voor cement van klasse S; </li><li><i>α</i> = 0 voor cement van klasse N; </li><li><i>α</i> = 1 voor cement van klasse R. </li></ul>")]
         public int MachtCementsoort
         {
             get
             {
-                switch (CementKlasse)
+                switch (_beton.CementKlasse)
                 {
                     case CementklasseEnum.S: return -1;
                     default: return 0;
@@ -164,6 +180,7 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
+
 
 
 
@@ -181,12 +198,12 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return 16.8 / Math.Sqrt(Fcm);
+                return 16.8 / Math.Sqrt(_beton.Fcm);
             }
         }
         public Formula BetaFcmFormula => new("(B.4)",
             @"\beta(f_{cm}) = \frac{16.8}{\sqrt{f_{cm}}}",
-            $@"\beta({Fcm.ToTeX()}) = \frac{{16.8}}{{\sqrt{{{Fcm.ToTeX()}}}}} = {BetaFcm.ToTeX()}");
+            $@"\beta({_beton.Fcm.ToTeX()}) = \frac{{16.8}}{{\sqrt{{{_beton.Fcm.ToTeX()}}}}} = {BetaFcm.ToTeX()}");
 
 
 
@@ -241,7 +258,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return 2 * (this.Profiel.Breedte + this.Profiel.Hoogte); // let op! fixed rechthoek
+                return 2 * (_beton.Profiel.Breedte + _beton.Profiel.Hoogte); // let op! fixed rechthoek
             }
         }
 
@@ -255,13 +272,13 @@ namespace Eurocode.BetonConstructies
             get
             {
                 double u = OmtrekElementInAanrakingMetBuitenlucht_u;
-                return 2 * this.Profiel.Area / u;
+                return 2 * _beton.Profiel.Area / u;
                 //return 2 * OppervlakteDwarsdoorsnedeBeton_Ac / OmtrekDeelDwarsdoorsnedeBlootgesteldAanUitdroging_u;
             }
         }
         public Formula TheoretischeDikteBeton_h0Formula => new("(B.6)",
             @"h_0=\frac{2\cdot A_c}{u}",
-            @$"h_0=\frac{{ {2} \cdot {Profiel.Area.ToTeX()} }}  {{ {OmtrekElementInAanrakingMetBuitenlucht_u.ToTeX()} }} ");
+            @$"h_0=\frac{{ {2} \cdot {_beton.Profiel.Area.ToTeX()} }}  {{ {OmtrekElementInAanrakingMetBuitenlucht_u.ToTeX()} }} ");
 
 
 
@@ -299,7 +316,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                if (Fcm <= 35)
+                if (_beton.Fcm <= 35)
                 {
                     var value1 = 1.5 * (1 + Math.Pow(0.012 * RelatieveVochtigheid, 18)) * TheoretischeDikteBeton_h0 + 250;
                     var value2 = 1500;
@@ -321,7 +338,7 @@ namespace Eurocode.BetonConstructies
                 string h0 = $"{TheoretischeDikteBeton_h0.ToTeX()}";
 
 
-                if (Fcm <= 35)
+                if (_beton.Fcm <= 35)
                 {
 
                     return new()
@@ -455,8 +472,7 @@ namespace Eurocode.BetonConstructies
 
         public int OuderdomBetonBeginUitdrogingsKrimpOfZwelling_ts { get; set; } = 1;
 
-        [JsonIgnore] // wordt ingelezen // todo controleer of goed gaat
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new(500, 700);
+
 
 
         /// <summary>
@@ -468,8 +484,8 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                double val1 = (1.6 - Profiel.Hoogte / 1000) * this.Fctm;
-                double val2 = this.Fctm;
+                double val1 = (1.6 - _beton.Profiel.Hoogte / 1000) * _beton.Fctm;
+                double val2 = _beton.Fctm;
                 return Math.Max(val1, val2);
             }
         }
@@ -517,7 +533,7 @@ namespace Eurocode.BetonConstructies
 
     public static class KruipEnKrimpExtensions
     {
-        public static double GetOuderdomVergelijkingB9(this BetonContext context, double t0t)
+        public static double GetOuderdomVergelijkingB9(this BetonContextKruipEnKrimpCalculator context, double t0t)
         {
             //(2) Het effect van de cementsoort(zie 3.1.2(6)) op de kruipcoëfficiënt van het beton mag in rekening zijn
             //gebracht door het aanpassen van de duur van de belasting t0 in vergelijking(B.5) volgens de volgende
@@ -537,9 +553,6 @@ namespace Eurocode.BetonConstructies
 
     }
 
-    public class FormulaDelete
-    {
 
-    }
 
 }

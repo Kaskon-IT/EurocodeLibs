@@ -15,6 +15,24 @@
         }
 
 
+        public List<string> Lines { get; set; } = [];
+        public string BuildFormula()
+        {
+            if (Lines == null || Lines.Count == 0)
+            {
+                // Standaard
+                Lines.Add(StaticValue);
+                if (DynamicValue != null)
+                {
+                    Lines.Add(DynamicValue);
+                }
+            }
+
+            var joined = string.Join(" \\\\ ", Lines);
+
+            return $"\\begin{{alignedat}} {joined} \\end{{alignedat}}";
+        }
+
         /// <summary>
         /// Statische LaTex string
         /// </summary>
@@ -31,19 +49,25 @@
         public string Name { get; set; } = "";
 
 
-        public string GetValue
+        public string GetValue(bool removeSymbol = false)
         {
-            get
+
+            var part2 = "";
+            if (DynamicValue != null)
             {
-                var part2 = "";
-                if (DynamicValue != null)
+                part2 = DynamicValue;
+
+                if (removeSymbol)
                 {
-                    int index = DynamicValue.IndexOf('=');
+                    var index = DynamicValue.IndexOf('=');
                     string result = index >= 0 ? DynamicValue.Substring(index) : string.Empty;
                     part2 = result;
                 }
-                return $"{StaticValue}{part2}";
+
+
             }
+            return $"{StaticValue}\\\\{part2}";
+
         }
 
     }

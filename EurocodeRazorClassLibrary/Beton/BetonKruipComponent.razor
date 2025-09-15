@@ -7,7 +7,7 @@
 
 <h3>BetonKruipComponent</h3>
 
-@if(Model != null)
+@if(Model != null && KruipKrimp != null)
 {
    
     // Gebruiker moet kunnen instellen:
@@ -16,8 +16,8 @@
     // 
     //
     <FluentSelectEnum TEnum="CementklasseEnum" @bind-EnumSelectedValue="Model.CementKlasse" Label="Cementklasse"></FluentSelectEnum>
-    <FluentNumberField @bind-Value="Model.OuderdomBeton_t" />
-    <FluentNumberField @bind-Value="Model.OuderdomBetonOpMomentVanBelasten_t0" />
+    <FluentNumberField @bind-Value="KruipKrimp.OuderdomBeton_t" />
+    <FluentNumberField @bind-Value="KruipKrimp.OuderdomBetonOpMomentVanBelasten_t0" />
 
 
 
@@ -75,6 +75,14 @@ else
 
     [Parameter] public Eurocode.BetonConstructies.BetonContext? Model { get; set; }
     [Parameter] public EventCallback<Eurocode.BetonConstructies.BetonContext> ModelChanged { get; set; }
+
+    // kruipkrimp
+    [Parameter] public BetonContextKruipEnKrimpCalculator? KruipKrimp { get; set; } = null;
+    [Parameter] public EventCallback<BetonContextKruipEnKrimpCalculator> KruipKrimpChanged { get; set; }
+
+
+
+
 
 
 }

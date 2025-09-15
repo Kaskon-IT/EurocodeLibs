@@ -1,9 +1,11 @@
-﻿using CommonLibrary.Extensions;
+﻿using CommonLibrary;
+using CommonLibrary.Extensions;
+using ExportFactory.MigraDocContentModels;
 using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
-    public partial class BetonContext
+    public partial class BetonContextKruipEnKrimpCalculator : BaseEurocodeContext
     {
         // 3.1.4 Kruip en krimp
         // (6) De totale krimpverkorting is samengesteld uit twee componenten:
@@ -11,6 +13,7 @@ namespace Eurocode.BetonConstructies
 
         /// <summary>
         /// Vergelijking (3.8)
+        /// ε_cs
         /// </summary>
         /// 
         [TableColumn(Label = "totale krimpverkorting", Symbol = "<i>ε</i><sub>cs</sub>",
@@ -35,7 +38,7 @@ namespace Eurocode.BetonConstructies
         /// 
         /// </summary>
         [TableColumn(Label = "uitdrogingskrimpverkorting", Symbol = "<i>ε</i><sub>cd</sub>(t)",
-            Article = "3.1.4 (6)")]
+            Article = "3.1.4 (6)", Description = "is de ontwikkeling van de uitdrogingskrimpverkorting in de tijd")]
         public double UitdrogingsKrimpverkorting
         {
             get
@@ -142,12 +145,12 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return 2.5 * (Fck - 10) * 0.000001;
+                return 2.5 * (_beton.Fck - 10) * 0.000001;
             }
         }
         public Formula EpsilonCaOneindigFormula => new("(3.12)",
             @"\epsilon_{ca}(\infty) = 2.5 (f_{ck}-10) 10^{-6})",
-            $@"\epsilon_{{ca}}(\infty) = 2.5 ({Fck.ToTeX()}-10) 10^{{-6}}) = {EpsilonCaOneindig.ToTeX()}");
+            $@"\epsilon_{{ca}}(\infty) = 2.5 ({_beton.Fck.ToTeX()}-10) 10^{{-6}}) = {EpsilonCaOneindig.ToTeX()}");
 
 
         /// <summary>
@@ -186,14 +189,14 @@ namespace Eurocode.BetonConstructies
             get
             {
                 double hulp1 = (220 + 110 * AlphaDs1);
-                double macht = -AlphaDs2 * (Fcm / Fcmo);
+                double macht = -AlphaDs2 * (_beton.Fcm / Fcmo);
                 double hulp2 = Math.Pow(Math.E, macht);
                 return 0.85 * (hulp1 * hulp2) * 0.000001 * BetaRH;
             }
         }
         public Formula BasisVerkortingUitdrogingskrimpFormula => new("(B.11)",
             @"\epsilon_{cd,0}=0.85 \left[ (220+110 \cdot \alpha_{ds1}) \cdot exp \left(-\alpha_{ds2} \cdot \frac{f_{cm}}{f_{cmo}} \right) \right] \cdot 10^{-6} \cdot \beta_{RH}",
-            $@"\epsilon_{{cd,0}}=0.85 \left[ (220+110 \cdot {AlphaDs1.ToTeX()}) \cdot exp \left(-{AlphaDs2.ToTeX()} \cdot \frac{{{Fcm.ToTeX()}}}{{{Fcmo.ToTeX()}}}\right) \right] \cdot 10^{{-6}} \cdot {BetaRH.ToTeX()} = {BasisVerkortingUitdrogingskrimp.ToTeX()}");
+            $@"\epsilon_{{cd,0}}=0.85 \left[ (220+110 \cdot {AlphaDs1.ToTeX()}) \cdot exp \left(-{AlphaDs2.ToTeX()} \cdot \frac{{{_beton.Fcm.ToTeX()}}}{{{Fcmo.ToTeX()}}}\right) \right] \cdot 10^{{-6}} \cdot {BetaRH.ToTeX()} = {BasisVerkortingUitdrogingskrimp.ToTeX()}");
 
 
         /// <summary>
@@ -249,7 +252,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                switch (CementKlasse)
+                switch (_beton.CementKlasse)
                 {
                     case CementklasseEnum.S:
                         return 3;
@@ -273,7 +276,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                switch (CementKlasse)
+                switch (_beton.CementKlasse)
                 {
                     case CementklasseEnum.S:
                         return 0.13;
@@ -286,37 +289,26 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        /// <summary>
-        /// 7.4.3 
-        /// (5) Voor belastingen met een duur die kruip veroorzaakt, mag de totale vervorming, inclusief kruip, zijn 
-        /// berekend door gebruik te maken van een effectieve elasticiteitsmodulus voor beton volgens
-        /// vergelijking(7.20) 
-        /// De effectieve elasticiteitsmodulus van beton. (inclusief kruip)
-        /// Ec,eff = Ecm / (1 + KruipCoefficient)
-        /// </summary>
-        [TableColumn(Label = "effectieve elasticiteitsmodulus", Symbol = $"<i>E</i><sub>c,eff</sub>", Article = "7.4.3 (5)", Unit = "N/mm²",
-            Description = "(5) Voor belastingen met een duur die kruip veroorzaakt, mag de totale vervorming, inclusief kruip, zijn berekend door gebruik te maken van een effectieve elasticiteitsmodulus voor beton volgens vergelijking (7.20).")]
-        public double EcEff
-        {
-            get
-            {
-                return Ecm / (1 + KruipCoefficient);
-            }
-        }
-        public Formula EcEffFormula => new("(7.20)",
-            @"E_{c,eff} = \frac{E_{cm}}{1 + \varphi(\infty,t_0)}",
-            $@"E_{{c,eff}} = \frac{{{Ecm.ToTeX()}}}{{1 + {KruipCoefficient.ToTeX()}}} = {EcEff.ToTeX()}");
 
-        [TableColumn(Label = "verhouding staal/beton", Symbol = $"<i>α</i><sub>e</sub>", StringFormat = "{0:0.0000}", Article = "7.4.3 (6)")]
-        public double Alphae
+
+
+
+
+
+
+        public override bool IsAkkoord()
         {
-            get
-            {
-                return BetonStaalContext.Es / (EcEff * 1000);
-            }
+            return true;
         }
-        public Formula AlphaeFormula => new("(7.21)",
-            @"\alpha_{e} = \frac{E_{s}}{E_{c,eff}}",
-            $@"\alpha_{{e}} = \frac{{{BetonStaalContext.Es.ToTeX()}}}{{{(EcEff * 1000).ToTeX()}}} = {Alphae.ToTeX()}");
+
+        protected override void Bereken()
+        {
+            //
+        }
+
+        protected override bool Valideer()
+        {
+            return IsAkkoord();
+        }
     }
 }

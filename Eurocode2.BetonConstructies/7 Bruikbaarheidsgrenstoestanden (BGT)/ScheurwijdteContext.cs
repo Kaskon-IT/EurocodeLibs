@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Extensions;
 using Eurocode.Grondslagen;
 using ExportFactory.Shared;
 using System.ComponentModel;
@@ -152,11 +153,20 @@ namespace Eurocode.BetonConstructies
         public double FactorK { get; set; } = 1.0;
 
 
-        [TableColumn("factor k<sub>t<sub>", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "0.##")]
-        public double FactorKt { get; set; } = 0.6;
+        [TableColumn(Label = "factor",
+            Weergave = WeergaveEnum.DraaiTabel,
+            Symbol = "<i>k</i><sub>t</sub>",
+            Article = "7.3.4 (2)",
+            Description = "is een factor die afhangt van de belastingsduur: <ul>" +
+            "<li><i>k</i><sub>t</sub> = 0,6 voor kortdurende belasting; " +
+            "<li><i>k</i><sub>t<</sub> = 0,4 voor langdurende belasting. </ul>"
 
 
-        public double FactorKc { get; set; } = 0.4; // naar 7.3.2
+            )]
+        public double FactorKt { get; internal set; } = 0.6;
+
+
+        public double FactorKc { get; internal set; } = 0.4; // naar 7.3.2
 
         [TableColumn(
             Label = "factor",
@@ -216,10 +226,15 @@ namespace Eurocode.BetonConstructies
         public double Act { get; set; }
         public double Staalspanning { get; set; }
 
-        [TableColumn("|sigma|<sub>s<sub>",
+        [TableColumn(Label = "staalspanning",
+            Symbol = "<i>σ</i><sub>s</sub>",
             Weergave = WeergaveEnum.DraaiTabel,
-            Description = "optredende spanning betonstaal |sigma|<sub>s<sub>",
-            StringFormat = "0 N/mm²")]
+            Description = "is de spanning in de trekwapening, uitgaande van een gescheurde doorsnede",
+            Unit = "N/mm²",
+            Article = "7.4.3 (2)"
+
+
+            )]
         public double StaalspanningOptredend { get; set; }
         public double Rho { get; set; }
         public double HoogteBetonDrukZoneBGT { get; set; }
@@ -260,8 +275,8 @@ namespace Eurocode.BetonConstructies
                         return new()
                         {
                             Name = "(7.11)",
-                            StaticValue = @"k_3 \cdot c + k_1 \cdot k_2 \cdot k_4 \cdot Ø / \varphi_{p,eff} ",
-                            DynamicValue = $"s_{{r,max}} = {MaximaleScheurAfstandFactorK3:0.##} \\cdot {AfstandVerdeelWapening:0.##} + {MaximaleScheurAfstandFactorK1:0.##} \\cdot {MaximaleScheurAfstandFactorK2:0.##} \\cdot {MaximaleScheurAfstandFactorK4:0.###} \\cdot {WapDiameterEquivalent:0.##} / {VerhoudingWapeningBetonEffectief:0.####} = {SrMax:0.##} mm"
+                            StaticValue = @"k_3 \cdot c + k_1 \cdot k_2 \cdot k_4 \cdot Ø / \varphi_{p,eff} \leq MAX[(50 – 0,8 fck)Ø en 15Ø]",
+                            DynamicValue = $"s_{{r,max}} = {MaximaleScheurAfstandFactorK3:0.##} \\cdot {DekkingOpLangsWapening:0.##} + {MaximaleScheurAfstandFactorK1:0.##} \\cdot {MaximaleScheurAfstandFactorK2:0.##} \\cdot {MaximaleScheurAfstandFactorK4:0.###} \\cdot {WapDiameterEquivalent:0.##} / {VerhoudingWapeningBetonEffectief:0.####} = {SrMax:0.##} mm"
                         };
 
                 }
@@ -275,11 +290,10 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(
-            Symbol = "|epsilon|<sub>sm<sub>-|epsilon|<sub>cm<sub>",
+            Symbol = "ε<sub>sm</sub>-ε<sub>cm</sub>",
             Label = "rekverschil",
             Article = "7.3.4 (2)",
             Description = "mag zijn berekend uit de vergelijking (7.9)",
-            StringFormat = "e2",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
         public double EpsSmMinusEpsCm { get; set; }
@@ -297,18 +311,39 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("w<sub>k<sub> [mm]",
-            description: "(7.8) berekende scheurwijdte w<sub>k<sub> = s<sub>r,max<sub> (|epsilon|<sub>sm<sub>-|epsilon|<sub>cm<sub>)",
+        [TableColumn(
+            Article = "7.3.4 (1)",
+            Label = "scheurwijdte",
+            Symbol = "<i>w</i><sub>k</sub>",
+            Unit = "mm",
+            Description = "De scheurwijdte <i>w</i><sub>k</sub> mag zijn berekend met vergelijking (7.8):",
             StringFormat = "0.##",
             Key = K.ScheurwijdteBerekend,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
         public double Wk { get; internal set; }
+        public Formula WkFormula
+        {
+            get
+            {
+                return new()
+                {
+                    Name = "7.8",
+                    StaticValue = @"w_k = s_{r,max} \cdot (\epsilon_{sm}-\epsilon_{cm})",
+                    DynamicValue = $@"w_k = {SrMax.ToTeX()} \cdot {EpsSmMinusEpsCm.ToTeX()} = {Wk.ToTeX()} \;mm"
+                };
+            }
+        }
 
-        [TableColumn("k<sub>x<sub>",
-            description: "k<sub>x<sub>",
+
+
+
+        [TableColumn(
+            Article = "7.3.1",
+            Label = "factor",
+            Symbol = "<i>k</i><sub>x</sub>",
+            Description = " voor de bepaling van de duurzaamheid, mogen de waarden in tabel 7.1N zijn vermenigvuldigd met een factor kx.",
             Key = K.ScheurwijdteKx,
-            StringFormat = "0.##",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double ScheurwijdteGrenswaardeFactorKx
         {
@@ -317,6 +352,7 @@ namespace Eurocode.BetonConstructies
                 return ScheurwijdteGrenswaarde.FactorKx;
             }
         }
+
 
         public double Ec
         {
@@ -327,10 +363,12 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("w<sub>max<sub> [mm]",
-            description: "grenswaarde scheurwijdte",
+        [TableColumn(
+            Article = "7.3.1",
+            Symbol = "<i>w</i><sub>max</sub>",
+            Unit = "mm",
+            Label = "grenswaarde scheurwijdte",
             Key = K.ScheurwijdteMax,
-            StringFormat = "0.0",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double ScheurwijdteMax
         {
@@ -359,7 +397,11 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("|alpha|<sub>e<sub>", Weergave = WeergaveEnum.DraaiTabel, StringFormat = "e2")]
+        [TableColumn(Symbol = "<i>α</i><sub>e<sub>",
+            Label = "verhouding",
+            Article = "7.3.4 (2)",
+            Description = "is de verhouding <i>E</i><sub>s</sub>/<i>E</i><sub>cm</sub>",
+            Weergave = WeergaveEnum.DraaiTabel)]
         public double ScheurwijdteVerhoudingElasticiteitsmodulusStaalBeton
         {
             get
@@ -371,18 +413,25 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("A<sub>s,min<sub>", Weergave = WeergaveEnum.DraaiTabel, Key = K.ScheurwijdteAsMin, StringFormat = "0 mm²")]
+        [TableColumn(
+            Article = "7.3.2 (2)",
+            Label = "minimale wapening scheurbeheersing",
+            Symbol = "<i>A</i><sub>s,min</sub>",
+            Unit = "mm²",
+            Weergave = WeergaveEnum.DraaiTabel,
+            Key = K.ScheurwijdteAsMin
+            )]
         public double ScheurwijdteAsMin { get; set; }
 
 
 
         public WapeningContext Wapening { get; set; } = new() { Tekst = "8-100" };
 
-        [TableColumn("A<sub>s,toe<sub> [mm²]",
-            description: "toegepaste wapening A<sub>s,toe<sub>",
-            Key = K.AsToe,
-            StringFormat = "0 mm²",
-            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        [TableColumn(
+            Symbol = "<i>A</i><sub>s,toe</sub>",
+            Label = "toegepast wapening",
+            Unit = "mm²"
+            )]
         public double AsToe
         {
             get { return Wapening.As; }
@@ -391,10 +440,9 @@ namespace Eurocode.BetonConstructies
 
 
 
+
         //[TableColumn("Element type", Weergave = WeergaveEnum.DraaiTabel)]
         public AanhechtingTypeEnum Aanhechting { get; set; } = AanhechtingTypeEnum.Standaard;
-
-
 
 
 
@@ -417,13 +465,11 @@ namespace Eurocode.BetonConstructies
         public override bool IsAkkoord()
         {
             return Valideer();
-            //throw new NotImplementedException();
         }
 
         protected override void Bereken()
         {
             this.VerwerkScheurwijdte();
-            //throw new NotImplementedException();
         }
 
         protected override bool Valideer()
@@ -445,8 +491,9 @@ namespace Eurocode.BetonConstructies
             }
 
             return true;
-            //throw new NotImplementedException();
         }
+
+
 
 
         public override string ToString()

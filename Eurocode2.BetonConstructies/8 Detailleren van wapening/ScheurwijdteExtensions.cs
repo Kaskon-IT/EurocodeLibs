@@ -12,7 +12,7 @@
             sw.ScheurwijdteMinimumWapening.Beton = sw.Beton;
 
 
-            // verplaats naar 7.3.2
+
             sw.SetFactorKt(sw.Belastingduur);
 
 

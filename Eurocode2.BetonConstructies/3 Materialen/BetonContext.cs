@@ -42,6 +42,11 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public BetonStaalContext BetonStaal = new();
 
+
+        [JsonIgnore] // wordt ingelezen // todo controleer of goed gaat
+        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new(500, 700);
+
+
         /// <summary>
         /// Wordt er een parabolisch spannings-rek-diagram toegepast?
         /// Bij <see langword="false"/> wordt een bi-lineair spannings-rek-diagram toegepast.
@@ -117,7 +122,7 @@ namespace Eurocode.BetonConstructies
 
 
                     case SpanningRekDiagramType.BiLineair:
-                        return new() { Name = "", };
+                        return new() { Name = "..", StaticValue = @"\sigma_c = f_{cd}", DynamicValue = @$"\sigma_c={Fcd.ToTeX()}" };
 
 
 
@@ -343,7 +348,9 @@ namespace Eurocode.BetonConstructies
             Article = "3.1.2 (3)",
             Unit = "N/mm²")]
         public double FctkVijfProcent { get { return 0.7 * Fctm; } }    // 5% fractiel
-        public Formula FctkVijfProcentFormula => new("Tabel 3.1", @"f_{ctk,0.05} = 0.7×f_{ctm}", @$"f_{{ctk,0.05}} = 0.7×{Fctm.ToEng()} = {FctkVijfProcent.ToEng(3, "N/mm²", isTeX: true)}");
+        public Formula FctkVijfProcentFormula => new("Tabel 3.1",
+            @"f_{ctk,0.05} = 0.7×f_{ctm}",
+            @$"f_{{ctk,0.05}} = 0.7×{Fctm.ToEng()} = {FctkVijfProcent.ToEng()}");
 
 
 
@@ -353,7 +360,9 @@ namespace Eurocode.BetonConstructies
             Unit = "N/mm²",
             Article = "3.1.2 (3)")]
         public double FctkVijfEnNegentigProcent { get { return 1.3 * Fctm; } } // 95% fractiel
-        public Formula FctkVijfEnNegentigProcentFormula => new("Tabel 3.1", @"f_{ctk,0.95} = 1.3×f_{ctm}", @$"f_{{ctk,0.95}} = 1.3×{Fctm.ToEng()} = {FctkVijfEnNegentigProcent.ToEng(3, "N/mm²", isTeX: true)}");
+        public Formula FctkVijfEnNegentigProcentFormula => new("Tabel 3.1",
+            @"f_{ctk,0.95} = 1.3×f_{ctm}",
+            @$"f_{{ctk,0.95}} = 1.3×{Fctm.ToEng()} = {FctkVijfEnNegentigProcent.ToEng()}");
 
 
         public bool IsOntwerpSituatieBuitenGewoon = false;  // default Blijvend en tijdelijk conform art. 2.4.2.4 (1) Partiële factoren voor materialen 
@@ -373,7 +382,7 @@ namespace Eurocode.BetonConstructies
         public double Fcd { get { return AlphaCC * Fck / GammaC; } }
         public Formula FcdFormula => new("(3.15)",
             @"f_{cd}=\alpha_{cc}f_{ck} / \gamma_{c}",
-            @$"f_{{cd}}={AlphaCC}×{Fck.ToEng()}/ {GammaC} = {Fcd.ToEng(3, "N/mm²", isTeX: true)}");
+            @$"f_{{cd}}={AlphaCC}×{Fck.ToEng()}/ {GammaC} = {Fcd.ToEng()}");
 
         [TableColumn("treksterkte", Symbol = "<i>f</i><sub>ctd</sub>", Weergave = WeergaveEnum.DraaiTabel,
             Description = "De rekenwaarde van de treksterkte",
@@ -381,7 +390,7 @@ namespace Eurocode.BetonConstructies
         public double Fctd { get { return AlphaCT * FctkVijfProcent / GammaC; } }
         public Formula FctdFormula => new("(3.16)",
             @"f_{ctd}=\alpha_{ct}f_{ctk,0.05} / \gamma_{c}",
-            @$"f_{{ctd}}={AlphaCT}×{FctkVijfProcent.ToEng()}/ {GammaC} = {Fctd.ToEng(3, "N/mm²", isTeX: true)}");
+            @$"f_{{ctd}}={AlphaCT}×{FctkVijfProcent.ToEng()}/ {GammaC} = {Fctd.ToEng()}");
 
 
         public const double AlphaCT = 1; // 3.1.6 Dit is de coëfficiënt die rekening houdt met langeduureffecten op de treksterkte en met ongunstige effecten als gevolg van de manier waarop de belasting aangrijpt.
@@ -493,7 +502,7 @@ namespace Eurocode.BetonConstructies
         public double Ecm { get { return this.GetEcm(); } }
         public Formula EcmFormula => new("Tabel 3.1",
             @"E_{cm}=22[f_{cm}/10]^{0.3} ×10^3",
-            $@"E_{{cm}}=22[{Fcm.ToEng()}/10]^{{{0.3}}} ×10^3 = {Ecm.ToEng(3, "N/mm²", isTeX: true)}");
+            $@"E_{{cm}}=22[{Fcm.ToEng()}/10]^{{{0.3}}} ×10^3 = {Ecm.ToEng()}");
 
 
 
@@ -551,8 +560,8 @@ namespace Eurocode.BetonConstructies
                         return new()
                         {
                             Name = "Tabel 3.1",
-                            StaticValue = @"\epsilon_{c2} = 2.0‰",
-                            DynamicValue = @"\epsilon_{c2} = 2.0‰"
+                            StaticValue = @"\epsilon_{c2} = 2.0‰"
+
                         };
                     }
                     else
@@ -572,8 +581,8 @@ namespace Eurocode.BetonConstructies
                         return new()
                         {
                             Name = "Tabel 3.1",
-                            StaticValue = @"\epsilon_{c3} = 1.75‰",
-                            DynamicValue = @"\epsilon_{c3} = 1.75‰"
+                            StaticValue = @"\epsilon_{c3} = 1.75‰"
+
                         };
                     }
                     else
@@ -631,8 +640,8 @@ namespace Eurocode.BetonConstructies
                         return new()
                         {
                             Name = "Tabel 3.1",
-                            StaticValue = @"\epsilon_{cu2} = 3.5‰",
-                            DynamicValue = @"\epsilon_{cu2} = 3.5‰"
+                            StaticValue = @"\epsilon_{cu2} = 3.5‰"
+
                         };
                     }
                     else
@@ -651,8 +660,8 @@ namespace Eurocode.BetonConstructies
                         return new()
                         {
                             Name = "Tabel 3.1",
-                            StaticValue = @"\epsilon_{cu3} = 3.5‰",
-                            DynamicValue = @"\epsilon_{cu3} = 3.5‰"
+                            StaticValue = @"\epsilon_{cu3} = 3.5‰"
+
                         };
                     }
                     else
