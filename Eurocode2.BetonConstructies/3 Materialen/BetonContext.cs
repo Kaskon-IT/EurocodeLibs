@@ -287,7 +287,7 @@ namespace Eurocode.BetonConstructies
             Description = "<i>f</i><sub>cm</sub> is de gemiddelde druksterkte op 28 dagen volgens tabel 3.1", Weergave = WeergaveEnum.DraaiTabel,
             Article = "3.1.2 (3)")]
         public double Fcm { get { return Fck + 8; } }
-        public Formula FcmFormula => new("Tabel 3.1", @"f_{cm} = f_{ck} + 8", @$"f_{{cm}} = {Fck.ToEng()} + 8 = {Fcm.ToEng(3, "N/mm²", isTeX: true)} ");
+        public Formula FcmFormula => new("Tabel 3.1", @"f_{cm} = f_{ck} + 8", @$"f_{{cm}} = {Fck.ToEng()} + 8 = {Fcm.ToTeX()} ");
 
 
         /// <summary>

@@ -51,25 +51,27 @@
 
         public string GetValue(bool removeSymbol = false)
         {
+            int aantalKarakters = DynamicValue?.Length ?? 0 + StaticValue.Length;
+            int aantalKaraktersVoorLineBreak = 120;
 
             var part2 = "";
             if (DynamicValue != null)
             {
                 part2 = DynamicValue;
 
-                if (removeSymbol)
+                if (removeSymbol || aantalKarakters < aantalKaraktersVoorLineBreak) // kleiner dan dit aantal sowieso in 1 lijn
                 {
                     var index = DynamicValue.IndexOf('=');
                     string result = index >= 0 ? DynamicValue.Substring(index) : string.Empty;
                     part2 = result;
                 }
-
-
             }
-            return $"{StaticValue}\\\\{part2}";
 
+            if (aantalKarakters < aantalKaraktersVoorLineBreak)
+                return $"{StaticValue} {part2}";
+            else
+                return $"{StaticValue}\\\\{part2}";
         }
-
     }
 
 }

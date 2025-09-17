@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 
+
 namespace CommonLibrary
 {
     /// <summary>
@@ -22,6 +23,7 @@ namespace CommonLibrary
         public DateTime AangemaaktOp { get; private set; } = DateTime.UtcNow;
 
         public DateTime GewijzigdOp { get; set; } = DateTime.UtcNow;
+
 
         public ObservableCollection<Melding> Meldingen { get; private set; } = [];
         public ObservableCollection<int> MeldingCodes { get; private set; } = [];

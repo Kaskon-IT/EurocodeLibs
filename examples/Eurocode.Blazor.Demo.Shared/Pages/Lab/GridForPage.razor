@@ -11,32 +11,9 @@
 }
 else
 {
-
-   
-
-
     <div>
-        <label><input type="checkbox" @bind="showLabel" @bind:after="UpdateVisibility"/> Label</label>
-        <label><input type="checkbox" @bind="showSymbol" @bind:after="UpdateVisibility" /> Symbol</label>
-        <label><input type="checkbox" @bind="showValue" @bind:after="UpdateVisibility" /> Value</label>
-        <label><input type="checkbox" @bind="showUnit" @bind:after="UpdateVisibility" /> Unit</label>
-        <label><input type="checkbox" @bind="showArticle" @bind:after="UpdateVisibility" /> Article</label>
-        <label><input type="checkbox" @bind="showFormula" @bind:after="UpdateVisibility" /> Formula</label>
-        <label><input type="checkbox" @bind="readOnly" /> ReadOnly</label>
-
+       <label><input type="checkbox" @bind="readOnly" /> ReadOnly</label>
     </div>
-
-    <button @onclick="ToggleAll">Toggle All</button>
-
-    @* <MyGridFor @bind-Model="@SampleProject.Beton" @bind-VisibleColumns="@visibleCols" /> *@
-
-
-   @*  @for (int i = 0; i < MyContexts.Count; i++)
-    {
-        <h6>@MyContexts[i].Id</h6>
-        <MyGridFor @bind-Model="MyContexts[i]" @key="MyContexts[i].Id" @bind-VisibleColumns="@visibleCols" />
-       
-    } *@
 
     <p>Count: @MyContexts.Count</p>
 
@@ -141,8 +118,9 @@ else
         visibleCols = new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
 
         MyContexts.Add(SampleProject?.DoorbuigingDemo);
-        MyContexts.Add(SampleProject?.DoorbuigingDemo.KruipKrimp);
-        MyContexts.Add(SampleProject?.DoorbuigingDemo.Doorbuiging);
+        MyContexts.Add(SampleProject?.DoorbuigingDemo.KruipKrimpBerekening);
+        MyContexts.Add(SampleProject?.DoorbuigingDemo.DoorbuigingBerekening);
+        MyContexts.Add(SampleProject?.DoorbuigingDemo.BuigingBerekening);
         //MyContexts.Add(SampleProject?.DoorbuiDemoging.Beton);
 
 

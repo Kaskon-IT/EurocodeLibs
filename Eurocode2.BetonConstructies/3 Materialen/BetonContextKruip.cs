@@ -136,7 +136,8 @@ namespace Eurocode.BetonConstructies
 
 
 
-
+        [TableColumn("coefficient invloed betonsterkte", Symbol = "<i>α</i><sub>1</sub>", Article = "Bijlage B",
+            Description = "coëfficiënt waarmee rekening wordt gehouden met het effect van de betonsterkte op de theoretische kruipcoëfficiënt")]
         public double CoefficentInvloedBetonsterkteAlpha1
         {
             get
@@ -144,9 +145,13 @@ namespace Eurocode.BetonConstructies
                 return Math.Pow(35 / _beton.Fcm, 0.7);
             }
         }
+        public Formula CoefficentInvloedBetonsterkteAlpha1Formula => new("(B.8c)",
+            @"\alpha_1 = \left[ \frac{35}{f_{cm}} \right]^{0.7}",
+            $@"\alpha_1 = \left[ \frac{{35}}{{{_beton.Fcm.ToTeX()}}} \right]^{{0.7}} = {CoefficentInvloedBetonsterkteAlpha1.ToTeX()}");
 
 
-
+        [TableColumn("coefficient invloed betonsterkte", Symbol = "<i>α</i><sub>2</sub>", Article = "Bijlage B",
+            Description = "coëfficiënt waarmee rekening wordt gehouden met het effect van de betonsterkte op de theoretische kruipcoëfficiënt")]
         public double CoefficentInvloedBetonsterkteAlpha2
         {
             get
@@ -154,7 +159,12 @@ namespace Eurocode.BetonConstructies
                 return Math.Pow(35 / _beton.Fcm, 0.2);
             }
         }
+        public Formula CoefficentInvloedBetonsterkteAlpha2Formula => new("(B.8c)",
+            @"\alpha_2 = \left[ \frac{35}{f_{cm}} \right]^{0.2}",
+            $@"\alpha_2 = \left[ \frac{{35}}{{{_beton.Fcm.ToTeX()}}} \right]^{{0.2}} = {CoefficentInvloedBetonsterkteAlpha2.ToTeX()}");
 
+        [TableColumn("coefficient invloed betonsterkte", Symbol = "<i>α</i><sub>3</sub>", Article = "Bijlage B",
+            Description = "coëfficiënt waarmee rekening wordt gehouden met het effect van de betonsterkte op de theoretische kruipcoëfficiënt")]
         public double CoefficentInvloedBetonsterkteAlpha3
         {
             get
@@ -162,11 +172,17 @@ namespace Eurocode.BetonConstructies
                 return Math.Pow(35 / _beton.Fcm, 0.5);
             }
         }
+        public Formula CoefficentInvloedBetonsterkteAlpha3Formula => new("(B.8c)",
+            @"\alpha_3 = \left[ \frac{35}{f_{cm}} \right]^{0.5}",
+            $@"\alpha_3 = \left[ \frac{{35}}{{{_beton.Fcm.ToTeX()}}} \right]^{{0.5}} = {CoefficentInvloedBetonsterkteAlpha3.ToTeX()}");
 
 
 
-        [TableColumn("macht cementsoort", Symbol = "<i>α</i>", Article = "Bijlage B", Description = "is een macht die afhangt van de cementsoort:" +
-            "<ul><li><i>α</i> = –1 voor cement van klasse S; </li><li><i>α</i> = 0 voor cement van klasse N; </li><li><i>α</i> = 1 voor cement van klasse R. </li></ul>")]
+        [TableColumn("macht cementsoort", Symbol = "<i>α</i>", Article = "Bijlage B",
+            Description = "is een macht die afhangt van de cementsoort:" +
+            "<br />= –1 voor cement van klasse S; " +
+            "<br />= 0 voor cement van klasse N;" +
+            "<br />= 1 voor cement van klasse R.")]
         public int MachtCementsoort
         {
             get

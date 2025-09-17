@@ -85,7 +85,9 @@
             await JS.InvokeVoidAsync("katex.render", _value, Container, new
             {
                 throwOnError = false,
-                displayMode = DisplayMode
+                displayMode = DisplayMode,
+                strict = "ignore",
+                
             });
         }
         catch

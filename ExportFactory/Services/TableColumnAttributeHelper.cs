@@ -1,4 +1,5 @@
-﻿using CommonLibrary.Extensions;
+﻿using CommonLibrary;
+using CommonLibrary.Extensions;
 using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
@@ -10,6 +11,10 @@ namespace ExportFactory.Services
 
     public static class TableColumnAttributeHelper
     {
+
+        private static readonly IFormatProvider SciFmt = new ScientificFormatter();
+
+
         public static IEnumerable<PropertyInfo> GetTableColumns<T>()
         {
             return typeof(T).GetProperties()
@@ -17,15 +22,61 @@ namespace ExportFactory.Services
         }
 
 
-        public static IEnumerable<PropertyRow> GetRows<T>(T model)
+        public static IEnumerable<IPropertyRow> GetRows<T>(T model)
         {
-
-            // ter info
-            // foreach (var prop in typeof(T).GetProperties())
-            // veranderd naar 
             foreach (var prop in model!.GetType().GetProperties())
             {
                 Formula? formula = null;
+
+                // aanvulling => haal de meldingen apart op
+                if (prop.PropertyType.IsGenericType)
+                {
+                    // Pak de generieke argumenten, bv. Melding bij ObservableCollection<Melding>
+                    var genericArgs = prop.PropertyType.GetGenericArguments();
+
+                    if (genericArgs.Length == 1)
+                    {
+                        var elementType = genericArgs[0];
+                        var enumerableType = typeof(IEnumerable<>).MakeGenericType(elementType);
+
+                        // Controleer of de property een IEnumerable<T> implementeert
+                        if (enumerableType.IsAssignableFrom(prop.PropertyType))
+                        {
+                            // Titel-row voor de collectie
+                            yield return new PropertyRow(prop.Name,
+                                symbol: string.Empty,
+                                unit: string.Empty,
+                                rawValue: null,
+                                displayValue: string.Empty,
+                                description: null,
+                                article: null,
+                                formula: null,
+                                editable: false,
+                                property: prop
+                            );
+
+                            // Haal de waarde op en cast naar IEnumerable
+                            var value = prop.GetValue(model) as System.Collections.IEnumerable;
+                            if (value != null)
+                            {
+
+                                foreach (var item in value)
+                                {
+                                    if (item is Melding m)
+                                    {
+                                        yield return new SubPropertyRow(m.GetEmoji, m.ToMarkupString().Value, m);
+                                    }
+
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
+
                 var attr = prop.GetCustomAttribute<TableColumnAttribute>();
 
                 if (attr == null)
@@ -49,10 +100,18 @@ namespace ExportFactory.Services
                         displayValue = ((double)Convert.ChangeType(rawValue, typeof(double)))
                             .ToEng();
                     }
-                    // ✅ Als StringFormat wél is opgegeven
+                    // ✅ Als StringFormat wél is opgegeven (gebruik custom formatter!)
                     else if (!string.IsNullOrEmpty(attr.StringFormat))
                     {
-                        displayValue = string.Format(attr.StringFormat, rawValue);
+                        string format = attr.StringFormat;
+
+                        // Als de gebruiker alleen "SIG3E6" geeft → maak er "{0:SIG3E6}" van
+                        if (!format.Contains("{0"))
+                        {
+                            format = "{0:" + format + "}";
+                        }
+
+                        displayValue = string.Format(SciFmt, format, rawValue);
                     }
                 }
 
@@ -69,21 +128,42 @@ namespace ExportFactory.Services
 
                 bool editable = prop.GetSetMethod(nonPublic: false) != null; // alleen publieke setters!
 
+                var label = attr?.Label ?? prop.Name;
+
                 yield return new PropertyRow(
-                    Label: attr.Label ?? prop.Name,
-                    Symbol: attr.Symbol,
-                    Unit: attr.Unit,
-                    RawValue: rawValue,
-                    DisplayValue: displayValue,
-                    Description: attr.Description,
-                    Article: attr.Article,
-                    Formula: formula, // via conventie
-                    Editable: editable, // als de property een setter heeft, is die bewerkbaar
-                    Property: prop // property meegeven zodat we kunnen wijzigen
+                    label: DeCapitalizeFirstLetter(label) ?? "",
+                    symbol: attr?.Symbol,
+                    unit: attr?.Unit,
+                    rawValue: rawValue,
+                    displayValue: displayValue,
+                    description: attr?.Description,
+                    article: attr?.Article,
+                    formula: formula,
+                    editable: editable,
+                    property: prop
                 );
+
             }
         }
 
+
+        private static string? DeCapitalizeFirstLetter(string? input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
+
+            var first = input[0];
+
+            // Grieks (Unicode range 0370–03FF)
+            if (first >= '\u0370' && first <= '\u03FF')
+                return input;
+
+            // Normale case
+            if (char.IsLetter(first))
+                return char.ToLower(first) + input.Substring(1);
+
+            return input;
+        }
 
 
         public static TableColumnDto GetMetaDto(PropertyInfo prop, object model)

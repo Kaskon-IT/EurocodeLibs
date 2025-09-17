@@ -21,6 +21,15 @@ namespace CommonLibrary
 
         public int? Code { get; set; } // Optioneel, kan gebruikt worden voor catalogus
 
+        public string GetCode
+        {
+            get
+            {
+                if (Code == null) return "";
+                return (Code.Value % 1000).ToString();
+            }
+        }
+
 
         // kleuren voor meldingen
         public const string colorWarning = "#E67E22"; // hexadecimale kleurcode voor waarschuwing 
@@ -54,20 +63,28 @@ namespace CommonLibrary
             }
         }
 
+        public string GetEmoji
+        {
+            get
+            {
+                return Type switch
+                {
+                    MeldingType.Opmerking => emojiInfo,
+                    MeldingType.Hint => emojiHint,
+                    MeldingType.Error => emojiError,
+                    MeldingType.Waarschuwing => emojiWaarschuwing,
+                    _ => "",
+                };
+            }
+        }
+
         private string? Emoji
         {
             get
             {
                 if (ShowEmoji)
                 {
-                    return Type switch
-                    {
-                        MeldingType.Opmerking => emojiInfo,
-                        MeldingType.Hint => emojiHint,
-                        MeldingType.Error => emojiError,
-                        MeldingType.Waarschuwing => emojiWaarschuwing,
-                        _ => "",
-                    };
+                    return GetEmoji;
                 }
                 else
                 {

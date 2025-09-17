@@ -22,6 +22,7 @@
     .formula .katex * {
         /* forceren dat KaTeX niet centreert */
         text-align: left !important;
+        font-size: 0.9em;
         margin: 0 !important;
         width: 100%;
     }
@@ -36,5 +37,5 @@
 }
 
 .katex-small {
-    font-size: 0.8em; /* schaal de KaTeX tekst */
+    font-size: 0.9em; /* schaal de KaTeX tekst */
 }

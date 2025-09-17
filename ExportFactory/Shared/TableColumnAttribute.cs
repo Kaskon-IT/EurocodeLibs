@@ -1,7 +1,6 @@
 ﻿using CommonLibrary;
 using ExportFactory.Services;
 using MigraDoc.DocumentObjectModel;
-using System.Reflection;
 
 
 namespace ExportFactory.Shared
@@ -149,18 +148,6 @@ namespace ExportFactory.Shared
         Formula? Formula
     );
 
-    public record PropertyRow(
-        string Label,
-        string? Symbol,
-        string? Unit,
-        object? RawValue,
-        string DisplayValue,
-        string? Description,
-        string? Article,
-        Formula? Formula,
-        bool Editable,
-        PropertyInfo Property
-    );
 
 
 

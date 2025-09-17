@@ -63,8 +63,8 @@ else
 
 @if(Model.Profiel == null)
 {
-    <EurocodeInputNumber @bind-Value=Model.Breedte Key="@K.ProfielBreedte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
-    <EurocodeInputNumber @bind-Value=Model.Hoogte Key="@K.ProfielHoogte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+    <EurocodeInputNumber Readonly=true Value=Model.Breedte Key="@K.ProfielBreedte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+    <EurocodeInputNumber Readonly=true Value=Model.Hoogte Key="@K.ProfielHoogte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
     <EurocodeInputNumber Readonly=true Value=Model.ZRef Key="ReferentieAfstandVoorNuttigeHoogte" Unit="mm"></EurocodeInputNumber>
 }
 else

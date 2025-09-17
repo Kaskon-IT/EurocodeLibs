@@ -23,6 +23,15 @@ namespace Eurocode.BetonConstructies
         private Snedekrachten? _snedekrachten;
         private VerankeringLangswapeningContext? _verankeringsLengte;
 
+        public string MeldingTeksten
+        {
+            get
+            {
+                return string.Join("; ", Meldingen.Select(m => m.ToMarkDownString()));
+            }
+        }
+
+
         public override string ToString()
         {
             var result = "";
@@ -161,7 +170,7 @@ namespace Eurocode.BetonConstructies
         public string Name { get; set; } = "Schil";
 
 
-        [TableColumn("M~Ed~ [kNm]", StringFormat = "0.0", Order = 1,
+        [TableColumn(Symbol = "M<sub>Ed</sub>", Label = "moment rekenwaarde", Unit = "kN", Order = 1,
             Key = K.MomentRekenwaarde,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Moment
@@ -183,45 +192,48 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("b [mm]", order: 2,
+        [TableColumn(Symbol = "<i>b</i>", Label = "breedte", Unit = "mm",
             Weergave = WeergaveEnum.DraaiTabel,
             Key = K.ProfielBreedte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Breedte
         {
             get => Profiel != null ? Profiel.Breedte : _breedte;
-            set => _breedte = value;
+            internal set => _breedte = value;
         }
 
-        [TableColumn("h [mm]", order: 3,
+        [TableColumn(Symbol = "<i>h</i>", Label = "hoogte", Unit = "mm",
             Weergave = WeergaveEnum.DraaiTabel,
             Key = K.ProfielHoogte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Hoogte
         {
             get => Profiel != null ? Profiel.Hoogte : _hoogte;
-            set => _hoogte = value;
+            internal set => _hoogte = value;
         }
+
+
+        public double ZRefZonderDekking { get; set; } = 50;
+
 
         public double ZRef
         {
             get
             {
-                if (Wapening == null) return 50;
-                else
-                {
+                if (Wapening == null || Wapening.Dekking == null)
+                    return ZRefZonderDekking;
 
-                    return Wapening.ZRef;
-                }
+                return Wapening.ZRef;
+
             }
         }
-        [TableColumn("d [mm]", order: 4,
+        [TableColumn(Symbol = "<i>d</i>", Label = "nuttige hoogte", Unit = "mm",
             Key = K.NuttigeHoogte,
             StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double D { get { return Hoogte - ZRef; } }
 
 
-        [TableColumn("x~u~ [mm]", order: 5,
+        [TableColumn(Symbol = "<i>x<i><sub>u</sub>", Label = "hoogte drukzone", Unit = "mm",
             Key = K.Xu,
             StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Xu
@@ -255,7 +267,7 @@ namespace Eurocode.BetonConstructies
             get { return Xu / D; }
         }
 
-        [TableColumn("z [mm]", order: 21,
+        [TableColumn(Symbol = "<i>z</i>", Unit = "mm", Label = "inwendige hefboomsarm",
             // Key = K.InwendigeHefboom,
             StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Z
@@ -305,12 +317,11 @@ namespace Eurocode.BetonConstructies
                     default:
                     case null:
                     case Schematisering.GedrongenEnum.Uitkraging:
-                        return "a";
+                        return "<i>a</i>";
                     case Schematisering.GedrongenEnum.StatischBepaald:
-                        return "l";
+                        return "<i>l</i>";
                     case Schematisering.GedrongenEnum.StatischOnbepaald:
-                        return "l~0~";
-
+                        return "<i>l</i><sub>0</sub>";
                 }
             }
         }
@@ -338,7 +349,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("A~s,req~ [mm²]", Order = 40,
+        [TableColumn(Symbol = "<i>A</i><sub>s,req</sub>", Unit = "mm²", Label = "benodigde wapening", Order = 40,
             Key = K.AsBen,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsRequired
@@ -366,13 +377,13 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("A~s,toe~ [mm²]", Order = 41,
+        [TableColumn(Symbol = "<i>A</i><sub>s,toe</sub>", Unit = "mm²", Label = "toegepaste wapening", Order = 41,
             Key = K.AsToe,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsApplied
         {
             get => _asApplied;
-            set
+            internal set
             {
                 if (_asApplied != value)
                 {
@@ -533,7 +544,7 @@ namespace Eurocode.BetonConstructies
 
         //private List<int> _meldingCodes = [];
 
-        [TableColumn("opm.", Order = 9999)]
+        [TableColumn(Label = "meldingen", Order = 9999)]
         public string MeldingNummers
         {
             get
