@@ -19,10 +19,7 @@ namespace Eurocode.Belastingen
             return new MarkupString(ToString());
         }
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         protected override void Bereken()
         {

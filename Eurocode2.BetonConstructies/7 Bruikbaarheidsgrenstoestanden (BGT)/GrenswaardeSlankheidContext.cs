@@ -138,27 +138,7 @@ namespace Eurocode.BetonConstructies
 
         public ConstructiefSysteemEnum? ConstructiefSysteem { get; set; } = ConstructiefSysteemEnum.VrijOpgelegd; // Constructief systeem van het element
 
-        public override bool IsAkkoord()
-        {
-            Meldingen.Clear();
 
-            if (GrenswaardeSlankheid > 0 && Slankheid > 0)
-            {
-                if (Slankheid > GrenswaardeSlankheid)
-                {
-                    AddMeldingWaarschuwing($"De slankheid (l/d) van het element ({Slankheid:0.#}) is groter dan de grenswaarde ({GrenswaardeSlankheid:0.#}). Toetsing doorbuiging noodzakelijk.");
-                    return false;
-                }
-
-                return Slankheid <= GrenswaardeSlankheid;
-            }
-            else
-            {
-                AddMeldingWaarschuwing("Onbekende fout");
-                return false;
-            }
-            throw new NotImplementedException();
-        }
 
 
 
@@ -172,9 +152,21 @@ namespace Eurocode.BetonConstructies
 
         protected override bool Valideer()
         {
+            Meldingen.Clear();
+
+            if (GrenswaardeSlankheid > 0 && Slankheid > 0)
+            {
+                if (Slankheid > GrenswaardeSlankheid)
+                {
+                    AddMeldingWaarschuwing($"De slankheid (l/d) van het element ({Slankheid:0.#}) is groter dan de grenswaarde ({GrenswaardeSlankheid:0.#}). Toetsing doorbuiging noodzakelijk.");
+                    return false;
+                }
+
+                return Slankheid <= GrenswaardeSlankheid;
+            }
 
 
-            return IsAkkoord();
+            return true;
         }
 
         public override string ToString()

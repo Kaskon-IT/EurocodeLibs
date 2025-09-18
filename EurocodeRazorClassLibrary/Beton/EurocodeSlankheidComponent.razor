@@ -55,7 +55,7 @@
 
     <p style="margin-left:3.5px;">@Model.ToMarkupString()</p>
 
-    @if (!Model.IsAkkoord())
+    @if (!Model.IsValidated)
     {
         <p style="margin-left:3.5px; color:red; ">LET OP, berekening doorbuigingscontrole kan niet achterwege blijven.</p>
     }

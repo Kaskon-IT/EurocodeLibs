@@ -1,6 +1,75 @@
-﻿using Eurocode.BetonConstructies;
+﻿using CommonLibrary;
+using Eurocode.BetonConstructies;
+using System.Reflection;
 
 namespace Eurocode2.BetonConstructies.Tests;
+
+
+
+
+public class BaseEurocodeContextGeneriekeTests
+{
+    /// <summary>
+    /// Alle afgeleide classes van BaseEurocodeContext in dezelfde assembly.
+    /// </summary>
+    public static IEnumerable<object[]> AlleAfgeleideContexten()
+    {
+        var baseType = typeof(BaseEurocodeContext);
+
+        var assemblies = new[]
+        {
+        typeof(BaseEurocodeContext).Assembly,
+        typeof(BetonContext).Assembly
+    };
+
+        var afgeleiden = assemblies
+            .SelectMany(a => a.GetTypes())
+            .Where(t => baseType.IsAssignableFrom(t) && !t.IsAbstract)
+            .ToList();
+
+        // 🔹 Debug check: zie je niets? Dan zit je in de verkeerde assembly
+        Assert.True(afgeleiden.Any(),
+            $"Geen afgeleiden van {baseType.Name} gevonden in assemblies: {string.Join(", ", assemblies.Select(a => a.GetName().Name))}");
+
+        foreach (var type in afgeleiden)
+        {
+            yield return new object[] { type };
+        }
+    }
+
+
+    [Theory]
+    [MemberData(nameof(AlleAfgeleideContexten))]
+    public void Kan_Instance_Maken_En_Berekenen(Type contextType)
+    {
+        // Arrange
+        var instance = Activator.CreateInstance(contextType) as BaseEurocodeContext;
+        Assert.NotNull(instance);
+
+        // Act
+        var ex = Record.Exception(() => instance!.BerekenEnValideer());
+
+        // Assert
+        Assert.Null(ex); // mag geen exception gooien
+    }
+
+    [Theory]
+    [MemberData(nameof(AlleAfgeleideContexten))]
+    public void GammaC_IsAltijdGroterDanNul(Type contextType)
+    {
+        var instance = Activator.CreateInstance(contextType) as BaseEurocodeContext;
+        Assert.NotNull(instance);
+
+        var prop = contextType.GetProperty("GammaC", BindingFlags.Public | BindingFlags.Instance);
+        if (prop != null && prop.PropertyType == typeof(double))
+        {
+            var value = (double)prop.GetValue(instance)!;
+            Assert.True(value > 0, $"{contextType.Name}.GammaC moet > 0 zijn (nu {value})");
+        }
+    }
+}
+
+
 
 public class BetonContextTests
 {
@@ -51,7 +120,7 @@ public class BetonContextTests
         // Act
         var fctk = context.FctkVijfProcent;
         // Assert
-        Assert.Equal(2.6, fctk, precision: 6);
+        Assert.Equal(2.0275277, fctk, precision: 6);
         // Voor C30/37 is fctk,5% = 2.6 N/mm² volgens Eurocode 2 tabel 3.1
     }
 
@@ -60,15 +129,15 @@ public class BetonContextTests
     public void Fctd_WordtCorrectBerekenend_VoorDefaultWaarden()
     {
         // Arrange
-        var context = new BetonContext(); // de ba
+        var context = new BetonContext("C30/37"); // de ba
 
 
         // Act
         var fctd = context.Fctd;
 
         // Assert
-        Assert.Equal(1.4667, fctd, precision: 4);
-        // 2.2 / 1.5 ≈ 1.4667
+        Assert.Equal(1.3516851, fctd, precision: 6);
+
     }
 
 

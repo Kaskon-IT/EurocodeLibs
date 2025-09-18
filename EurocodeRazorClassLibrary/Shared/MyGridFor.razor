@@ -3,12 +3,13 @@
 @using System.Reflection
 @using CommonLibrary
 @using CommonLibrary.Extensions
+@using CommonLibrary.Models
 @using ExportFactory.Services
 @using ExportFactory.Shared
 
 
 @using Microsoft.FluentUI.AspNetCore.Components
-
+@inherits BaseEurocodeComponent
 
 
 
@@ -34,21 +35,12 @@
         </caption>
 
 
-        @* <thead>
-            <tr>
-                <th>Label</th>
-                <th>Symbol</th>
-                <th>Value</th>
-                <th>Unit</th>
-            </tr>
-        </thead> *@
-
-            <colgroup>
-                <col style="width: auto;">       <!-- opvullende kolom -->
-                <col style="width: 120px;">      <!-- vaste -->
-                <col style="width: 120px;">      <!-- vaste -->
-                <col style="width: 120px;">      <!-- vaste -->
-            </colgroup>
+        <colgroup>
+            <col style="width: auto;">       <!-- opvullende kolom -->
+            <col style="width: 120px;">      <!-- vaste -->
+            <col style="width: 120px;">      <!-- vaste -->
+            <col style="width: 120px;">      <!-- vaste -->
+        </colgroup>
 
 
 
@@ -275,8 +267,11 @@
         VisibleColumns ??= new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
         // caching zodat we stabiel itereren en makkelijk kunnen refreshen na set
         _rows = TableColumnAttributeHelper.GetRows(Model!)
-        .OrderByNatural(r=>(r as PropertyRow)?.Article)
+        .OrderByDescending(r => (r as PropertyRow)?.Editable)
+        .ThenByNatural(r => (r as PropertyRow)?.Symbol)
+        .ThenByNatural(r=>(r as PropertyRow)?.Article)
         .ThenByNatural(r=>(r as PropertyRow)?.Formula?.Name)
+       
         .ToList();
 
         // Voeg SubPropertyRows toe als Model een BaseEurocodeContext is

@@ -1,0 +1,29 @@
+﻿@using CommonLibrary.Extensions
+<div class="number-formatter-settings">
+    <label>
+        Significante cijfers:
+        <input type="number"
+               class="form-control"
+               @bind="digits"
+               min="1"
+               max="15" />
+    </label>
+
+    <button class="btn btn-primary" @onclick="ApplyDigits">
+        Toepassen
+    </button>
+
+    <span class="ms-2">
+        (Huidige default: @NumberFormatter.DefaultSignificantDigits)
+    </span>
+</div>
+
+@code {
+    private int digits = NumberFormatter.DefaultSignificantDigits;
+
+    private void ApplyDigits()
+    {
+        NumberFormatter.DefaultSignificantDigits = digits;
+        StateHasChanged();
+    }
+}

@@ -462,10 +462,7 @@ namespace Eurocode.BetonConstructies
             Buiging, Trek
         }
 
-        public override bool IsAkkoord()
-        {
-            return Valideer();
-        }
+
 
         protected override void Bereken()
         {

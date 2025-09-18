@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using ExportFactory.Services;
 using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
@@ -19,12 +20,28 @@ namespace Eurocode.BetonConstructies
     /// </summary>
     public class BetonDoorbuigingCalculator : BaseEurocodeContext
     {
+
         private readonly BetonContext _beton;
         private readonly BetonContextKruipEnKrimpCalculator _kruipkrimp;
         private readonly WapeningContext _wapening = new() { Tekst = "6Ø25" }; // 2945 mm2
         private readonly Snedekrachten _krachten;
         private readonly DoorbuigingStudie _doorbuigingStudie;
         public double Overspanning { get; internal set; }
+
+        /// <summary>
+        /// Parameterloze constructor niet gebruiken.
+        /// Voor Unit tests alleen.
+        /// </summary>
+        public BetonDoorbuigingCalculator()
+        {
+            _beton = new("C30/37");
+            _kruipkrimp = new BetonContextKruipEnKrimpCalculator(_beton);
+            _krachten = new();
+            _doorbuigingStudie = new(10, 40); // verwijderen na testen, wordt ALLEEN gebruikt voor L in de formule voor u*
+            _beton.Profiel = new ParametrischeProfielen.ParametrischProfielContext() { Breedte = 500, Hoogte = 700 };
+
+
+        }
 
 
         public BetonDoorbuigingCalculator(
@@ -42,6 +59,37 @@ namespace Eurocode.BetonConstructies
             _doorbuigingStudie = doorbuigingStudie;
             _beton.Profiel = profiel;
         }
+
+
+        private double? _kruipfactorOverride = null;
+
+
+        [TableColumn(Label = "Kruipcoefficient", Symbol = $"<i>{GreekLetters.phi}</i><sub>(t,t<sub>0</sub>)</sub>",
+            Description = "is de kruipcoëfficiënt <br />" +
+            "Leeg laten of '0' invullen om te automatisch te laten berekenen<br />" +
+            "Er is ook de optie om een eigen waarde op te geven")]
+        public double Kruipfactor
+        {
+            get => _kruipfactorOverride ?? _kruipkrimp.KruipCoefficient;
+            set
+            {
+                if (value == 0)
+                    _kruipfactorOverride = null;  // reset naar standaard
+                else
+                    _kruipfactorOverride = value; // override opslaan
+            }
+        }
+
+        [TableColumn(Label = "krimpverkorting", Symbol = "<i>ε</i><sub>cs</sub>", Description = "is de totale krimpverkorting")]
+        public double Krimpverkorting
+        {
+            get => _kruipkrimp.TotaleKrimpverkorting;
+        }
+
+
+
+
+
 
 
         [TableColumn(Label = "doorbuiging benadering", Symbol = "<i>u</i><sup>*</sup>", Unit = "mm")]
@@ -64,8 +112,10 @@ namespace Eurocode.BetonConstructies
         public Formula DoorbuigingBenaderingFormula => new()
         {
             StaticValue = "u^{*} = \\frac{5}{48} \\cdot \\kappa_{max} \\cdot l^2 ",
-            DynamicValue = $"= {(5 / 48.0).ToTeX()} \\cdot {TotaleKromming.ToTeX()} \\cdot {(_doorbuigingStudie.L * 1000)}^2 = {DoorbuigingBenadering.ToTeX()}"
+            DynamicValue = $"= \\frac{{5}}{{48}} \\cdot {TotaleKromming.ToTeX()} \\cdot {(_doorbuigingStudie.L * 1000)}^2 = {DoorbuigingBenadering.ToTeX()}"
         };
+
+
 
 
         public double M
@@ -95,7 +145,6 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Mcr in kNm
         /// </summary>
-        [TableColumn(Label = "Scheurmoment", Symbol = "<i>M</i><sub>cr</sub>", Unit = "Nmm", StringFormat = "{0:SIG3E6}")]
         public double McrNmm
         {
             get
@@ -103,11 +152,7 @@ namespace Eurocode.BetonConstructies
                 return _beton.Profiel.Wy * _beton.Fctm;
             }
         }
-        public Formula McrNmmFormula => new()
-        {
-            StaticValue = "M_{cr} = Wf_{ctm}",
-            DynamicValue = $"= {_beton.Profiel.Wy.ToEng()} \\cdot {_beton.Fctm.ToEng()} = {McrNmm.ToTeX(forcedExponent: 6)}"
-        };
+
 
         [TableColumn(Label = "Scheurmoment", Symbol = "<i>M</i><sub>cr</sub>", Unit = "kNm")]
         public double Mcr
@@ -133,7 +178,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// x
         /// </summary>
-        [TableColumn(Label = "Drukzonehoogte", Symbol = "<i>x</i>", Unit = "mm")]
+        [TableColumn(Label = "hoogte drukzone", Symbol = "<i>x</i>", Unit = "mm", Description = "is de hoogte van de drukzone")]
         public double Drukzonehoogte
         {
             get
@@ -156,15 +201,15 @@ namespace Eurocode.BetonConstructies
         };
 
 
-        [TableColumn(Label = "verhouding wapening / beton", Symbol = "<i>ρ</i>")]
+        [TableColumn(Label = "verhouding", Symbol = "<i>ρ</i>", Description = "= <i>A</i><sub>s</sub> / (<i>bd</i>)")]
         public double Rho { get { return _wapening.As / (_beton.Profiel.Breedte * NuttigeHoogte); } }
         public Formula RhoFormula => new() { StaticValue = "\\rho = A_s/(b\\cdot d)", DynamicValue = $"= {_wapening.As.ToEng()} / ({_beton.Profiel.Breedte} \\cdot {NuttigeHoogte}) = {Rho.ToEng()}" };
 
 
 
-        [TableColumn(Label = "", Symbol = "<i>α</i><sub>e</sub><i>ρ</i>")]
+        [TableColumn(Label = "", Symbol = "<i>α</i><sub>e</sub><i>ρ</i>", Description = "wordt gebruikt bij het bepalen van de drukzonehoogte")]
         public double AlphaeRho { get { return this.Alphae * Rho; } }
-
+        public Formula AlphaeRhoFormula => new() { StaticValue = $@"\alpha_e\rho={Alphae.ToTeX()}\cdot{Rho.ToTeX()}={AlphaeRho.ToTeX()}" };
 
 
         [TableColumn(Label = "stijfheid (ongescheurd)", Symbol = "(<i>EI</i>)<sub>I</sub>", Unit = "Nmm²")]
@@ -190,7 +235,7 @@ namespace Eurocode.BetonConstructies
         }
         public Formula StijfheidIIFormula => new()
         {
-            StaticValue = @"(EI)_{II} = E_{c,eff} \cdot I_{II})",
+            StaticValue = @"(EI)_{II} = E_{c,eff} \cdot I_{II}",
             DynamicValue = @$"(EI)_{{II}} = {EcEff.ToTeX()} \cdot {I_II.ToTeX()}"
         };
 
@@ -199,11 +244,11 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "kromming (ongescheurd)", Symbol = "<i>κ</i><sub>I</sub>", Description = "In het ongescheurde stadium is de kromming:", Unit = "mm<sup>-1</sup>")]
+        [TableColumn(Label = "kromming (ongescheurd)", Symbol = "<i>κ</i><sub>I</sub>", Description = "is de kromming in het ongescheurde stadium", Unit = "mm<sup>-1</sup>")]
         public double KappaI { get { return MomentNmm / StijfheidI; } }
         public Formula KappaIFormula => new()
         {
-            StaticValue = "\\Kappa_I = \\frac{M_{Eqp}}{(EI)_I}",
+            StaticValue = "\\kappa_I = \\frac{M_{Eqp}}{(EI)_I}",
             DynamicValue = $"= \\frac{{{MomentNmm.ToTeX(forcedExponent: 6)}}}{{{StijfheidI.ToTeX()}}} = {KappaI.ToTeX()}"
         };
 
@@ -212,11 +257,11 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "kromming (gescheurd)", Symbol = "<i>κ</i><sub>II</sub>", Description = "In het gescheurde stadium is de kromming:", Unit = "mm<sup>-1</sup>")]
+        [TableColumn(Label = "kromming (gescheurd)", Symbol = "<i>κ</i><sub>II</sub>", Description = "is de kromming in het gescheurde stadium", Unit = "mm<sup>-1</sup>")]
         public double KappaII { get { return MomentNmm / StijfheidII; } }
         public Formula KappaIIFormula => new()
         {
-            StaticValue = "\\Kappa_{II} = \\frac{M_{Eqp}}{(EI)_II}",
+            StaticValue = "\\kappa_{II} = \\frac{M_{Eqp}}{(EI)_{II}}",
             DynamicValue = $"= \\frac{{{MomentNmm.ToTeX()}}}{{{StijfheidII.ToTeX()}}} = {KappaII.ToTeX()}"
         };
 
@@ -226,7 +271,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "verdelingsfactor", Symbol = "ζ", Article = "7.4.3", Description = "is een verdelingsfactor (rekening houdend met 'tension stiffening' in een doorsnede)")]
+        [TableColumn(Label = "verdelingsfactor", Symbol = "ζ", Article = "7.4.3 (3)", Description = "is een verdelingsfactor rekening houdend met 'tension stiffening' in een doorsnede")]
         public double VerdelingsfactorTensionStiffening
         {
             get
@@ -278,14 +323,14 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return _beton.Ecm / (1 + _kruipkrimp.KruipCoefficient);
+                return _beton.Ecm / (1 + this.Kruipfactor);
             }
         }
         public Formula EcEffFormula => new("(7.20)",
             @"E_{c,eff} = \frac{E_{cm}}{1 + \varphi(\infty,t_0)}",
-            $@"E_{{c,eff}} = \frac{{{_beton.Ecm.ToTeX()}}}{{1 + {_kruipkrimp.KruipCoefficient.ToTeX()}}} = {EcEff.ToTeX()}");
+            $@"E_{{c,eff}} = \frac{{{_beton.Ecm.ToTeX()}}}{{1 + {this.Kruipfactor.ToTeX()}}} = {EcEff.ToTeX()}");
 
-        [TableColumn(Label = "verhouding staal/beton", Symbol = $"<i>α</i><sub>e</sub>", StringFormat = "{0:0.0000}", Article = "7.4.3 (6)")]
+        [TableColumn(Label = "verhouding staalrek/betonrek", Symbol = $"<i>α</i><sub>e</sub>", StringFormat = "{0:0.0000}", Article = "7.4.3 (6)")]
         public double Alphae
         {
             get
@@ -300,8 +345,8 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(Label = "kromming uitwendig",
             Symbol = "<i>κ</i><sub>qp</sub>",
-            Article = "7.4.3",
-            Description = "De kromming ten gevolge van de uitwendige belasting (<i>M</i><sub>Eqp</sub>) wordt gevonden door interpolatie tussen de uiterste toestanden ‘ongescheurd’ en ‘geheel gescheurd’ (EC2; vgl. (7.18)):")]
+            Article = "7.4.3 (3)",
+            Description = "is de kromming ten gevolge van de uitwendige belasting (<i>M</i><sub>Eqp</sub>). Deze wordt gevonden door interpolatie tussen de uiterste toestanden ‘ongescheurd’ en ‘geheel gescheurd’ (EC2; vgl. (7.18)):")]
         public double KrommingUitwendig
         {
             get
@@ -319,8 +364,8 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "kromming door krimp (ongescheurd)", Symbol = "<i>κ</i><sub>cs,I</sub>",
-            Description = "De bijdrage aan de kromming door krimp wordt afzonderlijk in rekening gebracht (EC2; vgl. (7.21))")]
+        [TableColumn(Label = "kromming door krimp (ongescheurd)", Symbol = "<i>κ</i><sub>cs,I</sub>", Article = "7.4.3 (6)",
+            Description = "is de bijdrage aan de kromming door krimp (ongescheurd)")]
         public double KrommingKrimpI
         {
             get
@@ -331,12 +376,12 @@ namespace Eurocode.BetonConstructies
         public Formula KrommingKrimpIFormula => new()
         {
             Name = "(7.21)",
-            StaticValue = @"\kappa_{cs} = \epsilon_{cs} \alpha_e \frac{S_{I}}{I_{I}}",
-            DynamicValue = $@"\kappa_{{cs}} = {_kruipkrimp.TotaleKrimpverkorting.ToTeX()} \cdot {this.Alphae.ToTeX()} \cdot \frac{{{this.S_I.ToTeX()}}}{{{I_I.ToTeX()}}} = {KrommingKrimpI.ToTeX()}"
+            StaticValue = @"\kappa_{cs,I} = \epsilon_{cs} \alpha_e \frac{S_{I}}{I_{I}}",
+            DynamicValue = $@"\kappa_{{cs,I}} = {_kruipkrimp.TotaleKrimpverkorting.ToTeX()} \cdot {this.Alphae.ToTeX()} \cdot \frac{{{this.S_I.ToTeX()}}}{{{I_I.ToTeX()}}} = {KrommingKrimpI.ToTeX()}"
         };
 
-        [TableColumn(Label = "kromming door krimp (gescheurd)", Symbol = "<i>κ</i><sub>cs,II</sub>",
-            Description = "De bijdrage aan de kromming door krimp wordt afzonderlijk in rekening gebracht (EC2; vgl. (7.21))")]
+        [TableColumn(Label = "kromming door krimp (gescheurd)", Symbol = "<i>κ</i><sub>cs,II</sub>", Article = "7.4.3 (6)",
+            Description = "is de bijdrage aan de kromming door krimp wordt (gescheurd)")]
         public double KrommingKrimpII
         {
             get
@@ -347,12 +392,12 @@ namespace Eurocode.BetonConstructies
         public Formula KrommingKrimpIIFormula => new()
         {
             Name = "(7.21)",
-            StaticValue = @"\kappa_{cs} = \epsilon_{cs} \alpha_e \frac{S_{II}}{I_{II}}",
-            DynamicValue = $@"\kappa_{{cs}} = {_kruipkrimp.TotaleKrimpverkorting.ToTeX()} \cdot {this.Alphae.ToTeX()} \cdot \frac{{{this.S_II.ToTeX()}}}{{{I_II.ToTeX()}}} = {KrommingKrimpII.ToTeX()}"
+            StaticValue = @"\kappa_{cs,II} = \epsilon_{cs} \alpha_e \frac{S_{II}}{I_{II}}",
+            DynamicValue = $@"\kappa_{{cs,II}} = {_kruipkrimp.TotaleKrimpverkorting.ToTeX()} \cdot {this.Alphae.ToTeX()} \cdot \frac{{{this.S_II.ToTeX()}}}{{{I_II.ToTeX()}}} = {KrommingKrimpII.ToTeX()}"
         };
 
-        [TableColumn(Label = "kromming door krimp", Symbol = "<i>κ</i><sub>cs</sub>",
-            Description = "De kromming ten gevolge van de krimp wordt gevonden door interpolatie tussen de uiterste toestanden ‘ongescheurd’ en ‘geheel gescheurd’ (EC2; vgl. (7.18)):")]
+        [TableColumn(Label = "kromming door krimp", Symbol = "<i>κ</i><sub>cs</sub>", Article = "7.4.3 (3)",
+            Description = "is de kromming ten gevolge van de krimp. Deze wordt gevonden door interpolatie tussen de uiterste toestanden ‘ongescheurd’ en ‘geheel gescheurd’ (EC2; vgl. (7.18)):")]
         public double KrommingKrimp
         {
             get
@@ -370,7 +415,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Label = "totale kromming",
             Symbol = "<i>κ</i><sub>tot</sub>",
             Unit = "mm<sup>-1</sup>",
-            Description = "De totale kromming is de som van de kromming uit uitwendige belasting (<i>κ</i><sub>qp</sub>) en de kromming uit krimp (<i>κ</i><sub>cs</sub>):")]
+            Description = "is de totale kromming. Dit is de som van de kromming uit uitwendige belasting (<i>κ</i><sub>qp</sub>) en de kromming uit krimp (<i>κ</i><sub>cs</sub>)")]
         public double TotaleKromming
         {
             get
@@ -388,7 +433,8 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Label = "lineaire oppervlaktemoment (ongescheurd)",
             Symbol = "<i>S</i><sub>I</sub>",
             Unit = "mm³",
-            Description = "lineaire oppervlaktemoment van de wapening ten opzichte van de zwaartelijn van de doorsnede (ongescheurd)")]
+            Description = "is het lineaire oppervlaktemoment van de wapening ten opzichte van de zwaartelijn van de doorsnede (ongescheurd)<br />" +
+            "NB. Omdat we (in het ongescheurde stadium) de invloed van het betonstaal niet in rekening brengen, bevindt de zwaartelijn zich in het zwaartepunt van de betondoorsnede")]
         public double S_I
         {
             get
@@ -396,12 +442,17 @@ namespace Eurocode.BetonConstructies
                 return _wapening.As * (NuttigeHoogte - 1.0 / 2.0 * _beton.Profiel.Hoogte);
             }
         }
+        public Formula S_IFormula => new()
+        {
+            StaticValue = @"S_{I} = A_s \left( d- \frac{1}{2} h \right)",
+            DynamicValue = $"= {_wapening.As.ToTeX()} \\cdot \\left( {NuttigeHoogte.ToTeX()} - \\frac{{1}}{{2}} \\cdot{_beton.Profiel.Hoogte} \\right)"
+        };
 
 
         [TableColumn(Label = "lineaire oppervlaktemoment (gescheurd)",
            Symbol = "<i>S</i><sub>II</sub>",
            Unit = "mm³",
-           Description = "lineaire oppervlaktemoment van de wapening ten opzichte van de zwaartelijn van de doorsnede (gescheurd)")]
+           Description = "is het lineaire oppervlaktemoment van de wapening ten opzichte van de zwaartelijn van de doorsnede (gescheurd)")]
         public double S_II
         {
             get
@@ -420,7 +471,8 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Label = "kwadratische oppervlaktemoment (ongescheurd)",
             Symbol = "<i>I</i><sub>I</sub>",
             Unit = "mm<sup>4</sup>",
-            Description = "kwadratische oppervlaktemoment gehele doorsnede (ongescheurd)")]
+            Description = "is het kwadratische oppervlaktemoment van de gehele doorsnede (ongescheurd). <br />" +
+            "NB. De invloed van het betonstaal is hier buiten beschouwing gelaten.")]
         public double I_I
         {
             get
@@ -439,7 +491,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Label = "kwadratische oppervlaktemoment (gescheurd)",
             Symbol = "<i>I</i><sub>II</sub>",
             Unit = "mm<sup>4</sup>",
-            Description = "kwadratische oppervlaktemoment gehele doorsnede (gescheurd)")]
+            Description = "is het kwadratische oppervlaktemoment van de gehele doorsnede (gescheurd)")]
         public double I_II
         {
             get
@@ -468,19 +520,21 @@ namespace Eurocode.BetonConstructies
 
 
 
-        public override bool IsAkkoord()
-        {
-            throw new NotImplementedException();
-        }
+
 
         protected override void Bereken()
         {
-            throw new NotImplementedException();
+            // optie om berekeningen toe te voegen
         }
 
         protected override bool Valideer()
         {
-            throw new NotImplementedException();
+            if (DoorbuigingBenadering > _doorbuigingStudie.ToelaatbareDoorbuiging)
+            {
+                Meldingen.Add(new Melding(MeldingType.Waarschuwing, $"De berekende doorbuiging {DoorbuigingBenadering:N0} mm is groter dan de maximaal toelaatbare doorbuiging {_doorbuigingStudie.ToelaatbareDoorbuiging:N0} mm (L/250)"));
+                return false;
+            }
+            return true;
         }
     }
 }

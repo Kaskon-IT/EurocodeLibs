@@ -13,8 +13,22 @@ namespace Eurocode.BetonConstructies
         ControleerWapening,
     }
 
+    [Obsolete("classes met korte weergave niet meer nodig, we kunnen de properties filteren, orderen etcetera.")]
     public class DwarskrachtWapContextKort : DwarskrachtWapContext
     {
+
+        // deze class heb ik aangemaakt om een korte weergave te hebben in de UI
+        // dit is een tijdelijke oplossing, want uiteindelijk wil ik dat we de properties kunnen filteren
+        // en ordenen op basis van de TableColumn attributes.
+        // Dit is een tussenstap, want ik wil de UI niet teveel aanpassen in één keer.
+        // in de vakantie van Martijn is dit toch gedaan, dus deze class is nu overbodig geworden.
+        // even samen doornemen met Martijn.
+
+        public DwarskrachtWapContextKort()
+        {
+            // lege constructor
+        }
+
         public DwarskrachtWapContextKort(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, Snedekrachten snedekrachten)
             : base(beton, profiel, snedekrachten)
         {
@@ -45,6 +59,14 @@ namespace Eurocode.BetonConstructies
 
     public class DwarskrachtWapContext : BaseEurocodeContext
     {
+        public DwarskrachtWapContext()
+        {
+            Beton = new();
+            Profiel = new();
+            Snedekrachten = new();
+            LijstBeugelWap = new List<BeugelWap>();
+        }
+
         // context voor de dwarskrachtwapening volgens art. 6.2
         // Uitgangspunten voor niet-voorgespannen constructies
 
@@ -419,10 +441,7 @@ namespace Eurocode.BetonConstructies
 
         }
 
-        public override bool IsAkkoord()
-        {
-            return Valideer();
-        }
+
 
         protected override void Bereken()
         {

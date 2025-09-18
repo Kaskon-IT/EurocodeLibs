@@ -341,13 +341,18 @@ namespace Eurocode.BetonConstructies
             return MarkupHelper.ToMarkupString(this.ToLongstring());
         }
 
-        //public MarkupString ToMarkupString()
-        //{
-        //    return MarkupHelper.ToMarkupString(this.ToString());
-        //}
 
-        public override bool IsAkkoord()
+
+        protected override void Bereken()
         {
+
+            //throw new NotImplementedException();
+        }
+
+        protected override bool Valideer()
+        {
+            Meldingen.Clear();
+
             // de aanwezige opleglengte moet groter of gelijk zijn aan de nominale opleglengte
             if (OplegLengteNettoAanwezig < OplegLengteNominaal)
             {
@@ -362,29 +367,11 @@ namespace Eurocode.BetonConstructies
                 return false;
             }
 
-
+            // alles ok
             return true;
-            //throw new NotImplementedException();
         }
 
-        protected override void Bereken()
-        {
 
-            //throw new NotImplementedException();
-        }
-
-        protected override bool Valideer()
-        {
-            return true;
-            //throw new NotImplementedException();
-        }
-
-        //public override MarkupString ToHtml(bool isDraaiTabel = true)
-        //{
-        //    return this.ToHtmlTable(isDraaiTabel);
-
-        //    //throw new NotImplementedException();
-        //}
     }
 
     public enum OplegMateriaalEnum

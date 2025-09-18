@@ -213,10 +213,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         protected override void Bereken()
         {

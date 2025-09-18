@@ -230,10 +230,7 @@ namespace Eurocode.Grondslagen
             //throw new NotImplementedException();
         }
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         protected override void Bereken()
         {
@@ -242,6 +239,14 @@ namespace Eurocode.Grondslagen
 
         protected override bool Valideer()
         {
+            Meldingen.Clear();
+            if (NationaleBijlage == null)
+            {
+                Meldingen.Add(new Melding(MeldingType.Error, "Nationale bijlage is niet opgegeven"));
+                return false;
+            }
+
+
             return true;
         }
 

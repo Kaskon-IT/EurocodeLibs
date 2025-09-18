@@ -65,7 +65,7 @@ dl {
 
 dt {
     font-weight: lighter;
-    font-style: italic;
+    /*font-style: italic;*/
     min-width: 1cm;
 }
 

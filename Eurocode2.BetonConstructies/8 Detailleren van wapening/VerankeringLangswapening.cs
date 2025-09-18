@@ -303,11 +303,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        public override bool IsAkkoord()
-        {
-            return true; // Placeholder, implement actual logic for agreement check
-            throw new NotImplementedException();
-        }
+
 
         //public override MarkupString ToHtml(bool isDraaiTabel = true)
         //{
@@ -318,13 +314,11 @@ namespace Eurocode.BetonConstructies
         protected override void Bereken()
         {
             // Implement the calculation logic for the anchoring of long reinforcement
-            throw new NotImplementedException();
         }
 
         protected override bool Valideer()
         {
             return true; // Placeholder, implement actual validation logic
-            throw new NotImplementedException();
         }
 
         public override string ToString()

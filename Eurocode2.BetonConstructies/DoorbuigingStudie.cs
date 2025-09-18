@@ -10,7 +10,20 @@ namespace Eurocode.BetonConstructies
     /// </summary>
     public class DoorbuigingStudie : BaseEurocodeContext
     {
-        private readonly BetonContext _beton;
+
+        /// <summary>
+        /// Parameterloze constructor voor serialisatie doeleinden.
+        /// Tijdelijke voorbeeld/test class.
+        /// </summary>
+        public DoorbuigingStudie()
+        {
+            KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(Beton);
+            DoorbuigingBerekening = new BetonDoorbuigingCalculator(Beton, Wapening, KruipKrimpBerekening, Krachten, Profiel, this);
+            BuigingBerekening = new BendingResults(Beton, Profiel, Wapening, Krachten);
+
+        }
+
+        public BetonContext Beton { get; set; } = new("C30/37");
         public Snedekrachten Krachten { get; set; } = new();
         public BetonContextKruipEnKrimpCalculator KruipKrimpBerekening { get; set; }
         public BetonDoorbuigingCalculator DoorbuigingBerekening { get; set; }
@@ -23,12 +36,14 @@ namespace Eurocode.BetonConstructies
             L = l;
             Lijnlast = q;
             Profiel = new(500, 700);
-            _beton = new(BetonsterkteklasseEnum.C30_37) { Profiel = this.Profiel };
+            Beton = new(BetonsterkteklasseEnum.C30_37) { Profiel = this.Profiel };
 
-            KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(_beton);
-            DoorbuigingBerekening = new BetonDoorbuigingCalculator(_beton, Wapening, KruipKrimpBerekening, Krachten, Profiel, this);
-            BuigingBerekening = new BendingResults(_beton, Profiel, Wapening, Krachten);
+            KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(Beton);
+            DoorbuigingBerekening = new BetonDoorbuigingCalculator(Beton, Wapening, KruipKrimpBerekening, Krachten, Profiel, this);
+            BuigingBerekening = new BendingResults(Beton, Profiel, Wapening, Krachten);
         }
+
+
 
 
         // rekenvoorbeeld
@@ -96,7 +111,7 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Label = "nuttige hoogte",
-            Description = "is de nuttige hoogte van de profiel en wordt berekend door middel van de hoogte en de referentieafstand.",
+            Description = "is de nuttige hoogte en wordt berekend door middel van de hoogte van profiel en de referentieafstand.",
             Symbol = "d",
             Unit = "mm")]
         public double NuttigeHoogte
@@ -106,7 +121,7 @@ namespace Eurocode.BetonConstructies
                 return Hoogte - ReferentieAfstand;
             }
         }
-        public Formula NuttigeHoogteFormula => new() { StaticValue = "d = h - d_{ref}", DynamicValue = $"d = {Hoogte} - {ReferentieAfstand}" };
+        public Formula NuttigeHoogteFormula => new() { StaticValue = "d = h - d_{ref}", DynamicValue = $"d = {Hoogte} - {ReferentieAfstand} = {NuttigeHoogte.ToTeX(unit: "mm")}" };
 
 
 
@@ -139,6 +154,34 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        [TableColumn(Label = "deler toelaatbare doorbuiging", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "1/")]
+        public int DelerVoorToelaatbareDoorbuiging { get; set; } = 250;
+
+
+
+        private double ToelaatbareDoorbuigingFractieOverspanning => 1 / (double)DelerVoorToelaatbareDoorbuiging;
+
+        [TableColumn(Label = "toelaatbare doorbuiging", Symbol = "<i>u</i><sub>toel.</sub>", Unit = "mm")]
+        public double ToelaatbareDoorbuiging
+        {
+            get
+            {
+                return L * 1000 * ToelaatbareDoorbuigingFractieOverspanning;
+            }
+        }
+
+
+
+
+        [TableColumn(Label = "doorbuiging", Symbol = "<i>u</i><sup>*</sup>", Unit = "mm")]
+        public double DoorbuigingEenvoudig
+        {
+            get
+            {
+                BerekenEnValideer();
+                return DoorbuigingBerekening.DoorbuigingBenadering;
+            }
+        }
 
         //WapeningContext Wapening = new() { Tekst = "6Ø25" }; // 2945 mm2
 
@@ -163,20 +206,22 @@ namespace Eurocode.BetonConstructies
 
 
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
 
         protected override void Bereken()
         {
-
-            Console.WriteLine();
-
+            // gaat automatisch
         }
 
         protected override bool Valideer()
         {
+            Meldingen.Clear();
+            if (DoorbuigingBerekening.DoorbuigingBenadering > ToelaatbareDoorbuiging)
+            {
+
+
+                Meldingen.Add(new Melding(MeldingType.Waarschuwing, $"Doorbuiging is groter dan toelaatbaar."));
+                return false;
+            }
             return true;
         }
     }

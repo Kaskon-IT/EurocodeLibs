@@ -13,10 +13,7 @@ namespace Eurocode.Belastingen
             return $"{Naam,-8} {Type.GetDisplayName()} {UserFriendlyTextInclusiefMomentaanFactoren}";
         }
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         protected override void Bereken()
         {

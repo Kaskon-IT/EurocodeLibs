@@ -14,7 +14,19 @@ namespace Eurocode.BetonConstructies
         // het beton op het moment dat de belasting voor het eerst is aangebracht en hangt af van de duur en de
         // grootte van de belasting.
 
+        /// <summary>
+        /// Parameterloze constructor voor serialisatie doeleinden.
+        /// Alleen voor gebruik door serialisatie en unit-test.
+        /// </summary>
+        public BetonContextKruipEnKrimpCalculator()
+        {
+            _beton = new BetonContext();
+        }
+
         private readonly BetonContext _beton;
+
+
+
         public BetonContextKruipEnKrimpCalculator(BetonContext beton)
         {
             _beton = beton;
@@ -22,7 +34,8 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "tangentmodulus", Symbol = "<i>E</i><sub>c</sub>", Article = "3.1.4 (2)", Unit = "N/mm²")]
+        [TableColumn(Label = "tangentmodulus", Symbol = "<i>E</i><sub>c</sub>", Article = "3.1.4 (2)", Unit = "N/mm²",
+            Description = "is de tangentmodulus waarvoor 1,05 Ecm mag zijn aangehouden")]
         public double TangentModulus
         {
             get
@@ -59,7 +72,7 @@ namespace Eurocode.BetonConstructies
         }
         public Formula KruipCoefficientFormula => new("(B.1)",
             @"\varphi(t,t_0) = \varphi_0 \cdot \beta_c(t,t_0)",
-            $@"\varphi({OuderdomBeton_t},{OuderdomBetonOpMomentVanBelasten_t0.ToEng()}) = {TheoretischeKruipCoefficient.ToEng()} \cdot {BetaC.ToEng()} = {KruipCoefficient.ToEng(5)}");
+            $@"\varphi({OuderdomBeton_t},{OuderdomBetonOpMomentVanBelasten_t0.ToEng()}) = {TheoretischeKruipCoefficient.ToEng()} \cdot {BetaC.ToEng()} = {KruipCoefficient.ToTeX()}");
 
 
         /// <summary>

@@ -296,10 +296,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         protected override void Bereken()
         {
@@ -308,7 +305,20 @@ namespace Eurocode.BetonConstructies
 
         protected override bool Valideer()
         {
-            return IsAkkoord();
+            Meldingen.Clear();
+            // Waarschuwingen toevoegen indien nodig
+            if (_beton == null)
+            {
+                Meldingen.Add(new Melding(MeldingType.Error, "Beton is niet opgegeven"));
+                return false;
+            }
+            if (_beton.Fck < 20 || _beton.Fck > 80)
+            {
+                Meldingen.Add(new Melding(MeldingType.Waarschuwing, "Betonsterkte Fck ligt buiten het gangbare bereik (20-80 MPa)"));
+            }
+
+
+            return true;
         }
     }
 }

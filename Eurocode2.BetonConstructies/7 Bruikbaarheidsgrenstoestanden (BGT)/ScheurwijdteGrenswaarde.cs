@@ -15,6 +15,10 @@ namespace Eurocode.BetonConstructies
 
         public class ScheurwijdteGrenswaarde : BaseEurocodeContext
         {
+            public ScheurwijdteGrenswaarde()
+            {
+
+            }
             public override string Heading { get; set; } = "Scheurwijdte grenswaarde";
             // 7.3      Scheurbeheersing
             // 7.3.1    Algemene beschouwingen
@@ -167,10 +171,7 @@ namespace Eurocode.BetonConstructies
                 return $"w~max~ = {Wmax:0.##} mm (k~x~={DekkingEnDuurzaamheid.DekkingToe}/{DekkingEnDuurzaamheid.DekkingNom} ≤ 2 ={FactorKx:0.##})";
             }
 
-            public override bool IsAkkoord()
-            {
-                return DekkingEnDuurzaamheid.IsAkkoord();
-            }
+
 
             protected override void Bereken()
             {

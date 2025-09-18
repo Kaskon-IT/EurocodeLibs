@@ -43,17 +43,8 @@ namespace ExportFactory.Services
                         if (enumerableType.IsAssignableFrom(prop.PropertyType))
                         {
                             // Titel-row voor de collectie
-                            yield return new PropertyRow(prop.Name,
-                                symbol: string.Empty,
-                                unit: string.Empty,
-                                rawValue: null,
-                                displayValue: string.Empty,
-                                description: null,
-                                article: null,
-                                formula: null,
-                                editable: false,
-                                property: prop
-                            );
+                            // Mocht je een titel willen, dan zou je die hier kunnen toevoegen
+
 
                             // Haal de waarde op en cast naar IEnumerable
                             var value = prop.GetValue(model) as System.Collections.IEnumerable;

@@ -15,6 +15,8 @@ else
        <label><input type="checkbox" @bind="readOnly" /> ReadOnly</label>
     </div>
 
+    <NumberFormatterSettings />
+
     <p>Count: @MyContexts.Count</p>
 
     List<Guid> guids = [];
@@ -105,27 +107,32 @@ else
     private HashSet<string> visibleCols = new();
     private string modelDump => System.Text.Json.JsonSerializer.Serialize(SampleProject?.Beton, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
 
-    private bool showLabel = true;
-    private bool showSymbol = true;
-    private bool showValue = true;
-    private bool showUnit = true;
-    private bool showArticle = true;
-    private bool showFormula = !false;
+    //private bool showLabel = true;
+    //private bool showSymbol = true;
+    //private bool showValue = true;
+    //private bool showUnit = true;
+    //private bool showArticle = true;
+    //private bool showFormula = !false;
     private bool readOnly = true;
 
     protected override void OnInitialized()
     {
         visibleCols = new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
 
-        MyContexts.Add(SampleProject?.DoorbuigingDemo);
-        MyContexts.Add(SampleProject?.DoorbuigingDemo.KruipKrimpBerekening);
-        MyContexts.Add(SampleProject?.DoorbuigingDemo.DoorbuigingBerekening);
-        MyContexts.Add(SampleProject?.DoorbuigingDemo.BuigingBerekening);
-        //MyContexts.Add(SampleProject?.DoorbuiDemoging.Beton);
+        if(SampleProject?.DoorbuigingDemo != null && MyContexts != null)
+        {
+            MyContexts.Add(SampleProject.DoorbuigingDemo);
+            MyContexts.Add(SampleProject.DoorbuigingDemo.KruipKrimpBerekening);
+            MyContexts.Add(SampleProject.DoorbuigingDemo.DoorbuigingBerekening);
+            MyContexts.Add(SampleProject.DoorbuigingDemo.BuigingBerekening);
+            MyContexts.Add(SampleProject.DoorbuigingDemo.Beton);
+        }
+
+       
 
 
         // MyContexts.Add(SampleProject?.Grondslagen);
-        MyContexts.Add(SampleProject?.Beton);
+        //MyContexts.Add(SampleProject?.Beton);
         // MyContexts.Add(SampleProject?.Dekking);
 
         // SampleProject?.ScheurwijdteDemo.BerekenEnValideer(); // wacht eens even, dit moet net als alle andere automatisch gaan!
@@ -150,12 +157,12 @@ else
     private void UpdateVisibility()
     {
         visibleCols.Clear();
-        if (showLabel) visibleCols.Add("Label");
-        if (showSymbol) visibleCols.Add("Symbol");
-        if (showValue) visibleCols.Add("Value");
-        if (showUnit) visibleCols.Add("Unit");
-        if (showArticle) visibleCols.Add("Article");
-        if (showFormula) visibleCols.Add("Formula");
+        //if (showLabel) visibleCols.Add("Label");
+        //if (showSymbol) visibleCols.Add("Symbol");
+        //if (showValue) visibleCols.Add("Value");
+        //if (showUnit) visibleCols.Add("Unit");
+        //if (showArticle) visibleCols.Add("Article");
+        //if (showFormula) visibleCols.Add("Formula");
     }
 
     // hook checkboxes so changing them updates visibleCols immediately

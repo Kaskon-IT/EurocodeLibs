@@ -45,10 +45,7 @@ namespace ExportFactory.Shared
         [TableColumn("Vergelijking")]
         public string? Vergelijking { get { return Mapping.Vergelijking; } }
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         //public override MarkupString ToHtml(bool isDraaiTabel = true)
         //{

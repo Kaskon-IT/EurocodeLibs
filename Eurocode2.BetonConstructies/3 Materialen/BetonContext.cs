@@ -29,8 +29,6 @@ namespace Eurocode.BetonConstructies
             CementKlasse = vorige.CementKlasse;
             Alpha = vorige.Alpha;
             Beta = vorige.Beta;
-            //FckEigenOpgave = vorige.FckEigenOpgave;
-            //FckCubeEigenOpgave = vorige.FckCubeEigenOpgave;
             BetonStaal = new BetonStaalContext(vorige.BetonStaal);
         }
 
@@ -219,7 +217,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn("cilinderdruksterkte",
             Symbol = "<i>f</i><sub>ck</sub>",
             Article = "3.1.2",
-            Description = "karakteristieke cilinderdruksterkte van beton na 28 dagen",
+            Description = "is de karakteristieke cilinderdruksterkte van beton na 28 dagen",
             Unit = "N/mm²")]
         public double Fck
         {
@@ -251,7 +249,7 @@ namespace Eurocode.BetonConstructies
         //(MPa)
         [TableColumn("kubusdruksterkte",
             Symbol = "<i>f</i><sub>ck,cube</sub>",
-            Description = "karakteristieke kubusdruksterkte van beton na 28 dagen", Unit = "N/mm²",
+            Description = "is de karakteristieke kubusdruksterkte van beton na 28 dagen", Unit = "N/mm²",
             Article = "3.1.2 (3)"
             )]
         public double FckCube
@@ -284,7 +282,7 @@ namespace Eurocode.BetonConstructies
         /// gemiddelde waarde van de cilinderdruksterkte van beton 
         /// </summary>
         [TableColumn("gem. cilinderdruksterkte", Symbol = "<i>f</i><sub>cm</sub>", Unit = "N/mm²",
-            Description = "<i>f</i><sub>cm</sub> is de gemiddelde druksterkte op 28 dagen volgens tabel 3.1", Weergave = WeergaveEnum.DraaiTabel,
+            Description = "is de gemiddelde druksterkte op 28 dagen volgens tabel 3.1", Weergave = WeergaveEnum.DraaiTabel,
             Article = "3.1.2 (3)")]
         public double Fcm { get { return Fck + 8; } }
         public Formula FcmFormula => new("Tabel 3.1", @"f_{cm} = f_{ck} + 8", @$"f_{{cm}} = {Fck.ToEng()} + 8 = {Fcm.ToTeX()} ");
@@ -297,7 +295,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "<i>f</i><sub>ctm</sub>",
             Article = "3.1.2 (3)",
             Unit = "N/mm²",
-            Description = "gemiddelde axiale treksterkte", Weergave = WeergaveEnum.DraaiTabel)]
+            Description = "is de gemiddelde axiale treksterkte", Weergave = WeergaveEnum.DraaiTabel)]
 
         public double Fctm
         {
@@ -321,11 +319,11 @@ namespace Eurocode.BetonConstructies
             {
                 if (Fck <= 50)
                 {
-                    return new("Tabel 3.1", @"f_{ctm} = 0.3 × f_{ck}^{2/3}", null);
+                    return new("Tabel 3.1", @"f_{ctm} = 0.3 \cdot f_{ck}^{2/3}", @$"= 0.3 \cdot {Fck.ToTeX()} ^{{2/3}} = {Fctm.ToTeX()} ");
                 }
                 else
                 {
-                    return new("Tabel 3.1", @"f_{ctm} = 2.12 × \ln(1+(f_{cm}/10))", null);
+                    return new("Tabel 3.1", @"f_{ctm} = 2.12 \cdot \ln(1+(f_{cm}/10))", $@"= 2.12 \cdot \ln(1+({Fcm.ToTeX()}/10)) = {Fctm.ToTeX()}");
                 }
             }
         }
@@ -343,26 +341,26 @@ namespace Eurocode.BetonConstructies
         //        return 
         //    }
         //}
-        [TableColumn("5% fractiel",
+        [TableColumn("treksterkte (5% fractiel)",
             Symbol = "<i>f<i><sub>ctk,0.05</sub>",
             Article = "3.1.2 (3)",
             Unit = "N/mm²")]
         public double FctkVijfProcent { get { return 0.7 * Fctm; } }    // 5% fractiel
         public Formula FctkVijfProcentFormula => new("Tabel 3.1",
-            @"f_{ctk,0.05} = 0.7×f_{ctm}",
-            @$"f_{{ctk,0.05}} = 0.7×{Fctm.ToEng()} = {FctkVijfProcent.ToEng()}");
+            @"f_{ctk,0.05} = 0.7 \cdot f_{ctm}",
+            @$"f_{{ctk,0.05}} = 0.7 \cdot {Fctm.ToEng()} = {FctkVijfProcent.ToEng()}");
 
 
 
 
-        [TableColumn("95% fractiel",
+        [TableColumn("treksterkte (95% fractiel)",
             Symbol = "<i>f<i><sub>ctk,0.95</sub>",
             Unit = "N/mm²",
             Article = "3.1.2 (3)")]
         public double FctkVijfEnNegentigProcent { get { return 1.3 * Fctm; } } // 95% fractiel
         public Formula FctkVijfEnNegentigProcentFormula => new("Tabel 3.1",
-            @"f_{ctk,0.95} = 1.3×f_{ctm}",
-            @$"f_{{ctk,0.95}} = 1.3×{Fctm.ToEng()} = {FctkVijfEnNegentigProcent.ToEng()}");
+            @"f_{ctk,0.95} = 1.3 \cdot f_{ctm}",
+            @$"f_{{ctk,0.95}} = 1.3 \cdot {Fctm.ToEng()} = {FctkVijfEnNegentigProcent.ToEng()}");
 
 
         public bool IsOntwerpSituatieBuitenGewoon = false;  // default Blijvend en tijdelijk conform art. 2.4.2.4 (1) Partiële factoren voor materialen 
@@ -370,27 +368,27 @@ namespace Eurocode.BetonConstructies
         [JsonIgnore]
         [TableColumn("partiële veiligheidsfactor",
             Symbol = "<i>ɣ</i><sub>c</sub>",
-            Description = "|gamma|~c~\tpartiële veiligheidsfactor",
+            Description = "is de partiële veiligheidsfactor voor beton",
             Article = "2.4.2.4",
             Weergave = WeergaveEnum.DraaiTabel)]
         public double GammaC { get; set; } = 1.5;
 
 
         [TableColumn("druksterkte", Symbol = "<i>f</i><sub>cd</sub>", Weergave = WeergaveEnum.DraaiTabel,
-            Description = "De rekenwaarde van de druksterkte",
+            Description = "is de rekenwaarde van de druksterkte",
             Article = "3.1.6 (1)P", Unit = "N/mm²")]
         public double Fcd { get { return AlphaCC * Fck / GammaC; } }
         public Formula FcdFormula => new("(3.15)",
             @"f_{cd}=\alpha_{cc}f_{ck} / \gamma_{c}",
-            @$"f_{{cd}}={AlphaCC}×{Fck.ToEng()}/ {GammaC} = {Fcd.ToEng()}");
+            @$"f_{{cd}}={AlphaCC} \cdot {Fck.ToEng()}/ {GammaC} = {Fcd.ToEng()}");
 
         [TableColumn("treksterkte", Symbol = "<i>f</i><sub>ctd</sub>", Weergave = WeergaveEnum.DraaiTabel,
-            Description = "De rekenwaarde van de treksterkte",
+            Description = "is de rekenwaarde van de treksterkte",
             Article = "3.1.6 (2)P", Unit = "N/mm²")]
         public double Fctd { get { return AlphaCT * FctkVijfProcent / GammaC; } }
         public Formula FctdFormula => new("(3.16)",
             @"f_{ctd}=\alpha_{ct}f_{ctk,0.05} / \gamma_{c}",
-            @$"f_{{ctd}}={AlphaCT}×{FctkVijfProcent.ToEng()}/ {GammaC} = {Fctd.ToEng()}");
+            @$"f_{{ctd}}={AlphaCT} \cdot {FctkVijfProcent.ToEng()}/ {GammaC} = {Fctd.ToEng()}");
 
 
         public const double AlphaCT = 1; // 3.1.6 Dit is de coëfficiënt die rekening houdt met langeduureffecten op de treksterkte en met ongunstige effecten als gevolg van de manier waarop de belasting aangrijpt.
@@ -457,25 +455,17 @@ namespace Eurocode.BetonConstructies
             return this.BetonSterkteKlasseGebruiksvriendelijkeNaam;
         }
 
-        public override bool IsAkkoord()
-        {
-            // nakijken, volgens mij altijd akkoord
-            return true;
-            //throw new NotImplementedException();
-        }
+
 
         protected override void Bereken()
         {
-            // nakijken, volgens mij niet nodig
-            //throw new NotImplementedException();
+            // mogelijk berekeningen hier toevoegen
         }
 
         protected override bool Valideer()
         {
-
-            // nakijken, volgens mij altijd goed
+            // mogelijke validaties hier toevoegen
             return true;
-            //throw new NotImplementedException();
         }
 
         //public override MarkupString ToHtml(bool isDraaiTabel = true)
@@ -496,7 +486,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         [TableColumn("secans-elasticiteitsmodulus",
             Symbol = "<i>E</i><sub>cm</sub>",
-            Description = "E~cm~\tsecans-elasticiteitsmodulus van beton",
+            Description = "is de secans-elasticiteitsmodulus van beton",
             Unit = "N/mm²",
             Article = "3.1.2 (3)")]
         public double Ecm { get { return this.GetEcm(); } }

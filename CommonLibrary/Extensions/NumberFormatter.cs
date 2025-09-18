@@ -5,11 +5,29 @@ namespace CommonLibrary.Extensions
     public static class NumberFormatter
     {
         private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
+        private static int _defaultSignificantDigits = 8;
 
         /// <summary>
         /// Globale standaard voor aantal significante cijfers (kan runtime worden aangepast).
         /// </summary>
-        public static int DefaultSignificantDigits { get; set; } = 4;
+        public static int DefaultSignificantDigits
+        {
+            get => _defaultSignificantDigits;
+            set
+            {
+                if (_defaultSignificantDigits != value)
+                {
+                    _defaultSignificantDigits = value;
+                    Console.WriteLine($"DefaultSignificantDigits changed to {_defaultSignificantDigits}"); // DEBUG
+                    DefaultSignificantDigitsChanged?.Invoke(null, value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Event dat afgaat zodra de default significant digits verandert.
+        /// </summary>
+        public static event EventHandler<int>? DefaultSignificantDigitsChanged;
         public static double DefaultMaxValueWithoutExponent { get; set; } = 9999;
         public static double DefaultMinValueWithoutExponent { get; set; } = 0.0001;
 

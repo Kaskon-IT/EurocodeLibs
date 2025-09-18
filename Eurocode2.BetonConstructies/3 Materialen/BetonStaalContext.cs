@@ -1,4 +1,5 @@
-﻿using ExportFactory.Shared;
+﻿using CommonLibrary;
+using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
@@ -7,8 +8,12 @@ namespace Eurocode.BetonConstructies
     /// 3.2 Betonstaal
     /// Verzameling gegevens voor betonstaal
     /// </summary>
-    public class BetonStaalContext
+    public class BetonStaalContext : BaseEurocodeContext
     {
+        public BetonStaalContext()
+        {
+
+        }
         public override string ToString()
         {
             return $"{BetonStaalKwaliteit}";
@@ -251,6 +256,23 @@ namespace Eurocode.BetonConstructies
             return fydMaalFactor / this.Fyd;
         }
 
+
+
+        protected override void Bereken()
+        {
+            // niets te berekenen
+        }
+
+        protected override bool Valideer()
+        {
+            if (BetonStaalKwaliteit == null)
+            {
+                Meldingen.Add(new Melding(MeldingType.Error, "Betonstaalkwaliteit is niet opgegeven"));
+                return false;
+            }
+
+            return true;
+        }
     }
 }
 

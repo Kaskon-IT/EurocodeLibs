@@ -226,11 +226,6 @@ namespace Eurocode.BetonConstructies
             _zRef = DekkingToegepast + 0.5 * _gemiddeldeDiameter;
         }
 
-        public override bool IsAkkoord()
-        {
-
-            return true;
-        }
 
 
 

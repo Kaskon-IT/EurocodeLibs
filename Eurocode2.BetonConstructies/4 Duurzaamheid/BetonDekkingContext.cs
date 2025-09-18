@@ -400,10 +400,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public enum BetonAfwerkingOppervlakEnum { [Description("Glad")] Glad = 1, [Description("Nabewerkt of oneffen")] NabewerktOnEffen = 2 }
 
-        public override bool IsAkkoord()
-        {
-            return BerekenEnValideer();
-        }
+
 
         public override string? ToString()
         {

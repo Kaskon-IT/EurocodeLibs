@@ -54,7 +54,7 @@
         public const string finalSigma = "\u03C2"; // ς
         public const string tau = "\u03C4"; // τ
         public const string upsilon = "\u03C5"; // υ
-        public const string phi = "\u03C6"; // φ
+        public const string phi = "\u03C6"; // φφ
         public const string varPhi = "\u03D5"; // ϕ
         public const string chi = "\u03C7"; // χ
         public const string psi = "\u03C8"; // ψ

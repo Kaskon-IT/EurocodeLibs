@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reflection;
 
 
 
@@ -33,6 +34,8 @@ namespace CommonLibrary
         public event PropertyChangedEventHandler? PropertyChanged; // Welke moeten we nu gebruiken?.. 
 
 
+
+
         public void UpdateGewijzigdOp() => GewijzigdOp = DateTime.UtcNow; // Bijwerken van de wijzigingsdatum
 
         protected void OnPropertyChanged(string propertyName)
@@ -41,14 +44,103 @@ namespace CommonLibrary
             OnUpdated?.Invoke();
         }
 
-        protected BaseEurocodeContext()
+        // gebruikt voor binding van Nested properties die INotifyPropertyChanged implementeren
+        protected bool SetNestedProperty<T>(
+            ref T? field,
+            T? value,
+            PropertyChangedEventHandler handler,
+            string propertyName) where T : class, INotifyPropertyChanged
         {
-            OnUpdated += () => Console.WriteLine($"{GetType().Name} updated");
+            if (ReferenceEquals(field, value))
+                return false;
+
+            if (field != null)
+                field.PropertyChanged -= handler;
+
+            field = value;
+
+            if (field != null)
+                field.PropertyChanged += handler;
+
+            OnPropertyChanged(propertyName);
+            return true;
         }
+
+
+
+
+
+        /// <summary>
+        /// Abonneer op nested properties die INotifyPropertyChanged implementeren
+        /// </summary>
+        protected void SubscribeNestedProperty<T>(T? field) where T : class, INotifyPropertyChanged
+        {
+            if (field != null)
+            {
+                // eerst detach oude handler als deze al bestond
+                field.PropertyChanged -= NestedPropertyChanged;
+                // subscribe nieuwe handler
+                field.PropertyChanged += NestedPropertyChanged;
+            }
+        }
+
+
+
+
+
+        /// <summary>
+        /// Abonneer automatisch op PropertyChanged van alle nested properties die INotifyPropertyChanged implementeren
+        /// </summary>
+        protected void SubscribeNestedProperties()
+        {
+            var props = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => typeof(INotifyPropertyChanged).IsAssignableFrom(p.PropertyType));
+
+            foreach (var prop in props)
+            {
+                var nested = prop.GetValue(this) as INotifyPropertyChanged;
+                if (nested != null)
+                {
+                    nested.PropertyChanged -= NestedPropertyChanged;
+                    nested.PropertyChanged += NestedPropertyChanged;
+                }
+            }
+        }
+
+        private void NestedPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // Trigger BerekenEnValideer en geef door dat iets is veranderd
+            BerekenEnValideer();
+            OnPropertyChanged(null); // null = alle properties “updaten”
+        }
+
+        /// <summary>
+        /// Handig om te gebruiken in constructor of setter van nested objects
+        /// </summary>
+        protected void ReplaceNestedProperty<T>(ref T? field, T? value) where T : class, INotifyPropertyChanged
+        {
+            if (field != null)
+                field.PropertyChanged -= NestedPropertyChanged;
+
+            field = value;
+
+            if (field != null)
+                field.PropertyChanged += NestedPropertyChanged;
+
+            OnPropertyChanged(nameof(field));
+        }
+
+
+
+
+        //protected BaseEurocodeContext()
+        //{
+        //    OnUpdated += () => Console.WriteLine($"{GetType().Name} updated");
+        //}
 
         public bool IsValidated { get; private set; }
 
-        public abstract bool IsAkkoord();
+        //public abstract bool IsAkkoord();
 
         // ⚠️ Centrale methode om door te geven of de context waarschuwingen bevat
         public bool HeeftWaarschuwing() => Meldingen.Any(m => m.Type == MeldingType.Waarschuwing);
@@ -105,11 +197,11 @@ namespace CommonLibrary
         public void AddMeldingOpmerking(string tekst) => Meldingen.Add(new(MeldingType.Opmerking, tekst));
 
 
-        public void ControleerMeldingen()
-        {
-            ClearMeldingen();
-            IsAkkoord(); // Voer validatie uit in de child-class
-        }
+        //public void ControleerMeldingen()
+        //{
+        //    ClearMeldingen();
+        //    IsAkkoord(); // Voer validatie uit in de child-class
+        //}
 
         public MarkupString ToMarkupString() => Helpers.MarkupHelper.ToMarkupString(this.ToString());
         public MarkupString ToMarkupString(bool withUnityCheck) => Helpers.MarkupHelper.ToMarkupString(this.ToString(), withUnityCheck);
