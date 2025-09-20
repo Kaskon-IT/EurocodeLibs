@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+	  
+		<PackageId>Kaskon.ParametrischeProfielen</PackageId>
+		<!-- Kies een naam voor je NuGet-pakket -->
+
+
+		<Version>1.0.2</Version>
+		<!-- Versie van het pakket -->
+		
+		<Authors>Kaskon IT</Authors>
+		<!-- Jouw bedrijfsnaam of naam -->
+		
+		<Description>Parametrische profielen voor gebruik in doorsnede toetsen van beton, staal en houtconstructies.</Description>
+		<PackageTags>profielen, kaskon, parametrische profielen, profielendatabase, nuget, library</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<!-- Licentie van je pakket -->
+		<PackageProjectUrl>https://kaskon.nl</PackageProjectUrl>
+		<!-- Je website of repo link -->
+		<RepositoryUrl>https://github.com/jouwbedrijf/jouwrepository</RepositoryUrl>
+		<!-- Repository link -->
+
+		<!-- Lokale map voor .nupkg -->
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
+	  <Copyright>Copyright © 2025 Kaskon</Copyright>
+	  <IncludeSymbols>true</IncludeSymbols>
+	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
+	</ItemGroup>
+
+
+
+
+
+
+	<!--<ItemGroup>
+    <Reference Include="Kaskon_it.Algemeen">
+      <HintPath>..\..\..\Workspaces\Kaskon_it.Algemeen\Kaskon_it.Algemeen\bin\Debug\net9.0\Kaskon_it.Algemeen.dll</HintPath>
+    </Reference>
+  </ItemGroup>-->
+	
+	
+	
+	
+</Project>

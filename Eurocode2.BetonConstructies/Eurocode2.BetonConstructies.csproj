@@ -36,11 +36,10 @@
 	
   <ItemGroup>
     <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
-    <PackageReference Include="Kaskon.BetonProfielen" Version="1.1.500" />
-    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
+    <ProjectReference Include="..\Profielen\ParametrischeProfielen\ParametrischeProfielen.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Docs\license.md">

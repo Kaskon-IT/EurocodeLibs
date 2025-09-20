@@ -157,11 +157,11 @@ else
         {
             if (BetonStaalKwaliteitEnumItems.Length == 0)
             {
-                return [BetonStaalKwaliteitEnum.EigenFyk];
+                return [];
             }
             else
             {
-                List<BetonStaalKwaliteitEnum> excludeEnums = [BetonStaalKwaliteitEnum.EigenFyk];
+                List<BetonStaalKwaliteitEnum> excludeEnums = [];
                 
                 excludeEnums.AddRange(Enum
                 .GetValues(typeof(BetonStaalKwaliteitEnum))

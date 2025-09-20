@@ -7,6 +7,9 @@ namespace Eurocode.BetonConstructies
 {
     public partial class BetonContextKruipEnKrimpCalculator
     {
+        public override string Heading { get; set; } = "Beton kruip en krimp berekening";
+
+
         // 3.1.4 Kruip en krimp
 
         // (1)P Kruip en krimp van beton hangen af van de vochtigheid van de omgeving, de afmetingen van het 

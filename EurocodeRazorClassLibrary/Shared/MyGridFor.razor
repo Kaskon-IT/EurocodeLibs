@@ -18,7 +18,7 @@
     <table class="striped-table responsive-table">
         <caption style="caption-side:top;">
                 <span>
-                    <b>@Model?.GetType().Name</b>
+                    <i>@Heading</i>
 
                     <button @onclick="() => ToggleHidden(Hidden)">
                         @(Hidden ? "Toon tabel" : "Verberg tabel")
@@ -30,6 +30,15 @@
                 <button class="toggle-all-btn" @onclick="ToggleAllRows">
                     @(AllRowsOpen ? "Verberg details" : "Toon details")
                 </button>
+
+                if (openRowProperties.Any())
+                {
+                    <FluentCheckbox @bind-Value="ShowDescription" Label="omschrijving" />
+                    <FluentCheckbox @bind-Value="ShowArticles" Label="Toon artikelen" Style="margin-left:10px;" />
+                    <FluentCheckbox @bind-Value="ShowFormulas" Label="Toon formules" Style="margin-left:20px;" />
+
+                }
+
             }
 
         </caption>
@@ -74,7 +83,7 @@
                                 <dl style="margin-bottom:1px;">
                                     <dt class="katex-like">@((MarkupString)(row.Symbol ?? ""))</dt>
 
-                                    @if (row.Description != null)
+                                    @if (row.Description != null && ShowDescription)
                                     {
                                     <dd>@((MarkupString)(row.Description ?? ""))</dd>
                                     }
@@ -83,13 +92,13 @@
                                     <dd>@((MarkupString)row.Label)</dd>
                                     }
 
-                                    @if (row.Article != null)
+                                    @if (row.Article != null && ShowArticles)
                                     {
                                     <dt>artikel</dt>
                                     <dd>@row.Article</dd>
                                     }
 
-                                    @if (row.Formula != null)
+                                    @if (row.Formula != null && ShowFormulas)
                                     {
                                     <dt>vgl.</dt>
                                     <dd>
@@ -193,6 +202,12 @@
     [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
     [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; } = false;
+    [Parameter] public bool ShowDescription { get; set; } = true;
+    [Parameter] public bool ShowArticles { get; set; } = true;
+    [Parameter] public bool ShowFormulas { get; set; } = true;
+    [Parameter] public bool ShowNonEditables { get; set; } = !false;
+
+
 
 
     // Geef parent de mogelijkheid runtime kolommen te tonen/verbergen.
@@ -200,17 +215,17 @@
     [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
 
     private bool AllRowsOpen { get; set; } = false;
+    private string Heading { get; set; } = "";
 
     private HashSet<PropertyInfo> openRowProperties = new();
 
 
-    private HashSet<PropertyRow> openRows = new();
+    //private HashSet<PropertyRow> openRows = new();
     private void ToggleRowDetails(PropertyRow row)
     {
         if (!openRowProperties.Add(row.Property!))
             openRowProperties.Remove(row.Property!);
     }
-
     private void ToggleAllRows()
     {
         if (AllRowsOpen)
@@ -233,12 +248,8 @@
 
 
 
-    
-    private void ToggleRowDetailsBAK(PropertyRow row)
-    {
-        if (!openRows.Add(row))
-            openRows.Remove(row);
-    }
+
+
 
     private bool Hidden { get; set; }
     private void ToggleHidden(bool hidden)
@@ -265,8 +276,21 @@
     protected override void OnParametersSet()
     {
         VisibleColumns ??= new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
+
+        // info
+        if (Model is BaseEurocodeContext bec)
+        {
+            Heading = bec.Heading;
+        }
+
+
         // caching zodat we stabiel itereren en makkelijk kunnen refreshen na set
         _rows = TableColumnAttributeHelper.GetRows(Model!)
+        .Where(r => 
+            (r as PropertyRow)?.Editable == true ||
+            (r as SubPropertyRow)?.Value != null ||
+            ShowNonEditables
+        )
         .OrderByDescending(r => (r as PropertyRow)?.Editable)
         .ThenByNatural(r => (r as PropertyRow)?.Symbol)
         .ThenByNatural(r=>(r as PropertyRow)?.Article)

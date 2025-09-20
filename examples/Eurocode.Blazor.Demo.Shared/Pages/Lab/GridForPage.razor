@@ -13,32 +13,27 @@ else
 {
     <div>
        <label><input type="checkbox" @bind="readOnly" /> ReadOnly</label>
+       <label><input type="checkbox" @bind="showNonEditables" /> Non-Input</label>
+
     </div>
 
     <NumberFormatterSettings />
 
     <p>Count: @MyContexts.Count</p>
 
-    List<Guid> guids = [];
-
-    @for (int i = 0; i < MyContexts.Count; i++)
+    @if(EurocodeContext != null)
     {
-        var idx = i; // <-- nog steeds nodig om closure te fixen
-
-        guids.Add(MyContexts[idx].Id);
-
-        <MyGridFor @bind-Model="MyContexts[idx]"
+        <MyGridFor @bind-Model="EurocodeContext"
                    @bind-VisibleColumns="visibleCols"
-                   ReadOnly = "@readOnly"
-                   @key="MyContexts[idx].Id" />
+                   ReadOnly="@readOnly"
+                   ShowNonEditables="@showNonEditables"
+                   @key="EurocodeContext.Id" />
 
-
-         // haal de nested context op
-         // toon de nested
-        var nestedCtxen = GetNestedContexts(MyContexts[idx]).ToList();
+        var nestedCtxen = GetNestedContexts(EurocodeContext).ToList();
+        
         @* Recursief nested contexten tonen *@
-
-        @* for(int j = 0; j < nestedCtxen.Count; j++)
+        List<Guid> guids = [];
+        for (int j = 0; j < nestedCtxen.Count; j++)
         {
             var nidx = j; // fix closure
 
@@ -48,16 +43,34 @@ else
                 <MyGridFor @bind-Model="nestedCtxen[nidx]"
                            @bind-VisibleColumns="visibleCols"
                            ReadOnly="@readOnly"
-                           @key="nestedCtxen[nidx].Id" />
+                @key="nestedCtxen[nidx].Id" />
             }
-          
-        } *@
+
+        }
+    }
+    else
+    {
+        @for (int i = 0; i < MyContexts.Count; i++)
+        {
+            var idx = i; // <-- nog steeds nodig om closure te fixen
+
+
+
+            <MyGridFor @bind-Model="MyContexts[idx]"
+                       @bind-VisibleColumns="visibleCols"
+                       ReadOnly="@readOnly"
+                       ShowNonEditables="@showNonEditables"
+                       @key="MyContexts[idx].Id" />
+
+
+        }
+
+    }
+
 
    
 
-        
-    }
-
+   
   
 
 
@@ -73,6 +86,7 @@ else
 
 
     private List<BaseEurocodeContext> MyContexts { get; set; } = [];
+    private BaseEurocodeContext? EurocodeContext { get; set; } = null;
 
 
     private IEnumerable<BaseEurocodeContext> GetNestedContexts(object obj)
@@ -105,15 +119,10 @@ else
 
     //private SampleModel model = new();
     private HashSet<string> visibleCols = new();
-    private string modelDump => System.Text.Json.JsonSerializer.Serialize(SampleProject?.Beton, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+    //private string modelDump => System.Text.Json.JsonSerializer.Serialize(SampleProject?.Beton, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
 
-    //private bool showLabel = true;
-    //private bool showSymbol = true;
-    //private bool showValue = true;
-    //private bool showUnit = true;
-    //private bool showArticle = true;
-    //private bool showFormula = !false;
-    private bool readOnly = true;
+    private bool readOnly = !true;
+    private bool showNonEditables = !true;
 
     protected override void OnInitialized()
     {
@@ -121,11 +130,19 @@ else
 
         if(SampleProject?.DoorbuigingDemo != null && MyContexts != null)
         {
+
+            EurocodeContext = SampleProject.DoorbuigingDemo;
+
             MyContexts.Add(SampleProject.DoorbuigingDemo);
             MyContexts.Add(SampleProject.DoorbuigingDemo.KruipKrimpBerekening);
             MyContexts.Add(SampleProject.DoorbuigingDemo.DoorbuigingBerekening);
             MyContexts.Add(SampleProject.DoorbuigingDemo.BuigingBerekening);
             MyContexts.Add(SampleProject.DoorbuigingDemo.Beton);
+            MyContexts.Add(SampleProject.DoorbuigingDemo.Beton.BetonStaal);
+            MyContexts.Add(SampleProject.DoorbuigingDemo.Beton.Profiel);
+
+           
+
         }
 
        

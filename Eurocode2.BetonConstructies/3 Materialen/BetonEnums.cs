@@ -60,7 +60,6 @@ namespace Eurocode.BetonConstructies
         B600A = 21,
         B600B = 22,
         B600C = 23,
-        EigenFyk = 31,
     }
 
     public enum BetonStaalSpanningRekDiagramEnum

@@ -47,8 +47,6 @@
 	<ItemGroup>
 		<!-- NuGet afhankelijkheden -->
 		<PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
-		<PackageReference Include="Kaskon.BetonProfielen" Version="1.1.500" />
-		<PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
 		
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.6" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.12.0" />
@@ -72,6 +70,7 @@
 		<!--<ProjectReference Include="..\Eurocode7.Geotechniek\Eurocode7.Geotechniek.csproj" />-->
 		<!--<ProjectReference Include="..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />-->
 		<ProjectReference Include="..\ExportFactory\ExportFactory.csproj" />
+		<ProjectReference Include="..\Profielen\BetonProfielen\BetonProfielen.csproj" />
 	</ItemGroup>
 
     <ItemGroup>

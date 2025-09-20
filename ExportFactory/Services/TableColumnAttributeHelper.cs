@@ -74,7 +74,13 @@ namespace ExportFactory.Services
                     continue; // alleen properties met [TableColumn]
 
                 var rawValue = prop.GetValue(model);
-                string displayValue = rawValue?.ToString() ?? "-";
+                string displayValue = rawValue?.ToString() ?? "DEBUG";
+
+
+                if (displayValue == "DEBUG")
+                {
+                    bool error = true;
+                }
 
                 if (rawValue != null)
                 {

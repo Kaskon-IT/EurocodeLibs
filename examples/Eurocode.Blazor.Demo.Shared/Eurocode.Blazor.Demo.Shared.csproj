@@ -23,8 +23,6 @@
 
   <ItemGroup>
 	  <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
-	  <PackageReference Include="Kaskon.BetonProfielen" Version="1.1.500" />
-	  <PackageReference Include="Kaskon.ParametrischeProfielen" Version="1.0.2" />
 	  <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.12.0" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.12.0" />
     <PackageReference Include="Plotly.Blazor" Version="6.0.2" />
@@ -53,6 +51,8 @@
     <ProjectReference Include="..\..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />
     <ProjectReference Include="..\..\EurocodeRazorClassLibrary\EurocodeRazorClassLibrary.csproj" />
     <ProjectReference Include="..\..\ExportFactory\ExportFactory.csproj" />
+    <ProjectReference Include="..\..\Profielen\BetonProfielen\BetonProfielen.csproj" />
+    <ProjectReference Include="..\..\Profielen\ParametrischeProfielen\ParametrischeProfielen.csproj" />
     <ProjectReference Include="..\Eurocode.Blazor.Demo.Generators\Generators\Generators.csproj" />
   </ItemGroup>
 </Project>

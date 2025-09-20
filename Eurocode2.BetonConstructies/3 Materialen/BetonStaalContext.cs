@@ -1,4 +1,6 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Extensions;
+using ExportFactory.Services;
 using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
@@ -10,6 +12,8 @@ namespace Eurocode.BetonConstructies
     /// </summary>
     public class BetonStaalContext : BaseEurocodeContext
     {
+        public override string Heading { get; set; } = "Betonstaal";
+
         public BetonStaalContext()
         {
 
@@ -56,7 +60,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         //public bool IsHellendeTakDiagram { get; set; }
 
-        [TableColumn("Diagram", Order = 2)]
+        [TableColumn(Label = "spanning-rekrelatie", Article = "3.2.3")]
         public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.HorizontaleTak;
         public enum SpanningRekDiagramType { HellendeTak, HorizontaleTak }
 
@@ -66,17 +70,20 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public double EigenFyk { get; set; }
 
+        //3.2.2 (3)P De toepassingsregels voor ontwerp en berekening en detaillering in deze Eurocode zijn geldig voor een
+        //bereik van de gespecificeerde vloeigrens fyk = 400 Mpa tot en met 600 MPa.
+
         /// <summary>
         /// De betonstaalkwaliteit volgens tabel C.1 
         /// </summary>
-        [TableColumn("Betonstaalkwaliteit", Order = 0)]
-        public BetonStaalKwaliteitEnum? BetonStaalKwaliteit { get; set; }
+        [TableColumn(Label = "Betonstaalkwaliteit", Article = "3.2", Order = 0)]
+        public BetonStaalKwaliteitEnum? BetonStaalKwaliteit { get; set; } = BetonStaalKwaliteitEnum.B500A;
 
 
         /// <summary>
         /// karakteristieke vloeigrens van betonstaal 
         /// </summary>
-        [TableColumn("f~yk~", StringFormat = "0 N/mm²")]
+        [TableColumn(Label = "vloeigrens betonstaal", Description = "is de karakteristieke vloeigrens van betonstaal", Symbol = "<i>f</i><sub>yk</sub>", Unit = "N/mm²", Article = "3.2.3")]
         public double Fyk
         {
             get
@@ -86,7 +93,6 @@ namespace Eurocode.BetonConstructies
                     BetonStaalKwaliteitEnum.B500A or BetonStaalKwaliteitEnum.B500B or BetonStaalKwaliteitEnum.B500C => 500,
                     BetonStaalKwaliteitEnum.B400A or BetonStaalKwaliteitEnum.B400B or BetonStaalKwaliteitEnum.B400C => 400,
                     BetonStaalKwaliteitEnum.B600A or BetonStaalKwaliteitEnum.B600B or BetonStaalKwaliteitEnum.B600C => 600,
-                    BetonStaalKwaliteitEnum.EigenFyk => EigenFyk,
                     _ => 500,
                 };
             }
@@ -102,7 +108,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// conform art. 2.4.2.4 Partiële factoren voor materialen
         /// </summary>
-        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn(Article = "2.4.2.4", Label = "Partiële factor voor betonstaal", Symbol = $"<i>{GreekLetters.gamma}</i><sub>S</sub>", Weergave = WeergaveEnum.DraaiTabel)]
         public double GammaS
         {
             get
@@ -116,16 +122,18 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// 3.2.7 (2) rekenwaarde van de vloeigrens van betonstaal
         /// </summary>
-        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn(Article = "3.2.7 (2)",
+            Label = "vloeigrens", Description = "is de rekenwaarde van de vloeigrens van betonstaal",
+            Symbol = "<i>f</i><sub>yd</sub>", Unit = "N/mm²",
+            Weergave = WeergaveEnum.DraaiTabel)]
         public double Fyd { get { return Fyk / GammaS; } }  // 3.2.7 (2)
+        public Formula FydFormula => new("", @"f_{yd} = f_{yk} / \gamma_s", $"={Fyk.ToTeX()}/{GammaS.ToTeX()} = {Fyd.ToTeX()}");
 
 
         /// <summary>
         /// 6.2 rekenwaarde van de vloeigrens van dwarskrachtwapening
         /// </summary>
-        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
         public double Fywd { get { return Fywk / GammaS; } }	// conform art. 6.2
-
 
 
         public double EpsilonS { get; set; }
@@ -137,7 +145,9 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// karakteristieke rek van betonstaal of voorspanstaal bij maximale belasting
         /// </summary>
-        [TableColumn("|epsilon|~uk~", Order = 2, StringFormat = "0.00 ‰")]
+        [TableColumn(Symbol = $"<i>{GreekLetters.epsilon}</i><sub>uk</sub>", Label = "staalrek",
+            Description = "is de karakteristieke rek van betonstaal bij maximale belasting",
+            StringFormat = "0.00 ‰")]
         public double EpsilonUk
         {
             get
@@ -225,7 +235,7 @@ namespace Eurocode.BetonConstructies
 
         public const double Es = 200000;
 
-        [TableColumn("E~s~", StringFormat = "0 N/mm²")]
+        [TableColumn(Symbol = "<i>E</i><sub>s</sub>", Unit = "N/mm²")]
         public double ElasticiteitsModulus
         {
             get

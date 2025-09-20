@@ -14,13 +14,13 @@ namespace Eurocode.BetonConstructies
     /// (7.20)
     /// (7.21)
     /// 
-    /// 
-    /// 
-    /// 
     /// </summary>
     public class BetonDoorbuigingCalculator : BaseEurocodeContext
     {
+        public override string Heading { get; set; } = "Beton doorbuiging berekening";
 
+
+        private readonly Eurocode.Grondslagen.GrondslagenContext _grondslagen;
         private readonly BetonContext _beton;
         private readonly BetonContextKruipEnKrimpCalculator _kruipkrimp;
         private readonly WapeningContext _wapening = new() { Tekst = "6Ø25" }; // 2945 mm2
@@ -34,6 +34,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public BetonDoorbuigingCalculator()
         {
+            _grondslagen = new Eurocode.Grondslagen.GrondslagenContext();
             _beton = new("C30/37");
             _kruipkrimp = new BetonContextKruipEnKrimpCalculator(_beton);
             _krachten = new();
@@ -64,7 +65,7 @@ namespace Eurocode.BetonConstructies
         private double? _kruipfactorOverride = null;
 
 
-        [TableColumn(Label = "Kruipcoefficient", Symbol = $"<i>{GreekLetters.phi}</i><sub>(t,t<sub>0</sub>)</sub>",
+        [TableColumn(Label = "kruipcoëfficiënt", Symbol = $"<i>{GreekLetters.phi}</i><sub>(t,t<sub>0</sub>)</sub>",
             Description = "is de kruipcoëfficiënt <br />" +
             "Leeg laten of '0' invullen om te automatisch te laten berekenen<br />" +
             "Er is ook de optie om een eigen waarde op te geven")]
@@ -77,6 +78,8 @@ namespace Eurocode.BetonConstructies
                     _kruipfactorOverride = null;  // reset naar standaard
                 else
                     _kruipfactorOverride = value; // override opslaan
+
+                BerekenEnValideer();
             }
         }
 
@@ -85,6 +88,28 @@ namespace Eurocode.BetonConstructies
         {
             get => _kruipkrimp.TotaleKrimpverkorting;
         }
+
+
+        private bool _verwaarloosKrimp = true;
+
+        [TableColumn(Label = "verwaarloos krimp",
+          Article = "7.4.3 (6)",
+          Description = "Indien aangevinkt wordt de krimp niet meegenomen in de berekening<br />" +
+          "OPMERKING Bij de berekening van de doorbuiging van vloeren en balken wordt de invloed van de krimp " +
+          "op de grootte van de doorbuiging verwaarloosd.")]
+        public bool VerwaarloosKrimp
+        {
+            get => _verwaarloosKrimp;
+            set
+            {
+                if (_verwaarloosKrimp != value)
+                {
+                    _verwaarloosKrimp = value;
+                    BerekenEnValideer();
+                }
+            }
+        }
+
 
 
 
@@ -138,8 +163,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// d
         /// </summary>
-        public double NuttigeHoogte { get; set; } = 650; // mm
-        public double As { get; set; } = 2945; // mm2
+        public double NuttigeHoogte
+        {
+            get
+            {
+                return this._doorbuigingStudie.NuttigeHoogte; // todo verander doorbuigingStudie naar aparte class herbruikbaar
+            }
+        }
 
 
         /// <summary>
@@ -415,19 +445,50 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Label = "totale kromming",
             Symbol = "<i>κ</i><sub>tot</sub>",
             Unit = "mm<sup>-1</sup>",
-            Description = "is de totale kromming. Dit is de som van de kromming uit uitwendige belasting (<i>κ</i><sub>qp</sub>) en de kromming uit krimp (<i>κ</i><sub>cs</sub>)")]
+            Description = "is de totale kromming. Dit is de som van de kromming uit uitwendige belasting (<i>κ</i><sub>qp</sub>) " +
+            "en de kromming uit krimp (<i>κ</i><sub>cs</sub>)<br >" +
+            "OPMERKING de kromming uit krimp mag verwaarloosd zijn volgens de Nationale Bijlage ")]
         public double TotaleKromming
         {
             get
             {
-                return KrommingUitwendig + KrommingKrimp;
+                if (VerwaarloosKrimp)
+                {
+                    return KrommingUitwendig;
+                }
+                else
+                {
+                    return KrommingUitwendig + KrommingKrimp;
+                }
             }
         }
-        public Formula TotaleKrommingFormula => new()
+        public Formula TotaleKrommingFormula
         {
-            StaticValue = @"\kappa_{tot} = \kappa_{qp} + \kappa_{cs}",
-            DynamicValue = $@"\kappa_{{tot}} = {KrommingUitwendig.ToTeX()} + {KrommingKrimp.ToTeX()} = {TotaleKromming.ToTeX()}"
-        };
+            get
+            {
+                if (VerwaarloosKrimp)
+                {
+                    return new()
+                    {
+                        StaticValue = @"\kappa_{tot} = \kappa_{qp}",
+                        DynamicValue = $@"\kappa_{{tot}} = {KrommingUitwendig.ToTeX()} = {TotaleKromming.ToTeX()}"
+                    };
+                }
+                else
+                {
+                    return new()
+                    {
+                        StaticValue = @"\kappa_{tot} = \kappa_{qp} + \kappa_{cs}",
+                        DynamicValue = $@"\kappa_{{tot}} = {KrommingUitwendig.ToTeX()} + {KrommingKrimp.ToTeX()} = {TotaleKromming.ToTeX()}"
+                    };
+                }
+            }
+        }
+
+
+
+
+
 
 
         [TableColumn(Label = "lineaire oppervlaktemoment (ongescheurd)",
@@ -502,10 +563,20 @@ namespace Eurocode.BetonConstructies
                 return (1.0 / 12.0 * b * Math.Pow(x, 3) + (b * x) * Math.Pow(x / 2, 2) + this.Alphae * _wapening.As * Math.Pow((NuttigeHoogte - x), 2));
             }
         }
-        public Formula I_IIFormula => new()
+        public Formula I_IIFormula
         {
-            StaticValue = @"I_{II} = \frac{1}{12}bx^3 + (bx) \left( \frac{1}{2}x \right)^2 + \alpha_e A_s (d-x)^2"
-        };
+            get
+            {
+                var b = _beton.Profiel.Breedte.ToTeX();
+                var x = Drukzonehoogte.ToTeX();
+                return new()
+                {
+
+                    StaticValue = @"I_{II} = \frac{1}{12}bx^3 + (bx) \left( \frac{1}{2}x \right)^2 + \alpha_e A_s (d-x)^2",
+                    DynamicValue = @$"I_{{II}} = \frac{{1}}{{12}}\cdot{b}\cdot{x}^3 + ({b}\cdot{x}) \left( \frac{{1}}{{2}}{x} \right)^2 + {Alphae.ToTeX()} \cdot {_wapening.As.ToTeX()} \cdot ({NuttigeHoogte.ToTeX()}-{x})^2"
+                };
+            }
+        }
 
 
 
@@ -529,6 +600,19 @@ namespace Eurocode.BetonConstructies
 
         protected override bool Valideer()
         {
+            Meldingen.Clear();
+            if (_kruipfactorOverride.HasValue)
+            {
+                AddMeldingOpmerking($"De kruipcoëfficiënt is door gebruiker zelf opgegeven");
+            }
+
+            if (VerwaarloosKrimp)
+            {
+                AddMeldingOpmerking("Bij de berekening van de doorbuiging van vloeren en balken wordt de invloed van de krimp op de grootte van de doorbuiging verwaarloosd. ");
+            }
+
+
+
             if (DoorbuigingBenadering > _doorbuigingStudie.ToelaatbareDoorbuiging)
             {
                 Meldingen.Add(new Melding(MeldingType.Waarschuwing, $"De berekende doorbuiging {DoorbuigingBenadering:N0} mm is groter dan de maximaal toelaatbare doorbuiging {_doorbuigingStudie.ToelaatbareDoorbuiging:N0} mm (L/250)"));

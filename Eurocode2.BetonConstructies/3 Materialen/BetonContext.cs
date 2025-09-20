@@ -52,7 +52,7 @@ namespace Eurocode.BetonConstructies
         //public bool IsParabolischSpanningsRekDiagram { get; set; } = !true;
 
 
-        [TableColumn("spanning-rekrelatie", Order = 1,
+        [TableColumn(Label = "spanning-rekrelatie", Order = 1,
             Description = "Voor het berekenen van dwarsdoorsneden mag een parabool-rechthoekdiagram of bi-lineaire spanning-rekrelatie worden gebruikt",
             Article = "3.1.7")]
         public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.BiLineair;
@@ -73,11 +73,11 @@ namespace Eurocode.BetonConstructies
         public double RekEpsilonC { get; set; }
 
 
-        [TableColumn(Label = "betonspanning",
-            Symbol = "<i>σ</i><sub>c</sub>",
-            Description = "De optredende betonspanning is afhankelijk van het gebruikte spanning-rekrelatie en de optredende rek (<i>ε</i><sub>c</sub>)",
-            Article = "3.1.7",
-            Unit = "N/mm²")]
+        //[TableColumn(Label = "betonspanning",
+        //    Symbol = "<i>σ</i><sub>c</sub>",
+        //    Description = "De optredende betonspanning is afhankelijk van de gebruikte spanning-rekrelatie en de optredende rek (<i>ε</i><sub>c</sub>)",
+        //    Article = "3.1.7",
+        //    Unit = "N/mm²")]
         public double SpanningSigmaC
         {
             get
@@ -120,7 +120,7 @@ namespace Eurocode.BetonConstructies
 
 
                     case SpanningRekDiagramType.BiLineair:
-                        return new() { Name = "..", StaticValue = @"\sigma_c = f_{cd}", DynamicValue = @$"\sigma_c={Fcd.ToTeX()}" };
+                        return new() { Name = "", StaticValue = @"\sigma_c = f_{cd}", DynamicValue = @$"\sigma_c={Fcd.ToTeX()}" };
 
 
 
@@ -366,9 +366,9 @@ namespace Eurocode.BetonConstructies
         public bool IsOntwerpSituatieBuitenGewoon = false;  // default Blijvend en tijdelijk conform art. 2.4.2.4 (1) Partiële factoren voor materialen 
 
         [JsonIgnore]
-        [TableColumn("partiële veiligheidsfactor",
-            Symbol = "<i>ɣ</i><sub>c</sub>",
-            Description = "is de partiële veiligheidsfactor voor beton",
+        [TableColumn("partiële factor beton",
+            Symbol = "<i>ɣ</i><sub>C</sub>",
+            Description = "is de partiële factor voor beton",
             Article = "2.4.2.4",
             Weergave = WeergaveEnum.DraaiTabel)]
         public double GammaC { get; set; } = 1.5;

@@ -10,6 +10,8 @@ namespace Eurocode.BetonConstructies
     /// </summary>
     public class DoorbuigingStudie : BaseEurocodeContext
     {
+        public override string Heading { get; set; } = "Studie doorbuiging";
+
 
         /// <summary>
         /// Parameterloze constructor voor serialisatie doeleinden.
@@ -33,6 +35,7 @@ namespace Eurocode.BetonConstructies
 
         public DoorbuigingStudie(double l = 10, double q = 40)
         {
+            Heading = "Studie doorbuiging";
             L = l;
             Lijnlast = q;
             Profiel = new(500, 700);
@@ -154,12 +157,14 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn(Label = "deler toelaatbare doorbuiging", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "1/")]
+        //[TableColumn(Label = "deler toelaatbare doorbuiging", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "1/")]
         public int DelerVoorToelaatbareDoorbuiging { get; set; } = 250;
 
 
 
-        private double ToelaatbareDoorbuigingFractieOverspanning => 1 / (double)DelerVoorToelaatbareDoorbuiging;
+        [TableColumn(Label = "toelaatbare doorbuiging", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "")]
+
+        public double ToelaatbareDoorbuigingFractieOverspanning => 1 / (double)DelerVoorToelaatbareDoorbuiging;
 
         [TableColumn(Label = "toelaatbare doorbuiging", Symbol = "<i>u</i><sub>toel.</sub>", Unit = "mm")]
         public double ToelaatbareDoorbuiging
