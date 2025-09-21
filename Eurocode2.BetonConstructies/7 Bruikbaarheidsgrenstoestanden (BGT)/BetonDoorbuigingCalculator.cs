@@ -375,6 +375,7 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(Label = "kromming uitwendig",
             Symbol = "<i>κ</i><sub>qp</sub>",
+            Unit = "mm<sup>-1</sup>",
             Article = "7.4.3 (3)",
             Description = "is de kromming ten gevolge van de uitwendige belasting (<i>M</i><sub>Eqp</sub>). Deze wordt gevonden door interpolatie tussen de uiterste toestanden ‘ongescheurd’ en ‘geheel gescheurd’ (EC2; vgl. (7.18)):")]
         public double KrommingUitwendig
@@ -394,7 +395,8 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "kromming door krimp (ongescheurd)", Symbol = "<i>κ</i><sub>cs,I</sub>", Article = "7.4.3 (6)",
+        [TableColumn(Label = "kromming door krimp (ongescheurd)", Symbol = "<i>κ</i><sub>cs,I</sub>",
+            Article = "7.4.3 (6)", Unit = "mm<sup>-1</sup>",
             Description = "is de bijdrage aan de kromming door krimp (ongescheurd)")]
         public double KrommingKrimpI
         {
@@ -410,7 +412,8 @@ namespace Eurocode.BetonConstructies
             DynamicValue = $@"\kappa_{{cs,I}} = {_kruipkrimp.TotaleKrimpverkorting.ToTeX()} \cdot {this.Alphae.ToTeX()} \cdot \frac{{{this.S_I.ToTeX()}}}{{{I_I.ToTeX()}}} = {KrommingKrimpI.ToTeX()}"
         };
 
-        [TableColumn(Label = "kromming door krimp (gescheurd)", Symbol = "<i>κ</i><sub>cs,II</sub>", Article = "7.4.3 (6)",
+        [TableColumn(Label = "kromming door krimp (gescheurd)", Symbol = "<i>κ</i><sub>cs,II</sub>",
+            Article = "7.4.3 (6)", Unit = "mm<sup>-1</sup>",
             Description = "is de bijdrage aan de kromming door krimp wordt (gescheurd)")]
         public double KrommingKrimpII
         {
@@ -426,7 +429,7 @@ namespace Eurocode.BetonConstructies
             DynamicValue = $@"\kappa_{{cs,II}} = {_kruipkrimp.TotaleKrimpverkorting.ToTeX()} \cdot {this.Alphae.ToTeX()} \cdot \frac{{{this.S_II.ToTeX()}}}{{{I_II.ToTeX()}}} = {KrommingKrimpII.ToTeX()}"
         };
 
-        [TableColumn(Label = "kromming door krimp", Symbol = "<i>κ</i><sub>cs</sub>", Article = "7.4.3 (3)",
+        [TableColumn(Label = "kromming door krimp (interpolatie)", Symbol = "<i>κ</i><sub>cs</sub>", Article = "7.4.3 (3)", Unit = "mm<sup>-1</sup>",
             Description = "is de kromming ten gevolge van de krimp. Deze wordt gevonden door interpolatie tussen de uiterste toestanden ‘ongescheurd’ en ‘geheel gescheurd’ (EC2; vgl. (7.18)):")]
         public double KrommingKrimp
         {

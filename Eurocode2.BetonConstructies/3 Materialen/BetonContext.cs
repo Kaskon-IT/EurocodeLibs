@@ -70,7 +70,7 @@ namespace Eurocode.BetonConstructies
             Article = "3.1.7",
             Description = "De optredende betonrek"
             )]
-        public double RekEpsilonC { get; set; }
+        public double RekEpsilonC { get; private set; }
 
 
         //[TableColumn(Label = "betonspanning",
@@ -371,7 +371,7 @@ namespace Eurocode.BetonConstructies
             Description = "is de partiële factor voor beton",
             Article = "2.4.2.4",
             Weergave = WeergaveEnum.DraaiTabel)]
-        public double GammaC { get; set; } = 1.5;
+        public double GammaC { get; private set; } = 1.5;
 
 
         [TableColumn("druksterkte", Symbol = "<i>f</i><sub>cd</sub>", Weergave = WeergaveEnum.DraaiTabel,
@@ -501,7 +501,7 @@ namespace Eurocode.BetonConstructies
             Article = "3.1.3 (4)",
             Symbol = "<i>ν</i>",
             Description = "De Poissonverhouding mag zijn gelijkgenomen aan 0,2 voor ongescheurd beton en aan 0 voor gescheurd beton")]
-        public double PoissonFactor { get; set; } = 0.2;
+        public double PoissonFactor { get; private set; } = 0.2;
 
 
         public string Betonstuik

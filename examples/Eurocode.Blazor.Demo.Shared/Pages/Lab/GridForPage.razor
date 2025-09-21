@@ -43,7 +43,8 @@ else
                 <MyGridFor @bind-Model="nestedCtxen[nidx]"
                            @bind-VisibleColumns="visibleCols"
                            ReadOnly="@readOnly"
-                @key="nestedCtxen[nidx].Id" />
+                           ShowNonEditables="@showNonEditables"
+                           @key="nestedCtxen[nidx].Id" />
             }
 
         }
@@ -95,6 +96,11 @@ else
             yield break;
 
         var type = obj.GetType();
+
+        var debugProps = type.GetProperties();
+
+
+
 
         foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {

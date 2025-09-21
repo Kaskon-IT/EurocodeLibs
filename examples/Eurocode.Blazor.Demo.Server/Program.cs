@@ -1,3 +1,4 @@
+using CommonLibrary.Extensions;
 using Eurocode.Blazor.Demo.Shared.Extensions;
 using Eurocode.Blazor.Demo.Shared.SampleData;
 using Eurocode.Grondslagen;
@@ -7,6 +8,8 @@ using System.Globalization;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+NumberFormatter.DefaultSignificantDigits = 3;
 
 StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 

@@ -278,7 +278,7 @@ namespace Eurocode.BetonConstructies
 
         [JsonIgnore]
         [TableColumn("ouderdom beton op het beschouwde tijdstip", Symbol = "<i>t</i>", Unit = "dagen", Article = "Bijlage B")]
-        public int OuderdomBeton_t { get; set; } = 18250;
+        public int OuderdomBeton_t { get; private set; } = 18250;
 
         [TableColumn(Label = "ouderdom beton bij belasten", Symbol = $"<i>t</i><sub>0</sub>", Unit = "dagen", Article = "Bijlage B")]
         public int OuderdomBetonOpMomentVanBelasten_t0 { get; set; } = 30;

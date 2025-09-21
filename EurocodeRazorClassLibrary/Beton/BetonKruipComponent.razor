@@ -16,13 +16,13 @@
     // 
     //
     <FluentSelectEnum TEnum="CementklasseEnum" @bind-EnumSelectedValue="Model.CementKlasse" Label="Cementklasse"></FluentSelectEnum>
-    <FluentNumberField @bind-Value="KruipKrimp.OuderdomBeton_t" />
+    //<FluentNumberField @bind-Value="KruipKrimp.OuderdomBeton_t" />
     <FluentNumberField @bind-Value="KruipKrimp.OuderdomBetonOpMomentVanBelasten_t0" />
 
+    <MyGridFor TModel="BetonContextKruipEnKrimpCalculator" @bind-Model="KruipKrimp" ReadOnly="false" ShowNonEditables="true"></MyGridFor>
 
 
-
-    <ListFor TModel="BetonContext" @bind-Item="Model"></ListFor>
+    //<ListFor TModel="BetonContext" @bind-Item="Model"></ListFor>
    
 
 @* <div class="space-y-2">

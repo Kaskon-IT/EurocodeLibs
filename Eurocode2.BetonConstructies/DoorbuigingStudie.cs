@@ -29,7 +29,8 @@ namespace Eurocode.BetonConstructies
         public Snedekrachten Krachten { get; set; } = new();
         public BetonContextKruipEnKrimpCalculator KruipKrimpBerekening { get; set; }
         public BetonDoorbuigingCalculator DoorbuigingBerekening { get; set; }
-        public ParametrischeProfielen.ParametrischProfielContext Profiel = new() { Breedte = 500, Hoogte = 700 };
+
+        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new() { Breedte = 500, Hoogte = 700 };
         public WapeningContext Wapening { get; set; } = new() { Tekst = "6Ø25" };
         public BendingResults BuigingBerekening { get; set; }
 
@@ -71,7 +72,7 @@ namespace Eurocode.BetonConstructies
         public double Hoogte
         {
             get { return Profiel.Hoogte; }
-            set { Profiel.Hoogte = value; }
+            internal set { Profiel.Hoogte = value; }
         }
 
         [TableColumn(Label = "breedte profiel", Symbol = "b", Unit = "mm")]
@@ -79,7 +80,7 @@ namespace Eurocode.BetonConstructies
         public double Breedte
         {
             get { return Profiel.Breedte; }
-            set { Profiel.Breedte = value; }
+            internal set { Profiel.Breedte = value; }
         }
 
         [TableColumn(Label = "wapening (tekst)",
@@ -90,7 +91,7 @@ namespace Eurocode.BetonConstructies
         public string WapeningTekst
         {
             get { return Wapening.Tekst; }
-            set { Wapening.Tekst = value; }
+            internal set { Wapening.Tekst = value; }
         }
 
         [TableColumn(Label = "wapening (mm²)", Symbol = "<i>A<i><sub>s,toe</sub>", Unit = "mm²")]

@@ -27,7 +27,7 @@
 
             @if (!Hidden)
             {
-                <button class="toggle-all-btn" @onclick="ToggleAllRows">
+                <button class="toggle-all-btn" @onclick="ToggleDetails">
                     @(AllRowsOpen ? "Verberg details" : "Toon details")
                 </button>
 
@@ -226,6 +226,28 @@
         if (!openRowProperties.Add(row.Property!))
             openRowProperties.Remove(row.Property!);
     }
+
+    private void ToggleDetails()
+    {
+        ShowNonEditables = !ShowNonEditables;
+
+        if (ShowNonEditables)
+        {
+            openRowProperties = _rows.Select(r => (r as PropertyRow)?.Property!).
+            ToHashSet();
+
+            AllRowsOpen = true;
+        }
+        else
+        {
+            openRowProperties.Clear();
+            AllRowsOpen = false;
+        }
+
+
+    }
+
+
     private void ToggleAllRows()
     {
         if (AllRowsOpen)

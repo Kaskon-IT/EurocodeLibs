@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
@@ -33,6 +34,7 @@ namespace Eurocode.BetonConstructies
         }
 
         private string _tekst = "8-150";
+        [TableColumn(Label = "opgave wapening")]
         public string Tekst
         {
             get => _tekst;
@@ -178,25 +180,11 @@ namespace Eurocode.BetonConstructies
 
 
 
-        //public double ZRef
-        //{
-        //    get
-        //    {
-        //        return DekkingToegepast + 0.5 * GemiddeldeDiameter;
-        //    }
-        //}
-
-        //public double GemiddeldeDiameter
-        //{
-        //    get
-        //    {
-        //        return WapeningHelper.GetGemiddeldeDiameter(Tekst);
-        //    }
-        //}
 
 
 
 
+        [TableColumn(Label = "Doorsnedeoppervlakte wapening", Symbol = "<i>A</i><sub>s</sub>", Unit = "mm²", StringFormat = "0")]
         public double As { get { return WapeningHelper.GetDsnOpp(Tekst); } }
 
         private List<string>? _wapgroepen;
@@ -227,13 +215,15 @@ namespace Eurocode.BetonConstructies
         }
 
 
-
+        private List<double> _diameters = [5, 6, 8, 10, 12, 16, 20, 25, 32, 40];
 
         protected override bool Valideer()
         {
             Meldingen.Clear();
 
-            AddMeldingOpmerking("bijgewerkt");
+
+
+            //AddMeldingOpmerking("bijgewerkt");
 
             return true;
 
