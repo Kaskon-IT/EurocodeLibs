@@ -1,0 +1,86 @@
+﻿@using CommonLibrary
+@using CommonLibrary.Models
+@using CommonLibrary.Extensions
+
+@if (Context != null)
+{
+    <div class="ctx-block">
+        @* Gebruik @bind-Model zoals je wil *@
+        <MyGridFor @bind-Model="Context"
+                   @key="Context.Id" />
+
+        @* Recursieve rendering van unieke children *@
+        @RenderChildren(Context, new HashSet<Guid>())
+    </div>
+}
+
+@code {
+    [Parameter] public BaseEurocodeContext Context { get; set; } = default!;
+    [Parameter] public EventCallback<BaseEurocodeContext> ContextChanged { get; set; }
+
+    private HashSet<Guid> _subscribedContexts = new();
+
+    protected override void OnInitialized()
+    {
+        // Recursief subscriben op Context en alle nested children
+        SubscribeToContextRecursively(Context);
+    }
+
+    private void SubscribeToContextRecursively(BaseEurocodeContext ctx)
+    {
+        if (ctx == null || _subscribedContexts.Contains(ctx.Id))
+            return;
+
+        _subscribedContexts.Add(ctx.Id);
+
+        // Luister naar wijzigingen in deze context
+        ctx.PropertyChanged += (s, e) => InvokeAsync(StateHasChanged);
+
+        // Subscriben op alle children
+        foreach (var info in ctx.GetNestedContexts())
+        {
+            SubscribeToContextRecursively(info.Child);
+        }
+    }
+
+    private IEnumerable<NestedContextInfo> GetNestedInfos(BaseEurocodeContext ctx)
+    {
+        return ctx.GetNestedContexts();
+    }
+
+    private RenderFragment RenderChildren(BaseEurocodeContext parent, HashSet<Guid> rendered) => builder =>
+    {
+        int seq = 0;
+        var nestedInfos = GetNestedInfos(parent).ToList();
+
+        foreach (var info in nestedInfos)
+        {
+            var child = info.Child;
+            if (!rendered.Contains(child.Id))
+            {
+                rendered.Add(child.Id);
+
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", "nested-block");
+
+                // Toon ouders van deze child
+                builder.OpenElement(seq++, "span");
+                builder.AddAttribute(seq++, "class", "origin");
+                builder.AddContent(seq++, "Afkomstig van: ");
+                builder.AddContent(seq++, string.Join(", ", info.Parents.Select(p => $"{p.Parent.GetType().Name}.{p.PropertyName}")));
+                builder.CloseElement(); // span
+
+                // Toon child node met @bind-Model
+                builder.OpenComponent(seq++, typeof(MyGridFor<BaseEurocodeContext>));
+                builder.SetKey(child.Id);
+                builder.AddAttribute(seq++, "Model", child);
+                builder.CloseComponent();
+
+                // Recursief alle children van deze child
+                builder.AddContent(seq++, RenderChildren(child, rendered));
+
+                builder.CloseElement(); // div.nested-block
+            }
+        }
+    };
+}

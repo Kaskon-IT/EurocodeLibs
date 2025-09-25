@@ -108,7 +108,10 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// conform art. 2.4.2.4 Partiële factoren voor materialen
         /// </summary>
-        [TableColumn(Article = "2.4.2.4", Label = "Partiële factor voor betonstaal", Symbol = $"<i>{GreekLetters.gamma}</i><sub>S</sub>", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn(
+            Article = "2.4.2.4",
+            Label = "Partiële factor voor betonstaal",
+            Symbol = $"<i>{GreekLetters.gamma}</i><sub>S</sub>")]
         public double GammaS
         {
             get
@@ -124,8 +127,8 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         [TableColumn(Article = "3.2.7 (2)",
             Label = "vloeigrens", Description = "is de rekenwaarde van de vloeigrens van betonstaal",
-            Symbol = "<i>f</i><sub>yd</sub>", Unit = "N/mm²",
-            Weergave = WeergaveEnum.DraaiTabel)]
+            Symbol = "<i>f</i><sub>yd</sub>", Unit = "N/mm²"
+            )]
         public double Fyd { get { return Fyk / GammaS; } }  // 3.2.7 (2)
         public Formula FydFormula => new("", @"f_{yd} = f_{yk} / \gamma_s", $"={Fyk.ToTeX()}/{GammaS.ToTeX()} = {Fyd.ToTeX()}");
 

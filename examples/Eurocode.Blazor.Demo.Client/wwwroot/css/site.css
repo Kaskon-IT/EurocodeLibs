@@ -28,6 +28,23 @@
     }
 
 
+.ec-tree {
+    list-style-type: none;
+    margin-left: 1rem;
+    padding-left: 0.5rem;
+    border-left: 1px dashed #ccc;
+}
+
+.ec-node {
+    font-family: Consolas, monospace;
+    font-size: 0.9rem;
+}
+
+    .ec-node small {
+        color: #666;
+    }
+
+
 .table-input {
     width: 100%;
     min-width: 0; /* belangrijk voor number inputs */

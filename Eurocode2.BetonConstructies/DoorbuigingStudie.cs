@@ -19,20 +19,21 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public DoorbuigingStudie()
         {
-            KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(Beton);
+            KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(Beton, Profiel);
             DoorbuigingBerekening = new BetonDoorbuigingCalculator(Beton, Wapening, KruipKrimpBerekening, Krachten, Profiel, this);
-            BuigingBerekening = new BendingResults(Beton, Profiel, Wapening, Krachten);
+            //BuigingBerekening = new BendingResults(Beton, Profiel, Wapening, SectionForces);
 
         }
 
         public BetonContext Beton { get; set; } = new("C30/37");
         public Snedekrachten Krachten { get; set; } = new();
+        public SectionForces SectionForces { get; set; } = new();
         public BetonContextKruipEnKrimpCalculator KruipKrimpBerekening { get; set; }
         public BetonDoorbuigingCalculator DoorbuigingBerekening { get; set; }
 
         public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new() { Breedte = 500, Hoogte = 700 };
         public WapeningContext Wapening { get; set; } = new() { Tekst = "6Ø25" };
-        public BendingResults BuigingBerekening { get; set; }
+        //public BendingResults BuigingBerekening { get; set; }
 
         public DoorbuigingStudie(double l = 10, double q = 40)
         {
@@ -40,31 +41,16 @@ namespace Eurocode.BetonConstructies
             L = l;
             Lijnlast = q;
             Profiel = new(500, 700);
-            Beton = new(BetonsterkteklasseEnum.C30_37) { Profiel = this.Profiel };
+            Beton = new(BetonsterkteklasseEnum.C30_37);
 
-            KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(Beton);
+            KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(Beton, Profiel);
             DoorbuigingBerekening = new BetonDoorbuigingCalculator(Beton, Wapening, KruipKrimpBerekening, Krachten, Profiel, this);
-            BuigingBerekening = new BendingResults(Beton, Profiel, Wapening, Krachten);
+            //BuigingBerekening = new BendingResults(Beton, Profiel, Wapening, SectionForces);
         }
 
 
 
-
-        // rekenvoorbeeld
-        // uitgangspunten
-        //overspanning: l = 10 m
-        //totale hoogte doorsnede: h = 700 mm
-        //nuttige hoogte doorsnede: d = 650 mm
-        //quasi-blijvend aanwezige belasting(de blijvende belasting plus
-        //het quasi-blijvende deel van de veranderlijke belasting) :
-        //qEqp = qG,k + ψ2
-        //qQ, k = 40 kN/m
-        //betonsterkteklasse: C30/37
-        //betonstaal: As = 2945 mm2
-        // kruipcoëfficiënt φ(∞, t 0) = 2,0
-        // vrije krimpvervorming εcs = 415 · 10-6
-
-        [TableColumn(Label = "lengte overspanning", Symbol = "L", Unit = "m")]
+        [TableColumn(Label = "lengte overspanning", Symbol = "<i>L</i><sub>t,proj.z</sub>", Unit = "m")]
         public double L { get; set; } = 10; //m
 
 
@@ -100,8 +86,7 @@ namespace Eurocode.BetonConstructies
             get { return Wapening.As; }
         }
 
-        //public double Hoogte = 700;
-        //public double Breedte = 500;
+
 
         [TableColumn(Label = "referentie afstand",
             Description = "is een referentie afstand om automatisch de nuttige hoogte te kunnen bepalen. " +
@@ -111,6 +96,29 @@ namespace Eurocode.BetonConstructies
             "<br />c is de dekking op de hoofdwapening",
             Symbol = "<i>d</i><sub>ref</sub>", Unit = "mm")]
         public double ReferentieAfstand { get; set; } = 50;
+
+
+        [TableColumn(Label = "optrede", Symbol = "<i>l</i><sub>optrede</sub>", Unit = "mm")]
+        public double Optrede
+        {
+            get; set;
+        } = 185;
+
+        [TableColumn(Label = "aantrede", Symbol = "<i>l</i><sub>aantrede</sub>", Unit = "mm")]
+        public double Aantrede
+        {
+            get; set;
+        } = 220;
+
+        private double Schuin => Math.Sqrt(Math.Pow(Aantrede, 2) + Math.Pow(Optrede, 2));
+
+        [TableColumn(Symbol = "<i>L</i><sub>t,loc,x</sub>", Label = "lengte (schuin)")]
+        public double LengteLocX
+        {
+            get { return L * Schuin / Aantrede; }
+        }
+
+
 
 
 
@@ -132,7 +140,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Label = "lijnlast", Description = "lijnlast q in kN/m¹", Symbol = "q", Unit = "kN/m¹")]
         public double Lijnlast { get; set; } = 10; // kN/m
 
-
+        public double LijnlastLocZ => Lijnlast * Math.Pow(Aantrede / Schuin, 2);
 
         [TableColumn(Label = "Moment (BGT)", Description = "Moment", Symbol = "<i>M</i><sub>Eqp</sub>", Unit = "kNm")]
         public double MomentEqp
@@ -141,21 +149,37 @@ namespace Eurocode.BetonConstructies
             {
 
                 this.Krachten.My.Kar = Lijnlast * Math.Pow(L, 2) / 8.0;
-                return this.Krachten.My.Kar;
+                this.SectionForces.My = Lijnlast * Math.Pow(L, 2) / 8.0;
+                return this.SectionForces.My;
 
             }
         }
-        public Formula MomentEqpFormula => new() { StaticValue = @$"M_{{Eqp}} = \frac{{1}}{{8}} q L^2 = {MomentEqp.ToTeX()}" };
+        public Formula MomentEqpFormula => new() { StaticValue = @$"M_{{Eqp}} = \frac{{1}}{{8}} q L^2 = {1 / 8.0} \cdot {Lijnlast.ToTeX()} \cdot {L.ToTeX()}^2 = {MomentEqp.ToTeX()}" };
 
-        [TableColumn(Symbol = "<i>M</i><sub>Ed</sub>", Unit = "kNm", Label = "Moment rekenwaarde")]
-        public double MomentEd
+
+        [TableColumn(Label = "Moment (BGT)", Description = "Moment (locZ)", Symbol = "<i>M</i><sub>Eqp</sub>", Unit = "kNm")]
+        public double MomentEqpLocX
         {
             get
             {
-                this.Krachten.My.Ed = 1.3 * MomentEqp;
-                return this.Krachten.My.Ed;
+                return LijnlastLocZ * Math.Pow(LengteLocX, 2) / 8.0;
+
             }
         }
+        public Formula MomentEqpLocXFormula => new() { StaticValue = @$"M_{{Eqp}} = \frac{{1}}{{8}} q L^2 = {1 / 8.0} \cdot {LijnlastLocZ.ToTeX()} \cdot {LengteLocX.ToTeX()}^2 = {MomentEqpLocX.ToTeX()}" };
+
+
+
+
+        //[TableColumn(Symbol = "<i>M</i><sub>Ed</sub>", Unit = "kNm", Label = "Moment rekenwaarde")]
+        //public double MomentEd
+        //{
+        //   get
+        //   {
+        //        this.Krachten.My.Ed = 1.3 * MomentEqp;
+        //        return this.Krachten.My.Ed;
+        //    }
+        //}
 
 
         //[TableColumn(Label = "deler toelaatbare doorbuiging", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "1/")]
@@ -172,7 +196,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return L * 1000 * ToelaatbareDoorbuigingFractieOverspanning;
+                return Math.Max(L, LengteLocX) * 1000 * ToelaatbareDoorbuigingFractieOverspanning;
             }
         }
 
@@ -185,6 +209,11 @@ namespace Eurocode.BetonConstructies
             get
             {
                 BerekenEnValideer();
+
+                // dit is niet goed, maar als we de krachten willen vullen moeten we even M opvragen.
+                var moment = this.MomentEqp;
+
+                DoorbuigingBerekening.BerekenEnValideer();
                 return DoorbuigingBerekening.DoorbuigingBenadering;
             }
         }

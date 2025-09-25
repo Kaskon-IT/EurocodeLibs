@@ -23,13 +23,15 @@ namespace ParametrischeProfielen
         }
 
         private ParametrischeProfielVormEnum? _vorm = ParametrischeProfielVormEnum.Rechthoek;
+
+        [TableColumn(Label = "vorm")]
         public ParametrischeProfielVormEnum? Vorm
         {
             get
             {
                 return this._vorm;
             }
-            set
+            internal set
             {
                 if (value != this._vorm)
                 {

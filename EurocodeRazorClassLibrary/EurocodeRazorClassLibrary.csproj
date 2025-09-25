@@ -52,6 +52,7 @@
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.12.0" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.12.0" />
 		<PackageReference Include="Plotly.Blazor" Version="6.0.2" />
+		<PackageReference Include="Z.Blazor.Diagrams.Core" Version="3.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

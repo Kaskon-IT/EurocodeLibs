@@ -1,5 +1,7 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Extensions;
 using ExportFactory.MigraDocContentModels;
+using ExportFactory.Services;
 using ExportFactory.Shared;
 using System.ComponentModel;
 
@@ -36,7 +38,7 @@ namespace Eurocode.BetonConstructies
             // Bereken(); // niet nodig, want we hebben geen meldingen
         }
 
-        [TableColumn("V~Ed~", StringFormat = "0.##\tkN", Weergave = WeergaveEnum.AlleTabellen)]
+        [TableColumn(Symbol = "<i>V</i><sub>Ed</sub>", Unit = "kN")]
         public string Test
         {
             get
@@ -129,13 +131,19 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Rekenwaarde van de dwarskracht in kN
         /// </summary>
-        [TableColumn("V~Ed~ [kN]", StringFormat = "0.##")]
+        [TableColumn(
+            Label = "dwarskracht (rekenwaarde)",
+            Symbol = "<i>V</i><sub>Ed</sub>",
+            Unit = "kN")]
         public double Ved { get { return Snedekrachten.Vz.Ed; } }
 
         /// <summary>
         /// is de hoek in graden tussen de drukdiagonaal van beton en de as van de ligger loodrecht op de dwarskracht;
         /// </summary>
-        [TableColumn("|theta| [°]", StringFormat = "0.##")]
+        [TableColumn(
+            Label = "hoek drukdiagonaal",
+            Symbol = $"<i>{GreekLetters.theta}</i>",
+            Unit = "°")]
 
         public double Theta { get; set; } = 21.8;
 
@@ -171,10 +179,11 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// is de hoek tussen de dwarskrachtwapening en de as van de ligger loodrecht op de dwarskracht (positief gemeten zoals getoond in figuur 6.5) in graden;
         /// </summary>
-        [TableColumn("|alpha| [°]", StringFormat = "0.##")]
+        [TableColumn(Label = "hoek dwarskrachtwapening",
+            Symbol = $"<i>{GreekLetters.alpha}</i>",
+            Unit = "°")]
         public double Alpha { get; set; } = 90;  // hoek van de dwarskrachtwapning standaard 90 graden
 
-        //[TableColumn("tan |alpha|", StringFormat = "0.##")]
         private double TanAlpha { get { return Math.Tan(Alpha * Math.PI / 180); } }
         public double CotAlpha { get { return 1 / TanAlpha; } }
 
@@ -182,8 +191,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Breedte van de doorsnede voor de dwarskracht in mm
         /// </summary>
-        [TableColumn("b [mm]")]
-
+        [TableColumn(Label = "breedte dwarskracht", Symbol = "<i>b</i><sub>w</sub>", Unit = "mm")]
         public double Breedte
         {
             get { return Profiel.BreedteDwarskracht; }
@@ -198,8 +206,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Nuttige hooge (d) van de dwarskrachtdoorsnede in mm
         /// </summary>
-        [TableColumn("d[mm]")]
-        public double NutHoogte { get; set; } = 90;
+        [TableColumn(Label = "nuttige hoogte", Symbol = "d", Unit = "mm")]
+        public double NutHoogte { get; internal set; } = 90;
 
 
 
@@ -291,10 +299,9 @@ namespace Eurocode.BetonConstructies
         public List<BeugelWap> LijstBeugelWap { get; set; }
 
 
-        [TableColumn("|alpha|~cw~", Weergave = WeergaveEnum.AlleTabellen)]
+
         public double AlphaCw { get; } = 1; // art. 6.2.3 (3) NB cw = 1 voor niet-voorgespannen constructies
 
-        [TableColumn("k1", Weergave = WeergaveEnum.AlleTabellen)]
         public double FactorK1DwarskrachtWeerstandBeton { get; } = 0.15;   // 6.2.2(1) De waarde van k1 moet gelijk aan 0,15 zijn genomen.
 
         [TableColumn("k", StringFormat = "0.##")]
@@ -354,12 +361,71 @@ namespace Eurocode.BetonConstructies
         [TableColumn("|nu|~Ed~", StringFormat = "0.##\tN/mm²")]
         public double SchuifspanningD { get { return Ved * 1000 / Breedte / NutHoogte; } }
 
-        [TableColumn("V~Rd,max~", StringFormat = "0.##\tkN")]
+        [TableColumn(Label = "bovengrens dwarskrachtweerstand",
+            Symbol = "<i>V</i><sub>Rd,max</sub>", Unit = "kN")]
         public double DwarskrachtWeerstandMax { get { return this.SetVrdMax().value; } }
+        public Formula DwarskrachtWeerstandMaxFormula
+        {
+            get
+            {
+                if (Alpha == 90)
+                {
+                    //VRd,max = αcw bw z ν1 fcd/ (cot θ + tan θ )
+                    return new()
+                    {
+                        Name = "(6.9)",
+                        StaticValue = "V_{Rd,max} = α_{cw} b_w z v_1 f_{cd} / (cot θ + tan θ )",
+                        DynamicValue = $@"= {AlphaCw.ToTeX()} \cdot {Breedte.ToTeX()} \cdot {Z.ToTeX()} \cdot {SterkteReductieFactorBetonGescheurdDoorDwarskracht1.ToTeX()} \cdot {Beton.Fcd.ToTeX()} / ({CotTheta.ToTeX()}+{TanTheta.ToTeX()}) = {(DwarskrachtWeerstandMax * 1000).ToTeX(unit: "N", forcedExponent: 3)}"
+                    };
+                }
+                else
+                {
+                    return new()
+                    {
+                        Name = "(6.14)",
+                        StaticValue = "todo",
+                        DynamicValue = "todo"
+                    };
+                }
+            }
+        }
 
-        [TableColumn("V~Rd,c~", StringFormat = "0.##\tkN")]
+
+
+        [TableColumn(Label = "dwarskrachtweerstand (rekenwaarde)",
+            Symbol = "<i>V</i><sub>Rd,c</sub>",
+            Unit = "kN",
+            Description = "is de rekenwaarde van de dwarskrachtweerstand")]
         public double DwarskrachtWeerstandBeton { get { return SchuifspanningWeerstandBeton * Breedte * NutHoogte / 1000; } } // kN
 
+
+
+        public Formula DwarskrachtWeerstandBetonFormula
+        {
+            get
+            {
+                if (SchuifspanningMin < SchuifspanningWeerstandBeton)
+                {
+                    // (6.2a) is gebruikt
+                    return new()
+                    {
+                        Name = "(6.2a)",
+                        StaticValue = @"V_{Rd,c} = \left[C_{Rd,c}k(100 ρ_l f_{ck})^{1/3} + k_1 σ_{cp} \right] b_wd ",
+                        DynamicValue = $@"= \reft[ {Crdc.ToTeX()} {FactorKDwarskrachtWeerstandBeton.ToTeX()} (100 \cdot {Rho1.ToTeX()} \cdot {Beton.Fck.ToTeX()})^{{1/3}} + {FactorK1DwarskrachtWeerstandBeton.ToTeX()} \cdot {SigmaCp.ToTeX()} right] \cdot {Breedte.ToTeX()} \cdot{NutHoogte.ToTeX()} = {DwarskrachtWeerstandBeton.ToTeX()}"
+                    };
+                }
+                else
+                {
+                    // (6.2b) is gebruikt
+                    return new()
+                    {
+                        Name = "(6.2b)",
+                        StaticValue = @"V_{Rd,c} = (\nu_{min}+k_1\sigma_{cp})b_wd",
+                        DynamicValue = $"= ({SchuifspanningMin.ToTeX()} + {FactorK1DwarskrachtWeerstandBeton.ToTeX()}\\cdot {SigmaCp.ToTeX()}) {Breedte.ToTeX()}\\cdot{NutHoogte.ToTeX()} = {DwarskrachtWeerstandBeton.ToTeX()}"
+                    };
+                }
+            }
+        }
 
         private double? _dwarskrachtWeerstandStaal; // backing-field om gebruikersinvoer te bewaren
 
@@ -378,9 +444,34 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("V~Rd~", StringFormat = "0.##\tkN")]
+        [TableColumn(Label = "dwarskrachtweerstand", Symbol = "<i>V</i><sub>Rd</sub>", Unit = "kN")]
         public double DwarskrachtWeerstand { get { return Math.Min(DwarskrachtWeerstandStaal, DwarskrachtWeerstandMax); } }
+        public Formula DwarskrachtWeerstandFormula
+        {
+            get
+            {
+                if (DwarskrachtWeerstandMax < DwarskrachtWeerstand)
+                {
+                    return new()
+                    {
+                        StaticValue = "V_{Rd} = min(V_{Rd} ; V_{Rd,max})",
+                        DynamicValue = $"= min({DwarskrachtWeerstandStaal.ToTeX()};{DwarskrachtWeerstandMax.ToTeX()}) = {DwarskrachtWeerstand.ToTeX()}"
+                    };
+                }
+                else
+                {
+                    return new()
+                    {
+                        Name = "(6.1)",
+                        StaticValue = "V_{Rd} = V_{Rd,s} + V_{ccd} + V_{td}",
+                        DynamicValue = $"= {DwarskrachtWeerstandStaal.ToTeX()} + {Vccd} + {Vtd} = {DwarskrachtWeerstand.ToTeX()} "
+                    };
+                }
+            }
+        }
 
+        private readonly double Vccd = 0;
+        private readonly double Vtd = 0;
 
         public bool BerekeningVrd { get; set; } = false;    // bool om aan te geven of we beugels berekenen, of de Vrd bepalen. 
 
@@ -389,7 +480,10 @@ namespace Eurocode.BetonConstructies
         /// buigend moment in het beschouwde element. In de dwarskrachtberekening van de gewapend beton
         /// zonder normaalkracht mag in het algemeen de benaderende waarde z = 0,9d zijn gebruikt.
         /// </summary>
-        [TableColumn("z", StringFormat = "0.##\tmm")]
+        [TableColumn(
+            Label = "inwendige hefboomsarm",
+            Symbol = "<i>z</i>",
+            Unit = "mm")]
         public double Z
         {
             get
@@ -413,10 +507,14 @@ namespace Eurocode.BetonConstructies
         public MethodeVoorBerekenenInwendigeHefboomsArmEnum MethodeVoorBerekenenZ { get; set; }
 
 
-        [TableColumn("A~sw,min~", StringFormat = "0.##\tmm²/m")]
+        [TableColumn(Label = "minimale dwarskrachtwapening",
+            Symbol = "<i>A</i><sub>sw,min</sub>",
+            Unit = "mm²/m")]
         public double AswMin { get { return this.SetAswMin().value; } }
 
-        [TableColumn("A~sw,ber~", StringFormat = "0.##\tmm²/m")]
+        [TableColumn(Label = "berekende dwarskrachtwapening",
+            Symbol = "<i>A</i><sub>sw,ber</sub>",
+            Unit = "mm²/m")]
         public double AswBerekend { get { return this.SetAswBerekend().value; } }
 
         public enum MethodeVoorBerekenenInwendigeHefboomsArmEnum
@@ -432,13 +530,10 @@ namespace Eurocode.BetonConstructies
 
 
 
-
-        [TableColumn("A~sw,ben~", StringFormat = "0\tmm²/m")]
+        [TableColumn(Label = "benodigde dwarskrachtwapening", Symbol = "<i>A</i><sub>sw,ben</sub>", Unit = "mm²/m")]
         public double AswBenPerMeter
         {
             get { return Math.Max(AswMin, AswBerekend); }
-
-
         }
 
 
@@ -467,16 +562,7 @@ namespace Eurocode.BetonConstructies
                 AddMeldingWaarschuwing($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd,max</sub>) {(Ved / DwarskrachtWeerstandMax):0.##}");
                 return false;
             }
-
-
-
             return true;
         }
-
-        //public override MarkupString ToHtml(bool isDraaiTabel = true)
-        //{
-        //    return this.ToHtmlTable(isDraaiTabel);
-        //    throw new NotImplementedException();
-        //}
     }
 }

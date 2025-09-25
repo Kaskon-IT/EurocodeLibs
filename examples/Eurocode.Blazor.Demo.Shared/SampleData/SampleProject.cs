@@ -41,6 +41,7 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
         public ScheurwijdteContext ScheurwijdteDemo { get; set; }
         public WapeningContext WapeningContext { get; set; } = new();
         public Snedekrachten Snedekrachten { get; set; } = new() { My = new(80, 70), Vz = new(93) };
+        public SectionForces SectionForces { get; set; } = new() { My = 80 };
 
 
         public BetonContext Beton2 { get; set; } = new();
@@ -59,7 +60,7 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
             Dekking = new BetonDekkingContext(Grondslagen, Beton);
             WapeningContext = new WapeningContext("3R12", Dekking);
 
-            BendingResults = new(Beton, BetonProfiel.Profiel, WapeningContext, Snedekrachten);
+            BendingResults = new(Beton, BetonProfiel.Profiel, WapeningContext, SectionForces);
             //DwarskrachtDemo = new(Beton, new ParametrischeProfielen.ParametrischProfielContext(), 100);
             DwarskrachtDemo = DwarskrachtWap.GetDwarskrachtWapContext(Beton, BetonProfiel.Profiel, 21.8, 350, Snedekrachten, 2, 8, [75, 150, 300]);
             UitkragingDemo = new() { Beton = Beton };
@@ -67,7 +68,7 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
             GrenswaardeSlankheidDemo = new() { Profiel = BetonProfiel.Profiel, BendingResults = BendingResults, LengteOverspanning = 2000, ConstructiefSysteem = GrenswaardeSlankheidContext.ConstructiefSysteemEnum.VrijOpgelegd };
 
             Beton2 = new(BetonsterkteklasseEnum.C12_15);
-            BendingResults2 = new BendingResults(new(), BetonProfiel.Profiel, WapeningContext, Snedekrachten);
+            BendingResults2 = new BendingResults(new(), BetonProfiel.Profiel, WapeningContext, SectionForces);
 
 
 

@@ -38,11 +38,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// 3.2 Betonstaal is onderdeel van de betoncontext.
         /// </summary>
-        public BetonStaalContext BetonStaal = new();
-
-
-        [JsonIgnore] // wordt ingelezen // todo controleer of goed gaat
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new(500, 700);
+        public BetonStaalContext BetonStaal { get; set; } = new();
 
 
         /// <summary>
@@ -52,10 +48,16 @@ namespace Eurocode.BetonConstructies
         //public bool IsParabolischSpanningsRekDiagram { get; set; } = !true;
 
 
-        [TableColumn(Label = "spanning-rekrelatie", Order = 1,
+        [TableColumn(
+            Label = "spanning-rekrelatie",
+            Order = 1,
             Description = "Voor het berekenen van dwarsdoorsneden mag een parabool-rechthoekdiagram of bi-lineaire spanning-rekrelatie worden gebruikt",
             Article = "3.1.7")]
-        public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.BiLineair;
+        public SpanningRekDiagramType? SpanningRekDiagram
+        {
+            get => _spanningRekDiagram;
+            set => SetProperty(ref _spanningRekDiagram, value);
+        }
         public enum SpanningRekDiagramType
         {
             [Description("Parabolisch")]
@@ -175,6 +177,7 @@ namespace Eurocode.BetonConstructies
 
 
         private BetonsterkteklasseEnum? _betonsterkteklasse = BetonsterkteklasseEnum.C40_50;
+        private SpanningRekDiagramType? _spanningRekDiagram = SpanningRekDiagramType.Parabolisch;
 
         [TableColumn("betonsterkteklasse",
             Article = "3.1.2",
@@ -189,10 +192,12 @@ namespace Eurocode.BetonConstructies
                 if (_betonsterkteklasse != value)
                 {
                     _betonsterkteklasse = value;
+                    OnPropertyChanged(nameof(Betonsterkteklasse));
                     BerekenEnValideer();
                 }
             }
         }
+
 
 
 
@@ -216,7 +221,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         [TableColumn("cilinderdruksterkte",
             Symbol = "<i>f</i><sub>ck</sub>",
-            Article = "3.1.2",
+            Article = "3.1.2 (3)",
             Description = "is de karakteristieke cilinderdruksterkte van beton na 28 dagen",
             Unit = "N/mm²")]
         public double Fck
@@ -282,7 +287,7 @@ namespace Eurocode.BetonConstructies
         /// gemiddelde waarde van de cilinderdruksterkte van beton 
         /// </summary>
         [TableColumn("gem. cilinderdruksterkte", Symbol = "<i>f</i><sub>cm</sub>", Unit = "N/mm²",
-            Description = "is de gemiddelde druksterkte op 28 dagen volgens tabel 3.1", Weergave = WeergaveEnum.DraaiTabel,
+            Description = "is de gemiddelde druksterkte op 28 dagen volgens tabel 3.1",
             Article = "3.1.2 (3)")]
         public double Fcm { get { return Fck + 8; } }
         public Formula FcmFormula => new("Tabel 3.1", @"f_{cm} = f_{ck} + 8", @$"f_{{cm}} = {Fck.ToEng()} + 8 = {Fcm.ToTeX()} ");
@@ -295,7 +300,8 @@ namespace Eurocode.BetonConstructies
             Symbol = "<i>f</i><sub>ctm</sub>",
             Article = "3.1.2 (3)",
             Unit = "N/mm²",
-            Description = "is de gemiddelde axiale treksterkte", Weergave = WeergaveEnum.DraaiTabel)]
+            Description = "is de gemiddelde axiale treksterkte"
+            )]
 
         public double Fctm
         {
@@ -369,12 +375,12 @@ namespace Eurocode.BetonConstructies
         [TableColumn("partiële factor beton",
             Symbol = "<i>ɣ</i><sub>C</sub>",
             Description = "is de partiële factor voor beton",
-            Article = "2.4.2.4",
-            Weergave = WeergaveEnum.DraaiTabel)]
+            Article = "2.4.2.4"
+            )]
         public double GammaC { get; private set; } = 1.5;
 
 
-        [TableColumn("druksterkte", Symbol = "<i>f</i><sub>cd</sub>", Weergave = WeergaveEnum.DraaiTabel,
+        [TableColumn("druksterkte", Symbol = "<i>f</i><sub>cd</sub>",
             Description = "is de rekenwaarde van de druksterkte",
             Article = "3.1.6 (1)P", Unit = "N/mm²")]
         public double Fcd { get { return AlphaCC * Fck / GammaC; } }
@@ -382,7 +388,7 @@ namespace Eurocode.BetonConstructies
             @"f_{cd}=\alpha_{cc}f_{ck} / \gamma_{c}",
             @$"f_{{cd}}={AlphaCC} \cdot {Fck.ToEng()}/ {GammaC} = {Fcd.ToEng()}");
 
-        [TableColumn("treksterkte", Symbol = "<i>f</i><sub>ctd</sub>", Weergave = WeergaveEnum.DraaiTabel,
+        [TableColumn("treksterkte", Symbol = "<i>f</i><sub>ctd</sub>",
             Description = "is de rekenwaarde van de treksterkte",
             Article = "3.1.6 (2)P", Unit = "N/mm²")]
         public double Fctd { get { return AlphaCT * FctkVijfProcent / GammaC; } }
@@ -516,7 +522,6 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn("betonstuik", Symbol = "<i>ε</i><sub>c,stuik</sub>",
-            Weergave = WeergaveEnum.DraaiTabel,
             StringFormat = "{0:0.## ‰}",
             Article = "3.1.7",
             Description = "is de vervorming bij het bereiken van de maximale sterkte volgens tabel 3.1" +
@@ -596,7 +601,6 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn("betonstuik grens", Symbol = "<i>ε</i><sub>cu</sub>",
-            Weergave = WeergaveEnum.DraaiTabel,
             StringFormat = "{0:0.## ‰}",
             Article = "3.1.7",
             Description = "is de grenswaarde van de rek volgens tabel 3.1" +

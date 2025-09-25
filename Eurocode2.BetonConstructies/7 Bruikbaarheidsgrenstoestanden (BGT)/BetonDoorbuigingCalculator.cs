@@ -2,6 +2,7 @@
 using CommonLibrary.Extensions;
 using ExportFactory.Services;
 using ExportFactory.Shared;
+using ParametrischeProfielen;
 
 namespace Eurocode.BetonConstructies
 {
@@ -22,6 +23,7 @@ namespace Eurocode.BetonConstructies
 
         private readonly Eurocode.Grondslagen.GrondslagenContext _grondslagen;
         private readonly BetonContext _beton;
+        private readonly ParametrischProfielContext _profiel = new() { Breedte = 500, Hoogte = 700 };
         private readonly BetonContextKruipEnKrimpCalculator _kruipkrimp;
         private readonly WapeningContext _wapening = new() { Tekst = "6Ø25" }; // 2945 mm2
         private readonly Snedekrachten _krachten;
@@ -36,10 +38,9 @@ namespace Eurocode.BetonConstructies
         {
             _grondslagen = new Eurocode.Grondslagen.GrondslagenContext();
             _beton = new("C30/37");
-            _kruipkrimp = new BetonContextKruipEnKrimpCalculator(_beton);
+            _kruipkrimp = new BetonContextKruipEnKrimpCalculator(_beton, _profiel);
             _krachten = new();
             _doorbuigingStudie = new(10, 40); // verwijderen na testen, wordt ALLEEN gebruikt voor L in de formule voor u*
-            _beton.Profiel = new ParametrischeProfielen.ParametrischProfielContext() { Breedte = 500, Hoogte = 700 };
 
 
         }
@@ -50,7 +51,7 @@ namespace Eurocode.BetonConstructies
             WapeningContext wapening,
             BetonContextKruipEnKrimpCalculator kruipkrimp,
             Snedekrachten krachten,
-            ParametrischeProfielen.ParametrischProfielContext profiel,
+            ParametrischProfielContext profiel,
             DoorbuigingStudie doorbuigingStudie)
         {
             _beton = beton;
@@ -58,7 +59,7 @@ namespace Eurocode.BetonConstructies
             _kruipkrimp = kruipkrimp;
             _krachten = krachten;
             _doorbuigingStudie = doorbuigingStudie;
-            _beton.Profiel = profiel;
+            _profiel = profiel;
         }
 
 
@@ -112,6 +113,7 @@ namespace Eurocode.BetonConstructies
 
 
 
+        private double LengteMM => _doorbuigingStudie.LengteLocX * 1000;
 
 
 
@@ -129,7 +131,7 @@ namespace Eurocode.BetonConstructies
 
 
                 var kmax = TotaleKromming;
-                var l = 1000 * _doorbuigingStudie.L;
+                var l = LengteMM;
 
                 return ((5.0 / 48.0) * kmax * Math.Pow(l, 2));
             }
@@ -179,7 +181,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return _beton.Profiel.Wy * _beton.Fctm;
+                return _profiel.Wy * _beton.Fctm;
             }
         }
 
@@ -195,7 +197,7 @@ namespace Eurocode.BetonConstructies
         public Formula McrFormula => new()
         {
             StaticValue = "M_{cr} = W\\cdot f_{ctm}",
-            DynamicValue = $"= {_beton.Profiel.Wy.ToEng()} \\cdot {_beton.Fctm.ToEng()} = {McrNmm.ToTeX(forcedExponent: 6, unit: "Nmm")}"
+            DynamicValue = $"= {_profiel.Wy.ToEng()} \\cdot {_beton.Fctm.ToEng()} = {McrNmm.ToTeX(forcedExponent: 6, unit: "Nmm")}"
         };
 
 
@@ -232,8 +234,8 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Label = "verhouding", Symbol = "<i>ρ</i>", Description = "= <i>A</i><sub>s</sub> / (<i>bd</i>)")]
-        public double Rho { get { return _wapening.As / (_beton.Profiel.Breedte * NuttigeHoogte); } }
-        public Formula RhoFormula => new() { StaticValue = "\\rho = A_s/(b\\cdot d)", DynamicValue = $"= {_wapening.As.ToEng()} / ({_beton.Profiel.Breedte} \\cdot {NuttigeHoogte}) = {Rho.ToEng()}" };
+        public double Rho { get { return _wapening.As / (_profiel.Breedte * NuttigeHoogte); } }
+        public Formula RhoFormula => new() { StaticValue = "\\rho = A_s/(b\\cdot d)", DynamicValue = $"= {_wapening.As.ToEng()} / ({_profiel.Breedte} \\cdot {NuttigeHoogte}) = {Rho.ToEng()}" };
 
 
 
@@ -243,7 +245,7 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Label = "stijfheid (ongescheurd)", Symbol = "(<i>EI</i>)<sub>I</sub>", Unit = "Nmm²")]
-        public double StijfheidI { get { return this.EcEff * _beton.Profiel.Iy; } }
+        public double StijfheidI { get { return this.EcEff * _profiel.Iy; } }
         public Formula StijfheidIFormula => new()
         {
             StaticValue = "(EI)_I = E_{c,eff} \\cdot I_{I}",
@@ -257,7 +259,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                double b = _beton.Profiel.Breedte;
+                double b = _profiel.Breedte;
                 double x = Drukzonehoogte;
 
                 return this.EcEff * (1.0 / 12.0 * b * Math.Pow(x, 3) + (b * x) * Math.Pow(x / 2, 2) + this.Alphae * _wapening.As * Math.Pow((NuttigeHoogte - x), 2));
@@ -503,13 +505,13 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return _wapening.As * (NuttigeHoogte - 1.0 / 2.0 * _beton.Profiel.Hoogte);
+                return _wapening.As * (NuttigeHoogte - 1.0 / 2.0 * _profiel.Hoogte);
             }
         }
         public Formula S_IFormula => new()
         {
             StaticValue = @"S_{I} = A_s \left( d- \frac{1}{2} h \right)",
-            DynamicValue = $"= {_wapening.As.ToTeX()} \\cdot \\left( {NuttigeHoogte.ToTeX()} - \\frac{{1}}{{2}} \\cdot{_beton.Profiel.Hoogte} \\right)"
+            DynamicValue = $"= {_wapening.As.ToTeX()} \\cdot \\left( {NuttigeHoogte.ToTeX()} - \\frac{{1}}{{2}} \\cdot{_profiel.Hoogte} \\right)"
         };
 
 
@@ -541,7 +543,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return _beton.Profiel.Iy;
+                return _profiel.Iy;
             }
         }
         public Formula I_IFormula => new()
@@ -560,7 +562,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                double b = _beton.Profiel.Breedte;
+                double b = _profiel.Breedte;
                 double x = Drukzonehoogte;
 
                 return (1.0 / 12.0 * b * Math.Pow(x, 3) + (b * x) * Math.Pow(x / 2, 2) + this.Alphae * _wapening.As * Math.Pow((NuttigeHoogte - x), 2));
@@ -570,7 +572,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                var b = _beton.Profiel.Breedte.ToTeX();
+                var b = _profiel.Breedte.ToTeX();
                 var x = Drukzonehoogte.ToTeX();
                 return new()
                 {

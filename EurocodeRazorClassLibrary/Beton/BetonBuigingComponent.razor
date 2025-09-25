@@ -1,0 +1,74 @@
+﻿@using CommonLibrary
+@using Eurocode.BetonConstructies
+@using EurocodeRazorClassLibrary.Shared
+
+
+<h3>BetonBuigingComponent</h3>
+<p>Studie voor zuivere buiging met opgave van:
+    <ul>
+        <li>materiaal</li>
+        <li>profiel</li>
+        <li>wapening</li>
+        <li>snedekrachten</li>
+    </ul>
+
+    en berekening van:
+    <ul>
+        <li><i>d</i></li>
+        <li><i>A</i><sub>s,req</sub></li>
+    </ul>
+
+</p>
+
+
+@if (ZuivereBuigingInstance != null)
+{
+
+    @* <EurocodeRazorClassLibrary.Diagrams.EurocodeContextDiagram Root="ZuivereBuiging" /> *@
+
+
+   @*  <EurocodeRazorClassLibrary.Shared.MyGridFor 
+    TModel="ZuivereBuiging" 
+    Model="ZuivereBuiging"
+    ShowNonEditables="true" 
+    
+    />*@
+    
+    @* <h1>Eurocode context tree test</h1>
+    <EurocodeContextTree 
+        Context="ZuivereBuiging"/>  *@
+
+        <h1>EcTree (test)</h1>
+        <EcTree Context="ZuivereBuigingInstance"/> 
+
+}
+
+
+
+@code {
+    // volgens mij hebben we 1 context nodig met nested contexts
+    private ZuivereBuiging ZuivereBuigingInstance = new ZuivereBuiging();
+
+    private SectionForces forces = new() { My = 100};
+    private BetonContext betonContext = new BetonContext();
+    private WapeningContext wapeningContext = new WapeningContext();
+    private ParametrischeProfielen.ParametrischProfielContext profiel = new();
+
+    protected override void OnInitialized()
+    {
+        ZuivereBuigingInstance.Beton = betonContext;
+        ZuivereBuigingInstance.Wapening = wapeningContext;
+        ZuivereBuigingInstance.Profiel = profiel;
+        ZuivereBuigingInstance.DekkingToegepast = 30;
+        ZuivereBuigingInstance.Forces = forces;
+
+        ZuivereBuigingInstance.Init();
+        //ZuivereBuiging.BerekenEnValideer();
+
+
+
+
+    }
+
+    
+}

@@ -1,5 +1,7 @@
-﻿using CommonLibrary.Extensions;
+﻿using CommonLibrary;
+using CommonLibrary.Extensions;
 using ExportFactory.Shared;
+using ParametrischeProfielen;
 using System.Text.Json.Serialization;
 using GREEK = ExportFactory.Services.GreekLetters;
 
@@ -24,15 +26,18 @@ namespace Eurocode.BetonConstructies
         public BetonContextKruipEnKrimpCalculator()
         {
             _beton = new BetonContext();
+            _profiel = new ParametrischProfielContext();
         }
 
         private readonly BetonContext _beton;
+        private readonly ParametrischProfielContext _profiel;
 
 
 
-        public BetonContextKruipEnKrimpCalculator(BetonContext beton)
+        public BetonContextKruipEnKrimpCalculator(BetonContext beton, ParametrischProfielContext profiel)
         {
             _beton = beton;
+            _profiel = profiel;
         }
 
 
@@ -290,7 +295,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return 2 * (_beton.Profiel.Breedte + _beton.Profiel.Hoogte); // let op! fixed rechthoek
+                return 2 * (_profiel.Breedte + _profiel.Hoogte); // let op! fixed rechthoek
             }
         }
 
@@ -304,13 +309,13 @@ namespace Eurocode.BetonConstructies
             get
             {
                 double u = OmtrekElementInAanrakingMetBuitenlucht_u;
-                return 2 * _beton.Profiel.Area / u;
+                return 2 * _profiel.Area / u;
                 //return 2 * OppervlakteDwarsdoorsnedeBeton_Ac / OmtrekDeelDwarsdoorsnedeBlootgesteldAanUitdroging_u;
             }
         }
         public Formula TheoretischeDikteBeton_h0Formula => new("(B.6)",
             @"h_0=\frac{2\cdot A_c}{u}",
-            @$"h_0=\frac{{ {2} \cdot {_beton.Profiel.Area.ToTeX()} }}  {{ {OmtrekElementInAanrakingMetBuitenlucht_u.ToTeX()} }} ");
+            @$"h_0=\frac{{ {2} \cdot {_profiel.Area.ToTeX()} }}  {{ {OmtrekElementInAanrakingMetBuitenlucht_u.ToTeX()} }} ");
 
 
 
@@ -516,7 +521,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                double val1 = (1.6 - _beton.Profiel.Hoogte / 1000) * _beton.Fctm;
+                double val1 = (1.6 - _profiel.Hoogte / 1000) * _beton.Fctm;
                 double val2 = _beton.Fctm;
                 return Math.Max(val1, val2);
             }

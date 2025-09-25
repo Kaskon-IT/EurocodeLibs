@@ -105,9 +105,7 @@ namespace Eurocode.BetonConstructies
             Label = "moment UGT",
             Symbol = "M<sub>Ed</sub>",
             Description = "moment in de uiterste grenstoestand (UGT)",
-            Unit = "kNm",
-            Key = K.MomentRekenwaarde,
-            Weergave = WeergaveEnum.Geen)]
+            Unit = "kNm")]
         public double MomentRekenwaarde { get { return Snedekrachten.My.Ed; } }
 
         [TableColumn(
@@ -154,7 +152,6 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Label = "factor",
-            Weergave = WeergaveEnum.DraaiTabel,
             Symbol = "<i>k</i><sub>t</sub>",
             Article = "7.3.4 (2)",
             Description = "is een factor die afhangt van de belastingsduur: <ul>" +
@@ -172,8 +169,9 @@ namespace Eurocode.BetonConstructies
             Label = "factor",
             Symbol = "<i>k</i><sub>1</sub>",
             Article = "7.3.4 (3)",
-            Description = "is een coëfficiënt die rekening houdt met de aanhechteigenschappen van de hechtende wapening",
-            Weergave = WeergaveEnum.DraaiTabel, Key = K.ScheurwijdteK1)]
+            Description = "is een coëfficiënt die rekening houdt met de aanhechteigenschappen" +
+            " van de hechtende wapening"
+            )]
         public double MaximaleScheurAfstandFactorK1 { get; private set; } = 0.8; // naar 7.3.2
 
         //[TableColumn("Type", Weergave = WeergaveEnum.DraaiTabel)]
@@ -187,8 +185,8 @@ namespace Eurocode.BetonConstructies
             Label = "factor",
             Symbol = "<i>k</i><sub>2<sub>",
             Article = "7.3.4 (3)",
-            Description = "is een coëfficiënt die rekening houdt met de rekverdeling",
-            Weergave = WeergaveEnum.DraaiTabel, Key = K.ScheurwijdteK2)]
+            Description = "is een coëfficiënt die rekening houdt met de rekverdeling"
+            )]
 
         public double MaximaleScheurAfstandFactorK2
         {
@@ -208,7 +206,6 @@ namespace Eurocode.BetonConstructies
             Symbol = "<i>k</i><sub>3</sub>",
             Article = "7.3.4 (3)",
             Description = "zie nationale bijlage",
-            Weergave = WeergaveEnum.DraaiTabel,
             Key = K.ScheurwijdteK3
             )]
         public double MaximaleScheurAfstandFactorK3 { get; private set; } = 3.4;
@@ -228,12 +225,10 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(Label = "staalspanning",
             Symbol = "<i>σ</i><sub>s</sub>",
-            Weergave = WeergaveEnum.DraaiTabel,
-            Description = "is de spanning in de trekwapening, uitgaande van een gescheurde doorsnede",
+            Description = "is de spanning in de trekwapening, uitgaande van een" +
+            " gescheurde doorsnede",
             Unit = "N/mm²",
             Article = "7.4.3 (2)"
-
-
             )]
         public double StaalspanningOptredend { get; set; }
         public double Rho { get; set; }
@@ -400,8 +395,8 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Symbol = "<i>α</i><sub>e<sub>",
             Label = "verhouding",
             Article = "7.3.4 (2)",
-            Description = "is de verhouding <i>E</i><sub>s</sub>/<i>E</i><sub>cm</sub>",
-            Weergave = WeergaveEnum.DraaiTabel)]
+            Description = "is de verhouding <i>E</i><sub>s</sub>/<i>E</i><sub>cm</sub>"
+            )]
         public double ScheurwijdteVerhoudingElasticiteitsmodulusStaalBeton
         {
             get
@@ -417,9 +412,7 @@ namespace Eurocode.BetonConstructies
             Article = "7.3.2 (2)",
             Label = "minimale wapening scheurbeheersing",
             Symbol = "<i>A</i><sub>s,min</sub>",
-            Unit = "mm²",
-            Weergave = WeergaveEnum.DraaiTabel,
-            Key = K.ScheurwijdteAsMin
+            Unit = "mm²"
             )]
         public double ScheurwijdteAsMin { get; set; }
 

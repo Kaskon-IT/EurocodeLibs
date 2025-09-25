@@ -1,7 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
 using CommonLibrary.Interfaces;
-using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 
@@ -89,7 +88,7 @@ namespace Eurocode.Belastingen
 
 
         // userFriendlyHelpers
-        [TableColumn("momentaan factoren", order: 30, width: 4.0, weergave: WeergaveEnum.Geen)]
+        [TableColumn("momentaan factoren", order: 30, width: 4.0)]
         public string MomentaanFactorenUserFriendly
         {
             get

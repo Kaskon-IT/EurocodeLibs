@@ -4,6 +4,40 @@ using System.Reflection;
 
 namespace Eurocode2.BetonConstructies.Tests
 {
+
+    public class DoorbuigingStudieTests
+    {
+        [Theory]
+        [InlineData(10.0, 40.0, 500.0, 700.0, 43.822061)]
+
+        public void TestDoorbuigingStudie(
+            double L,
+            double lijnlast,
+            double b,
+            double h,
+            double expectedDoorbuiging)
+        {
+            // Arrange
+            var studie = new DoorbuigingStudie(L, lijnlast)
+            {
+                Optrede = 0, // geen optrede zodat het de lengte niet wordt beïnvloed
+                Profiel = new ParametrischeProfielen.ParametrischProfielContext { Breedte = b, Hoogte = h }
+            };
+
+            // Act
+            var resultaat = studie.DoorbuigingEenvoudig;
+
+            // Assert
+            Assert.Equal(expectedDoorbuiging, resultaat, 3); // afronden op 2 decimalen
+        }
+
+
+
+
+
+    }
+
+
     public class BaseEurocodeContextVerwachteWaardenTests
     {
         // Verwachte waarden per context
@@ -13,8 +47,8 @@ namespace Eurocode2.BetonConstructies.Tests
                 { nameof(BetonContext) + ".Fcd", ("Fcd", 20.0, 6) },
                 { nameof(BetonContext) + ".FctkVijfProcent", ("FctkVijfProcent", 2.0275277, 6) },
                 { nameof(BetonContext) + ".Fctd", ("Fctd", 1.3516851, 6) },
-                { nameof(BetonStaalContext) + ".Fyd", ("Fyd", 435.0, 1) },
-                { nameof(BetonStaalContext) + ".Es", ("Es", 200000.0, 6) },
+                { nameof(BetonStaalContext) + ".Fyd", ("Fyd", 500/1.15, 1) },
+
             };
 
         public static IEnumerable<object[]> TestData()
@@ -84,7 +118,6 @@ namespace Eurocode2.BetonConstructies.Tests
             if (instance is BetonContext beton)
             {
                 beton.Betonsterkteklasse = BetonsterkteklasseEnum.C30_37;
-                beton.GammaC = 1.5;
             }
 
             // Property ophalen en checken

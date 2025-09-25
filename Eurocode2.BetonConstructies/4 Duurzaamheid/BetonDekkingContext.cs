@@ -58,7 +58,6 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn("constructieklasse",
             Order = 20,
-            Weergave = WeergaveEnum.DraaiTabel,
             Article = "4.4.1.2 (5)"
 
             )]
@@ -74,7 +73,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Naam van de betondekking context, bijvoorbeeld 'bovenzijde' of 'onderzijde' 
         /// </summary>
-        [TableColumn("positie", order: 0, Weergave = WeergaveEnum.StandaardTabel)]
+        [TableColumn("positie", order: 0
+            )]
         public string Naam { get; set; } = "Bovenzijde";
 
 
@@ -118,7 +118,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien plaatgeometrie van toepassing dan een vermindering van 1 op de constructieklasse.
         /// </summary>
-        [TableColumn("plaatgeometrie?", description: "-", Order = 2, Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("plaatgeometrie?", description: "-", Order = 2
+            )]
         public bool IsPlaatGeometrie
         {
             get => _isPlaatGeometrie;
@@ -128,7 +129,8 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien specifieke kwaliteitsbeheersing (bijvoorbeeld bij prefab beton) vermindering met 1 op constructieklasse.
         /// </summary>
-        [TableColumn("kwaliteitsbeheersing?", Order = 3, Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("kwaliteitsbeheersing?", Order = 3
+            )]
         public bool IsKwaliteitsBeheersing
         {
             get => _isKwaliteitsBeheersing;
@@ -354,8 +356,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "<i>d</i><sub>g</sub>",
             Order = 5,
             Unit = "mm",
-            Article = "4.4.1.2 (3)",
-            Weergave = WeergaveEnum.DraaiTabel)]
+            Article = "4.4.1.2 (3)")]
         public double GrootsteKorrelDiameter
         {
             get => _grootsteKorrelDiameter;

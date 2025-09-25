@@ -95,7 +95,6 @@ public class BetonContextTests
         var context = new BetonContext
         {
             Betonsterkteklasse = BetonsterkteklasseEnum.C30_37,
-            GammaC = 1.5,
         };
 
         // Act

@@ -16,10 +16,10 @@
     @* <BuigingBasicComponent @bind-Model="SampleProject.BendingResults" OnStateChanged="StateHasChanged"></BuigingBasicComponent> *@
 
     <h5>Snedekrachten</h5>
-    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false />
-    <EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false ToonWaardeBruiksbaarheidsGrensToestand=true />
+    //<EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false />
+    //<EurocodeRazorClassLibrary.Shared.SnedekrachtenComponent @bind-Model="SampleProject.BendingResults.Snedekrachten" OnStateChanged="StateHasChanged" ToonVz=false ToonWaardeBruiksbaarheidsGrensToestand=true />
 
-    <BuigingBasicComponent @bind-Model="SampleProject.BendingResults"></BuigingBasicComponent>
+    @* <BuigingBasicComponent @bind-Model="SampleProject.BendingResults"></BuigingBasicComponent> *@
 
     @* <EurocodeBetondoorsnedeComponent 
         BuigingContext="SampleProject.BendingResults"
@@ -29,6 +29,8 @@
 
     @* <FluentButton OnClick="UpdateChart">Update</FluentButton> *@
     @* <PlotlyChart @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart"/> *@
+
+    <BetonBuigingComponent /> 
 
 
 }
@@ -41,7 +43,7 @@
     public SampleProject? SampleProject { get; set; }
 
     [Parameter]
-    public Snedekrachten Snedekrachten {get;set;} = new();
+    public SectionForces Snedekrachten {get;set;} = new();
 
 
     PlotlyChart chart;

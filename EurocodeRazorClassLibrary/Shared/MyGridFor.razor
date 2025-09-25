@@ -1,4 +1,4 @@
-﻿@typeparam TModel
+﻿@typeparam TModel where TModel : BaseEurocodeContext
 @using System.Globalization
 @using System.Reflection
 @using CommonLibrary
@@ -9,6 +9,7 @@
 
 
 @using Microsoft.FluentUI.AspNetCore.Components
+@using System.ComponentModel
 @inherits BaseEurocodeComponent
 
 
@@ -18,8 +19,7 @@
     <table class="striped-table responsive-table">
         <caption style="caption-side:top;">
                 <span>
-                    <i>@Heading</i>
-
+                    <i>@Model.Heading</i>
                     <button @onclick="() => ToggleHidden(Hidden)">
                         @(Hidden ? "Toon tabel" : "Verberg tabel")
                     </button>
@@ -27,18 +27,51 @@
 
             @if (!Hidden)
             {
-                <button class="toggle-all-btn" @onclick="ToggleDetails">
-                    @(AllRowsOpen ? "Verberg details" : "Toon details")
-                </button>
+                <FluentSwitch @bind-Value="ShowDescription"
+                              Label="label :"
+                              Style="margin-left: 20px;"
+                              UncheckedMessage="kort"
+                              CheckedMessage="lang"/>
 
-                if (openRowProperties.Any())
-                {
-                    <FluentCheckbox @bind-Value="ShowDescription" Label="omschrijving" />
-                    <FluentCheckbox @bind-Value="ShowArticles" Label="Toon artikelen" Style="margin-left:10px;" />
-                    <FluentCheckbox @bind-Value="ShowFormulas" Label="Toon formules" Style="margin-left:20px;" />
+                <FluentSwitch @bind-Value="ShowArticles"
+                              Label="art. :"
+                              Style="margin-left: 20px;"
+                              
+                               />
 
-                }
+                @* <FluentCheckbox @bind-Value="ShowDescription"
+                                Label="omschrijving"
+                                Style="margin-left:10px" /> *@
 
+
+
+               @*  <FluentCheckbox @bind-Value="ShowArticles"
+                                Label="artikel"
+                                Style="margin-left:10px;" /> *@
+
+                <FluentSwitch @bind-Value="ShowFormulas"
+                              Label="vgl. :"
+                              Style="margin-left: 20px;"
+                              
+                               />
+
+               @*  <FluentCheckbox @bind-Value="ShowFormulas" 
+                                Label="formule"
+                                Style="margin-left:10px;" /> *@
+
+                <FluentSwitch @bind-Value="ShowNonEditables"
+                              @bind-Value:after="OnShowNonEditablesChanged"
+                              Label="rijen :"
+                              Style="margin-left: 20px;"
+                              UncheckedMessage="invoer"
+                              CheckedMessage="alle rijen" />
+
+
+
+               @*  <FluentCheckbox @bind-Value="ShowNonEditables"
+                                @bind-Value:after="OnShowNonEditablesChanged"
+                                Label="berekende waarden"
+                                Style="margin-left:10px;" /> *@
             }
 
         </caption>
@@ -61,25 +94,11 @@
                 {
                     if (iRow is PropertyRow row)
                     {
-
-                        <tr>
+                        // geef een key mee voor
+                        <tr @key=row.Id>
 
                             @* 1e kolom *@
                             <td>
-
-                      
-
-                                @if (!openRowProperties.Contains(row.Property))
-                                {
-                                    <div class="cell-content">
-                                        <dl>
-                                            <dt class="katex-like">@((MarkupString)(row.Symbol ?? ""))</dt>
-                                            <dd>@((MarkupString)row.Label)</dd>
-                                        </dl>
-                                    </div>
-                                }
-                                else
-                                {
                                 <dl style="margin-bottom:1px;">
                                     <dt class="katex-like">@((MarkupString)(row.Symbol ?? ""))</dt>
 
@@ -109,7 +128,7 @@
                                     </dd>
                                     }
                                 </dl>
-                        }
+                        
 
                             </td>
 
@@ -140,7 +159,7 @@
                     } // end if (iRow is PropertyRow row)
                     else if (iRow is SubPropertyRow subRow)
                     {   
-                        <tr>
+                        <tr @key=subRow.Id>
                             @* 1e kolom over 4 kolommen*@
                             <td colspan="4">
                                 <dl>
@@ -151,45 +170,6 @@
                             </td>
                         </tr>
                     }
-
-
-
-                
-
-                   @*  @if (openRowProperties.Contains(row.Property))
-                    {
-                        <tr class="row-details">
-                            <td colspan="1">
-                               
-                                <dl>
-                                    @if (row.Article != null)
-                                    {
-                                        <dt>artikel</dt>
-                                        <dd>@row.Article</dd>
-                                    }
-
-                                    @if (row.Description != null)
-                                    {
-                                        <dt class="katex-like">@((MarkupString)(row.Symbol ?? ""))</dt>
-                                        <dd>@((MarkupString)(row.Description ?? ""))</dd>
-                                    }
-
-                                    @if (row.Formula != null)
-                                    {
-                                        <dt>vgl.</dt>
-                                        <dd>
-                                            <KaTexFormula Value="@row.Formula?.GetValue()"
-                                                          Label="@row.Formula?.Name"
-                                                          Small="true"
-                                                          DisplayMode="false" />
-                                        </dd>
-                                    }
-                                </dl>
-                            </td>
-                        </tr>
-                    } *@
-
-                
                 }
             }
 
@@ -201,11 +181,19 @@
 @code {
     [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
     [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
-    [Parameter] public bool ReadOnly { get; set; } = false;
-    [Parameter] public bool ShowDescription { get; set; } = true;
-    [Parameter] public bool ShowArticles { get; set; } = true;
-    [Parameter] public bool ShowFormulas { get; set; } = true;
-    [Parameter] public bool ShowNonEditables { get; set; } = !false;
+
+    [Parameter] public bool ReadOnly { get; set; } = false; // standaard bewerkbaar
+
+    [Parameter] public bool ShowDescription { get; set; } = !true; // standaard uit, toont label
+
+    [Parameter] public bool ShowArticles { get; set; } = !true; // standaard geen artikelen tonen
+
+    [Parameter] public bool ShowFormulas { get; set; } = !true; // standaard geen formules tonen
+
+
+    [Parameter] public bool ShowNonEditables { get; set; } = true; // standaard alle velden tonen
+    [Parameter] public EventCallback<bool> ShowNonEditablesChanged { get; set; }
+
 
 
 
@@ -215,6 +203,8 @@
     [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
 
     private bool AllRowsOpen { get; set; } = false;
+
+    [Obsolete ("use Model.Heading instead")]
     private string Heading { get; set; } = "";
 
     private HashSet<PropertyInfo> openRowProperties = new();
@@ -227,9 +217,10 @@
             openRowProperties.Remove(row.Property!);
     }
 
+    [Obsolete("Niet meer doen")]
     private void ToggleDetails()
     {
-        ShowNonEditables = !ShowNonEditables;
+        //ShowNonEditables = !ShowNonEditables;
 
         if (ShowNonEditables)
         {
@@ -292,10 +283,104 @@
     }
 
 
-
+    private TModel? _previousModel;
     private List<IPropertyRow> _rows = new();
+    private List<IPropertyRow> _rawRows = new();
+
+    private void ResetRows()
+    {
+        // caching zodat we stabiel itereren en makkelijk kunnen refreshen na set
+        _rows = _rawRows
+        .Where(r =>
+            (r as PropertyRow)?.Editable == true ||
+            (r as SubPropertyRow)?.Value != null ||
+            ShowNonEditables
+        )
+        .OrderByDescending(r => (r as PropertyRow)?.Editable)
+        .ThenByNatural(r => (r as PropertyRow)?.Symbol)
+        .ThenByNatural(r => (r as PropertyRow)?.Article)
+        .ThenByNatural(r => (r as PropertyRow)?.Formula?.Name)
+
+        .ToList();
+    }
+
+    private void OnShowNonEditablesChanged()
+    {
+        // gebruik deze void zodat de waarde eerst gewijzigd is voordat we verder gaan.
+        ResetRows();
+        StateHasChanged(); // niet nodig, maar tijdelijk voor debug
+    }
+
+    protected override void OnInitialized()
+    {
+        _rawRows = TableColumnAttributeHelper.GetRows(Model!)
+        .ToList();
+    }
 
     protected override void OnParametersSet()
+    {
+        if (_previousModel is INotifyPropertyChanged old)
+            old.PropertyChanged -= OnModelPropertyChanged;
+
+        if (Model is INotifyPropertyChanged npc)
+            npc.PropertyChanged += OnModelPropertyChanged;
+
+        _previousModel = Model;
+
+        // dit wil ik eigenlijk niet 
+        _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
+        ResetRows();
+
+    }
+
+    private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // deze methode wordt afgevuurd als een property van het model wordt aangepast
+        // bijvoorbeeld Beton.Fck
+        // we moeten volgens mij de _rawRow aanpassen
+        // dan kunnen we gewoon doorgaan zonder opnieuw de _rawRows binnen te halen
+
+        var senderProp = "";
+        // hier even debuggen
+        //
+        // de sender is het model (TModel)
+        // in e zit alleen de PropertyName
+
+        // we weten dat dit werkt
+        _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
+        // maar dat wil ik eigenlijk niet doen.
+
+        // dus ZONDER _rawRows = ...
+        // wordt bijvoorbeeld de Wy niet bijgewerkt van een profiel
+
+
+
+        var row = _rawRows.OfType<PropertyRow>().FirstOrDefault(r => r.Property.Name == e.PropertyName);
+        if (row != null)
+        {
+
+            var value = row.Property.GetValue(Model);
+            //row.Property = "debug";
+            row.RawValue = value;
+
+            // even de waarde opvragen?
+            var ctx = (BaseEurocodeContext)sender!;
+            ctx.BerekenEnValideer();
+            // dit werkt hierboven, maar dan worden de berekende waarde nog steeds niet bijgewerkt!
+            // volgens mij zitten we vast aan _rawRows = ...
+
+
+            row.DisplayValue = value?.ToString() ?? "";
+        }
+
+        // dit wil ik ook niet doen hier
+        ResetRows();
+
+        // dit wel
+        InvokeAsync(StateHasChanged);
+    }
+
+    protected void OnParametersSetVERWIJDER_NA_SUCCES()
     {
         VisibleColumns ??= new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
 
@@ -305,34 +390,14 @@
             Heading = bec.Heading;
         }
 
+        ResetRows();
 
-        // caching zodat we stabiel itereren en makkelijk kunnen refreshen na set
-        _rows = TableColumnAttributeHelper.GetRows(Model!)
-        .Where(r => 
-            (r as PropertyRow)?.Editable == true ||
-            (r as SubPropertyRow)?.Value != null ||
-            ShowNonEditables
-        )
-        .OrderByDescending(r => (r as PropertyRow)?.Editable)
-        .ThenByNatural(r => (r as PropertyRow)?.Symbol)
-        .ThenByNatural(r=>(r as PropertyRow)?.Article)
-        .ThenByNatural(r=>(r as PropertyRow)?.Formula?.Name)
-       
-        .ToList();
-
-        // Voeg SubPropertyRows toe als Model een BaseEurocodeContext is
-        //if (Model is BaseEurocodeContext bec)
-        //{
-        //    foreach (var melding in bec.Meldingen ?? Enumerable.Empty<Melding>())
-        //    {
-        //        _rows.Add(new SubPropertyRow(melding.Code?.ToString(), melding.Bericht));
-        //    }
-        //}
+        
 
     }
 
 
-    private async void OnValueChanged(PropertyInfo property, string? newValue)
+    private async void OnValueChangedVERWIJDEREN_NA_SUCCES(PropertyInfo property, string? newValue)
     {
         if (newValue is null) return;
 
@@ -350,6 +415,30 @@
             StateHasChanged();
         }
     }
+
+    private async void OnValueChanged(PropertyInfo property, string? newValue)
+    {
+        if (newValue is null) return;
+
+        var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+        if (TryConvertStringToType(newValue, targetType, out var converted))
+        {
+            property.SetValue(Model, converted);
+
+            // Alleen de DisplayValue bijwerken
+            var row = _rows.OfType<PropertyRow>().FirstOrDefault(r => r.Property == property);
+            if (row != null)
+            {
+                row.DisplayValue = converted?.ToString() ?? "";
+            }
+
+            if (ModelChanged.HasDelegate)
+                await ModelChanged.InvokeAsync(Model);
+
+            StateHasChanged();
+        }
+    }
+
 
 
 
@@ -485,6 +574,15 @@
             e => OnValueChanged(property, e?.Value?.ToString())));
         builder.CloseElement();
     }
+    else if (typeof(BaseEurocodeContext).IsAssignableFrom(targetType))
+    {
+        // recursief
+        RenderDynamic(targetType, Model);
+        builder.OpenElement(1, "p");
+        builder.AddContent(2, "zie tabel");
+        builder.CloseElement();
+    }
+
     // Alles anders → input type afhankelijk van TypeCode
     else
     {
@@ -511,6 +609,16 @@
     builder.CloseElement(); // td sluiten
 };
 
+
+    RenderFragment RenderDynamic(Type t, object model) => builder =>
+    {
+        var seq = 0;
+        var genericType = typeof(MyGridFor<>).MakeGenericType(t);
+        builder.OpenComponent(seq++, genericType);
+        builder.AddAttribute(seq++, "Model", model);
+        builder.AddAttribute(seq++, "TModel", genericType);
+        builder.CloseComponent();
+    };
 
 
     private RenderFragment RenderInputBAK(PropertyInfo property) => builder =>

@@ -8,7 +8,8 @@
 
 <FluentSelectEnum Label="vorm"
                   DisabledEnumItems="DisabledProfielVormen"
-                  @bind-EnumSelectedValue="Model.Profiel.Vorm"
+                  EnumSelectedValue="Model.Profiel.Vorm"
+                  ReadOnly="true"
                   TEnum="ParametrischeProfielen.ParametrischeProfielVormEnum">
 </FluentSelectEnum>
 <EurocodeInputNumber @bind-Value=Model.Profiel.Breedte Key="@K.ProfielBreedte" MinValue="80" Unit="mm" StringFormat="0" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>

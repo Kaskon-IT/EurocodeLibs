@@ -29,8 +29,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eurocode.Blazor.Demo.Shared
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{111E7444-8886-40F2-ABD6-EED44DAAD225}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1C3E6761-9A99-4339-8F42-8423E9DCE178}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{547D8124-4235-4C36-8069-22CF0C6933B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eurocode.Blazor.Demo.Server", "examples\Eurocode.Blazor.Demo.Server\Eurocode.Blazor.Demo.Server.csproj", "{63AB72F1-4F24-4BA9-9009-1956005EF13C}"

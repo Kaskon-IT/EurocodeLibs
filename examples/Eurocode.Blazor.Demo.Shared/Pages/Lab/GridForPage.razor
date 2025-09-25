@@ -1,6 +1,7 @@
 ﻿@page "/Lab/gridforpage"
 @using System.Collections.Generic
 @using CommonLibrary
+@using CommonLibrary.Extensions
 @using EurocodeRazorClassLibrary.Shared
 @using System.Reflection
 
@@ -17,19 +18,26 @@ else
 
     </div>
 
-    <NumberFormatterSettings />
+    @* <NumberFormatterSettings /> *@
 
-    <p>Count: @MyContexts.Count</p>
+    @* <p>Count: @MyContexts.Count</p> *@
 
     @if(EurocodeContext != null)
     {
-        <MyGridFor @bind-Model="EurocodeContext"
-                   @bind-VisibleColumns="visibleCols"
-                   ReadOnly="@readOnly"
-                   ShowNonEditables="@showNonEditables"
-                   @key="EurocodeContext.Id" />
+        <EcTree Context="EurocodeContext" />
 
-        var nestedCtxen = GetNestedContexts(EurocodeContext).ToList();
+        @* <EurocodeRazorClassLibrary.Diagrams.EurocodeContextDiagram Root="EurocodeContext" /> *@
+
+        @* <EurocodeContextTreeViewDemo Context="EurocodeContext" /> *@
+
+
+  @*       <MyGridFor @bind-Model="EurocodeContext"
+                   @bind-VisibleColumns="visibleCols"
+                   ReadOnly="readOnly"
+                   ShowNonEditables="showNonEditables"
+                   @key="EurocodeContext.Id" /> *@
+
+        var nestedCtxen = EurocodeContext.GetNestedContexts().ToList();
         
         @* Recursief nested contexten tonen *@
         List<Guid> guids = [];
@@ -38,35 +46,17 @@ else
             var nidx = j; // fix closure
 
             // voorkom dubbele keys
-            if (!guids.Contains(nestedCtxen[nidx].Id))
+            if (!guids.Contains(nestedCtxen[nidx].Child.Id))
             {
-                <MyGridFor @bind-Model="nestedCtxen[nidx]"
-                           @bind-VisibleColumns="visibleCols"
-                           ReadOnly="@readOnly"
-                           ShowNonEditables="@showNonEditables"
-                           @key="nestedCtxen[nidx].Id" />
+               @*  <MyGridFor @bind-Model="nestedCtxen[nidx].Child"
+                           ReadOnly="readOnly"
+                           ShowNonEditables="showNonEditables"
+                           @key="nestedCtxen[nidx].Child.Id" /> *@
             }
 
         }
     }
-    else
-    {
-        @for (int i = 0; i < MyContexts.Count; i++)
-        {
-            var idx = i; // <-- nog steeds nodig om closure te fixen
-
-
-
-            <MyGridFor @bind-Model="MyContexts[idx]"
-                       @bind-VisibleColumns="visibleCols"
-                       ReadOnly="@readOnly"
-                       ShowNonEditables="@showNonEditables"
-                       @key="MyContexts[idx].Id" />
-
-
-        }
-
-    }
+    
 
 
    
@@ -86,10 +76,10 @@ else
     public SampleProject? SampleProject { get; set; }
 
 
-    private List<BaseEurocodeContext> MyContexts { get; set; } = [];
+    //private List<BaseEurocodeContext> MyContexts { get; set; } = [];
     private BaseEurocodeContext? EurocodeContext { get; set; } = null;
 
-
+    [Obsolete("Gebruik extension method")]
     private IEnumerable<BaseEurocodeContext> GetNestedContexts(object obj)
     {
         if (obj == null)
@@ -134,33 +124,10 @@ else
     {
         visibleCols = new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
 
-        if(SampleProject?.DoorbuigingDemo != null && MyContexts != null)
+        if(SampleProject?.DoorbuigingDemo != null)
         {
-
             EurocodeContext = SampleProject.DoorbuigingDemo;
-
-            MyContexts.Add(SampleProject.DoorbuigingDemo);
-            MyContexts.Add(SampleProject.DoorbuigingDemo.KruipKrimpBerekening);
-            MyContexts.Add(SampleProject.DoorbuigingDemo.DoorbuigingBerekening);
-            MyContexts.Add(SampleProject.DoorbuigingDemo.BuigingBerekening);
-            MyContexts.Add(SampleProject.DoorbuigingDemo.Beton);
-            MyContexts.Add(SampleProject.DoorbuigingDemo.Beton.BetonStaal);
-            MyContexts.Add(SampleProject.DoorbuigingDemo.Beton.Profiel);
-
-           
-
         }
-
-       
-
-
-        // MyContexts.Add(SampleProject?.Grondslagen);
-        //MyContexts.Add(SampleProject?.Beton);
-        // MyContexts.Add(SampleProject?.Dekking);
-
-        // SampleProject?.ScheurwijdteDemo.BerekenEnValideer(); // wacht eens even, dit moet net als alle andere automatisch gaan!
-        // MyContexts.Add(SampleProject?.ScheurwijdteDemo);
-        // MyContexts.Add(SampleProject?.Belastingen);
 
 
         UpdateVisibility();

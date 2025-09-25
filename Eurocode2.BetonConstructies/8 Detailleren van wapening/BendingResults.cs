@@ -20,7 +20,7 @@ namespace Eurocode.BetonConstructies
         private double _breedte = 300;
         private double _hoogte = 400;
         private double _moment = 80.80;
-        private Snedekrachten? _snedekrachten;
+        private SectionForces? _snedekrachten;
         private VerankeringLangswapeningContext? _verankeringsLengte;
 
         public string MeldingTeksten
@@ -64,7 +64,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public BendingResults(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, WapeningContext wapening, Snedekrachten snedekrachten)
+        public BendingResults(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, WapeningContext wapening, SectionForces snedekrachten)
         {
             Beton = beton;
             Profiel = profiel;
@@ -185,7 +185,7 @@ namespace Eurocode.BetonConstructies
 
         private void Snedekrachten_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Snedekrachten.My.Ed))
+            if (e.PropertyName == nameof(Snedekrachten.My))
             {
                 BerekenEnValideer();
                 OnPropertyChanged(nameof(Moment));
@@ -193,7 +193,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public Snedekrachten? Snedekrachten
+        public SectionForces? Snedekrachten
         {
             get => _snedekrachten;
             set => SetNestedProperty(ref _snedekrachten, value, Snedekrachten_PropertyChanged, nameof(Snedekrachten));
@@ -227,6 +227,10 @@ namespace Eurocode.BetonConstructies
 
         public string Name { get; set; } = "-";
 
+        [TableColumn(Label = "DEBUG", Symbol = "Beta")]
+        public double Beta => Beton.GetBeta();
+
+
 
         [TableColumn(Symbol = "M<sub>Ed</sub>", Label = "moment rekenwaarde", Unit = "kN", Order = 1,
             Key = K.MomentRekenwaarde,
@@ -235,12 +239,12 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                if (Snedekrachten != null && Snedekrachten.My.Ed != _moment)
+                if (Snedekrachten != null && Snedekrachten.My != _moment)
                 {
-                    _moment = Snedekrachten.My.Ed;
+                    _moment = Snedekrachten.My;
                     BerekenEnValideer();
                 }
-                return Snedekrachten != null ? Snedekrachten.My.Ed : _moment;
+                return Snedekrachten != null ? Snedekrachten.My : _moment;
 
             }
             internal set
@@ -250,7 +254,7 @@ namespace Eurocode.BetonConstructies
                 if (Snedekrachten != null)
                 {
                     // Als Snedekrachten is ingesteld, override met de waarde uit Snedekrachten
-                    newValue = Snedekrachten.My.Ed;
+                    newValue = Snedekrachten.My;
                 }
                 else
                 {
@@ -269,7 +273,6 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Symbol = "<i>b</i>", Label = "breedte", Unit = "mm",
-            Weergave = WeergaveEnum.DraaiTabel,
             Key = K.ProfielBreedte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Breedte
@@ -283,7 +286,6 @@ namespace Eurocode.BetonConstructies
         }
 
         [TableColumn(Symbol = "<i>h</i>", Label = "hoogte", Unit = "mm",
-            Weergave = WeergaveEnum.DraaiTabel,
             Key = K.ProfielHoogte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Hoogte
@@ -435,7 +437,10 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Symbol = "<i>A</i><sub>s,req</sub>", Unit = "mm²", Label = "benodigde wapening", Order = 40,
+        [TableColumn(
+            Symbol = "<i>A</i><sub>s,req</sub>",
+            Unit = "mm²", Label = "benodigde wapening",
+            Order = 40,
             Key = K.AsBen,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsRequired
@@ -463,9 +468,15 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(Symbol = "<i>A</i><sub>s,toe</sub>", Unit = "mm²", Label = "toegepaste wapening", Order = 41,
+        [TableColumn(
+            Symbol = "<i>A</i><sub>s,toe</sub>",
+            Unit = "mm²",
+            Label = "toegepaste wapening",
+            Order = 41,
             Key = K.AsToe,
-            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+            StringFormat = "0",
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
+            )]
         public double AsApplied
         {
             get => _asApplied;
@@ -549,6 +560,8 @@ namespace Eurocode.BetonConstructies
         {
             get { return Beton.GetAlpha() * Breedte * XeMin * Beton.Fcd / Beton.BetonStaal.Fyd; }
         }
+
+
         public double AsMin2
         {
             get
@@ -556,6 +569,14 @@ namespace Eurocode.BetonConstructies
                 return 1.25 * AsBerekend;
             }
         }
+
+
+        [TableColumn(
+            Label = "minimale wapening",
+            Symbol = "<i>A</i><sub>s,min</sub>",
+            Unit = "mm²",
+            StringFormat = "0"
+            )]
         public double AsMin
         {
             get
@@ -563,6 +584,11 @@ namespace Eurocode.BetonConstructies
                 return Math.Min(AsMin1, AsMin2);
             }
         }
+        public Formula AsMinFormula => new()
+        {
+            StaticValue = "A_{s,min} = min (A_{s,min1}; A_{s,min2})",
+            DynamicValue = $"= min({AsMin1:0};{AsMin2:0}) = {AsMin:0}"
+        };
 
         /// <summary>
         /// Gebruik artikel 7.3.1 minimale wapening voor gecontroleerde scheurbeheersing.
@@ -646,6 +672,26 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        [TableColumn(
+            Label = "moment opneembaar",
+            Symbol = "<i>M</i><sub>Rd</sub>",
+            Unit = "kNm"
+            )]
+        public double MRd
+        {
+            get
+            {
+                if (Wapening != null)
+                {
+                    // nakijken of dit altijd klopt, zo niet dan aanpassen
+                    if (MinimaleWapeningToegepast)
+                        return Moment * AsApplied / (AsRequired / 1.25);
+                    else
+                        return Moment * AsApplied / AsRequired;
+                }
+                else return 0;
+            }
+        }
 
 
 

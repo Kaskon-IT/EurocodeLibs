@@ -17,7 +17,7 @@
     <FluentGridItem xs="12">
         <EurocodeInputNumber ReadOnly=ReadOnly Value="Model.Ved" Key="@K.DwarskrachtRekenwaarde" Unit="kN" MinValue=-Model.DwarskrachtWeerstandMax MaxValue="@Model.DwarskrachtWeerstandMax"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnly @bind-Value="Model.Profiel.Breedte" Key="Breedte" MinValue=60 Unit="mm"></EurocodeInputNumber>
-        <EurocodeInputNumber ReadOnly=ReadOnly @bind-Value="Model.NutHoogte" Key="NutHoogte" MinValue=30 Unit="mm"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=true Value="Model.NutHoogte" Key="NutHoogte" MinValue=30 Unit="mm"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnly @bind-Value="Model.AsLangs" MinValue=0 Key="AsLangs" MaxValue="@Balken.GetAsMax(Model.Profiel)" Unit="mm²"></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnly @bind-Value="Model.Theta" Key="Theta" Unit="°" MinValue=21.8 MaxValue=45></EurocodeInputNumber>
         <EurocodeInputNumber ReadOnly=ReadOnly @bind-Value="Model.Alpha" Key="Alpha" Unit="°" MinValue=@Balken.GetGrenswaardeHoekDwarskrachtWapening().min MaxValue=@Balken.GetGrenswaardeHoekDwarskrachtWapening().max></EurocodeInputNumber>

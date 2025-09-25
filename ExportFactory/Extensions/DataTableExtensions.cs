@@ -1,5 +1,6 @@
 ﻿namespace ExportFactory.Extensions
 {
+    using CommonLibrary;
     using ExportFactory.Shared;
     using MigraDoc.DocumentObjectModel;
     using MigraDoc.DocumentObjectModel.Tables;
@@ -85,9 +86,7 @@
                     Attribute = p.GetCustomAttribute<TableColumnAttribute>()
                 })
                 .Where(pa =>
-                    pa.Attribute != null &&
-                    pa.Attribute.Weergave != WeergaveEnum.Geen &&
-                    (pa.Attribute.Weergave == WeergaveEnum.AlleTabellen || pa.Attribute.Weergave == weergave)) // 2025-02-24
+                    pa.Attribute != null) // 2025-02-24
                 .OrderBy(pa => pa.Attribute.Order) // Sort by ColumnOrder
                 .ToList();
 

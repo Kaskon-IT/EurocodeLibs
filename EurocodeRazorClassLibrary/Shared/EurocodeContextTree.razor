@@ -1,0 +1,55 @@
+﻿@using CommonLibrary
+@using CommonLibrary.Models
+@using CommonLibrary.Extensions
+
+
+@if (Context != null)
+{
+    <div class="ctx-block">
+        <MyGridFor @bind-Model="Context"
+                   ReadOnly="@ReadOnly"
+                   ShowNonEditables="@ShowNonEditables"
+                   @key="Context.Id" />
+
+        @foreach (var info in NestedInfos)
+        {
+            <div class="nested-block">
+                <span class="origin">
+                    Afkomstig van:
+                    @string.Join(", ", info.Parents.Select(p => $"{p.Parent.GetType().Name}.{p.PropertyName}"))
+                </span>
+
+                <EurocodeContextTree @bind-Context="info.Child"
+                                     ReadOnly="ReadOnly"
+                                     ShowNonEditables="ShowNonEditables"
+                                     @key="info.Child.Id" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public BaseEurocodeContext Context { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<BaseEurocodeContext> ContextChanged { get; set; }
+
+    [Parameter]
+    public List<string> VisibleColumns { get; set; } = [];
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public bool ShowNonEditables { get; set; }
+
+    private List<NestedContextInfo> NestedInfos = [];
+
+    protected override void OnParametersSet()
+    {
+        NestedInfos = Context.GetNestedContexts().ToList();
+    }
+}
+
+

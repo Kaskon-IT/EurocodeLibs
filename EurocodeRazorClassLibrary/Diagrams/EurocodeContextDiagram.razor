@@ -1,0 +1,79 @@
+﻿@using Blazor.Diagrams.Core.Geometry
+@using CommonLibrary
+@using CommonLibrary.Extensions
+
+<svg width="100%" height="600">
+    @if (Root != null)
+    {
+        @RenderNodes(Root, 400, 50, 200)
+    }
+</svg>
+
+@code {
+    [Parameter, EditorRequired]
+    public BaseEurocodeContext Root { get; set; } = default!;
+
+    private Dictionary<Guid, (double X, double Y)> nodePositions = new();
+    private HashSet<Guid> rendered = new();
+    private double NodeWidth = 100;
+    private double NodeHeight = 50;
+
+    private RenderFragment RenderNodes(BaseEurocodeContext node, double x, double y, double offset) => builder =>
+    {
+        if (rendered.Contains(node.Id))
+            return; // voorkom dubbele nodes
+
+        rendered.Add(node.Id);
+
+        int seq = 0;
+
+        // Node rechthoek
+        builder.OpenElement(seq++, "rect");
+        builder.AddAttribute(seq++, "x", x - NodeWidth / 2);
+        builder.AddAttribute(seq++, "y", y);
+        builder.AddAttribute(seq++, "width", NodeWidth);
+        builder.AddAttribute(seq++, "height", NodeHeight);
+        builder.AddAttribute(seq++, "fill", "#87CEFA");
+        builder.AddAttribute(seq++, "stroke", "black");
+        builder.AddAttribute(seq++, "rx", 10); // horizontale straal
+        builder.AddAttribute(seq++, "ry", 10); // verticale straal
+        builder.CloseElement();
+
+        // Node label
+        builder.OpenElement(seq++, "text");
+        builder.AddAttribute(seq++, "x", x);
+        builder.AddAttribute(seq++, "y", y + NodeHeight / 2 + 5);
+        builder.AddAttribute(seq++, "text-anchor", "middle");
+        builder.AddAttribute(seq++, "font-size", "11");
+        builder.AddContent(seq++, node.Heading);
+        builder.CloseElement();
+
+        nodePositions[node.Id] = (x, y);
+
+        var children = node.GetNestedContexts().ToList();
+        if (children.Any())
+        {
+            int count = children.Count;
+            double spacing = offset * 2;
+
+            for (int i = 0; i < count; i++)
+            {
+                var child = children[i];
+                double childX = x - offset + i * spacing / (count - 1);
+                double childY = y + NodeHeight + 50;
+
+                // lijn naar child
+                builder.OpenElement(seq++, "line");
+                builder.AddAttribute(seq++, "x1", x);
+                builder.AddAttribute(seq++, "y1", y + NodeHeight);
+                builder.AddAttribute(seq++, "x2", childX);
+                builder.AddAttribute(seq++, "y2", childY);
+                builder.AddAttribute(seq++, "stroke", "black");
+                builder.CloseElement();
+
+                // Recursief child renderen
+                builder.AddContent(seq++, RenderNodes(child.Child, childX, childY, offset / 2));
+            }
+        }
+    };
+}

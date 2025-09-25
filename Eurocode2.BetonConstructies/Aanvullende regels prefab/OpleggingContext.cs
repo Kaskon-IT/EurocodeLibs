@@ -1,7 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
 using CommonLibrary.Helpers;
-using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
@@ -198,11 +197,11 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("droge verbinding?", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("droge verbinding?")]
         public bool DrogeVerbinding { get; set; } = false;
 
 
-        [TableColumn("vellingkanten noodzakelijk?", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("vellingkanten noodzakelijk?")]
         public bool VellingkantenNoodzakelijk { get; set; } = false;
 
         /// <summary>
@@ -241,15 +240,15 @@ namespace Eurocode.BetonConstructies
             get { return OplegSpanningRekenwaarde / LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement; }
         }
 
-        [TableColumn("oplegmat.", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("oplegmateriaal")]
         public OplegMateriaalEnum? OplegMateriaal { get; set; } = OplegMateriaalEnum.PREFAB_BETON;
 
-        [TableColumn("type", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("type oplegging")]
         public OplegTypeEnum? OplegType { get; set; } = OplegTypeEnum.LIJNVORMIG;
 
 
 
-        [TableColumn("detaillering", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("detaillering wapening")]
         public DetailleringWapeningEnum? DetailleringWapening { get; set; } = DetailleringWapeningEnum.VerticaleHaarspelden;
         public enum DetailleringWapeningEnum
         {
@@ -263,7 +262,7 @@ namespace Eurocode.BetonConstructies
             VerticaleHaarspelden
         }
 
-        [TableColumn("elementtype", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("elementtype")]
 
         public OpleggingElementTypeEnum? OpleggingElementType { get; set; } = OpleggingElementTypeEnum.AfzonderlijkElement;
 

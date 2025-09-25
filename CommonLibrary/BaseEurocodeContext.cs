@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 
 
@@ -34,15 +35,47 @@ namespace CommonLibrary
         public event PropertyChangedEventHandler? PropertyChanged; // Welke moeten we nu gebruiken?.. 
 
 
+        protected bool SetAndRecalculate<T>(ref T field, T value,
+            [CallerMemberName] string? propertyName = null)
+        {
+            if (!EqualityComparer<T>.Default.Equals(field, value))
+            {
+                field = value;
+                BerekenEnValideer();
+                OnPropertyChanged(propertyName);
+                return true;
+            }
+            return false;
+        }
 
 
         public void UpdateGewijzigdOp() => GewijzigdOp = DateTime.UtcNow; // Bijwerken van de wijzigingsdatum
 
-        protected void OnPropertyChanged(string propertyName)
+        protected void OnPropertyChanged(string? propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             OnUpdated?.Invoke();
+            Console.WriteLine(propertyName + " changed");
         }
+
+        /// <summary>
+        /// Compacte manier voor Setters met backing field.
+        /// In 1 regel wordt gecontroleerd de waarde veranderd.
+        /// Indien de waarde gewijzigd is wordt dit PropertyChangedEvent afgevuurd.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="value"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
 
         // gebruikt voor binding van Nested properties die INotifyPropertyChanged implementeren
         protected bool SetNestedProperty<T>(
@@ -67,6 +100,18 @@ namespace CommonLibrary
         }
 
 
+        // 23-9-2025 : nieuwe methode om te subscriben op PropertyChanged van een context
+        protected void SubscribeToContext(INotifyPropertyChanged context)
+        {
+            if (context != null)
+            {
+                context.PropertyChanged += (s, e) =>
+                {
+                    BerekenEnValideer();
+                    OnPropertyChanged(e.PropertyName);
+                };
+            }
+        }
 
 
 

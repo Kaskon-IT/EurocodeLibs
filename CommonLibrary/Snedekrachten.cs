@@ -47,7 +47,7 @@ namespace CommonLibrary
 
 
 
-
+    [Obsolete("Gebruik SectionForces")]
     public class Snedekrachten : IMarkupConvertible, INotifyPropertyChanged
     {
 
@@ -105,9 +105,6 @@ namespace CommonLibrary
 
         public override string ToString() => ToString("0.##");
     }
-
-
-
 
     public class SnedekrachtenDELETE(double my = 0, double mz = 0, double vy = 0, double vz = 0, double nx = 0, double tx = 0) : IMarkupConvertible
     {

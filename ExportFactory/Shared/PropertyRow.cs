@@ -5,11 +5,13 @@ namespace ExportFactory.Shared
 {
     public record PropertyRow : IPropertyRow
     {
+        public string Id { get; }
+
         public string Label { get; init; } = "";
         public string? Symbol { get; init; }
         public string? Unit { get; init; }
-        public object? RawValue { get; init; }
-        public string DisplayValue { get; init; } = "";
+        public object? RawValue { get; set; } // mutable voor live update in UI
+        public string DisplayValue { get; set; } = ""; // mutable voor live update in UI
         public string? Description { get; init; }
         public string? Article { get; init; }
         public Formula? Formula { get; init; }
@@ -28,6 +30,7 @@ namespace ExportFactory.Shared
             string? article = null,
             Formula? formula = null,
             bool editable = false
+
             )
         {
             this.Label = label;
@@ -40,11 +43,30 @@ namespace ExportFactory.Shared
             this.Article = article;
             this.Formula = formula;
             this.Editable = editable;
+            this.Id = $"{property.DeclaringType?.FullName}.{property.Name}";
         }
     }
 
 
-    public record SubPropertyRow(string Label, string Value, object SourceObject) : IPropertyRow;
+    public record SubPropertyRow : IPropertyRow
+    {
+        public string Id { get; init; }
+        public string Label { get; init; }
+        public string Value { get; init; }
+        public object SourceObject { get; init; }
+
+        public SubPropertyRow(string label, string value, object sourceObject)
+        {
+            Label = label;
+            Value = value;
+            SourceObject = sourceObject;
+
+            // unieke Id gebaseerd op type en label
+            Id = $"{SourceObject.GetType().FullName}.{Label}";
+        }
+    }
+
+
 
 
     public interface IPropertyRow { }
