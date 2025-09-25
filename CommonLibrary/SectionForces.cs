@@ -19,7 +19,9 @@ namespace CommonLibrary
             get => _my;
             set => SetProperty(ref _my, value);
         }
-        [TableColumn(Label = "Moment (Z-as)", Symbol = "<i>M</i><sub>z</sub>", Unit = "kNm")]
+
+
+        //[TableColumn(Label = "Moment (Z-as)", Symbol = "<i>M</i><sub>z</sub>", Unit = "kNm")]
 
         public double Mz
         {
@@ -27,7 +29,7 @@ namespace CommonLibrary
             set => SetProperty(ref _mz, value);
         }
 
-        [TableColumn(Label = "Dwarskracht (Y-as)", Symbol = "<i>V</i><sub>y</sub>", Unit = "kN")]
+        //[TableColumn(Label = "Dwarskracht (Y-as)", Symbol = "<i>V</i><sub>y</sub>", Unit = "kN")]
 
         public double Vy
         {
@@ -44,7 +46,7 @@ namespace CommonLibrary
             set => SetProperty(ref _vz, value);
         }
 
-        [TableColumn(Label = "Normaalkracht (X-as)", Symbol = "<i>N</i><sub>x</sub>", Unit = "kN")]
+        //[TableColumn(Label = "Normaalkracht (X-as)", Symbol = "<i>N</i><sub>x</sub>", Unit = "kN")]
 
         public double Nx
         {
@@ -52,7 +54,7 @@ namespace CommonLibrary
             set => SetProperty(ref _nx, value);
         }
 
-        [TableColumn(Label = "Torsie (X-as)", Symbol = "<i>T</i><sub>x</sub>", Unit = "kNm")]
+        //[TableColumn(Label = "Torsie (X-as)", Symbol = "<i>T</i><sub>x</sub>", Unit = "kNm")]
 
         public double Tx
         {

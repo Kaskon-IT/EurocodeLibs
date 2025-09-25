@@ -22,6 +22,7 @@ namespace Eurocode.BetonConstructies
             // geef de contexten mee aan de berekening
             // let op, zonder dekking dus opgave z-ref noodzakelijk
             BerekeningBuiging = new BendingResults(Beton, Profiel, Wapening, Forces);
+            ShearCalculation = new DwarskrachtWapContext(Beton, Profiel, Forces);
         }
 
         // Input parameters
@@ -84,7 +85,7 @@ namespace Eurocode.BetonConstructies
 
         // Berekeningen
         public BendingResults BerekeningBuiging { get; set; } = new();
-
+        public DwarskrachtWapContext ShearCalculation { get; set; } = new();
 
 
 
@@ -92,6 +93,8 @@ namespace Eurocode.BetonConstructies
         {
             // we hebben geen dekking Context, dus dan moeten we de z-ref doorgeven
             BerekeningBuiging.ZRefZonderDekking = Zref;
+            ShearCalculation.NutHoogte = NuttigeHoogte;
+
             //BerekeningBuiging.Moment = Forces.My;
 
             BerekeningBuiging.BerekenEnValideer();

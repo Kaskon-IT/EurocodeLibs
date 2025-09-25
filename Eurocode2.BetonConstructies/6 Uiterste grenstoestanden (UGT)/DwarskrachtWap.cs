@@ -12,8 +12,15 @@ namespace Eurocode.BetonConstructies
         #region Berekeningen aan te roepen vanuit interface
 
 
-        public static DwarskrachtWapContext GetDwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, double theta, double d, Snedekrachten snedekrachten,
-            double aantalSnede, double diameter, List<double> hohAfstanden)
+        public static DwarskrachtWapContext GetDwarskrachtWapContext(
+            BetonContext beton,
+            ParametrischeProfielen.ParametrischProfielContext profiel,
+            double theta,
+            double d,
+            SectionForces snedekrachten,
+            double aantalSnede,
+            double diameter,
+            List<double> hohAfstanden)
         {
 
             // tijdelijk test => verwijderen na afronding
@@ -263,25 +270,25 @@ namespace Eurocode.BetonConstructies
             return DwarskrachtHelpers.GetRhoWMin(context.Beton.Fck, context.Beton.BetonStaal.Fyk);
         }
 
-        public static double SetSterkteReductieFactorBetonGescheurdDoorDwarskracht(this DwarskrachtWapContext context)
+        public static double SetNu(this DwarskrachtWapContext context)
         {
             return DwarskrachtHelpers.GetSterkteReductieV(context.Beton.Fck);
         }
 
-        public static double SetSterkteReductieFactorBetonGescheurdDoorDwarskracht1(this DwarskrachtWapContext context)
+        public static double SetNu1(this DwarskrachtWapContext context)
         {
             return DwarskrachtHelpers.GetSterkteReductieV1(context.Beton.Fck, context.SpanningDwarskrachtWapening, context.Beton.BetonStaal.Fyk);
         }
 
         public static double SetSchuifspanningWeerstandZonderWapeningMin(this DwarskrachtWapContext context)
         {
-            return DwarskrachtHelpers.GetSchuifSpanningWeerstandZonderDwarskrachtWapeningMin(context.FactorKDwarskrachtWeerstandBeton, context.Beton.Fck);
+            return DwarskrachtHelpers.GetSchuifSpanningWeerstandZonderDwarskrachtWapeningMin(context.FactorK, context.Beton.Fck);
         }
 
         public static double SetSchuifspanningWeerstandZonderDwarskrachtWapening(this DwarskrachtWapContext context)
         {
             return DwarskrachtHelpers.GetSchuifSpanningWeerstandZonderDwarskrachtWapening(
-                context.SchuifspanningMin, context.Crdc, context.FactorKDwarskrachtWeerstandBeton, context.Rho1, context.Beton.Fcd, context.FactorK1DwarskrachtWeerstandBeton, context.SigmaCp);
+                context.SchuifspanningMin, context.Crdc, context.FactorK, context.RhoLangs, context.Beton.Fcd, context.FactorK1DwarskrachtWeerstandBeton, context.SigmaCp);
         }
 
         public static double SetCrdc(this DwarskrachtWapContext context)
@@ -299,7 +306,7 @@ namespace Eurocode.BetonConstructies
 
         public static (double value, string art) SetVrdMax(this DwarskrachtWapContext context)
         {
-            double returnVal = DwarskrachtHelpers.GetVrdMax(context.AlphaCw, context.Profiel.BreedteDwarskracht, context.Z, context.SterkteReductieFactorBetonGescheurdDoorDwarskracht1, context.Beton.Fcd, context.CotTheta, context.TanTheta, context.Alpha, out string art);
+            double returnVal = DwarskrachtHelpers.GetVrdMax(context.AlphaCw, context.Profiel.BreedteDwarskracht, context.Z, context.Nu1, context.Beton.Fcd, context.CotTheta, context.TanTheta, context.Alpha, out string art);
             return (returnVal, art);
         }
 

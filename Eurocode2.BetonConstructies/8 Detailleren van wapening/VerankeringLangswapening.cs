@@ -1,4 +1,6 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Extensions;
+using ExportFactory.Shared;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
@@ -46,6 +48,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// l~b,min~
         /// </summary>
+        [TableColumn(Label = "minimum verankeringslengte", Symbol = "<i>l</i><sub>b,min</sub>", Unit = "mm")]
         public double MinimumVerankeringsLengte
         {
             get
@@ -84,7 +87,7 @@ namespace Eurocode.BetonConstructies
             Drukstaaf = 2,
         }
 
-
+        [TableColumn(Label = "goede aanhechtingsomstandigheden?")]
         public bool GoedeAanhechtingOmstandigheden
         {
             get => _goedeAanhechtingOmstandigheden;
@@ -150,6 +153,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// f~bd~ (8.2)
         /// </summary>
+        [TableColumn(Label = "rekenwaarde opneembare aanhechtspanning", Symbol = "<i>f</i><sub>bd</sub>", Unit = "N/mm²", Article = "8.4.2 (2)")]
         public double Fbd
         {
             get
@@ -157,10 +161,18 @@ namespace Eurocode.BetonConstructies
                 return 2.25 * FactorN1 * FactorN2 * Fctd; // (8.2)
             }
         }
+        public Formula FbdFormula => new()
+        {
+            Name = "(8.2)",
+            StaticValue = @"f_{bd} = 2.25 \; \eta_1 \; \eta_2 \; f_{ctd}",
+            DynamicValue = @$"= 2.25\cdot{FactorN1.ToTeX()}\cdot{FactorN2.ToTeX()}\cdot{Fctd.ToTeX()} = {Fbd.ToTeX()}"
+        };
 
         /// <summary>
         /// l~b,rqd~ (8.3)
         /// </summary>
+        /// 
+        [TableColumn(Label = "basisverankeringslengte", Symbol = "<i>l</i><sub>b,rqd</sub>", Unit = "mm", Article = "8.4.3 (2)")]
         public double BasisVerankeringsLengte
         {
             get
@@ -169,10 +181,24 @@ namespace Eurocode.BetonConstructies
                 return (Diameter / 4.0) * (RekenwaardeStaafspanning / Fbd); // Diameter in mm, SigmaSd in N/mm², Fbd in N/mm²
             }
         }
+        public Formula BasisVerankeringsLengteFormula => new()
+        {
+            Name = "(8.3)",
+            StaticValue = @"l_{b,rqd} = (Ø/4) \;(\sigma_{sd} / f_{bd})",
+            DynamicValue = @$"= ({Diameter.ToTeX()} / 4 )\cdot ({RekenwaardeStaafspanning.ToTeX()} / {Fbd.ToTeX()}) = {BasisVerankeringsLengte.ToTeX()}"
+        };
 
         /// <summary>
         /// l~bd~ (8.4)
         /// </summary>
+        /// 
+        [TableColumn(
+            Label = "verankeringslengte",
+            Description = "is de rekenwaarde van de verankeringslengte",
+            Symbol = "<i>l</i><sub>bd</sub>",
+            Unit = "mm",
+            Article = "8.4.4 (1)"
+            )]
         public double RekenwaardeVerankeringsLengte
         {
             get
@@ -180,6 +206,13 @@ namespace Eurocode.BetonConstructies
                 return Math.Max(BasisVerankeringsLengte * _alpha1 * _alpha2 * _alpha3 * _alpha4 * _alpha5, MinimumVerankeringsLengte);
             }
         }
+        public Formula RekenwaardeVerankeringsLengteFormula => new()
+        {
+            Name = "(8.4)",
+            StaticValue = @"l_{bd} = \alpha_1 \; \alpha_2 \; \alpha_3 \;\alpha_4 \;\alpha_5 \; l_{b,rqd} \geq l_{b,min}",
+
+        };
+
 
 
 

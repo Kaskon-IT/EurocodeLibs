@@ -62,9 +62,9 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
 
             BendingResults = new(Beton, BetonProfiel.Profiel, WapeningContext, SectionForces);
             //DwarskrachtDemo = new(Beton, new ParametrischeProfielen.ParametrischProfielContext(), 100);
-            DwarskrachtDemo = DwarskrachtWap.GetDwarskrachtWapContext(Beton, BetonProfiel.Profiel, 21.8, 350, Snedekrachten, 2, 8, [75, 150, 300]);
+            DwarskrachtDemo = DwarskrachtWap.GetDwarskrachtWapContext(Beton, BetonProfiel.Profiel, 21.8, 350, SectionForces, 2, 8, [75, 150, 300]);
             UitkragingDemo = new() { Beton = Beton };
-            ScheurwijdteDemo = new(Snedekrachten, Beton, Dekking, BetonProfiel.Profiel, WapeningContext, Grondslagen.NationaleBijlage ?? NationaleBijlageEnum.NL);
+            ScheurwijdteDemo = new(SectionForces, Beton, Dekking, BetonProfiel.Profiel, WapeningContext, Grondslagen.NationaleBijlage ?? NationaleBijlageEnum.NL);
             GrenswaardeSlankheidDemo = new() { Profiel = BetonProfiel.Profiel, BendingResults = BendingResults, LengteOverspanning = 2000, ConstructiefSysteem = GrenswaardeSlankheidContext.ConstructiefSysteemEnum.VrijOpgelegd };
 
             Beton2 = new(BetonsterkteklasseEnum.C12_15);

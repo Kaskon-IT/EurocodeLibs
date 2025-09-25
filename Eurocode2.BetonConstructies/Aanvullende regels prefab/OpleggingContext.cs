@@ -81,7 +81,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                BerekenEnValideer();
+                //BerekenEnValideer(); // StackOverflow
                 return this.SetOplegLengteNetto();
             }
         }

@@ -58,7 +58,7 @@ TEnum="@Schematisering.ConstructiefModelEnum"
 }
 else
 {
-    <EurocodeInputNumber ReadOnly=true @bind-Value=Model.Snedekrachten.My" Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true @bind-Value="Model.Snedekrachten.My" Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
 }
 
 @if(Model.Profiel == null)
@@ -67,12 +67,6 @@ else
     <EurocodeInputNumber Readonly=true Value=Model.Hoogte Key="@K.ProfielHoogte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
     <EurocodeInputNumber Readonly=true Value=Model.ZRef Key="ReferentieAfstandVoorNuttigeHoogte" Unit="mm"></EurocodeInputNumber>
 }
-else
-{
-   @*  <EurocodeInputNumber @bind-Value=Model.Profiel.Breedte Key="@K.ProfielBreedte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
-    <EurocodeInputNumber @bind-Value=Model.Profiel.Hoogte Key="@K.ProfielHoogte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber> *@
-}
-
 
 
 <EurocodeInputNumber ReadOnly=true Value=Model.D Key="NuttigeHoogte" Unit="mm"></EurocodeInputNumber>

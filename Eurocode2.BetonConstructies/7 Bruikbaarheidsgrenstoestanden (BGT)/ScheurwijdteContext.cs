@@ -37,7 +37,7 @@ namespace Eurocode.BetonConstructies
         }
 
         public ScheurwijdteContext(
-            Snedekrachten snedekrachten,
+            SectionForces snedekrachten,
             BetonContext beton,
             BetonDekkingContext dekking,
             ParametrischeProfielen.ParametrischProfielContext profiel,
@@ -99,25 +99,27 @@ namespace Eurocode.BetonConstructies
             Description = "Moment in de bruikbaarheidsgrenstoestand (BGT)",
             Symbol = "M<sub>E,freq</sub>",
             Unit = "kNm")]
-        public double MomentFrequent { get { return Snedekrachten.My.Kar; } }
+        public double MomentFrequent { get { return Snedekrachten.My; } }
 
-        [TableColumn(
-            Label = "moment UGT",
-            Symbol = "M<sub>Ed</sub>",
-            Description = "moment in de uiterste grenstoestand (UGT)",
-            Unit = "kNm")]
-        public double MomentRekenwaarde { get { return Snedekrachten.My.Ed; } }
+        //[TableColumn(
+        //    Label = "moment UGT",
+        //    Symbol = "M<sub>Ed</sub>",
+        //    Description = "moment in de uiterste grenstoestand (UGT)",
+        //    Unit = "kNm")]
+        //public double MomentRekenwaarde { get { return Snedekrachten.My.Ed; } }
 
         [TableColumn(
             Label = "scheurmoment",
             Symbol = "M<sub>cr</sub>",
             Description = "scheurmoment",
             Unit = "kNm")]
-        public double Mcr { get; set; }
+        public double Mcr { get; internal set; }
 
         public NationaleBijlageEnum NationaleBijlage { get; set; } = NationaleBijlageEnum.EU;
 
-        public Snedekrachten Snedekrachten { get; set; } = new();
+        //public Snedekrachten Snedekrachten { get; set; } = new();
+        public SectionForces Snedekrachten { get; set; } = new();
+
         public BetonContext Beton { get; set; } = new();
         public BetonDekkingContext Dekking { get; set; } = new();
         public double DekkingOpLangsWapening { get; set; }

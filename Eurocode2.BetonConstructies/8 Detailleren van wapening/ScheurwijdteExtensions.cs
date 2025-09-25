@@ -33,7 +33,7 @@
 
             //sw.AsToe = WapeningHelper.GetDsnOpp(sw.WapeningToegepastTekst);
 
-            sw.StaalspanningOptredend = sw.GetStaalspanningOptredend();
+            //sw.StaalspanningOptredend = sw.GetStaalspanningOptredend();
             sw.Rho = sw.GetRho();
             sw.HoogteBetonDrukZoneBGT = sw.GetHoogteBetonDrukZoneBGT();
             sw.StaalspanningOptredend = sw.GetStaalspanningOptredendVerbeterd();
@@ -212,12 +212,12 @@
 
 
 
-        public static double GetStaalspanningOptredend(this ScheurwijdteContext sw)
-        {
-            // σ;s = (M;frequent / M;Ed) * (A;s,ben / A;s,toegepast) * f;yd
-            return (sw.MomentFrequent / sw.MomentRekenwaarde) * (sw.AsBen / sw.AsToe) * sw.Staalspanning;
+        //public static double GetStaalspanningOptredend(this ScheurwijdteContext sw)
+        //{
+        //    // σ;s = (M;frequent / M;Ed) * (A;s,ben / A;s,toegepast) * f;yd
+        //    return (sw.MomentFrequent / sw.MomentRekenwaarde) * (sw.AsBen / sw.AsToe) * sw.Staalspanning;
 
-        }
+        //}
 
         public static double GetStaalspanningOptredendVerbeterd(this ScheurwijdteContext sw)
         {
