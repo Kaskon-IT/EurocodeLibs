@@ -63,7 +63,7 @@ namespace ExportFactory.Services
                                 {
                                     if (item is Melding m)
                                     {
-                                        yield return new SubPropertyRow(m.GetEmoji, m.ToMarkupString().Value, m);
+                                        yield return new SubPropertyRow(m.Id.ToString(), m.GetEmoji, m.ToMarkupString().Value, m);
                                     }
                                     else
                                     {
@@ -193,7 +193,7 @@ namespace ExportFactory.Services
                                 {
                                     if (item is Melding m)
                                     {
-                                        yield return new SubPropertyRow(m.GetEmoji, m.ToMarkupString().Value, m);
+                                        yield return new SubPropertyRow(m.Id.ToString(), m.GetEmoji, m.ToMarkupString().Value, m);
                                     }
 
 

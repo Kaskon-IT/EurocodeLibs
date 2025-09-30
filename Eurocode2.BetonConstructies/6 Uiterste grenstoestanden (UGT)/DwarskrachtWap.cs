@@ -1,4 +1,4 @@
-﻿using CommonLibrary;
+﻿using Eurocode.Belastingen;
 
 namespace Eurocode.BetonConstructies
 {

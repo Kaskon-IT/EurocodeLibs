@@ -142,8 +142,12 @@ namespace Eurocode.BetonConstructies
             Order = 21,
             Description = "cement klasse",
             Article = "3.1.2 (6)")]
-        public CementklasseEnum? CementKlasse { get; set; } = CementklasseEnum.N;
-
+        public CementklasseEnum? CementKlasse
+        {
+            get => _cementklasse;
+            set => SetProperty(ref _cementklasse, value);
+        }
+        private CementklasseEnum? _cementklasse = CementklasseEnum.N;
 
 
         public double CoefficientCementKlasse

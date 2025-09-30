@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using Eurocode.Belastingen;
 using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
@@ -20,14 +21,17 @@ namespace Eurocode.BetonConstructies
         public DoorbuigingStudie()
         {
             KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(Beton, Profiel);
-            DoorbuigingBerekening = new BetonDoorbuigingCalculator(Beton, Wapening, KruipKrimpBerekening, Krachten, Profiel, this);
+            //DoorbuigingBerekening = new BetonDoorbuigingCalculator(Ctx);
             //BuigingBerekening = new BendingResults(Beton, Profiel, Wapening, SectionForces);
 
         }
 
+
+        public BetonDoorbuigingContext Ctx = new(new(), new(), new());
+
         public BetonContext Beton { get; set; } = new("C30/37");
-        public Snedekrachten Krachten { get; set; } = new();
-        public SectionForces SectionForces { get; set; } = new();
+        //public Snedekrachten Krachten { get; set; } = new();
+        public List<SectionForces> SectionForces { get; set; } = new();
         public BetonContextKruipEnKrimpCalculator KruipKrimpBerekening { get; set; }
         public BetonDoorbuigingCalculator DoorbuigingBerekening { get; set; }
 
@@ -43,8 +47,19 @@ namespace Eurocode.BetonConstructies
             Profiel = new(500, 700);
             Beton = new(BetonsterkteklasseEnum.C30_37);
 
+            // eerst kruip
             KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(Beton, Profiel);
-            DoorbuigingBerekening = new BetonDoorbuigingCalculator(Beton, Wapening, KruipKrimpBerekening, Krachten, Profiel, this);
+
+            // vul Ctx
+            Ctx.D = NuttigeHoogte;
+            Ctx.Beton = Beton;
+            Ctx.Kruipkrimp = KruipKrimpBerekening;
+            Ctx.Wapening = Wapening;
+            Ctx.LengteMM = L * 1000;
+            Ctx.Heading = "Context voor doorbuiging";
+            //Ctx.LijnlastBijvend = q;
+
+            DoorbuigingBerekening = new BetonDoorbuigingCalculator(this.Ctx);
             //BuigingBerekening = new BendingResults(Beton, Profiel, Wapening, SectionForces);
         }
 
@@ -148,9 +163,14 @@ namespace Eurocode.BetonConstructies
             get
             {
 
-                this.Krachten.My.Kar = Lijnlast * Math.Pow(L, 2) / 8.0;
-                this.SectionForces.My = Lijnlast * Math.Pow(L, 2) / 8.0;
-                return this.SectionForces.My;
+                //this.Krachten.My.Kar = Lijnlast * Math.Pow(L, 2) / 8.0;
+                //this.SectionForces.My = Lijnlast * Math.Pow(L, 2) / 8.0;
+
+                // niet meer berekenen, dat doe je maar lekker hierbuiten
+                var mEqp = SectionForces
+                    .FirstOrDefault(sf => sf.CombinatieType == BelastingCombinatieTypeEnum.QuasiBlijvend);
+
+                return mEqp?.My ?? 0;
 
             }
         }

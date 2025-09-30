@@ -1,17 +1,13 @@
-﻿using CommonLibrary.Extensions;
-
+﻿using CommonLibrary;
+using CommonLibrary.Extensions;
 using System.ComponentModel;
 
-
-namespace CommonLibrary
+namespace Eurocode.Belastingen
 {
-    public class SectionForcesVERPLAATST : BaseEurocodeContext, INotifyPropertyChanged
+    public class SectionForces : BaseEurocodeContext, INotifyPropertyChanged
     {
-
-
         // backing fields
         private double _my, _mz, _vy, _vz, _nx, _tx;
-
 
 
         [TableColumn(Label = "Moment (Y-as)", Symbol = "<i>M</i><sub>y</sub>", Unit = "kNm")]
@@ -21,9 +17,7 @@ namespace CommonLibrary
             set => SetProperty(ref _my, value);
         }
 
-
         //[TableColumn(Label = "Moment (Z-as)", Symbol = "<i>M</i><sub>z</sub>", Unit = "kNm")]
-
         public double Mz
         {
             get => _mz;
@@ -31,7 +25,6 @@ namespace CommonLibrary
         }
 
         //[TableColumn(Label = "Dwarskracht (Y-as)", Symbol = "<i>V</i><sub>y</sub>", Unit = "kN")]
-
         public double Vy
         {
             get => _vy;
@@ -48,7 +41,6 @@ namespace CommonLibrary
         }
 
         //[TableColumn(Label = "Normaalkracht (X-as)", Symbol = "<i>N</i><sub>x</sub>", Unit = "kN")]
-
         public double Nx
         {
             get => _nx;
@@ -56,16 +48,49 @@ namespace CommonLibrary
         }
 
         //[TableColumn(Label = "Torsie (X-as)", Symbol = "<i>T</i><sub>x</sub>", Unit = "kNm")]
-
         public double Tx
         {
             get => _tx;
             set => SetProperty(ref _tx, value);
         }
 
+        private BelastingCombinatieTypeEnum _combinatieType;
+        public BelastingCombinatieTypeEnum CombinatieType
+        {
+            get => _combinatieType;
+            set => SetProperty(ref _combinatieType, value);
+        }
+
+        public string Suffix
+        {
+            get
+            {
+                switch (_combinatieType)
+                {
+                    default:
+                    case BelastingCombinatieTypeEnum.Fundamenteel_A:
+                    case BelastingCombinatieTypeEnum.Fundamenteel_B:
+                        return ",Ed";
+
+                    case BelastingCombinatieTypeEnum.QuasiBlijvend:
+                        return ",Eqb";
+
+                    case BelastingCombinatieTypeEnum.Brand:
+                        return ",Ebr";
+                    case BelastingCombinatieTypeEnum.Frequent:
+                        return ",Efr";
+                    case BelastingCombinatieTypeEnum.Aardbeving:
+                        return ",Eab";
+                    case BelastingCombinatieTypeEnum.Karakteristiek:
+                        return ",kar";
+                    case BelastingCombinatieTypeEnum.Blijvend:
+                        return ",bl";
 
 
-        public string Suffix { get; set; }
+                }
+
+            }
+        }
 
         public override string Heading { get; set; } = "Snedekrachten";
 
@@ -133,14 +158,14 @@ namespace CommonLibrary
 
         const double MaxValue = 999999999;
 
-        public SectionForcesVERPLAATST(
+        public SectionForces(
             double my = 0,
             double mz = 0,
             double vy = 0,
             double vz = 0,
             double nx = 0,
             double tx = 0,
-            string suffix = ",Ed")
+            BelastingCombinatieTypeEnum combinatieType = BelastingCombinatieTypeEnum.Fundamenteel_A)
         {
             My = my;
             Mz = mz;
@@ -148,7 +173,7 @@ namespace CommonLibrary
             Vz = vz;
             Nx = nx;
             Tx = tx;
-            Suffix = suffix;
+            CombinatieType = combinatieType;
         }
 
         // dynamische overrides voor Attribute.Symbol

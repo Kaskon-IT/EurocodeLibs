@@ -1,42 +1,35 @@
 ﻿using CommonLibrary.Interfaces;
 using Microsoft.AspNetCore.Components;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-
-
 namespace CommonLibrary
 {
-    /// <summary>
-    /// Basis voor alle eurocode context, waarbij validatie en melding noodzakelijk is.
-    /// Een lijst met meldingen is beschikbaar. 
-    /// (bijvoorbeeld "Waarschuwing - Overschrijding hoogte drukzone" of
-    /// neutrale melding "Minimale wapening toegepast conform artikel 80.80")
-    /// </summary>
     public abstract class BaseEurocodeContext : IEurocodeContext, IContext, IMarkupConvertible, INotifyPropertyChanged
     {
-        public Guid Id { get; private set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
         public virtual string Heading { get; set; } = "Onbekend";
 
-        public virtual void Init() { } // Init methode om de context te initialiseren, kan overschreven worden in child-classes
+        public virtual void Init()
+        {
+            SubscribeAllNestedProperties(this);
+        }
 
         public DateTime AangemaaktOp { get; private set; } = DateTime.UtcNow;
-
         public DateTime GewijzigdOp { get; set; } = DateTime.UtcNow;
-
 
         public ObservableCollection<Melding> Meldingen { get; private set; } = [];
         public ObservableCollection<int> MeldingCodes { get; private set; } = [];
 
+        public event Action? OnUpdated;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public event Action? OnUpdated; // 🔥 Event voor automatische UI-updates
-        public event PropertyChangedEventHandler? PropertyChanged; // Welke moeten we nu gebruiken?.. 
+        private readonly HashSet<object> _visited = new();
 
-
-        protected bool SetAndRecalculate<T>(ref T field, T value,
-            [CallerMemberName] string? propertyName = null)
+        protected bool SetAndRecalculate<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (!EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -48,26 +41,17 @@ namespace CommonLibrary
             return false;
         }
 
-
-        public void UpdateGewijzigdOp() => GewijzigdOp = DateTime.UtcNow; // Bijwerken van de wijzigingsdatum
+        public void UpdateGewijzigdOp() => GewijzigdOp = DateTime.UtcNow;
 
         protected void OnPropertyChanged(string? propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             OnUpdated?.Invoke();
-            Console.WriteLine(propertyName + " changed");
+#if DEBUG
+            Console.WriteLine($"{GetType().Name}: {propertyName} changed");
+#endif
         }
 
-        /// <summary>
-        /// Compacte manier voor Setters met backing field.
-        /// In 1 regel wordt gecontroleerd de waarde veranderd.
-        /// Indien de waarde gewijzigd is wordt dit PropertyChangedEvent afgevuurd.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="field"></param>
-        /// <param name="value"></param>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
         protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (Equals(field, value)) return false;
@@ -76,181 +60,163 @@ namespace CommonLibrary
             return true;
         }
 
-
-        // gebruikt voor binding van Nested properties die INotifyPropertyChanged implementeren
-        protected bool SetNestedProperty<T>(
-            ref T? field,
-            T? value,
-            PropertyChangedEventHandler handler,
-            string propertyName) where T : class, INotifyPropertyChanged
+        // Voor nested INotifyPropertyChanged properties
+        protected bool SetNestedProperty<T>(ref T? field, T? value, [CallerMemberName] string? propertyName = null)
+            where T : class, INotifyPropertyChanged
         {
-            if (ReferenceEquals(field, value))
-                return false;
+            if (ReferenceEquals(field, value)) return false;
 
+            // oude handler loskoppelen
             if (field != null)
-                field.PropertyChanged -= handler;
+                field.PropertyChanged -= NestedPropertyChanged;
 
             field = value;
 
+            // nieuwe handler koppelen
             if (field != null)
-                field.PropertyChanged += handler;
+                field.PropertyChanged += NestedPropertyChanged;
 
             OnPropertyChanged(propertyName);
             return true;
         }
 
-
-        // 23-9-2025 : nieuwe methode om te subscriben op PropertyChanged van een context
-        protected void SubscribeToContext(INotifyPropertyChanged context)
+        // Event dat wordt gebruikt voor alle nested properties
+        private void NestedPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (context != null)
-            {
-                context.PropertyChanged += (s, e) =>
-                {
-                    BerekenEnValideer();
-                    OnPropertyChanged(e.PropertyName);
-                };
-            }
-        }
-
-
-
-        /// <summary>
-        /// Abonneer op nested properties die INotifyPropertyChanged implementeren
-        /// </summary>
-        protected void SubscribeNestedProperty<T>(T? field) where T : class, INotifyPropertyChanged
-        {
-            if (field != null)
-            {
-                // eerst detach oude handler als deze al bestond
-                field.PropertyChanged -= NestedPropertyChanged;
-                // subscribe nieuwe handler
-                field.PropertyChanged += NestedPropertyChanged;
-            }
+            //BerekenEnValideer();
+            OnPropertyChanged(e.PropertyName); // bubbelt door naar UI
         }
 
 
 
 
 
-        /// <summary>
-        /// Abonneer automatisch op PropertyChanged van alle nested properties die INotifyPropertyChanged implementeren
-        /// </summary>
-        protected void SubscribeNestedProperties()
+
+
+
+
+        // 🔥 Nieuwe generieke deep-subscribe
+        protected void SubscribeAllNestedProperties(object? obj = null)
         {
-            var props = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => typeof(INotifyPropertyChanged).IsAssignableFrom(p.PropertyType));
+            obj ??= this;
+
+            if (obj == null || !_visited.Add(obj))
+                return;
+
+            var type = obj.GetType();
+            var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead && p.GetIndexParameters().Length == 0);
 
             foreach (var prop in props)
             {
-                var nested = prop.GetValue(this) as INotifyPropertyChanged;
-                if (nested != null)
+                var value = prop.GetValue(obj);
+                if (value is null) continue;
+
+                // 1. Enkelvoudige child
+                if (value is INotifyPropertyChanged inpc)
                 {
-                    nested.PropertyChanged -= NestedPropertyChanged;
-                    nested.PropertyChanged += NestedPropertyChanged;
+                    inpc.PropertyChanged -= NestedPropertyChanged;
+                    inpc.PropertyChanged += NestedPropertyChanged;
+
+                    SubscribeAllNestedProperties(value);
+                }
+                // 2. Collecties met children
+                else if (value is System.Collections.IEnumerable enumerable && value is not string)
+                {
+                    foreach (var item in enumerable)
+                    {
+                        if (item is INotifyPropertyChanged itemInpc)
+                        {
+                            itemInpc.PropertyChanged -= NestedPropertyChanged;
+                            itemInpc.PropertyChanged += NestedPropertyChanged;
+
+                            SubscribeAllNestedProperties(itemInpc);
+                        }
+                    }
+
+                    if (value is INotifyCollectionChanged collChanged)
+                    {
+                        collChanged.CollectionChanged -= NestedCollectionChanged;
+                        collChanged.CollectionChanged += NestedCollectionChanged;
+                    }
                 }
             }
         }
 
-        private void NestedPropertyChanged(object? sender, PropertyChangedEventArgs e)
+
+
+
+
+
+        private void NestedCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            // Trigger BerekenEnValideer en geef door dat iets is veranderd
+            if (e.NewItems != null)
+            {
+                foreach (var item in e.NewItems.OfType<INotifyPropertyChanged>())
+                {
+                    item.PropertyChanged += NestedPropertyChanged;
+                    SubscribeAllNestedProperties(item);
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (var item in e.OldItems.OfType<INotifyPropertyChanged>())
+                {
+                    item.PropertyChanged -= NestedPropertyChanged;
+                }
+            }
+
             BerekenEnValideer();
-            OnPropertyChanged(null); // null = alle properties “updaten”
+            OnPropertyChanged(null);
         }
-
-        /// <summary>
-        /// Handig om te gebruiken in constructor of setter van nested objects
-        /// </summary>
-        protected void ReplaceNestedProperty<T>(ref T? field, T? value) where T : class, INotifyPropertyChanged
-        {
-            if (field != null)
-                field.PropertyChanged -= NestedPropertyChanged;
-
-            field = value;
-
-            if (field != null)
-                field.PropertyChanged += NestedPropertyChanged;
-
-            OnPropertyChanged(nameof(field));
-        }
-
-
-
-
-        //protected BaseEurocodeContext()
-        //{
-        //    OnUpdated += () => Console.WriteLine($"{GetType().Name} updated");
-        //}
 
         public bool IsValidated { get; private set; }
 
-        //public abstract bool IsAkkoord();
-
-        // ⚠️ Centrale methode om door te geven of de context waarschuwingen bevat
         public bool HeeftWaarschuwing() => Meldingen.Any(m => m.Type == MeldingType.Waarschuwing);
 
-        // 🔥 Centrale methode die elke context opnieuw berekent en valideert
         public bool BerekenEnValideer()
         {
-            ClearMeldingen(); // 🧹 Oude meldingen wissen
-            Bereken(); // 🚀 Context-specifieke berekeningen uitvoeren
+            ClearMeldingen();
+            Bereken();
             GewijzigdOp = DateTime.UtcNow;
-            IsValidated = Valideer(); // ✅ Validaties uitvoeren
-            OnUpdated?.Invoke(); // 🔥 UI wordt automatisch geüpdatet
+            IsValidated = Valideer();
+            OnUpdated?.Invoke();
             return IsValidated;
         }
 
-
         protected abstract void Bereken();
-
         protected abstract bool Valideer();
 
         public void AddMelding(Melding melding)
         {
             if (!Meldingen.Any(m => m.Bericht == melding.Bericht))
-            {
                 Meldingen.Add(melding);
-            }
-        }  // Voeg een melding toe aan de lijst
+        }
 
         public void AddMelding(int code)
         {
             if (MeldingCodes.Contains(code))
-                return; // Voorkom dubbele meldingen
-            MeldingCodes.Add(code); // Voeg de code toe aan de lijst van codes
+                return;
 
-            var melding = CommonLibrary.Helpers.MeldingenBetonHelper.GetMelding(code); // Haal de melding op uit de helper
-
-            AddMelding(melding); // Voeg de melding toe aan de lijst van meldingen
-
+            MeldingCodes.Add(code);
+            var melding = CommonLibrary.Helpers.MeldingenBetonHelper.GetMelding(code);
+            AddMelding(melding);
 #if DEBUG
             Console.WriteLine($"{melding}");
 #endif
-
         }
-
 
         public void ClearMeldingen()
         {
-            Meldingen.Clear(); // 🧹 Oude meldingen wissen
-            MeldingCodes.Clear(); // en ook de codes
+            Meldingen.Clear();
+            MeldingCodes.Clear();
         }
 
         public void AddMeldingWaarschuwing(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing, tekst));
-
         public void AddMeldingOpmerking(string tekst) => Meldingen.Add(new(MeldingType.Opmerking, tekst));
 
-
-        //public void ControleerMeldingen()
-        //{
-        //    ClearMeldingen();
-        //    IsAkkoord(); // Voer validatie uit in de child-class
-        //}
-
-        public MarkupString ToMarkupString() => Helpers.MarkupHelper.ToMarkupString(this.ToString());
-        public MarkupString ToMarkupString(bool withUnityCheck) => Helpers.MarkupHelper.ToMarkupString(this.ToString(), withUnityCheck);
-
-
+        public MarkupString ToMarkupString() => Helpers.MarkupHelper.ToMarkupString(ToString());
+        public MarkupString ToMarkupString(bool withUnityCheck) => Helpers.MarkupHelper.ToMarkupString(ToString(), withUnityCheck);
     }
 }

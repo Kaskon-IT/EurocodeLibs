@@ -60,24 +60,33 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         //public bool IsHellendeTakDiagram { get; set; }
 
+
+
         [TableColumn(Label = "spanning-rekrelatie", Article = "3.2.3")]
-        public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.HorizontaleTak;
+        public SpanningRekDiagramType? SpanningRekDiagram
+        {
+            get => _spanningRekDiagram;
+            set => SetProperty(ref _spanningRekDiagram, value);
+        }
         public enum SpanningRekDiagramType { HellendeTak, HorizontaleTak }
+        private SpanningRekDiagramType? _spanningRekDiagram = SpanningRekDiagramType.HorizontaleTak;
 
 
-        /// <summary>
-        /// Eigen opgave fyk (indien gekozen is voor betonstaalkwaliteit 'eigen opgave')
-        /// </summary>
-        public double EigenFyk { get; set; }
 
         //3.2.2 (3)P De toepassingsregels voor ontwerp en berekening en detaillering in deze Eurocode zijn geldig voor een
         //bereik van de gespecificeerde vloeigrens fyk = 400 Mpa tot en met 600 MPa.
+
+        private BetonStaalKwaliteitEnum? _betonStaalKwaliteit = BetonStaalKwaliteitEnum.B500A;
 
         /// <summary>
         /// De betonstaalkwaliteit volgens tabel C.1 
         /// </summary>
         [TableColumn(Label = "Betonstaalkwaliteit", Article = "3.2", Order = 0)]
-        public BetonStaalKwaliteitEnum? BetonStaalKwaliteit { get; set; } = BetonStaalKwaliteitEnum.B500A;
+        public BetonStaalKwaliteitEnum? BetonStaalKwaliteit
+        {
+            get => _betonStaalKwaliteit;
+            set => SetProperty(ref _betonStaalKwaliteit, value);
+        }
 
 
         /// <summary>

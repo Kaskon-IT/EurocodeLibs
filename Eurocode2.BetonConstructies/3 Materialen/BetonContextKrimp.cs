@@ -307,15 +307,19 @@ namespace Eurocode.BetonConstructies
         {
             Meldingen.Clear();
             // Waarschuwingen toevoegen indien nodig
-            if (_beton == null)
+            if (Beton == null)
             {
                 Meldingen.Add(new Melding(MeldingType.Error, "Beton is niet opgegeven"));
                 return false;
             }
-            if (_beton.Fck < 20 || _beton.Fck > 80)
+
+            if (Beton.Fck < 20 || Beton.Fck > 80)
             {
                 Meldingen.Add(new Melding(MeldingType.Waarschuwing, "Betonsterkte Fck ligt buiten het gangbare bereik (20-80 MPa)"));
             }
+
+
+
 
 
             return true;

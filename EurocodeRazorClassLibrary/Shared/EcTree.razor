@@ -7,7 +7,8 @@
     <div class="ctx-block">
         @* Gebruik @bind-Model zoals je wil *@
         <MyGridFor @bind-Model="Context"
-                   @key="Context.Id" />
+                   @key="Context.Id"
+                   @bind-ReadOnly="ReadOnly" />
 
         @* Recursieve rendering van unieke children *@
         @RenderChildren(Context, new HashSet<Guid>())
@@ -17,6 +18,8 @@
 @code {
     [Parameter] public BaseEurocodeContext Context { get; set; } = default!;
     [Parameter] public EventCallback<BaseEurocodeContext> ContextChanged { get; set; }
+    [Parameter] public bool ReadOnly { get; set; } = false;
+    [Parameter] public EventCallback<bool> ReadOnlyChanged{ get; set; }
 
     private HashSet<Guid> _subscribedContexts = new();
 
@@ -66,7 +69,15 @@
                 // Toon ouders van deze child
                 builder.OpenElement(seq++, "span");
                 builder.AddAttribute(seq++, "class", "origin");
-                builder.AddContent(seq++, "Afkomstig van: ");
+
+                //builder.AddContent(seq++, "Afkomstig van: ");
+                //builder.AddContent(seq++, string.Join(" → ", GetParentChains(child)));
+
+
+
+                //builder.AddContent(seq++, "Afkomstig van: ");
+                //builder.AddContent(seq++, string.Join(" → ", GetParentChains(child)));
+
                 builder.AddContent(seq++, string.Join(", ", info.Parents.Select(p => $"{p.Parent.GetType().Name}.{p.PropertyName}")));
                 builder.CloseElement(); // span
 
@@ -74,6 +85,7 @@
                 builder.OpenComponent(seq++, typeof(MyGridFor<BaseEurocodeContext>));
                 builder.SetKey(child.Id);
                 builder.AddAttribute(seq++, "Model", child);
+                builder.AddAttribute(seq++, "ReadOnly", ReadOnly);
                 builder.CloseComponent();
 
                 // Recursief alle children van deze child
@@ -83,4 +95,44 @@
             }
         }
     };
+
+    private IEnumerable<string> GetParentChains(BaseEurocodeContext child) =>
+    GetParentChains(child, new HashSet<Guid>());
+
+    private IEnumerable<string> GetParentChains(BaseEurocodeContext child, HashSet<Guid> visited)
+    {
+        if (child == null || !visited.Add(child.Id))
+            yield break; // al gezien → stop
+
+        var infos = GetNestedInfos(child);
+
+        foreach (var info in infos)
+        {
+            foreach (var parent in info.Parents)
+            {
+                var prefix = $"{parent.Parent.GetType().Name}.{parent.PropertyName}";
+
+                var grandParents = GetParentChains(parent.Parent, visited).ToList();
+
+                if (grandParents.Any())
+                {
+                    foreach (var gp in grandParents)
+                        yield return $"{gp} → {prefix}";
+                }
+                else
+                {
+                    yield return prefix;
+                }
+            }
+        }
+    }
+
+
+
+
+
 }
+
+
+
+

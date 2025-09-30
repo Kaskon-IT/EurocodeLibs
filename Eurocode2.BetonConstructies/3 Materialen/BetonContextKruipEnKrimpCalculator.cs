@@ -29,18 +29,36 @@ namespace Eurocode.BetonConstructies
             _profiel = new ParametrischProfielContext();
         }
 
-        private readonly BetonContext _beton;
-        private readonly ParametrischProfielContext _profiel;
+        private BetonContext _beton = new();
+        private ParametrischProfielContext _profiel = new();
 
 
 
         public BetonContextKruipEnKrimpCalculator(BetonContext beton, ParametrischProfielContext profiel)
         {
-            _beton = beton;
-            _profiel = profiel;
+            Beton = beton;
+            Profiel = profiel;
+
+            Init(); // subscribe op nested context
+        }
+
+        public BetonContext Beton
+        {
+            get => _beton;
+            set
+            {
+                SetNestedProperty(ref _beton!, value);
+            }
         }
 
 
+
+
+        public ParametrischProfielContext Profiel
+        {
+            get => _profiel;
+            set => SetNestedProperty(ref _profiel!, value);
+        }
 
         [TableColumn(Label = "tangentmodulus", Symbol = "<i>E</i><sub>c</sub>", Article = "3.1.4 (2)", Unit = "N/mm²",
             Description = "is de tangentmodulus waarvoor 1,05 Ecm mag zijn aangehouden")]
@@ -129,6 +147,7 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
+
         public Formula FactorRelatieveVochtigheidFormula
         {
             get
@@ -274,7 +293,12 @@ namespace Eurocode.BetonConstructies
             Unit = "%",
             Article = "Bijlage B"
             )]
-        public int RelatieveVochtigheid { get; set; } = 50;
+        public int RelatieveVochtigheid
+        {
+            get => _relatieveVochtigheid;
+            set => SetProperty(ref _relatieveVochtigheid, value);
+        }
+        private int _relatieveVochtigheid = 50;
 
 
 
@@ -286,8 +310,12 @@ namespace Eurocode.BetonConstructies
         public int OuderdomBeton_t { get; private set; } = 18250;
 
         [TableColumn(Label = "ouderdom beton bij belasten", Symbol = $"<i>t</i><sub>0</sub>", Unit = "dagen", Article = "Bijlage B")]
-        public int OuderdomBetonOpMomentVanBelasten_t0 { get; set; } = 30;
-
+        public int OuderdomBetonOpMomentVanBelasten_t0
+        {
+            get => _ouderdomBetonOpMomentVanBelasten_t0;
+            set => SetProperty(ref _ouderdomBetonOpMomentVanBelasten_t0, value);
+        }
+        private int _ouderdomBetonOpMomentVanBelasten_t0 = 28;
 
 
 

@@ -183,6 +183,8 @@
     [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
 
     [Parameter] public bool ReadOnly { get; set; } = false; // standaard bewerkbaar
+    [Parameter] public EventCallback<bool> ReadOnlyChanged { get; set; }
+
 
     [Parameter] public bool ShowDescription { get; set; } = !true; // standaard uit, toont label
 
@@ -201,6 +203,8 @@
     // Geef parent de mogelijkheid runtime kolommen te tonen/verbergen.
     [Parameter] public HashSet<string> VisibleColumns { get; set; } = new();
     [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
+
+
 
     private bool AllRowsOpen { get; set; } = false;
 

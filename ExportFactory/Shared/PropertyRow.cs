@@ -55,14 +55,15 @@ namespace ExportFactory.Shared
         public string Value { get; init; }
         public object SourceObject { get; init; }
 
-        public SubPropertyRow(string label, string value, object sourceObject)
+        public SubPropertyRow(string id, string label, string value, object sourceObject)
         {
+            Id = id;
             Label = label;
             Value = value;
             SourceObject = sourceObject;
 
-            // unieke Id gebaseerd op type en label
-            Id = $"{SourceObject.GetType().FullName}.{Label}";
+
+
         }
     }
 

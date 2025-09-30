@@ -1,6 +1,7 @@
 ﻿@using Eurocode.BetonConstructies
 @using ParametrischeProfielen
 @using Eurocode.Grondslagen
+@using Eurocode.Belastingen
 
 
 
@@ -36,7 +37,7 @@
     private BetonContext beton => BuigingContext.Beton;
     private ParametrischProfielContext profiel => BuigingContext.Profiel ?? new();
     private WapeningContext wapening => BuigingContext.Wapening;
-    private CommonLibrary.SectionForces snedekrachten => BuigingContext.Snedekrachten ?? new();
+    private SectionForces snedekrachten => BuigingContext.Snedekrachten ?? new();
 
 
 }

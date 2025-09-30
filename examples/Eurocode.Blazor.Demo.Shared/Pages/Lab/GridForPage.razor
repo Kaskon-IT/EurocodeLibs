@@ -24,7 +24,7 @@ else
 
     @if(EurocodeContext != null)
     {
-        <EcTree Context="EurocodeContext" />
+        <EcTree Context="EurocodeContext" @bind-ReadOnly="readOnly" />
 
         @* <EurocodeRazorClassLibrary.Diagrams.EurocodeContextDiagram Root="EurocodeContext" /> *@
 
@@ -124,10 +124,17 @@ else
     {
         visibleCols = new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
 
-        if(SampleProject?.DoorbuigingDemo != null)
+        if (SampleProject?.DoorbuigingTrap != null)
         {
-            EurocodeContext = SampleProject.DoorbuigingDemo;
+            EurocodeContext = SampleProject.DoorbuigingTrap;
         }
+
+        //if(SampleProject?.DoorbuigingDemo != null)
+        //{
+        //    EurocodeContext = SampleProject.DoorbuigingDemo;
+        //}
+
+      
 
 
         UpdateVisibility();

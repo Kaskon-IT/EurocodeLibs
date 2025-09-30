@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Helpers;
+using Eurocode.Belastingen;
 using ExportFactory.Shared;
 using System.ComponentModel;
 using K = CommonLibrary.EurocodeKeys;
@@ -196,7 +197,7 @@ namespace Eurocode.BetonConstructies
         public SectionForces? Snedekrachten
         {
             get => _snedekrachten;
-            set => SetNestedProperty(ref _snedekrachten, value, Snedekrachten_PropertyChanged, nameof(Snedekrachten));
+            set => SetNestedProperty(ref _snedekrachten, value);
             //{
 
 

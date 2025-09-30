@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using Eurocode.Belastingen;
 using ParametrischeProfielen;
 
 namespace Eurocode.BetonConstructies
@@ -14,10 +15,11 @@ namespace Eurocode.BetonConstructies
         public override string Heading { get; set; } = "Zuivere buiging";
         public override void Init()
         {
-            SubscribeToContext(Beton);
-            SubscribeToContext(Profiel);
-            SubscribeToContext(Wapening);
-            SubscribeToContext(Forces);
+            base.Init();
+            //SubscribeToContext(Beton);
+            //SubscribeToContext(Profiel);
+            //SubscribeToContext(Wapening);
+            //SubscribeToContext(Forces);
 
             // geef de contexten mee aan de berekening
             // let op, zonder dekking dus opgave z-ref noodzakelijk

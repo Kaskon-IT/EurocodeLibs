@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using Eurocode.Belastingen;
 using ExportFactory.MigraDocContentModels;
 using ExportFactory.Services;
 using ExportFactory.Shared;
@@ -148,7 +149,15 @@ namespace Eurocode.BetonConstructies
             Symbol = $"<i>{GreekLetters.theta}</i>",
             Unit = "°")]
 
-        public double Theta { get; set; } = 21.8;
+        public double Theta
+        {
+            get => _theta;
+            set => SetProperty(ref _theta, value);
+        }
+
+
+        private double _theta = 21.8;
+
 
         /// <summary>
         /// hoek drukdiagonaal in radialen
@@ -188,7 +197,13 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Label = "hoek dwarskrachtwapening",
             Symbol = $"<i>{GreekLetters.alpha}</i>",
             Unit = "°")]
-        public double Alpha { get; set; } = 90;  // hoek van de dwarskrachtwapning standaard 90 graden
+        public double Alpha
+        {
+            get => _alpha;
+            set => SetProperty(ref _alpha, value);
+        }
+        private double _alpha = 90;
+
 
         private double TanAlpha { get { return Math.Tan(Alpha * Math.PI / 180); } }
         public double CotAlpha { get { return 1 / TanAlpha; } }
@@ -221,8 +236,13 @@ namespace Eurocode.BetonConstructies
         /// Nuttige hooge (d) van de dwarskrachtdoorsnede in mm
         /// </summary>
         [TableColumn(Label = "nuttige hoogte", Symbol = "d", Unit = "mm")]
-        public double NutHoogte { get; set; } = 90;
+        public double NutHoogte
+        {
+            get => _nutHoogte;
+            set => SetProperty(ref _nutHoogte, value);
+        }
 
+        private double _nutHoogte = 90;
 
 
         // --- Toegepaste Wapening
@@ -266,11 +286,8 @@ namespace Eurocode.BetonConstructies
                 // Gebruik de handmatige invoer als die er is
                 return _aswToegepast ?? 0.0; // Standaardwaarde indien null
             }
-            set
-            {
-                // Sta gebruikersinvoer toe
-                _aswToegepast = value;
-            }
+            set => SetProperty(ref _aswToegepast, value);
+
         }
 
         public string ToelichtingVRdc

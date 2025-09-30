@@ -19,6 +19,8 @@ namespace CommonLibrary
     public class Melding
     {
 
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         public int? Code { get; set; } // Optioneel, kan gebruikt worden voor catalogus
 
         public string GetCode
