@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 
 namespace Eurocode.Belastingen
@@ -54,6 +55,15 @@ namespace Eurocode.Belastingen
             set => SetProperty(ref _tx, value);
         }
 
+
+        private EenheidSysteem _eenheden = EenheidSysteem.KiloNewtonMeter;
+        public EenheidSysteem Eenheden
+        {
+            get => _eenheden;
+            set => SetProperty(ref _eenheden, value);
+        }
+
+
         private BelastingCombinatieTypeEnum _combinatieType;
         public BelastingCombinatieTypeEnum CombinatieType
         {
@@ -61,7 +71,10 @@ namespace Eurocode.Belastingen
             set => SetProperty(ref _combinatieType, value);
         }
 
-        public string Suffix
+
+
+
+        private string Suffix
         {
             get
             {
@@ -92,6 +105,8 @@ namespace Eurocode.Belastingen
             }
         }
 
+
+
         public override string Heading { get; set; } = "Snedekrachten";
 
         public override string ToString()
@@ -99,14 +114,22 @@ namespace Eurocode.Belastingen
             return $"My: {My.ToEng()}, Mz: {Mz.ToEng()}, Vy: {Vy.ToEng()}, Vz: {Vz.ToEng()}, Nx: {Nx.ToEng()}, Tx: {Tx.ToEng()}";
         }
 
-        public string ToMarkupString()
+
+
+        public MarkupString GetMarkupString()
         {
-            return $"<i>M</i><sub>y{Suffix}</sub>: {My.ToEng()}, " +
-                $"<i>M</i><sub>z{Suffix}</sub>: {Mz.ToEng()}, " +
-                $"<i>V</i><sub>y{Suffix}</sub>: {Vy.ToEng()}, " +
-                $"<i>V</i><sub>z{Suffix}</sub>: {Vz.ToEng()}, " +
-                $"<i>N</i><sub>x{Suffix}</sub>: {Nx.ToEng()}, " +
-                $"<i>T</i><sub>x{Suffix}</sub>: {Tx.ToEng()}";
+            List<string> items = [];
+            if (Tx != 0) items.Add($"<i>T</i><sub>x{Suffix}</sub>: {Tx.ToEng()}");
+            if (My != 0) items.Add($"<i>M</i><sub>y{Suffix}</sub>: {My.ToEng()}");
+            if (Mz != 0) items.Add($"<i>M</i><sub>z{Suffix}</sub>: {Mz.ToEng()}");
+
+            if (Nx != 0) items.Add($"<i>N</i><sub>x{Suffix}</sub>: {Nx.ToEng()}");
+            if (Vy != 0) items.Add($"<i>V</i><sub>y{Suffix}</sub>: {Vy.ToEng()}");
+            if (Vz != 0) items.Add($"<i>V</i><sub>z{Suffix}</sub>: {Vz.ToEng()}");
+
+            return new MarkupString(string.Join(", ", items));
+
+
         }
 
         protected override void Bereken()

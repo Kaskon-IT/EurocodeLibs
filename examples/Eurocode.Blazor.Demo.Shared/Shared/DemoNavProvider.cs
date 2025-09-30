@@ -167,6 +167,11 @@ public class DemoNavProvider
                         title: "GridFor demonstratie"
                     ),
 
+                    new NavLink(
+                        href: "/lab/eenheden-demo",
+                        icon: new Icons.Regular.Size20.MathSymbols(),
+                        title: "Eenheden demonstratie"
+                        )
                 ]
             )
         ];

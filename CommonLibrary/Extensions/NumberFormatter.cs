@@ -5,7 +5,7 @@ namespace CommonLibrary.Extensions
     public static class NumberFormatter
     {
         private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
-        private static int _defaultSignificantDigits = 8;
+        private static int _defaultSignificantDigits = 3;
 
         /// <summary>
         /// Globale standaard voor aantal significante cijfers (kan runtime worden aangepast).
@@ -18,7 +18,6 @@ namespace CommonLibrary.Extensions
                 if (_defaultSignificantDigits != value)
                 {
                     _defaultSignificantDigits = value;
-                    Console.WriteLine($"DefaultSignificantDigits changed to {_defaultSignificantDigits}"); // DEBUG
                     DefaultSignificantDigitsChanged?.Invoke(null, value);
                 }
             }
@@ -31,20 +30,6 @@ namespace CommonLibrary.Extensions
         public static double DefaultMaxValueWithoutExponent { get; set; } = 9999;
         public static double DefaultMinValueWithoutExponent { get; set; } = 0.0001;
 
-        // ---- Universele helper ----
-        [Obsolete("Use RoundToSignificantDigits instead")]
-        public static double TruncateToSignificantDigits(double value, int digits)
-        {
-            if (value == 0.0 || double.IsNaN(value) || double.IsInfinity(value))
-                return value;
-
-            double abs = Math.Abs(value);
-            int exponent = (int)Math.Floor(Math.Log10(abs));    // orde van grootte
-            double scale = Math.Pow(10, exponent - digits + 1);
-
-            double truncated = Math.Truncate(value / scale) * scale;
-            return truncated;
-        }
 
         // ---- Verbeterde universele helper met afronding ----
         public static double RoundToSignificantDigits(double value, int digits)

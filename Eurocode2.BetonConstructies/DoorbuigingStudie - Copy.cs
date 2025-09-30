@@ -250,7 +250,7 @@ namespace Eurocode.BetonConstructies
         public double ToelaatbareDoorbuigingFractieOverspanning => 1 / (double)DelerVoorToelaatbareDoorbuiging;
 
         [TableColumn(Label = "toelaatbare doorbuiging (eind)", Symbol = "<i>u</i><sub>toel.</sub>", Unit = "mm")]
-        public double ToelaatbareDoorbuiging
+        public double ToelaatbareDoorbuigingEind
         {
             get
             {
@@ -321,7 +321,7 @@ namespace Eurocode.BetonConstructies
         protected override bool Valideer()
         {
             Meldingen.Clear();
-            if (CalculatorDoorbuigingQuasiBlijvend.DoorbuigingBenadering > ToelaatbareDoorbuiging)
+            if (Wtot > ToelaatbareDoorbuigingEind)
             {
                 Meldingen.Add(new Melding(MeldingType.Waarschuwing, $"Doorbuiging is groter dan toelaatbaar."));
                 return false;

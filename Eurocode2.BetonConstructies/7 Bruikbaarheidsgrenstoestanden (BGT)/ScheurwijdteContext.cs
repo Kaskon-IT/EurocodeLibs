@@ -493,12 +493,12 @@ namespace Eurocode.BetonConstructies
         {
             string result = "";
             //ME,freq	sr,max	εsm-εcm	wk	kx	wmax
-            result += $"M<sub>E,freq<sub> = {MomentFrequent:0.0 kNm}, ";
-            result += $"s<sub>r,max<sub> = {SrMax:0.## mm}, ";
-            result += $"ε<sub>sm<sub>-ε<sub>cm<sub> = {EpsSmMinusEpsCm:0.## ‰}, ";
-            result += $"w<sub>k<sub> = {Wk:0.00 mm}, ";
-            result += $"w<sub>max<sub> = {ScheurwijdteGrenswaarde.Wmax:0.00 mm}, ";
-            result += $"k<sub>x<sub> = {ScheurwijdteGrenswaarde.FactorKx:0.##}, ";
+            result += $"M<sub>E,freq</sub> = {MomentFrequent:0.0 kNm}, ";
+            result += $"s<sub>r,max</sub> = {SrMax:0.## mm}, ";
+            result += $"ε<sub>sm</sub>-ε<sub>cm</sub> = {EpsSmMinusEpsCm:0.## ‰}, ";
+            result += $"w<sub>k</sub> = {Wk:0.00 mm}, ";
+            result += $"w<sub>max</sub> = {ScheurwijdteGrenswaarde.Wmax:0.00 mm}, ";
+            result += $"k<sub>x</sub> = {ScheurwijdteGrenswaarde.FactorKx:0.##}, ";
             result += $"(UC = {(Wk / ScheurwijdteGrenswaarde.Wmax):0.00})";
             return result;
         }

@@ -12,7 +12,7 @@ namespace ExportFactory.Services
     public static class TableColumnAttributeHelper
     {
 
-        private static readonly IFormatProvider SciFmt = new ScientificFormatter();
+        private static readonly IFormatProvider _sciSciFmt = new ScientificFormatter();
 
 
         public static IEnumerable<PropertyInfo> GetTableColumns<T>()
@@ -94,7 +94,7 @@ namespace ExportFactory.Services
                     else if (!string.IsNullOrEmpty(attr.StringFormat))
                     {
                         var format = attr.StringFormat.Contains("{0") ? attr.StringFormat : "{0:" + attr.StringFormat + "}";
-                        displayValue = string.Format(SciFmt, format, rawValue);
+                        displayValue = string.Format(_sciSciFmt, format, rawValue);
                     }
 
                     var formulaProp = model.GetType().GetProperty(prop.Name + "Formula");
@@ -246,7 +246,7 @@ namespace ExportFactory.Services
                             format = "{0:" + format + "}";
                         }
 
-                        displayValue = string.Format(SciFmt, format, rawValue);
+                        displayValue = string.Format(_sciSciFmt, format, rawValue);
                     }
                 }
 

@@ -1,5 +1,4 @@
 ﻿using CommonLibrary;
-using ExportFactory.Shared;
 using K = CommonLibrary.EurocodeKeys;
 
 namespace Eurocode.BetonConstructies
@@ -23,9 +22,21 @@ namespace Eurocode.BetonConstructies
         //eventuele zeeg.
 
         // oorzaken
+        private double _lengteOverspanning = 2000;
+
 
         [TableColumn("l [mm]", Key = K.Slankheid_LengteOverspanning)]
-        public double LengteOverspanning { get; set; } // Lengte van de overspanning van het element in mm
+        public double LengteOverspanning
+        {
+            get => _lengteOverspanning;
+            set
+            {
+                if (SetProperty(ref _lengteOverspanning, value))
+                {
+                    BerekenEnValideer();
+                }
+            }
+        } // Lengte van de overspanning van het element in mm
 
         [TableColumn("d [mm]", Key = K.Slankheid_EffectieveDikte)]
         public double EffectieveDikte
@@ -135,8 +146,18 @@ namespace Eurocode.BetonConstructies
             Uitkraging
         }
 
-
-        public ConstructiefSysteemEnum? ConstructiefSysteem { get; set; } = ConstructiefSysteemEnum.VrijOpgelegd; // Constructief systeem van het element
+        private ConstructiefSysteemEnum? _constructiefSysteem = ConstructiefSysteemEnum.VrijOpgelegd;
+        public ConstructiefSysteemEnum? ConstructiefSysteem
+        {
+            get => _constructiefSysteem;
+            set
+            {
+                if (SetProperty(ref _constructiefSysteem, value))
+                {
+                    Valideer();
+                }
+            }
+        }
 
 
 
