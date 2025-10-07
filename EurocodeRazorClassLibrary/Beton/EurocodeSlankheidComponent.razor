@@ -9,7 +9,7 @@
 {
     if (ReadOnly)
     {
-        <EurocodeInputNumber ReadOnly=true Value="Model.LengteOverspanning" Key="@K.Slankheid_LengteOverspanning" Unit="mm" MinValue="1" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+        <EurocodeInputNumber ReadOnly=true Value="Model.LengteOverspanning" Key="@K.Slankheid_LengteOverspanning" Unit="mm" MinValue="1" ></EurocodeInputNumber>
 
         <FluentSelectEnum Label="schematisering"
         ReadOnly=true
@@ -18,7 +18,7 @@
     }
     else
     {
-        <EurocodeInputNumber @bind-Value="Model.LengteOverspanning" Key="@K.Slankheid_LengteOverspanning" Unit="mm" MinValue="1" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+        <EurocodeInputNumber @bind-Value="Model.LengteOverspanning" Key="@K.Slankheid_LengteOverspanning" Unit="mm" MinValue="1" ></EurocodeInputNumber>
         <FluentSelectEnum Label="schematisering"
         @bind-EnumSelectedValue="@Model.ConstructiefSysteem"
         TEnum="Eurocode.BetonConstructies.GrenswaardeSlankheidContext.ConstructiefSysteemEnum" />
@@ -65,7 +65,7 @@
 
 
 
-<BaseEurocodeContextComponent TContext="GrenswaardeSlankheidContext" @bind-Model="@Model" />
+@* <BaseEurocodeContextComponent TContext="GrenswaardeSlankheidContext" @bind-Model="@Model" /> *@
 
 
 @code {

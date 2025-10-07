@@ -10,11 +10,11 @@
 
 
     <EurocodeInputNumber @bind-Value="@Model.TandLengte" Key="@K.TandLengte" Unit="mm"
-    LabelPosition="@LabelPosition" LabelType="@LabelType" 
+    LabelPosition="@LabelPosition" 
     ReadOnly="IsFieldReadOnly(nameof(Model.TandLengte))"  />
 
     <EurocodeInputNumber @bind-Value="@Model.TandLengte" Key="@K.TandHoogte" Unit="mm"
-                         LabelPosition="@LabelPosition" LabelType="@LabelType"
+                         LabelPosition="@LabelPosition" 
                          ReadOnly="IsFieldReadOnly(nameof(Model.TandHoogte))" />
 
     <EurocodeInputNumber @bind-Value="@Model.TandNuttigeHoogte" Key="@K.TandNuttigeHoogte" Unit="mm"
@@ -22,21 +22,21 @@
     ReadOnly="IsFieldReadOnly(nameof(Model.TandNuttigeHoogte))" />
 
     <EurocodeInputNumber @bind-Value="@Model.Reactiekracht" Key="@K.ReactieRekenwaarde" Unit="kN"
-                         LabelPosition="@LabelPosition" LabelType="@LabelType"
+                         LabelPosition="@LabelPosition" 
                          ReadOnly="IsFieldReadOnly(nameof(Model.Reactiekracht))" />
 
     <EurocodeInputNumber Value="@Model.ArmReactieVerticaal" Key="@K.MomentArm" Unit="mm"
-                         LabelPosition="@LabelPosition" LabelType="@LabelType"
+                         LabelPosition="@LabelPosition" 
                          ReadOnly=true />
 
     <EurocodeInputNumber Value="@Model.Moment" Key="@K.MomentRekenwaarde" Unit="kNm"
-                         LabelPosition="@LabelPosition" LabelType="@LabelType"
+                         LabelPosition="@LabelPosition" 
                          ReadOnly=true />
 
     <FluentCheckbox Value=@Model.IsGedrongenLigger ReadOnly=true>Gedrongen?</FluentCheckbox>
 
 
-    <EurocodeBetonDwarskrachtComponent ReadOnlyFields="@ReadOnlyFields" 
+    <EurocodeBetonDwarskrachtComponent 
                                        Model="@Model.TandShear"></EurocodeBetonDwarskrachtComponent> 
 
 

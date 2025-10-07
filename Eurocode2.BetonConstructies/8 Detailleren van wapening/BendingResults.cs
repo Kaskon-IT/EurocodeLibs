@@ -228,12 +228,12 @@ namespace Eurocode.BetonConstructies
 
         public string Name { get; set; } = "-";
 
-        [TableColumn(Label = "DEBUG", Symbol = "Beta")]
+        //[TableColumn(Label = "DEBUG", Symbol = "Beta")]
         public double Beta => Beton.GetBeta();
 
 
 
-        [TableColumn(Symbol = "M<sub>Ed</sub>", Label = "moment rekenwaarde", Unit = "kN", Order = 1,
+        [TableColumn(Symbol = "<i>M</i><sub>Ed</sub>", Label = "moment rekenwaarde", Unit = "kN", Order = 1,
             Key = K.MomentRekenwaarde,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Moment
@@ -322,7 +322,7 @@ namespace Eurocode.BetonConstructies
         public double D { get { return Hoogte - ZRef; } }
 
 
-        [TableColumn(Symbol = "<i>x<i><sub>u</sub>", Label = "hoogte drukzone", Unit = "mm",
+        [TableColumn(Symbol = "<i>x</i><sub>u</sub>", Label = "hoogte drukzone", Unit = "mm",
             Key = K.Xu,
             StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Xu
@@ -572,12 +572,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn(
-            Label = "minimale wapening",
-            Symbol = "<i>A</i><sub>s,min</sub>",
-            Unit = "mm²",
-            StringFormat = "0"
-            )]
+        //[TableColumn(Label = "minimale wapening", Symbol = "<i>A</i><sub>s,min</sub>", Unit = "mm²", StringFormat = "0")]
         public double AsMin
         {
             get
@@ -673,11 +668,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(
-            Label = "moment opneembaar",
-            Symbol = "<i>M</i><sub>Rd</sub>",
-            Unit = "kNm"
-            )]
+        //[TableColumn(Label = "moment opneembaar", Symbol = "<i>M</i><sub>Rd</sub>", Unit = "kNm" )]
         public double MRd
         {
             get

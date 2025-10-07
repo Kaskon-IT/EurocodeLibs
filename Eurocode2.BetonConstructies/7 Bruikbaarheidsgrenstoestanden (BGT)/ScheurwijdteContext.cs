@@ -88,17 +88,14 @@ namespace Eurocode.BetonConstructies
         }
 
         // gebruik naam voor positie
-        [TableColumn(label: "positie",
-
-            Description = "gebied waar deze toets van toepassing is",
-            Width = 2)]
+        //[TableColumn(label: "positie", Description = "gebied waar deze toets van toepassing is", Width = 2)]
         public string Naam { get; set; } = "";
 
         // input
         [TableColumn(
             Label = "moment BGT",
             Description = "Moment in de bruikbaarheidsgrenstoestand (BGT)",
-            Symbol = "M<sub>E,freq</sub>",
+            Symbol = "<i>M</i><sub>E,freq</sub>",
             Unit = "kNm")]
         public double MomentFrequent { get { return Snedekrachten.My; } }
 
@@ -111,7 +108,7 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(
             Label = "scheurmoment",
-            Symbol = "M<sub>cr</sub>",
+            Symbol = "<i>M</i><sub>cr</sub>",
             Description = "scheurmoment",
             Unit = "kNm")]
         public double Mcr { get; internal set; }
@@ -154,27 +151,23 @@ namespace Eurocode.BetonConstructies
         public double FactorK { get; set; } = 1.0;
 
 
-        [TableColumn(Label = "factor",
-            Symbol = "<i>k</i><sub>t</sub>",
-            Article = "7.3.4 (2)",
-            Description = "is een factor die afhangt van de belastingsduur: <ul>" +
+        [TableColumn(Visible = false, Label = "factor", Symbol = "<i>k</i><sub>t</sub>", Article = "7.3.4 (2)", Description = "is een factor die afhangt van de belastingsduur: <ul>" +
             "<li><i>k</i><sub>t</sub> = 0,6 voor kortdurende belasting; " +
-            "<li><i>k</i><sub>t<</sub> = 0,4 voor langdurende belasting. </ul>"
-
-
+            "<li><i>k</i><sub>t</sub> = 0,4 voor langdurende belasting. </ul>"
             )]
         public double FactorKt { get; internal set; } = 0.6;
 
 
         public double FactorKc { get; internal set; } = 0.4; // naar 7.3.2
 
-        [TableColumn(
-            Label = "factor",
-            Symbol = "<i>k</i><sub>1</sub>",
-            Article = "7.3.4 (3)",
-            Description = "is een coëfficiënt die rekening houdt met de aanhechteigenschappen" +
-            " van de hechtende wapening"
-            )]
+        //[TableColumn(
+        //    Visible = false,
+        //    Label = "factor",
+        //    Symbol = "<i>k</i><sub>1</sub>",
+        //    Article = "7.3.4 (3)",
+        //    Description = "is een coëfficiënt die rekening houdt met de aanhechteigenschappen" +
+        //    " van de hechtende wapening"
+        //    )]
         public double MaximaleScheurAfstandFactorK1 { get; private set; } = 0.8; // naar 7.3.2
 
         //[TableColumn("Type", Weergave = WeergaveEnum.DraaiTabel)]
@@ -184,12 +177,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// is een factor die rekening houdt met de rekverdeling (in 7.11)
         /// </summary>
-        [TableColumn(
-            Label = "factor",
-            Symbol = "<i>k</i><sub>2<sub>",
-            Article = "7.3.4 (3)",
-            Description = "is een coëfficiënt die rekening houdt met de rekverdeling"
-            )]
+        //[TableColumn(
+        //    Visible = false,
+        //    Label = "factor",
+        //    Symbol = "<i>k</i><sub>2</sub>",
+        //    Article = "7.3.4 (3)",
+        //    Description = "is een coëfficiënt die rekening houdt met de rekverdeling"
+        //    )]
 
         public double MaximaleScheurAfstandFactorK2
         {
@@ -204,21 +198,23 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn(
-            Label = "factor",
-            Symbol = "<i>k</i><sub>3</sub>",
-            Article = "7.3.4 (3)",
-            Description = "zie nationale bijlage",
-            Key = K.ScheurwijdteK3
-            )]
+        //[TableColumn(
+        //    Visible = false,
+        //    Label = "factor",
+        //    Symbol = "<i>k</i><sub>3</sub>",
+        //    Article = "7.3.4 (3)",
+        //    Description = "zie nationale bijlage",
+        //    Key = K.ScheurwijdteK3
+        //    )]
         public double MaximaleScheurAfstandFactorK3 { get; private set; } = 3.4;
 
-        [TableColumn(
-            Label = "factor",
-            Symbol = "<i>k</i><sub>4</sub>",
-            Article = "7.3.4 (3)",
-            Description = "zie nationale bijlage"
-            )]
+        //[TableColumn(
+        //    Visible = false,
+        //    Label = "factor",
+        //    Symbol = "<i>k</i><sub>4</sub>",
+        //    Article = "7.3.4 (3)",
+        //    Description = "zie nationale bijlage"
+        //    )]
         public double MaximaleScheurAfstandFactorK4 { get; private set; } = 0.425;
 
 
@@ -226,13 +222,15 @@ namespace Eurocode.BetonConstructies
         public double Act { get; set; }
         public double Staalspanning { get; set; }
 
-        [TableColumn(Label = "staalspanning",
-            Symbol = "<i>σ</i><sub>s</sub>",
-            Description = "is de spanning in de trekwapening, uitgaande van een" +
-            " gescheurde doorsnede",
-            Unit = "N/mm²",
-            Article = "7.4.3 (2)"
-            )]
+        //[TableColumn(
+        //    Visible = false,
+        //    Label = "staalspanning",
+        //    Symbol = "<i>σ</i><sub>s</sub>",
+        //    Description = "is de spanning in de trekwapening, uitgaande van een" +
+        //    " gescheurde doorsnede",
+        //    Unit = "N/mm²",
+        //    Article = "7.4.3 (2)"
+        //    )]
         public double StaalspanningOptredend { get; set; }
         public double Rho { get; set; }
         public double HoogteBetonDrukZoneBGT { get; set; }
@@ -292,6 +290,7 @@ namespace Eurocode.BetonConstructies
             Label = "rekverschil",
             Article = "7.3.4 (2)",
             Description = "mag zijn berekend uit de vergelijking (7.9)",
+            StringFormat = "0.0000",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
         public double EpsSmMinusEpsCm { get; set; }

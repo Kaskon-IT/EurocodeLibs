@@ -24,7 +24,7 @@ else
 
     @if(EurocodeContext != null)
     {
-        <EcTree Context="EurocodeContext" @bind-ReadOnly="readOnly" />
+        <EcTree Context="EurocodeContext" @bind-ReadOnly="readOnly" MaakTabbladen="showNonEditables" />
 
         @* <EurocodeRazorClassLibrary.Diagrams.EurocodeContextDiagram Root="EurocodeContext" /> *@
 

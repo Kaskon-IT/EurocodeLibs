@@ -44,7 +44,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        private double _d, _lengteMM, _lijnlast;
+        private double _d, _lengteMM, _lijnlast, _lijnlastG;
 
         [TableColumn(Label = "nuttige hoogte", Symbol = "d", Unit = "mm")]
         public double D { get => _d; set => SetProperty(ref _d, value); }
@@ -58,11 +58,23 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Label = "lijnlast voor w_tot", Symbol = "q<sub>...</sub>")]
         public double Lijnlast { get => _lijnlast; set => SetProperty(ref _lijnlast, value); }
 
-        public double Moment => 1.0 / 8.0 * _lijnlast * Math.Pow(LengteMM * 0.001, 2); // kNm
+        [TableColumn(Label = "lijnlast voor <i>w</i><sub>on,G</sub>", Symbol = "q<sub>G,k</sub>")]
+        public double LijnlastG { get => _lijnlastG; set => SetProperty(ref _lijnlastG, value); }
 
-        public double W1 { get; set; }
+
+        public double Moment => 1.0 / 8.0 * _lijnlast * Math.Pow(LengteMM * 0.001, 2); // kNm
+        public double MomengtG => 1.0 / 8.0 * _lijnlastG * Math.Pow(LengteMM * 0.001, 2); // kNm
+
+
+
+
+        public double W1
+        {
+            get; set;
+
+        }
         public double Wtot { get; set; }
-        public double Wbijk() => Wtot - W1;
+        public double Wbijk => Wtot - W1;
 
 
         private BetonContext _beton = new();
@@ -189,10 +201,6 @@ namespace Eurocode.BetonConstructies
             set
             {
                 SetProperty(ref _kruipfactorOverride, value); // override opslaan
-
-
-
-                //BerekenEnValideer();
             }
         }
 
@@ -235,13 +243,74 @@ namespace Eurocode.BetonConstructies
         //     set => SetProperty(ref _lengteMM, value);
         //}
 
+        [TableColumn(Label = "doorbuiging (bijkomend)", Symbol = "<i>w</i><sub>bijk</sub>", Unit = "mm")]
+        public double DoorbuigingBijk
+        {
+            get
+            {
+                return DoorbuigingLangeduur - DoorbuigingW1;
+            }
+        }
+
+        private double _doorbuigingZeeg = 0;
+
+        [TableColumn(Label = "doorbuiging zeeg", Symbol = "<i>w</i><sub>c</sub>", Unit = "mm")]
+        public double DoorbuigingZeeg
+        {
+            get => _doorbuigingZeeg;
+            set => SetProperty(ref _doorbuigingZeeg, value);
+        }
+
+        [TableColumn(Label = "doorbuiging eind", Symbol = "<i>w</i><sub>eind</sub>", Unit = "mm")]
+
+        public double DoorbuigingEind
+        {
+            get
+            {
+                return DoorbuigingLangeduur - DoorbuigingZeeg;
+            }
+        }
+
+        [TableColumn(Label = "doorbuiging (eind toelaatbaar)", Symbol = "<i>w</i><sub>eind,toel.</sub>", Unit = "mm")]
+
+        public double DoorbuigingEindToelaatbaar
+        {
+            get
+            {
+                return 1 / 250.0 * Ctx.LengteMM;
+            }
+        }
+
+        [TableColumn(Label = "doorbuiging (bijk. toelaatbaar)", Symbol = "<i>w</i><sub>bijk,toel.</sub>", Unit = "mm")]
+
+        public double DoorbuigingBijkomendeToelaatbaar
+        {
+            get
+            {
+                return 1 / 500.0 * Ctx.LengteMM;
+            }
+        }
 
 
+        [TableColumn(Label = "doorbuiging (tgv blijvende belasting G)", Symbol = "<i>w</i><sub>on,G</sub>", Unit = "mm")]
+        public double DoorbuigingW1
+        {
+            get
+            {
+                // wegschrijven naar de Context
+                Ctx.W1 = 5.0 / 384.0 * (Ctx.LijnlastG * Math.Pow(Ctx.LengteMM, 4)) / (Delta_cs0 * Buigstijfheid_0);
+                return Ctx.W1;
+            }
+        }
+        public Formula DoorbuigingW1Formula => new()
+        {
+            StaticValue = @"w_{on,G} = \frac{5}{384} \frac{q_G l^4}{\delta_{cs,0} (EI)_0}",
+            DynamicValue = $@"= \frac{{5}}{{384}} \frac{{{Ctx.LijnlastG} \cdot {Ctx.LengteMM}^4 }}{{ {Delta_cs0.ToTeX()} \cdot {Buigstijfheid_0.ToTeX()}}} = {DoorbuigingW1.ToTeX()}"
+        };
 
 
-
-        [TableColumn(Label = "doorbuiging benadering", Symbol = "<i>u</i><sup>*</sup>", Unit = "mm")]
-        public double DoorbuigingBenadering
+        [TableColumn(Label = "doorbuiging benadering", Symbol = "<i>w</i><sub>∞</sub>", Unit = "mm")]
+        public double DoorbuigingLangeduur
         {
             get
             {
@@ -249,6 +318,8 @@ namespace Eurocode.BetonConstructies
                 // midden van de overspanning van de gescheurde ligger bij
                 // benadering gelijk aan:
                 // u * = 5/48 * k_max * l^2
+
+                // en de directe doorbuiging = 5/384 * ql^4 / (EI)0 
 
 
                 var kmax = TotaleKromming;
@@ -259,9 +330,9 @@ namespace Eurocode.BetonConstructies
 
                 // geef ook w1
                 // test
-                var ei = this.StijfheidMetInterpolatie;
-                var w1 = (5 * Ctx.Lijnlast * Math.Pow(l, 4)) / (384 * ei);
-                Ctx.W1 = w1;
+                //var ei = this.Buigstijfheid_I0;
+                //var w1 = (5 * Ctx.LijnlastG * Math.Pow(l, 4)) / (384 * ei);
+                //Ctx.W1 = w1;
 
                 return wTot;
             }
@@ -269,7 +340,7 @@ namespace Eurocode.BetonConstructies
         public Formula DoorbuigingBenaderingFormula => new()
         {
             StaticValue = "u^{*} = \\frac{5}{48} \\cdot \\kappa_{max} \\cdot l^2 ",
-            DynamicValue = $"= \\frac{{5}}{{48}} \\cdot {TotaleKromming.ToTeX()} \\cdot {Ctx.LengteMM.ToEng()}^2 = {DoorbuigingBenadering.ToTeX()}"
+            DynamicValue = $"= \\frac{{5}}{{48}} \\cdot {TotaleKromming.ToTeX()} \\cdot {Ctx.LengteMM.ToEng()}^2 = {DoorbuigingLangeduur.ToTeX()}"
         };
 
         [TableColumn(Label = "context.q")]
@@ -284,7 +355,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("moment", Symbol = "M<sub>Eqp</sub>")]
+        [TableColumn("moment", Symbol = "<i>M</i><sub>Eqp</sub>")]
         public double M
         {
             get
@@ -297,6 +368,15 @@ namespace Eurocode.BetonConstructies
 
                 return mEqp?.My ?? 500;
 
+            }
+        }
+
+        [TableColumn("moment", Symbol = "<i>M</i><sub>G</sub>")]
+        public double Mg
+        {
+            get
+            {
+                return Ctx.MomengtG;
             }
         }
 
@@ -387,9 +467,14 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "", Symbol = "<i>α</i><sub>e</sub><i>ρ</i>", Description = "wordt gebruikt bij het bepalen van de drukzonehoogte")]
+        [TableColumn(Label = "factor", Symbol = "<i>α</i><sub>e</sub><i>ρ</i>", Description = "verhouding elasticiteitsmoduli × wapeningsverhouding")]
         public double AlphaeRho { get { return this.Alphae * Rho; } }
         public Formula AlphaeRhoFormula => new() { StaticValue = $@"\alpha_e\rho={Alphae.ToTeX()}\cdot{Rho.ToTeX()}={AlphaeRho.ToTeX()}" };
+
+        [TableColumn(Label = "factor", Symbol = "<i>α</i><sub>e,0</sub><i>ρ</i>", Description = "verhouding elasticiteitsmoduli × wapeningsverhouding")]
+        public double Alphae0Rho { get { return this.Alphae_0 * Rho; } }
+        public Formula Alphae0RhoFormula => new() { StaticValue = $@"\alpha_e\rho={Alphae_0.ToTeX()}\cdot{Rho.ToTeX()}={Alphae0Rho.ToTeX()}" };
+
 
 
         [TableColumn(Label = "stijfheid (ongescheurd)", Symbol = "(<i>EI</i>)<sub>I</sub>", Unit = "Nmm²")]
@@ -397,7 +482,7 @@ namespace Eurocode.BetonConstructies
         public Formula StijfheidIFormula => new()
         {
             StaticValue = "(EI)_I = E_{c,eff} \\cdot I_{I}",
-            DynamicValue = $"(EI)_I = {StijfheidI.ToTeX()}"
+            DynamicValue = $"(EI)_I = {EcEff.ToTeX()} \\cdot {I_I.ToTeX()} = {StijfheidI.ToTeX()}"
         };
 
 
@@ -425,6 +510,119 @@ namespace Eurocode.BetonConstructies
             {
                 return Zeta * StijfheidII + (1 - Zeta) * StijfheidI;
             }
+        }
+
+
+        /// <summary>
+        /// (EI)I,0 = δI,0 × (EI)0
+        /// </summary>
+        [TableColumn(Label = "buigstijfheid in het ongescheurde statium (I) bij een kortdurende aanwezige blasting (0)", Symbol = "(<i>EI</i>)<sub>I,0</sub>")]
+        public double Buigstijfheid_I0
+        {
+            get
+            {
+                return Delta_I0 * Buigstijfheid_0;
+            }
+        }
+        public Formula Buigstijfheid_I0Formula => new()
+        {
+            StaticValue = @"(EI)_{I,0} =  \delta_{I,0} \cdot (EI)_{0} = \left( \frac{1+ 3 \alpha_{e,0} \rho}{1 + \alpha_{e,0 \rho}}\right) E_{cm} \cdot I",
+            DynamicValue = $"={Delta_I0.ToTeX()} \\cdot {Ctx.Beton.Ecm.ToTeX()} \\cdot {Ctx.Profiel.Iy.ToTeX()} = {Buigstijfheid_I0.ToTeX()}"
+        };
+
+        public double Buigstijfheid_II0
+        {
+            get
+            {
+                return Delta_II0 * Buigstijfheid_0;
+            }
+        }
+
+        /// <summary>
+        /// (EI)_0
+        /// </summary>
+        public double Buigstijfheid_0
+        {
+            get
+            {
+                return Ctx.Beton.Ecm * Ctx.Profiel.Iy;
+            }
+        }
+
+
+        [TableColumn(Label = "factor buigstijfheid (gewogen, korteduur)", Symbol = "<i>δ</i><sub>cs,0</sub>")]
+        public double Delta_cs0
+        {
+            get
+            {
+                return Zeta0 * Delta_II0 + (1 - Zeta0) * Delta_I0;
+            }
+        }
+        public Formula Delta_cs0Formula => new()
+        {
+            StaticValue = @"\delta_{cs,0} = \zeta \cdot \delta_{II,0} + (1-\zeta) \cdot \delta_{I,0}",
+            DynamicValue = $@" = {Zeta0.ToTeX()} \cdot {Delta_II0.ToTeX()} + (1-{Zeta0.ToTeX()}) \cdot {Delta_I0.ToTeX()} = {Delta_cs0.ToTeX()}"
+        };
+
+
+
+        [TableColumn(Label = "factor buigstijfheid (ongescheurd, korteduur)", Symbol = "<i>δ</i><sub>I,0</sub>")]
+        public double Delta_I0
+        {
+            get
+            {
+                return (1 + 3 * Alphae_0 * Rho) / (1 + Alphae_0 * Rho);
+            }
+        }
+        public Formula Delta_I0Formula => new()
+        {
+            StaticValue = @"\delta_{I,0} = (1 + 3 \cdot \alpha_{e,0} \rho) / (1+\alpha_{e,0}  \rho)",
+            DynamicValue = @$"= (1 + 3 \cdot {Alphae0Rho.ToTeX()}) / (1 + {Alphae0Rho.ToTeX()}) = {Delta_I0.ToTeX()}"
+        };
+
+
+        [TableColumn(Label = "factor buigstijfheid (gescheurd, korteduur)", Symbol = "<i>δ</i><sub>II,0</sub>")]
+        public double Delta_II0
+        {
+            get
+            {
+                return 6 * Math.Pow(NuttigeHoogte / Ctx.Profiel.Hoogte, 3) * Math.Pow(VerhoudingXD_0, 2) * (1 - 1 / 3.0 * VerhoudingXD_0);
+            }
+        }
+        public Formula Delta_II0Formula => new()
+        {
+            StaticValue = @"\delta_{II,0} = 6\left(\frac{d}{h}\right)^3 \left(\frac{x}{d} \right)^2 \left(1-\frac{1}{3}\frac{x}{d} \right)",
+            DynamicValue = $" = 6 \\left( \\frac{{{NuttigeHoogte}}}{{{Ctx.Profiel.Hoogte}}} \\right)^3 \\cdot {VerhoudingXD_0.ToTeX()}^2 \\left( 1 - \\frac{{1}}{{3}} {VerhoudingXD_0.ToTeX()} \\right)"
+        };
+
+
+
+        [TableColumn(Label = "relatieve drukzonehoogte (langeduur)", Symbol = "(<i>x/d</i>)<sub>∞</sub>")]
+        public double VerhoudingXD_Langeduur
+        {
+            get
+            {
+                return GetVerhoudingXD(AlphaeRho);
+            }
+        }
+
+        /// <summary>
+        /// x/d (kortdurende belasting
+        /// x/d = ae,0 rho
+        /// </summary>
+        [TableColumn(Label = "relatieve drukzonehoogte (korteduur)", Symbol = "(<i>x/d</i>)<sub>0</sub>")]
+
+        public double VerhoudingXD_0
+        {
+            get
+            {
+                return GetVerhoudingXD(Alphae0Rho);
+            }
+        }
+
+        public double GetVerhoudingXD(double alphaeRho)
+        {
+            return -alphaeRho + Math.Sqrt(Math.Pow(alphaeRho, 2) + 2 * alphaeRho);
         }
 
 
@@ -457,7 +655,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "verdelingsfactor", Symbol = "ζ", Article = "7.4.3 (3)", Description = "is een verdelingsfactor rekening houdend met 'tension stiffening' in een doorsnede")]
+        [TableColumn(Label = "verdelingsfactor", Symbol = "<i>ζ</i>", Article = "7.4.3 (3)", Description = "is een verdelingsfactor rekening houdend met 'tension stiffening' in een doorsnede")]
         public double Zeta
         {
             get
@@ -466,12 +664,14 @@ namespace Eurocode.BetonConstructies
 
                 if (Mcr > Math.Abs(M)) return 0;
 
-                return 1 - BetaTensionStiffening * Math.Pow(Mcr / Math.Abs(M), 2);
+                return 1 - BetaLangeduur * Math.Pow(Mcr / Math.Abs(M), 2);
 
             }
         }
 
-        public Formula VerdelingsfactorTensionStiffeningFormula
+
+
+        public Formula ZetaFormula
         {
             get
             {
@@ -479,22 +679,38 @@ namespace Eurocode.BetonConstructies
 
                 return new("(7.19)",
             @"\zeta = 1 - \beta \left( \frac{M_{cr}}{M} \right)^2",
-            $@"\zeta = 1 - {BetaTensionStiffening.ToTeX()} \left( \frac{{{Mcr.ToTeX()}}}{{{Math.Abs(M).ToTeX()}}} \right)^2 = {Zeta.ToTeX()}");
+            $@"\zeta = 1 - {BetaLangeduur.ToTeX()} \left( \frac{{{Mcr.ToTeX()}}}{{{Math.Abs(M).ToTeX()}}} \right)^2 = {Zeta.ToTeX()}");
             }
         }
 
-
-        [TableColumn(Label = "factor belastingduur",
-            Symbol = "<i>β</i>",
-            Article = "7.4.3",
-            Description = "is een coëfficiënt die rekening houdt met de invloed van de belastingsduur of herhaalde belasting op de gemiddelde rek; <br />= 1,0 voor een enkele kortdurende belasting; <br />= 0,5 voor aanhoudende belastingen of meervoudige cycli van zich herhalende belastingen")]
-        public double BetaTensionStiffening
+        [TableColumn(Label = "verdelingsfactor (korteduur)", Symbol = "<i>ζ</i><sub>0</sub>")]
+        public double Zeta0
         {
-            get => _betaTensionStiffening;
-            set => SetProperty(ref _betaTensionStiffening, value);
+            get
+            {
+                if (Mcr > Math.Abs(Mg)) return 0;
+                return 1 - BetaKorteduur * Math.Pow(Mcr / Math.Abs(Mg), 2);
+            }
         }
-        private double _betaTensionStiffening = 0.5;
+        public Formula Zeta0Formula => new()
+        {
+            StaticValue = @"\zeta_0= 1- \beta \cdot \left( \frac{M_{cr}}{M_G}  \right)^2",
+            DynamicValue = $@"= 1 - 1 \cdot \left( \frac{{{Mcr.ToTeX()}}}{{{Mg.ToTeX()}}} \right)^2 = {Zeta0.ToTeX()}"
+        };
 
+
+
+        [TableColumn(Label = "factor belastingduur (langeduur)",
+            Symbol = "<i>β</i><sub>∞</sub>",
+            Article = "7.4.3",
+            Description = "is een coëfficiënt die rekening houdt met de invloed van de belastingsduur of herhaalde belasting op de gemiddelde rek")]
+        public double BetaLangeduur => 0.5;
+
+        [TableColumn(Label = "factor belastingduur (korteduur)",
+           Symbol = "<i>β</i><sub>∞</sub>",
+           Article = "7.4.3",
+           Description = "is een coëfficiënt die rekening houdt met de invloed van de belastingsduur of herhaalde belasting op de gemiddelde rek")]
+        public double BetaKorteduur => 1.0;
 
 
 
@@ -528,6 +744,16 @@ namespace Eurocode.BetonConstructies
                 return BetonStaalContext.Es / (EcEff * 1);
             }
         }
+
+
+        public double Alphae_0
+        {
+            get
+            {
+                return BetonStaalContext.Es / Ctx.Beton.Ecm;
+            }
+        }
+
         public Formula AlphaeFormula => new("(7.21)",
             @"\alpha_{e} = \frac{E_{s}}{E_{c,eff}}",
             $@"\alpha_{{e}} = \frac{{{BetonStaalContext.Es.ToTeX()}}}{{{(EcEff * 1).ToTeX()}}} = {Alphae.ToTeX()}");
@@ -771,12 +997,12 @@ namespace Eurocode.BetonConstructies
 
             }
 
-            if (BetaTensionStiffening < 0)
+            if (BetaLangeduur < 0)
             {
                 AddMeldingWaarschuwing("factor belastingduur mag niet kleiner dan 0 zijn");
             }
 
-            if (BetaTensionStiffening > 1)
+            if (BetaLangeduur > 1)
             {
                 AddMeldingWaarschuwing("factor belastingduur mag niet gorter dan 1 zijn");
             }

@@ -241,25 +241,54 @@ namespace Eurocode.BetonConstructies
 
 
         //[TableColumn(Label = "deler toelaatbare doorbuiging", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "1/")]
-        public int DelerVoorToelaatbareDoorbuiging { get; set; } = 250;
-
+        public int DelerVoorToelaatbareDoorbuigingEind { get; set; } = 250;
+        public int DelerVoorToelaatbareDoorbuigingBijk { get; set; } = 500;
 
 
         [TableColumn(Label = "fractie toelaatbare doorbuiging (eind)", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "")]
 
-        public double ToelaatbareDoorbuigingFractieOverspanning => 1 / (double)DelerVoorToelaatbareDoorbuiging;
+        public double ToelaatbareDoorbuigingEindFractieOverspanning => 1 / (double)DelerVoorToelaatbareDoorbuigingEind;
 
         [TableColumn(Label = "toelaatbare doorbuiging (eind)", Symbol = "<i>u</i><sub>toel.</sub>", Unit = "mm")]
         public double ToelaatbareDoorbuigingEind
         {
             get
             {
-                return Overspanning * ToelaatbareDoorbuigingFractieOverspanning;
+                return Overspanning * ToelaatbareDoorbuigingEindFractieOverspanning;
+            }
+        }
+
+        [TableColumn(Label = "fractie toelaatbare doorbuiging (bijkomend)", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "")]
+
+        public double ToelaatbareDoorbuigingBijkFractieOverspanning => 1 / (double)DelerVoorToelaatbareDoorbuigingBijk;
+
+        [TableColumn(Label = "toelaatbare doorbuiging (bijkomend)", Symbol = "<i>w</i><sub>bijk.toel.</sub>", Unit = "mm")]
+        public double ToelaatbareDoorbuigingBijk
+        {
+            get
+            {
+                return Overspanning * ToelaatbareDoorbuigingBijkFractieOverspanning;
             }
         }
 
 
 
+
+        public double UnityCheckDoorbuigingEind
+        {
+            get
+            {
+                return DoorbuigingEind / ToelaatbareDoorbuigingEind;
+            }
+        }
+
+        public double UnityCheckDoorbuigingBijkomend
+        {
+            get
+            {
+                return DoorbuigingBijkomend / ToelaatbareDoorbuigingBijk;
+            }
+        }
 
         [TableColumn(Label = "doorbuiging", Symbol = "<i>w</i><sub>tot</sub>", Unit = "mm")]
         public double Wtot
@@ -273,8 +302,8 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "doorbuiging", Symbol = "<i>u</i><sup>*</sup>", Unit = "mm")]
-        public double DoorbuigingEenvoudig
+        [TableColumn(Label = "doorbuiging", Symbol = "<i>w</i><sub>eind</sub>", Unit = "mm")]
+        public double DoorbuigingEind
         {
             get
             {
@@ -284,10 +313,22 @@ namespace Eurocode.BetonConstructies
                 var moment = this.MomentEqp;
 
                 //CalculatorDoorbuigingQuasiBlijvend.BerekenEnValideer();
-                return CalculatorDoorbuigingQuasiBlijvend.DoorbuigingBenadering;
+                return CalculatorDoorbuigingQuasiBlijvend.DoorbuigingEind;
 
             }
         }
+
+        [TableColumn(Label = "doorbuiging", Symbol = "<i>w</i><sub>bijk</sub>", Unit = "mm")]
+        public double DoorbuigingBijkomend
+        {
+            get
+            {
+                return CtxQuasiBlijvend.Wbijk;
+
+            }
+        }
+
+
 
         //WapeningContext Wapening = new() { Tekst = "6Ø25" }; // 2945 mm2
 

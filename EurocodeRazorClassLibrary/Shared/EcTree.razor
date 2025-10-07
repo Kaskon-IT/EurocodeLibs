@@ -4,22 +4,85 @@
 
 @if (Context != null)
 {
-    <div class="ctx-block">
-        @* Gebruik @bind-Model zoals je wil *@
-        <MyGridFor @bind-Model="Context"
-                   @key="Context.Id"
-                   @bind-ReadOnly="ReadOnly" />
+    @if (MaakTabbladen)
+    {
+        <FluentTabs Id="ctxTabs" ActiveId="tab0">
+            <FluentTab TabId="tab0" Label="Hoofdcontext">
+                <MyGridFor @bind-Model="Context"
+                           @key="Context.Id"
+                           @bind-ReadOnly="ReadOnly"
+                           IsInklapbaar="true" />
+            </FluentTab>
 
-        @* Recursieve rendering van unieke children *@
-        @RenderChildren(Context, new HashSet<Guid>())
-    </div>
-}
+            @RenderChildTabs(Context, new HashSet<Guid>())
+        </FluentTabs>
+    }
+    else
+    {
+        <div class="ctx-block">
+            <MyGridFor @bind-Model="Context"
+                       @key="Context.Id"
+                       @bind-ReadOnly="ReadOnly"
+                       IsInklapbaar="true" />
+
+            @RenderChildren(Context, new HashSet<Guid>())
+        </div>
+    }
+
+
+
+
+
+
+} 
 
 @code {
     [Parameter] public BaseEurocodeContext Context { get; set; } = default!;
     [Parameter] public EventCallback<BaseEurocodeContext> ContextChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; } = false;
     [Parameter] public EventCallback<bool> ReadOnlyChanged{ get; set; }
+    [Parameter] public bool MaakTabbladen { get; set; } = false;
+
+    private RenderFragment RenderChildTabs(BaseEurocodeContext ctx, HashSet<Guid> visited) => builder =>
+    {
+          if (ctx == null) return;
+
+    // alleen checken als het ID eerder écht voorkomt (cyclus)
+    if (!visited.Add(ctx.Id))
+        return;
+
+        //var children = ctx.GetChildContexts(); // verondersteld dat jij deze helper hebt
+        var infos = GetNestedInfos(ctx).ToList();
+
+        int seq = 100;
+        int tabIndex = 1;
+
+        foreach (var info in infos)
+        {
+            var child = info.Child;
+
+            var label = child.Heading ?? child.GetType().Name;
+            var tabId = $"tab{tabIndex++}";
+
+            builder.OpenComponent<FluentTab>(seq++);
+            builder.AddAttribute(seq++, "TabId", tabId);
+            builder.AddAttribute(seq++, "Label", label);
+            builder.AddAttribute(seq++, "ChildContent", (RenderFragment)(b =>
+            {
+                int s = 0;
+                b.OpenComponent(s++, typeof(MyGridFor<BaseEurocodeContext>));
+                b.SetKey(child.Id);
+                b.AddAttribute(s++, "Model", child);
+                b.AddAttribute(s++, "ReadOnly", ReadOnly);
+                b.CloseComponent();
+
+                // recursieve children
+                b.AddContent(s++, RenderChildTabs(child, visited));
+            }));
+            builder.CloseComponent();
+        }
+    };
+
 
     private HashSet<Guid> _subscribedContexts = new();
 
@@ -67,8 +130,8 @@
                 builder.AddAttribute(seq++, "class", "nested-block");
 
                 // Toon ouders van deze child
-                builder.OpenElement(seq++, "span");
-                builder.AddAttribute(seq++, "class", "origin");
+                //builder.OpenElement(seq++, "span");
+                //builder.AddAttribute(seq++, "class", "origin");
 
                 //builder.AddContent(seq++, "Afkomstig van: ");
                 //builder.AddContent(seq++, string.Join(" → ", GetParentChains(child)));
@@ -78,8 +141,8 @@
                 //builder.AddContent(seq++, "Afkomstig van: ");
                 //builder.AddContent(seq++, string.Join(" → ", GetParentChains(child)));
 
-                builder.AddContent(seq++, string.Join(", ", info.Parents.Select(p => $"{p.Parent.GetType().Name}.{p.PropertyName}")));
-                builder.CloseElement(); // span
+                //builder.AddContent(seq++, string.Join(", ", info.Parents.Select(p => $"{p.Parent.GetType().Name}.{p.PropertyName}")));
+                //builder.CloseElement(); // span
 
                 // Toon child node met @bind-Model
                 builder.OpenComponent(seq++, typeof(MyGridFor<BaseEurocodeContext>));

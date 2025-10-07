@@ -7,7 +7,7 @@ namespace ExportFactory.Services
 {
 
 
-    internal class SvgService
+    public class SvgService
     {
 
 

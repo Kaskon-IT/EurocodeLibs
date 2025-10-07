@@ -70,13 +70,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// a of a~nom~
         /// </summary>
-        [TableColumn("a~nom~", "nominale opleglengte")]
+        [TableColumn("<i>a</i>~nom~", "nominale opleglengte")]
         public double OplegLengteNominaal { get { return this.SetOplegLengteNominaal(); } }
 
         /// <summary>
         /// a~1~
         /// </summary>
-        [TableColumn("a~1~", "netto opleglengte")]
+        [TableColumn("<i>a</i>~1~", "netto opleglengte")]
         public double OplegLengteNetto
         {
             get
@@ -99,7 +99,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// b~1~
         /// </summary>
-        [TableColumn("b~1~", "oplegbreedte netto")]
+        [TableColumn("<i>b</i>~1~", "oplegbreedte netto")]
         public double OplegBreedteNetto { get; set; } = 1000;
 
         /// <summary>
@@ -367,6 +367,7 @@ namespace Eurocode.BetonConstructies
             }
 
             // alles ok
+
             return true;
         }
 

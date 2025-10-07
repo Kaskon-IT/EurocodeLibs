@@ -1,5 +1,4 @@
 ﻿using CommonLibrary;
-using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
@@ -30,7 +29,7 @@ namespace Eurocode.BetonConstructies
         public void SetZRef()
         {
             this._gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
-            this._zRef = DekkingToegepast + _gemiddeldeDiameter / 2;
+            this._zRef = DekkingToegepast + _gemiddeldeDiameter / 2.0;
         }
 
         private string _tekst = "8-150";
@@ -76,7 +75,11 @@ namespace Eurocode.BetonConstructies
         }
         public override string ToString()
         {
-            return $"{Tekst} | ({As:0} mm²)";
+            return $"{Tekst
+                .Replace("r", "Ø")
+                .Replace("R", "Ø")
+                .Replace("d", "Ø")
+                .Replace("D", "Ø")}  ({As:0} mm²)";
         }
 
         public string GetUserFriendlyText(string eenheid = "mm²", bool includeGroups = true)

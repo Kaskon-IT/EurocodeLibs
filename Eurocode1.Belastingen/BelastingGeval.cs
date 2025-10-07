@@ -88,7 +88,7 @@ namespace Eurocode.Belastingen
 
 
         // userFriendlyHelpers
-        [TableColumn("momentaan factoren", order: 30, width: 4.0)]
+        //[TableColumn("momentaan factoren", order: 30, width: 4.0)]
         public string MomentaanFactorenUserFriendly
         {
             get

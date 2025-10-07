@@ -52,14 +52,15 @@ namespace Eurocode.Blazor.Demo.Shared.SampleData
         public DoorbuigingStudie DoorbuigingDemo { get; set; } = new(10, 40);
         public DoorbuigingTrap DoorbuigingTrap { get; set; } =
             new(new BetonDoorbuigingContext(
-                new BetonContext("C45/55"),
-                new ParametrischeProfielen.ParametrischProfielContext(1000, 140),
-                new WapeningContext() { Tekst = "12-150" }
+                new BetonContext("C20/25"),
+                new ParametrischeProfielen.ParametrischProfielContext(1000, 300),
+                new WapeningContext() { Tekst = "12-125" }
                 )
             {
-                LengteMM = 5000,
-                D = 94,
-                Lijnlast = 5.17,
+                LengteMM = 7200,
+                D = 279,
+                Lijnlast = 10.2,
+                LijnlastG = 8.5
 
             });
 

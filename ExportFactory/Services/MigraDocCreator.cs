@@ -7,12 +7,12 @@ using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using MigraDoc.DocumentObjectModel.Tables;
 using PdfSharp.Fonts;
+using SkiaSharp;
+using Svg.Skia;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
-
-
-
+using System.Text.RegularExpressions;
 //using System.Reflection.Metadata;
 
 //
@@ -20,7 +20,6 @@ using System.Text;
 
 
 //using System.Reflection.Metadata;
-using System.Text.RegularExpressions;
 using static ExportFactory.MigraDocContentModels.ExampleDocumentContent;
 
 namespace ExportFactory.Services
@@ -29,10 +28,13 @@ namespace ExportFactory.Services
 
 
 
+
+
+
     public class MigraDocCreator
     {
         private static readonly CustomTempFileCollection _tempFiles = new();
-
+        //private SvgImageCache _cache { get; set; } = new SvgImageCache();
 
 
         /// <summary>
@@ -40,7 +42,7 @@ namespace ExportFactory.Services
         /// </summary>
         /// <param name="content">DocumentContent for creating the document</param>
         /// <returns>A Migradoc Document</returns>
-        public static Document GenerateDocument(DocumentContent content, bool includeToc = false)
+        public static Document GenerateDocument(DocumentContent content, SvgImageCache? cache, bool includeToc = false)
         {
             // Font resolver mag maar 1x gedaan worden!
             if (GlobalFontSettings.FontResolver is not CustomFontResolver)
@@ -49,7 +51,7 @@ namespace ExportFactory.Services
             }
 
 
-
+            //_cache = cache;
 
             // 1. Maak een TempFileCollection aan. keepFiles: true zorgt dat bestanden niet automatisch verwijderd worden.
             //var tempFiles = new TempFileCollection(Path.GetTempPath(), keepFiles: true);
@@ -96,7 +98,7 @@ namespace ExportFactory.Services
             // Add sections (iterate through all contents)
             foreach (var sectionContent in content.Sections.OrderBy(sc => sc.Order))
             {
-                AddSection(document, sectionContent, bookmarks);
+                AddSection(document, sectionContent, bookmarks, cache);
             }
 
             // Bookmarks bijwerken (with saved bookmarks)
@@ -123,6 +125,7 @@ namespace ExportFactory.Services
                 filename += ".rtf";
             }
             rtfRenderer.Render(document, filename, null);
+
         }
 
         public static string ExportToRtfString(Document document)
@@ -304,7 +307,7 @@ namespace ExportFactory.Services
         /// <param name="document">a MigraDoc Document</param>
         /// <param name="sectionContent">Data content for this Section</param>
         /// <param name="bookmarks">List of bookmarks</param>
-        private static void AddSection(Document document, SectionContent sectionContent, List<BookmarkContent> bookmarks)
+        private static void AddSection(Document document, SectionContent sectionContent, List<BookmarkContent> bookmarks, SvgImageCache cache)
         {
             var section = document.LastSection;
 
@@ -340,7 +343,7 @@ namespace ExportFactory.Services
 
                         case ParagraphContent paragraphContent:
                             var par = section.AddParagraph("", paragraphContent.Style);
-                            AddMarkdownToParagraph(par, paragraphContent.Markdown);
+                            AddMarkdownToParagraph(par, paragraphContent.Markdown, cache);
                             break;
 
                         case TableContent tableContent:
@@ -1457,7 +1460,7 @@ namespace ExportFactory.Services
         }
 
 
-        public static void AddMarkdownToParagraph(Paragraph paragraph, string? markdown, bool trim = false)
+        public static void AddMarkdownToParagraph(Paragraph paragraph, string? markdown, SvgImageCache? cache = null, bool trim = false)
         {
             if (markdown == null) return;
             if (string.IsNullOrWhiteSpace(markdown))
@@ -1487,14 +1490,14 @@ namespace ExportFactory.Services
             else
             {
                 // Regular text (non-heading)
-                AddStyledTextToParagraph(paragraph, markdown);
+                AddStyledTextToParagraph(paragraph, markdown, cache);
             }
         }
 
 
 
 
-        private static void AddStyledTextToParagraph(Paragraph paragraph, string markdown)
+        private static void AddStyledTextToParagraph(Paragraph paragraph, string markdown, SvgImageCache cache)
         {
             // Parse for backticks first to handle raw text
             var rawSegments = markdown.Split('`');
@@ -1509,14 +1512,118 @@ namespace ExportFactory.Services
                     // Replace Greek letter placeholders
                     string processedText = ReplaceGreekLetters(rawSegments[i]);
                     // Parse and apply Markdown styles (bold, italic, underline, etc.) to non-raw segments
-                    ApplyMarkdownStylesToParagraph(paragraph, processedText);
+                    ApplyMarkdownStylesToParagraph(paragraph, processedText, cache);
                 }
             }
         }
 
 
+        /// <summary>
+        /// Simpele viewBox parser: verwacht iets als viewBox="0 0 1200 300"
+        /// </summary>
+        private static (double x, double y, double width, double height) ParseViewBox(string svgXml)
+        {
+            var m = Regex.Match(svgXml, @"viewBox\s*=\s*""([\d\.\-]+)\s+([\d\.\-]+)\s+([\d\.\-]+)\s+([\d\.\-]+)""");
+            if (!m.Success)
+                throw new Exception("SVG heeft geen geldige viewBox");
 
-        private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown, Color? currentColor = null, int depth = 0)
+            double x = double.Parse(m.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture);
+            double y = double.Parse(m.Groups[2].Value, System.Globalization.CultureInfo.InvariantCulture);
+            double w = double.Parse(m.Groups[3].Value, System.Globalization.CultureInfo.InvariantCulture);
+            double h = double.Parse(m.Groups[4].Value, System.Globalization.CultureInfo.InvariantCulture);
+            return (x, y, w, h);
+        }
+
+
+        public static byte[] ConvertSvgToPng(string svgXml, int width, int height)
+        {
+            using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(svgXml));
+
+            var svg = new Svg.Skia.SKSvg();
+            svg.Load(stream);
+
+            using var bitmap = new SkiaSharp.SKBitmap(width, height);
+            using var canvas = new SkiaSharp.SKCanvas(bitmap);
+            canvas.Clear(SkiaSharp.SKColors.Transparent);
+            canvas.DrawPicture(svg.Picture);
+            canvas.Flush();
+
+            using var img = SkiaSharp.SKImage.FromBitmap(bitmap);
+            using var pngData = img.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
+            return pngData.ToArray();
+        }
+
+
+        /// <summary>
+        /// Render SVG naar PNG via SkiaSharp.Svg
+        /// </summary>
+        private static byte[] RenderSvgToPng(string svgXml, int widthPx, int heightPx)
+        {
+            using var svgStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(svgXml));
+            var svg = new SKSvg();
+            svg.Load(svgStream);
+
+            using var bitmap = new SKBitmap(widthPx, heightPx);
+            using var canvas = new SKCanvas(bitmap);
+            canvas.Clear(SKColors.Transparent);
+
+            // Schaal zodat de SVG past in de bitmap
+            float scaleX = widthPx / svg.Picture.CullRect.Width;
+            float scaleY = heightPx / svg.Picture.CullRect.Height;
+            canvas.Scale(scaleX, scaleY);
+            canvas.DrawPicture(svg.Picture);
+            canvas.Flush();
+
+            using var image = SKImage.FromBitmap(bitmap);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            return data.ToArray();
+        }
+
+
+        public static Image AddSvgViaTempFile(Paragraph paragraph, string svgXml, double widthPx, double heightPx)
+        {
+            // viewbox
+            var viewBox = ParseViewBox(svgXml);
+            double svgWidth = viewBox.width;
+            double svgHeight = viewBox.height;
+
+            double aspectRatio = svgWidth / svgHeight;
+            int renderWidth, rendereHeight;
+
+            if (aspectRatio >= 1.0)
+            {
+                renderWidth = (int)widthPx;
+                rendereHeight = (int)(heightPx / aspectRatio);
+            }
+            else
+            {
+                rendereHeight = (int)heightPx;
+                renderWidth = (int)(heightPx * aspectRatio);
+            }
+
+
+
+
+            // SVG → PNG (byte[]). Deze helper moet jij zelf implementeren
+            // bv. via SkiaSharp, Svg.Skia of een ander svg-renderer.
+            byte[] pngBytes = ConvertSvgToPng(svgXml, renderWidth, rendereHeight);
+
+            // schrijf naar temp-bestand
+            string fileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".png");
+            File.WriteAllBytes(fileName, pngBytes);
+
+            // voeg image toe via filename
+            var image = paragraph.AddImage(fileName);
+            image.LockAspectRatio = true;
+
+            // eventueel MigraDoc-schaal meegeven
+            //image.Width = Unit.FromPoint(widthPx);
+            return image;
+        }
+
+
+
+        private static void ApplyMarkdownStylesToParagraph(Paragraph paragraph, string markdown, SvgImageCache? cache = null, Color? currentColor = null, int depth = 0)
         {
             const int maxDepth = 15;
             if (depth > maxDepth || string.IsNullOrWhiteSpace(markdown))
@@ -1532,6 +1639,7 @@ namespace ExportFactory.Services
                                .Replace("‰", "^0^/~00~");
 
             var regex = new Regex(
+                @"(?<svg>\<svg.*?\</svg\>)|" +  // <-- nieuwe groep voor SVG
                 @"(?<bold>\*\*(.*?)\*\*|<b>(.*?)</b>)|" +
                 @"(?<italic>\*(.*?)\*|<i>(.*?)</i>)|" +
                 @"(?<underline>__(.*?)__|<u>(.*?)</u>)|" +
@@ -1546,11 +1654,37 @@ namespace ExportFactory.Services
 
             foreach (Match match in regex.Matches(markdown))
             {
-                if (match.Groups["bold"].Success)
+                if (match.Groups["svg"].Success)
+                {
+                    string svgString = match.Value;
+
+                    //AddSvgViaTempFile(paragraph, svgString, 600, 600);
+
+                    // SVG toevoegen (10 cm breed, maximaal 15 cm hoog)
+                    cache?.AddSvg(paragraph, svgString, widthCm: 10, maxHeightCm: 15);
+
+
+
+
+
+                    // hier je SVG omzetten naar PNG via SkiaSharp en toevoegen aan MigraDoc
+                    //AddSvgToParagraph(paragraph, svgString);
+
+                    // gebruik de Tag om het SVG object in te bewaren
+                    // dit wordt gebruikt bij conversie naar HTML.
+                    paragraph.Tag = svgString;
+
+                    //paragraph.AddImage();
+
+                    //paragraph.AddImage();
+
+
+                }
+                else if (match.Groups["bold"].Success)
                 {
                     var inner = StripTags(match.Value, "**", "<b>", "</b>");
                     var tempPara = new Paragraph();
-                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, cache, currentColor, depth + 1);
                     foreach (var el in tempPara.Elements.OfType<FormattedText>())
                     {
                         el.Bold = true;
@@ -1561,7 +1695,7 @@ namespace ExportFactory.Services
                 {
                     var inner = StripTags(match.Value, "*", "<i>", "</i>");
                     var tempPara = new Paragraph();
-                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, cache, currentColor, depth + 1);
                     foreach (var el in tempPara.Elements.OfType<FormattedText>())
                     {
                         el.Italic = true;
@@ -1572,7 +1706,7 @@ namespace ExportFactory.Services
                 {
                     var inner = StripTags(match.Value, "__", "<u>", "</u>");
                     var tempPara = new Paragraph();
-                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, cache, currentColor, depth + 1);
                     foreach (var el in tempPara.Elements.OfType<FormattedText>())
                     {
                         el.Underline = Underline.Single;
@@ -1589,7 +1723,7 @@ namespace ExportFactory.Services
                 {
                     var inner = StripTags(match.Value, "^", "<sup>", "</sup>");
                     var tempPara = new Paragraph();
-                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, cache, currentColor, depth + 1);
                     foreach (var el in tempPara.Elements.OfType<FormattedText>())
                     {
                         el.Superscript = true;
@@ -1600,7 +1734,7 @@ namespace ExportFactory.Services
                 {
                     var inner = StripTags(match.Value, "~", "<sub>", "</sub>");
                     var tempPara = new Paragraph();
-                    ApplyMarkdownStylesToParagraph(tempPara, inner, currentColor, depth + 1);
+                    ApplyMarkdownStylesToParagraph(tempPara, inner, cache, currentColor, depth + 1);
                     foreach (var el in tempPara.Elements.OfType<FormattedText>())
                     {
                         el.Subscript = true;
@@ -1612,7 +1746,7 @@ namespace ExportFactory.Services
                     var parts = Regex.Match(match.Value, @"\{(.*?):(.*?)\}").Groups;
                     var color = Color.Parse(parts[1].Value.Trim());
                     var content = parts[2].Value.Trim();
-                    ApplyMarkdownStylesToParagraph(paragraph, content, color, depth + 1);
+                    ApplyMarkdownStylesToParagraph(paragraph, content, cache, color, depth + 1);
                 }
                 else if (match.Groups["br"].Success)
                 {

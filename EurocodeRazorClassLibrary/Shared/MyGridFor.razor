@@ -6,76 +6,66 @@
 @using CommonLibrary.Models
 @using ExportFactory.Services
 @using ExportFactory.Shared
-
-
 @using Microsoft.FluentUI.AspNetCore.Components
 @using System.ComponentModel
+
 @inherits BaseEurocodeComponent
-
-
 
 
 <div class="mijn-component">
     <table class="striped-table responsive-table">
-        <caption style="caption-side:top;">
-                <span>
-                    <i>@Model.Heading</i>
-                    <button @onclick="() => ToggleHidden(Hidden)">
-                        @(Hidden ? "Toon tabel" : "Verberg tabel")
-                    </button>
-                </span>
+        <caption style="caption-side:top; padding-bottom:0px; ">
 
-            @if (!Hidden)
+            <span>
+
+
+
+            @if (!IsInklapbaar)
             {
-                <FluentSwitch @bind-Value="ShowDescription"
-                              Label="label :"
-                              Style="margin-left: 20px;"
-                              UncheckedMessage="kort"
-                              CheckedMessage="lang"/>
-
-                <FluentSwitch @bind-Value="ShowArticles"
-                              Label="art. :"
-                              Style="margin-left: 20px;"
-                              
-                               />
-
-                @* <FluentCheckbox @bind-Value="ShowDescription"
-                                Label="omschrijving"
-                                Style="margin-left:10px" /> *@
-
-
-
-               @*  <FluentCheckbox @bind-Value="ShowArticles"
-                                Label="artikel"
-                                Style="margin-left:10px;" /> *@
-
-                <FluentSwitch @bind-Value="ShowFormulas"
-                              Label="vgl. :"
-                              Style="margin-left: 20px;"
-                              
-                               />
-
-               @*  <FluentCheckbox @bind-Value="ShowFormulas" 
-                                Label="formule"
-                                Style="margin-left:10px;" /> *@
-
-                <FluentSwitch @bind-Value="ShowNonEditables"
-                              @bind-Value:after="OnShowNonEditablesChanged"
-                              Label="rijen :"
-                              Style="margin-left: 20px;"
-                              UncheckedMessage="invoer"
-                              CheckedMessage="alle rijen" />
-
-
-
-               @*  <FluentCheckbox @bind-Value="ShowNonEditables"
-                                @bind-Value:after="OnShowNonEditablesChanged"
-                                Label="berekende waarden"
-                                Style="margin-left:10px;" /> *@
+                    @* <i>@Model.Heading</i> *@
+                    <button style="width:80%; border-radius:1vw; text-align:left;" @onclick="() => ToggleHidden(Hidden)">
+                        @(Hidden ? $"🔻 {Model.Heading}" : $"🔺 {Model.Heading}")
+                    </button>
+            }
+            else
+            {
+                    @Model.Heading          
             }
 
-        </caption>
+               
 
+           
+                <FluentButton Appearance="Appearance.Stealth" @onclick="ToggleMenu" Style="padding:2px 8px;">
+                    <span>⋯</span> @* drie puntjes als menu-button *@
+                </FluentButton>
+
+            </span>
+
+
+                <FluentMenu Open="IsMenuOpen" Anchored="false">
+                    <FluentMenuItem Id="ckDesc" Role="MenuItemRole.MenuItemCheckbox" @bind-Checked=ShowDescription>
+                        Omschrijving
+                    </FluentMenuItem>
+                    <FluentMenuItem Id="ckArt" Role="MenuItemRole.MenuItemCheckbox" @bind-Checked=ShowArticles>
+                        Artikel
+                    </FluentMenuItem>
+                    <FluentMenuItem Id="ckFormulas" Role="MenuItemRole.MenuItemCheckbox" @bind-Checked=ShowFormulas>
+                        Formules
+                    </FluentMenuItem>
+
+                   
+                    <FluentDivider></FluentDivider>
+
+                    <FluentSwitch @bind-Value="ShowNonEditables"
+                                  @bind-Value:after="OnShowNonEditablesChanged"
+                                  Style="margin-left: 20px;"
+                                  UncheckedMessage="toon invoer"
+                                  CheckedMessage="alle rijen" />
+                </FluentMenu>
+           
+
+
+        </caption>
 
         <colgroup>
             <col style="width: auto;">       <!-- opvullende kolom -->
@@ -83,7 +73,6 @@
             <col style="width: 120px;">      <!-- vaste -->
             <col style="width: 120px;">      <!-- vaste -->
         </colgroup>
-
 
 
         <tbody>
@@ -185,6 +174,9 @@
     [Parameter] public bool ReadOnly { get; set; } = false; // standaard bewerkbaar
     [Parameter] public EventCallback<bool> ReadOnlyChanged { get; set; }
 
+    [Parameter] public bool IsInklapbaar{ get; set; }
+
+
 
     [Parameter] public bool ShowDescription { get; set; } = !true; // standaard uit, toont label
 
@@ -193,7 +185,7 @@
     [Parameter] public bool ShowFormulas { get; set; } = !true; // standaard geen formules tonen
 
 
-    [Parameter] public bool ShowNonEditables { get; set; } = true; // standaard alle velden tonen
+    [Parameter] public bool ShowNonEditables { get; set; } = !true; // standaard alleen invoer tonen
     [Parameter] public EventCallback<bool> ShowNonEditablesChanged { get; set; }
 
 
@@ -204,6 +196,15 @@
     [Parameter] public HashSet<string> VisibleColumns { get; set; } = new();
     [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
 
+
+    private bool IsMenuOpen { get; set; } = false;
+
+    private void ToggleMenu()
+    {
+        IsMenuOpen = !IsMenuOpen;
+    }
+    
+   
 
 
     private bool AllRowsOpen { get; set; } = false;
@@ -592,7 +593,8 @@
     {
         string typeAttr = Type.GetTypeCode(targetType) switch
         {
-            TypeCode.Int32 or TypeCode.Double or TypeCode.Single or TypeCode.Decimal => "number",
+            TypeCode.Int32 =>"number",
+            TypeCode.Double or TypeCode.Single or TypeCode.Decimal => "text",
             TypeCode.DateTime => "date",
             _ => "text"
         };

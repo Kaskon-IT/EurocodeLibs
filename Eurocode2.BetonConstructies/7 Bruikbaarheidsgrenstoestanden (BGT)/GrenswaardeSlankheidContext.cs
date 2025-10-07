@@ -23,7 +23,7 @@ namespace Eurocode.BetonConstructies
 
         // oorzaken
         private double _lengteOverspanning = 2000;
-
+        private BendingResults? _bendingResults;
 
         [TableColumn("l [mm]", Key = K.Slankheid_LengteOverspanning)]
         public double LengteOverspanning
@@ -38,23 +38,32 @@ namespace Eurocode.BetonConstructies
             }
         } // Lengte van de overspanning van het element in mm
 
+
+
         [TableColumn("d [mm]", Key = K.Slankheid_EffectieveDikte)]
         public double EffectieveDikte
         {
-            get
-            {
-                if (BendingResults == null) return 100;
+            get => BendingResults?.D ?? 100;
 
-                var nuttigeHoogte = BendingResults.D;
-                return nuttigeHoogte;
-            }
 
         } // Effectieve dikte van het element in mm
 
 
         public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
 
-        public required BendingResults BendingResults { get; set; }
+        public required BendingResults BendingResults
+        {
+            get => _bendingResults;
+            set
+            {
+                if (SetNestedProperty(ref _bendingResults, value))
+                {
+                    BerekenEnValideer();
+                }
+            }
+
+
+        }
 
 
         // gevolgen
