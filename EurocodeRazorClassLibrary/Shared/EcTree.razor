@@ -4,18 +4,20 @@
 
 @if (Context != null)
 {
-    @if (MaakTabbladen)
+    @if (ShowAccordion)
     {
-        <FluentTabs Id="ctxTabs" ActiveId="tab0">
-            <FluentTab TabId="tab0" Label="Hoofdcontext">
-                <MyGridFor @bind-Model="Context"
+        <FluentAccordion Id="ctxAccordion">
+            <FluentAccordionItem Heading="@Context.Heading">
+                <MyGridFor @bind-Model="Context" 
                            @key="Context.Id"
                            @bind-ReadOnly="ReadOnly"
-                           IsInklapbaar="true" />
-            </FluentTab>
+                           ShowCaption="false"
+                           ShowNonEditables="ShowNonEditables"
+                           />
+            </FluentAccordionItem> 
 
-            @RenderChildTabs(Context, new HashSet<Guid>())
-        </FluentTabs>
+            @RenderChildrenAccordionItems(Context)
+        </FluentAccordion>
     }
     else
     {
@@ -23,7 +25,9 @@
             <MyGridFor @bind-Model="Context"
                        @key="Context.Id"
                        @bind-ReadOnly="ReadOnly"
-                       IsInklapbaar="true" />
+                       ShowNonEditables="ShowNonEditables"
+                       ShowCaption="ShowCaptions"
+                        />
 
             @RenderChildren(Context, new HashSet<Guid>())
         </div>
@@ -41,7 +45,103 @@
     [Parameter] public EventCallback<BaseEurocodeContext> ContextChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; } = false;
     [Parameter] public EventCallback<bool> ReadOnlyChanged{ get; set; }
-    [Parameter] public bool MaakTabbladen { get; set; } = false;
+    [Parameter] public bool ShowAccordion { get; set; } = false;
+    [Parameter] public EventCallback<bool> ShowAccordionChanged { get; set; }
+
+    //[Parameter] public bool ShowCaptions { get; set; } = true;
+    //[Parameter] public EventCallback<bool> ShowCaptionsChanged { get; set; }
+
+    [Parameter] public bool ShowNonEditables { get; set; } = true;
+    [Parameter] public EventCallback<bool> ShowNonEditablesChanged { get; set; }
+
+
+    private bool ShowCaptions => !ShowAccordion;
+
+    private RenderFragment RenderChildrenAccordionItems(BaseEurocodeContext rootCtx)
+    {
+        var visited = new HashSet<Guid>();
+        var allChildren = GetAllChildContexts(rootCtx, visited)
+            .DistinctBy(c => c.Id)
+            .ToList();
+
+        return builder =>
+        {
+            int seq = 0;
+
+            foreach (var child in allChildren)
+            {
+                builder.OpenComponent<FluentAccordionItem>(seq++);
+                builder.AddAttribute(seq++, "Heading", child.Heading ?? child.GetType().Name);
+                builder.AddAttribute(seq++, "ChildContent", (RenderFragment)(itemContent =>
+                {
+                    int t = 0;
+                    itemContent.OpenComponent(t++, typeof(MyGridFor<BaseEurocodeContext>));
+                    itemContent.SetKey(child.Id);
+                    itemContent.AddAttribute(t++, "Model", child);
+                    itemContent.AddAttribute(t++, "ReadOnly", ReadOnly);
+                    itemContent.CloseComponent();
+                }));
+                builder.CloseComponent();
+            }
+        };
+    }
+
+
+    private RenderFragment RenderChildrenAccordion(BaseEurocodeContext rootCtx)
+    {
+        var visited = new HashSet<Guid>();
+        var allChildren = GetAllChildContexts(rootCtx, visited)
+            .DistinctBy(c => c.Id)
+            .ToList();
+
+        return builder =>
+        {
+            if (allChildren.Count == 0)
+                return;
+
+            int seq = 0;
+
+            builder.OpenComponent<FluentAccordion>(seq++);
+            builder.AddAttribute(seq++, "ChildContent", (RenderFragment)(accordionBuilder =>
+            {
+                int s = 0;
+
+                // AccordionItem voor de parent
+                accordionBuilder.OpenComponent<FluentAccordionItem>(s++);
+                accordionBuilder.AddAttribute(s++, "Title", rootCtx.Heading ?? rootCtx.GetType().Name);
+                accordionBuilder.AddAttribute(s++, "ChildContent", (RenderFragment)(itemContent =>
+                {
+                    int t = 0;
+                    itemContent.OpenComponent(t++, typeof(MyGridFor<BaseEurocodeContext>));
+                    itemContent.SetKey(rootCtx.Id);
+                    itemContent.AddAttribute(t++, "Model", rootCtx);
+                    itemContent.AddAttribute(t++, "ReadOnly", ReadOnly);
+                    itemContent.CloseComponent();
+                }));
+                accordionBuilder.CloseComponent();
+
+                // AccordionItems voor alle distinct children
+                foreach (var child in allChildren)
+                {
+                    accordionBuilder.OpenComponent<FluentAccordionItem>(s++);
+                    accordionBuilder.AddAttribute(s++, "Title", child.Heading ?? child.GetType().Name);
+                    accordionBuilder.AddAttribute(s++, "ChildContent", (RenderFragment)(itemContent =>
+                    {
+                        int t = 0;
+                        itemContent.OpenComponent(t++, typeof(MyGridFor<BaseEurocodeContext>));
+                        itemContent.SetKey(child.Id);
+                        itemContent.AddAttribute(t++, "Model", child);
+                        itemContent.AddAttribute(t++, "ReadOnly", ReadOnly);
+                        itemContent.CloseComponent();
+                    }));
+                    accordionBuilder.CloseComponent();
+                }
+            }));
+            builder.CloseComponent();
+        };
+    }
+
+
 
     private RenderFragment RenderChildTabs(BaseEurocodeContext ctx, HashSet<Guid> visited) => builder =>
     {
@@ -109,6 +209,32 @@
         }
     }
 
+
+
+    private IEnumerable<BaseEurocodeContext> GetAllChildContexts(BaseEurocodeContext ctx, HashSet<Guid> visited)
+    {
+        if (ctx == null || !visited.Add(ctx.Id))
+            yield break;
+
+        var infos = GetNestedInfos(ctx);
+        foreach (var info in infos)
+        {
+            var child = info.Child;
+            if (child == null)
+                continue;
+
+            yield return child;
+
+            // recursief verder
+            foreach (var sub in GetAllChildContexts(child, visited))
+                yield return sub;
+        }
+    }
+
+
+
+
+
     private IEnumerable<NestedContextInfo> GetNestedInfos(BaseEurocodeContext ctx)
     {
         return ctx.GetNestedContexts();
@@ -128,23 +254,6 @@
 
                 builder.OpenElement(seq++, "div");
                 builder.AddAttribute(seq++, "class", "nested-block");
-
-                // Toon ouders van deze child
-                //builder.OpenElement(seq++, "span");
-                //builder.AddAttribute(seq++, "class", "origin");
-
-                //builder.AddContent(seq++, "Afkomstig van: ");
-                //builder.AddContent(seq++, string.Join(" → ", GetParentChains(child)));
-
-
-
-                //builder.AddContent(seq++, "Afkomstig van: ");
-                //builder.AddContent(seq++, string.Join(" → ", GetParentChains(child)));
-
-                //builder.AddContent(seq++, string.Join(", ", info.Parents.Select(p => $"{p.Parent.GetType().Name}.{p.PropertyName}")));
-                //builder.CloseElement(); // span
-
-                // Toon child node met @bind-Model
                 builder.OpenComponent(seq++, typeof(MyGridFor<BaseEurocodeContext>));
                 builder.SetKey(child.Id);
                 builder.AddAttribute(seq++, "Model", child);
@@ -153,7 +262,6 @@
 
                 // Recursief alle children van deze child
                 builder.AddContent(seq++, RenderChildren(child, rendered));
-
                 builder.CloseElement(); // div.nested-block
             }
         }

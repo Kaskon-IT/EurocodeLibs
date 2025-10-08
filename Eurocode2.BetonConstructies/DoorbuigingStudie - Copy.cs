@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using Eurocode.Belastingen;
 using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
@@ -14,21 +15,28 @@ namespace Eurocode.BetonConstructies
 
         //public BetonDoorbuigingContext CtxBlijvend { get; set; } = new();
         //public BetonDoorbuigingContext CtxBlijvend { get; set; } = new();
-        public BetonDoorbuigingContext CtxQuasiBlijvend { get; set; } = new(new(), new(), new());
+
+
+        private BetonDoorbuigingContext _ctx = new();
+        public BetonDoorbuigingContext Ctx
+        {
+            get => _ctx;
+            set => SetNestedProperty(ref _ctx, value);
+        }
         //public BetonDoorbuigingContext CtxFrequent { get; set; } = new();
 
 
         private void SetContextCollection(DoorbuigingTrap trap)
         {
             // vul de context
-            CtxQuasiBlijvend.Beton = trap.Beton;
-            CtxQuasiBlijvend.Profiel = trap.Profiel;
-            CtxQuasiBlijvend.Wapening = trap.Wapening;
-            CtxQuasiBlijvend.Kruipkrimp = trap.KruipKrimpBerekening;
+            Ctx.Beton = trap.Beton;
+            Ctx.Profiel = trap.Profiel;
+            Ctx.Wapening = trap.Wapening;
+            Ctx.Kruipkrimp = trap.KruipKrimpBerekening;
 
-            CtxQuasiBlijvend.D = trap.NuttigeHoogte;
+            Ctx.D = trap.NuttigeHoogte;
             //CtxQuasiBlijvend.LengteMM = trap.LengteMM;
-            CtxQuasiBlijvend.Lijnlast = trap.Lijnlast;
+            Ctx.Lijnlast = trap.Lijnlast;
 
 
             // clone
@@ -48,7 +56,7 @@ namespace Eurocode.BetonConstructies
         {
             KruipKrimpBerekening = new BetonContextKruipEnKrimpCalculator(Beton, Profiel);
             //SetContextCollection(this);
-            CalculatorDoorbuigingQuasiBlijvend = new BetonDoorbuigingCalculator(CtxQuasiBlijvend);
+            CalculatorDoorbuigingQuasiBlijvend = new BetonDoorbuigingCalculator(Ctx);
         }
 
         public BetonContext Beton { get; set; } = new("C30/37");
@@ -74,13 +82,14 @@ namespace Eurocode.BetonConstructies
             KruipKrimpBerekening = context.Kruipkrimp;
             Wapening = context.Wapening;
 
-            CtxQuasiBlijvend = context;
+            Ctx = context;
             CalculatorDoorbuigingQuasiBlijvend = new(context);
             //
             //context.Kruipkrimp = new() { Beton = context.Beton, Profiel = context.Profiel };
 
 
             Init();
+            BerekenEnValideer();
         }
 
 
@@ -99,7 +108,7 @@ namespace Eurocode.BetonConstructies
 
             //DoorbuigingBerekening = new BetonDoorbuigingCalculator(CtxBlijvend);
             //CalculatorDoorbuigingBlijvend = new BetonDoorbuigingCalculator(CtxBlijvend);
-            CalculatorDoorbuigingQuasiBlijvend = new BetonDoorbuigingCalculator(CtxQuasiBlijvend);
+            CalculatorDoorbuigingQuasiBlijvend = new BetonDoorbuigingCalculator(Ctx);
             //CalculatorDoorbuigingFrequent = new BetonDoorbuigingCalculator(CtxFrequent);
 
             //CtxQuasiBlijvend.LengteMM
@@ -108,34 +117,41 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "lijnlast", Symbol = "<i>q</i><sub>qp</sub>", Unit = "kN/m")]
+        [TableColumn(Label = "lijnlast (BGT)", Symbol = "<i>q</i><sub>E,BGT</sub>", Unit = "kN/m")]
         public double Lijnlast
         {
-            get => CtxQuasiBlijvend.Lijnlast;
-
+            get => Ctx.Lijnlast;
         }
+        public string LijnlastSymbol => $"<i>q</i><sub>{SuffixCombinatieType}</sub>";
+
+        [TableColumn(Label = "lijnlast (permanent)", Symbol = "<i>q</i><sub>G</sub>", Unit = "kN/m")]
+        public double LijnlastPermanent
+        {
+            get => Ctx.LijnlastG;
+        }
+
 
 
         //[TableColumn(Label = "lengte overspanning", Symbol = "<i>L</i><sub>t,proj.z</sub>", Unit = "m")]
         public double LengteM => Overspanning / 1000.0;
 
 
-        [TableColumn(Label = "overspanning", Symbol = "Lt", Unit = "mm")]
+        [TableColumn(Label = "overspanning", Symbol = "<i>L</i><sub>t</sub>", Unit = "mm")]
         public double Overspanning
         {
-            get => CtxQuasiBlijvend.LengteMM;
+            get => Ctx.LengteMM;
             //internal set { CtxQuasiBlijvend.LengteMM = value; }
         }
 
 
-        [TableColumn(Label = "hoogte profiel", Symbol = "h", Unit = "mm")]
+        //[TableColumn(Label = "hoogte profiel", Symbol = "h", Unit = "mm")]
         public double Hoogte
         {
             get { return Profiel.Hoogte; }
             internal set { Profiel.Hoogte = value; }
         }
 
-        [TableColumn(Label = "breedte profiel", Symbol = "b", Unit = "mm")]
+        //[TableColumn(Label = "breedte profiel", Symbol = "b", Unit = "mm")]
 
         public double Breedte
         {
@@ -143,18 +159,18 @@ namespace Eurocode.BetonConstructies
             internal set { Profiel.Breedte = value; }
         }
 
-        [TableColumn(Label = "wapening (tekst)",
-            Description = "Voor opgave wapening gebruik bijvoorbeeld: " +
-            "<br />6r25 (voor 6 staven Ø25)" +
-            "<br />r8-200 (voor staven Ø8 hoh 200mm)" +
-            "<br />4r20+2r25 (voor meerdere groepen)")]
+        //[TableColumn(Label = "wapening (tekst)",
+        //    Description = "Voor opgave wapening gebruik bijvoorbeeld: " +
+        //    "<br />6r25 (voor 6 staven Ø25)" +
+        //    "<br />r8-200 (voor staven Ø8 hoh 200mm)" +
+        //    "<br />4r20+2r25 (voor meerdere groepen)")]
         public string WapeningTekst
         {
             get { return Wapening.Tekst; }
             internal set { Wapening.Tekst = value; }
         }
 
-        [TableColumn(Label = "wapening (mm²)", Symbol = "<i>A<i><sub>s,toe</sub>", Unit = "mm²")]
+        //[TableColumn(Label = "wapening (mm²)", Symbol = "<i>A<i><sub>s,toe</sub>", Unit = "mm²")]
         public double WapeningAsApplied
         {
             get { return Wapening.As; }
@@ -179,15 +195,15 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "nuttige hoogte",
-            Description = "is de nuttige hoogte en wordt berekend door middel van de hoogte van profiel en de referentieafstand.",
-            Symbol = "d",
-            Unit = "mm")]
+        //[TableColumn(Label = "nuttige hoogte",
+        //    Description = "is de nuttige hoogte en wordt berekend door middel van de hoogte van profiel en de referentieafstand.",
+        //    Symbol = "d",
+        //    Unit = "mm")]
         public double NuttigeHoogte
         {
             get
             {
-                return CtxQuasiBlijvend.D;
+                return Ctx.D;
             }
         }
 
@@ -195,61 +211,73 @@ namespace Eurocode.BetonConstructies
 
         //[TableColumn(Label = "lijnlast", Description = "lijnlast q in kN/m¹", Symbol = "q", Unit = "kN/m¹")]
         //public double Lijnlast => CtxBlijvend.Q;
-
+        private string SuffixCombinatieType
+        {
+            get
+            {
+                switch (Ctx.CombinatieType)
+                {
+                    case Belastingen.BelastingCombinatieTypeEnum.Fundamenteel_A:
+                    case Belastingen.BelastingCombinatieTypeEnum.Fundamenteel_B:
+                        return "Ed";
+                    case Belastingen.BelastingCombinatieTypeEnum.Brand:
+                        return "Ebr";
+                    case Belastingen.BelastingCombinatieTypeEnum.Aardbeving:
+                        return "Eab";
+                    case Belastingen.BelastingCombinatieTypeEnum.Karakteristiek:
+                        return "Ek";
+                    case Belastingen.BelastingCombinatieTypeEnum.Frequent:
+                        return "Efr";
+                    case Belastingen.BelastingCombinatieTypeEnum.QuasiBlijvend:
+                        return "Eqp";
+                    case Belastingen.BelastingCombinatieTypeEnum.Blijvend:
+                        return "Ep";
+                    default:
+                        return "Ed";
+                }
+            }
+        }
 
         //public double LijnlastLocZ => Lijnlast * Math.Pow(Aantrede / Schuin, 2);
 
-        [TableColumn(Label = "Moment (BGT)", Description = "Moment", Symbol = "<i>M</i><sub>Eqp</sub>", Unit = "kNm")]
+        [TableColumn(Label = "Moment (BGT)", Description = "Moment", Symbol = "<i>M</i><sub>E,BGT</sub>", Unit = "kNm")]
         public double MomentEqp
         {
             get
             {
-
-                //this.Krachten.My.Kar = Lijnlast * Math.Pow(L, 2) / 8.0;
-                //this.SectionForces.My = Lijnlast * Math.Pow(L, 2) / 8.0;
-                return CtxQuasiBlijvend.Lijnlast * Math.Pow(LengteM, 2) / 8.0;
-                //return this.SectionForces.My;
-
+                return Ctx.Lijnlast * Math.Pow(LengteM, 2) / 8.0;
             }
         }
-        public Formula MomentEqpFormula => new() { StaticValue = @$"M_{{Eqp}} = \frac{{1}}{{8}} q L^2 = {1 / 8.0} \cdot {CtxQuasiBlijvend.Lijnlast.ToTeX()} \cdot {LengteM.ToTeX()}^2 = {MomentEqp.ToTeX()}" };
+        public string MomentEqpSymbol => $"<i>M</i><sub>{SuffixCombinatieType}</sub>";
+
+        public Formula MomentEqpFormula => new() { StaticValue = @$"M_{{{SuffixCombinatieType}}} = \frac{{1}}{{8}} q L^2 = {1 / 8.0} \cdot {Ctx.Lijnlast.ToTeX()} \cdot {LengteM.ToTeX()}^2 = {MomentEqp.ToTeX()}" };
 
 
-        //[TableColumn(Label = "Moment (BGT)", Description = "Moment (locZ)", Symbol = "<i>M</i><sub>Eqp</sub>", Unit = "kNm")]
-        //public double MomentEqpLocX
-        //{
-        //    get
-        //    {
-        //        return LijnlastLocZ * Math.Pow(LengteLocX, 2) / 8.0;
-
-        //    }
-        //}
-        //public Formula MomentEqpLocXFormula => new() { StaticValue = @$"M_{{Eqp}} = \frac{{1}}{{8}} q L^2 = {1 / 8.0} \cdot {LijnlastLocZ.ToTeX()} \cdot {LengteLocX.ToTeX()}^2 = {MomentEqpLocX.ToTeX()}" };
+        [TableColumn(Label = "Moment (G)", Description = "Moment", Symbol = "<i>M</i><sub>G</sub>", Unit = "kNm")]
+        public double MomentG
+        {
+            get
+            {
+                return Ctx.LijnlastG * Math.Pow(LengteM, 2) / 8.0;
+            }
+        }
 
 
 
-
-        //[TableColumn(Symbol = "<i>M</i><sub>Ed</sub>", Unit = "kNm", Label = "Moment rekenwaarde")]
-        //public double MomentEd
-        //{
-        //   get
-        //   {
-        //        this.Krachten.My.Ed = 1.3 * MomentEqp;
-        //        return this.Krachten.My.Ed;
-        //    }
-        //}
 
 
         //[TableColumn(Label = "deler toelaatbare doorbuiging", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "1/")]
         public int DelerVoorToelaatbareDoorbuigingEind { get; set; } = 250;
         public int DelerVoorToelaatbareDoorbuigingBijk { get; set; } = 500;
 
+        //[TableColumn(Label = "Combinatietype")]
+        public BelastingCombinatieTypeEnum CombinatieType => Ctx.CombinatieType;
 
-        [TableColumn(Label = "fractie toelaatbare doorbuiging (eind)", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "")]
 
+        //[TableColumn(Label = "fractie toelaatbare doorbuiging (eind)", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "")]
         public double ToelaatbareDoorbuigingEindFractieOverspanning => 1 / (double)DelerVoorToelaatbareDoorbuigingEind;
 
-        [TableColumn(Label = "toelaatbare doorbuiging (eind)", Symbol = "<i>u</i><sub>toel.</sub>", Unit = "mm")]
+        //[TableColumn(Label = "toelaatbare doorbuiging (eind)", Symbol = "<i>u</i><sub>eind,toel.</sub>", Unit = "mm")]
         public double ToelaatbareDoorbuigingEind
         {
             get
@@ -258,11 +286,23 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(Label = "fractie toelaatbare doorbuiging (bijkomend)", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "")]
+        [TableColumn(Label = "unity check eind", Symbol = "U.C.", StringFormat = "0.00")]
+        public double UnityCheckEind => DoorbuigingEind / ToelaatbareDoorbuigingEind;
+        public Formula UnityCheckEindFormula => new() { StaticValue = $@"= \frac{{{DoorbuigingEind:0.00}}} {{{ToelaatbareDoorbuigingEind:0.00}}} = {UnityCheckEind:0.00}" };
 
+        [TableColumn(Label = "unity check bijk", Symbol = "U.C.", StringFormat = "0.00")]
+        public double UnityCheckBijk => DoorbuigingBijk / ToelaatbareDoorbuigingBijk;
+        public Formula UnityCheckBijkFormula => new() { StaticValue = $@"= \frac{{{DoorbuigingBijk:0.00}}} {{{ToelaatbareDoorbuigingBijk:0.00}}} = {UnityCheckBijk:0.00}" };
+
+
+
+
+
+
+        //[TableColumn(Label = "fractie toelaatbare doorbuiging (bijkomend)", Unit = "×L", Description = "De toelaatbare doorbuiging wordt bepaalt als fractie van de overspanning, bijvoorbeeld 1/250 of 1/300", Symbol = "")]
         public double ToelaatbareDoorbuigingBijkFractieOverspanning => 1 / (double)DelerVoorToelaatbareDoorbuigingBijk;
 
-        [TableColumn(Label = "toelaatbare doorbuiging (bijkomend)", Symbol = "<i>w</i><sub>bijk.toel.</sub>", Unit = "mm")]
+        //[TableColumn(Label = "toelaatbare doorbuiging (bijkomend)", Symbol = "<i>w</i><sub>bijk.toel.</sub>", Unit = "mm")]
         public double ToelaatbareDoorbuigingBijk
         {
             get
@@ -286,23 +326,23 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return DoorbuigingBijkomend / ToelaatbareDoorbuigingBijk;
+                return DoorbuigingBijk / ToelaatbareDoorbuigingBijk;
             }
         }
 
-        [TableColumn(Label = "doorbuiging", Symbol = "<i>w</i><sub>tot</sub>", Unit = "mm")]
+        //[TableColumn(Label = "doorbuiging", Symbol = "<i>w</i><sub>tot</sub>", Unit = "mm")]
         public double Wtot
         {
             get
             {
                 //CalculatorDoorbuigingQuasiBlijvend.BerekenEnValideer();
-                return CtxQuasiBlijvend.Wtot;
+                return Ctx.Wtot;
             }
         }
 
 
 
-        [TableColumn(Label = "doorbuiging", Symbol = "<i>w</i><sub>eind</sub>", Unit = "mm")]
+        [TableColumn(Label = "doorbuiging (eind)", Symbol = "<i>w</i><sub>eind</sub>", Unit = "mm")]
         public double DoorbuigingEind
         {
             get
@@ -318,16 +358,26 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(Label = "doorbuiging", Symbol = "<i>w</i><sub>bijk</sub>", Unit = "mm")]
-        public double DoorbuigingBijkomend
+        [TableColumn(Label = "doorbuiging (bijkomstig)", Symbol = "<i>w</i><sub>bijk</sub>", Unit = "mm")]
+        public double DoorbuigingBijk
         {
             get
             {
-                return CtxQuasiBlijvend.Wbijk;
+                return Ctx.Wbijk;
 
             }
         }
 
+
+        [TableColumn(Label = "doorbuiging (onmiddelijk)", Symbol = "<i>w</i><sub>on,G</sub>", Unit = "mm")]
+        public double DoorbuigingW1
+        {
+            get
+            {
+                return Ctx.W1;
+
+            }
+        }
 
 
         //WapeningContext Wapening = new() { Tekst = "6Ø25" }; // 2945 mm2
@@ -362,12 +412,22 @@ namespace Eurocode.BetonConstructies
         protected override bool Valideer()
         {
             Meldingen.Clear();
-            if (Wtot > ToelaatbareDoorbuigingEind)
+            bool returnVal = true;
+            if (UnityCheckEind > 1)
             {
-                Meldingen.Add(new Melding(MeldingType.Waarschuwing, $"Doorbuiging is groter dan toelaatbaar."));
-                return false;
+                AddMeldingWaarschuwing("doorbuiging eindfase te groot");
+                returnVal = false;
             }
-            return true;
+
+            if (UnityCheckBijk > 1)
+            {
+                AddMeldingWaarschuwing("doorbuiging bijkomend te groot");
+                returnVal = false;
+            }
+
+
+
+            return returnVal;
         }
     }
 }

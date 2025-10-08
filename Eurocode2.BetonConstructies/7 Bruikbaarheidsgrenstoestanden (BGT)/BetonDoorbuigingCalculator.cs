@@ -30,6 +30,7 @@ namespace Eurocode.BetonConstructies
         // lijnlastBlijvend     [kN/m¹]   -> w1 
         // lijnlastCombinatie   [kN/m¹]   -> w_tot
         //                                w_bijk = w_tot - w1                                  
+        public BetonDoorbuigingContext() { }
 
         public BetonDoorbuigingContext(BetonContext beton, ParametrischProfielContext profiel, WapeningContext wapening)
         {
@@ -37,6 +38,7 @@ namespace Eurocode.BetonConstructies
             this.Profiel = profiel;
             this.Wapening = wapening;
             this.Kruipkrimp = new(Beton, Profiel);
+            Heading = "Gegevens doorbuiging";
 
 
 
@@ -64,6 +66,9 @@ namespace Eurocode.BetonConstructies
 
         public double Moment => 1.0 / 8.0 * _lijnlast * Math.Pow(LengteMM * 0.001, 2); // kNm
         public double MomengtG => 1.0 / 8.0 * _lijnlastG * Math.Pow(LengteMM * 0.001, 2); // kNm
+
+
+        public BelastingCombinatieTypeEnum CombinatieType { get; set; } = BelastingCombinatieTypeEnum.Frequent;
 
 
 

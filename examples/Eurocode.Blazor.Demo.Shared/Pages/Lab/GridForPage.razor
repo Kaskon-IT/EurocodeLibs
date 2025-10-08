@@ -13,8 +13,12 @@
 else
 {
     <div>
-       <label><input type="checkbox" @bind="readOnly" /> ReadOnly</label>
-       <label><input type="checkbox" @bind="showNonEditables" /> Non-Input</label>
+        <label><input type="checkbox" @bind="readOnly" /> ReadOnly</label>
+        <label><input type="checkbox" @bind="showNonEditables" /> Non-Input</label>
+     
+        <label><input type="checkbox" @bind="showCaptions" /> Caption</label>
+        <label><input type="checkbox" @bind="showChildren" /> Children</label>
+
 
     </div>
 
@@ -24,37 +28,14 @@ else
 
     @if(EurocodeContext != null)
     {
-        <EcTree Context="EurocodeContext" @bind-ReadOnly="readOnly" MaakTabbladen="showNonEditables" />
+        <EcTree Context="EurocodeContext" 
+            @bind-ReadOnly="readOnly" 
+            ShowAccordion="showChildren"
+             />
 
-        @* <EurocodeRazorClassLibrary.Diagrams.EurocodeContextDiagram Root="EurocodeContext" /> *@
+       
 
-        @* <EurocodeContextTreeViewDemo Context="EurocodeContext" /> *@
-
-
-  @*       <MyGridFor @bind-Model="EurocodeContext"
-                   @bind-VisibleColumns="visibleCols"
-                   ReadOnly="readOnly"
-                   ShowNonEditables="showNonEditables"
-                   @key="EurocodeContext.Id" /> *@
-
-        var nestedCtxen = EurocodeContext.GetNestedContexts().ToList();
         
-        @* Recursief nested contexten tonen *@
-        List<Guid> guids = [];
-        for (int j = 0; j < nestedCtxen.Count; j++)
-        {
-            var nidx = j; // fix closure
-
-            // voorkom dubbele keys
-            if (!guids.Contains(nestedCtxen[nidx].Child.Id))
-            {
-               @*  <MyGridFor @bind-Model="nestedCtxen[nidx].Child"
-                           ReadOnly="readOnly"
-                           ShowNonEditables="showNonEditables"
-                           @key="nestedCtxen[nidx].Child.Id" /> *@
-            }
-
-        }
     }
     
 
@@ -119,6 +100,8 @@ else
 
     private bool readOnly = !true;
     private bool showNonEditables = !true;
+    private bool showCaptions = true;
+    private bool showChildren = true;
 
     protected override void OnInitialized()
     {

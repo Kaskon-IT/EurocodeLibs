@@ -27,12 +27,12 @@ namespace CommonLibrary.Extensions
                 }
                 else if (val is IEnumerable<BaseEurocodeContext> list)
                 {
-                    // recursief (even uitzetten)
-                    //foreach (var item in list)
-                    //{
-                    //    if (item != null)
-                    //        AddRelation(ctx, prop.Name, item, map);
-                    //}
+                    // recursief 
+                    foreach (var item in list)
+                    {
+                        if (item != null)
+                            AddRelation(ctx, prop.Name, item, map);
+                    }
                 }
             }
         }

@@ -80,12 +80,28 @@ namespace CommonLibrary
             return true;
         }
 
-        // Event dat wordt gebruikt voor alle nested properties
+        private bool _isCalculating;
+
         private void NestedPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            //BerekenEnValideer();
-            OnPropertyChanged(e.PropertyName); // bubbelt door naar UI
+            // Bubbel property change omhoog
+            OnPropertyChanged(e.PropertyName);
+
+            // voorkomen dat BerekenEnValideer zichzelf triggert
+            if (_isCalculating)
+                return;
+
+            try
+            {
+                _isCalculating = true;
+                BerekenEnValideer();
+            }
+            finally
+            {
+                _isCalculating = false;
+            }
         }
+
 
 
 

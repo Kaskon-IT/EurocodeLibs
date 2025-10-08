@@ -165,7 +165,8 @@ article {
     border-right: 1px solid var(--neutral-stroke-divider-rest);
     margin: 0 0;
     /*width: calc(100% - 18rem);*/
-    max-width: 1080px;
+    
+    width: 1080px;
 }
 
 aside {

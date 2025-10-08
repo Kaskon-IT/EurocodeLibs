@@ -11,160 +11,147 @@
 
 @inherits BaseEurocodeComponent
 
-
-<div class="mijn-component">
-    <table class="striped-table responsive-table">
-        <caption style="caption-side:top; padding-bottom:0px; ">
-
-            <span>
+<div id="@GridId">
 
 
+    <div class="mijn-component">
+        <table class="striped-table responsive-table">
 
-            @if (!IsInklapbaar)
+    @if (ShowCaption)
             {
-                    @* <i>@Model.Heading</i> *@
-                    <button style="width:80%; border-radius:1vw; text-align:left;" @onclick="() => ToggleHidden(Hidden)">
-                        @(Hidden ? $"🔻 {Model.Heading}" : $"🔺 {Model.Heading}")
-                    </button>
-            }
-            else
-            {
-                    @Model.Heading          
+                <caption style="caption-side:top; padding-bottom:0px; ">
+                    @Model.Heading
+                </caption>
             }
 
-               
+      
 
-           
-                <FluentButton Appearance="Appearance.Stealth" @onclick="ToggleMenu" Style="padding:2px 8px;">
-                    <span>⋯</span> @* drie puntjes als menu-button *@
-                </FluentButton>
-
-            </span>
-
-
-                <FluentMenu Open="IsMenuOpen" Anchored="false">
-                    <FluentMenuItem Id="ckDesc" Role="MenuItemRole.MenuItemCheckbox" @bind-Checked=ShowDescription>
-                        Omschrijving
-                    </FluentMenuItem>
-                    <FluentMenuItem Id="ckArt" Role="MenuItemRole.MenuItemCheckbox" @bind-Checked=ShowArticles>
-                        Artikel
-                    </FluentMenuItem>
-                    <FluentMenuItem Id="ckFormulas" Role="MenuItemRole.MenuItemCheckbox" @bind-Checked=ShowFormulas>
-                        Formules
-                    </FluentMenuItem>
-
-                   
-                    <FluentDivider></FluentDivider>
-
-                    <FluentSwitch @bind-Value="ShowNonEditables"
-                                  @bind-Value:after="OnShowNonEditablesChanged"
-                                  Style="margin-left: 20px;"
-                                  UncheckedMessage="toon invoer"
-                                  CheckedMessage="alle rijen" />
-                </FluentMenu>
-           
+            <colgroup>
+                <col style="width: auto;">       <!-- opvullende kolom -->
+                <col style="width: 120px;">      <!-- vaste -->
+                <col style="width: 120px;">      <!-- vaste -->
+                <col style="width: 120px;">      <!-- vaste -->
+            </colgroup>
 
 
-        </caption>
+            <tbody>
 
-        <colgroup>
-            <col style="width: auto;">       <!-- opvullende kolom -->
-            <col style="width: 120px;">      <!-- vaste -->
-            <col style="width: 120px;">      <!-- vaste -->
-            <col style="width: 120px;">      <!-- vaste -->
-        </colgroup>
-
-
-        <tbody>
-
-            @if (!Hidden)
-            {
-                @foreach (var iRow in _rows)
+                @if (!Hidden)
                 {
-                    if (iRow is PropertyRow row)
+                    @foreach (var iRow in _rows)
                     {
-                        // geef een key mee voor
-                        <tr @key=row.Id>
+                        if (iRow is PropertyRow row)
+                        {
+                            // geef een key mee voor
+                            <tr @key=row.Id>
 
-                            @* 1e kolom *@
-                            <td>
-                                <dl style="margin-bottom:1px;">
-                                    <dt class="katex-like">@((MarkupString)(row.Symbol ?? ""))</dt>
+                                @* 1e kolom *@
+                                <td>
+                                    <dl style="margin-bottom:1px;">
+                                        <dt class="katex-like">@((MarkupString)(row.Symbol ?? ""))</dt>
 
-                                    @if (row.Description != null && ShowDescription)
-                                    {
-                                    <dd>@((MarkupString)(row.Description ?? ""))</dd>
-                                    }
-                                    else
-                                    {
-                                    <dd>@((MarkupString)row.Label)</dd>
-                                    }
+                                        @if (row.Description != null && ShowDescription)
+                                        {
+                                        <dd>@((MarkupString)(row.Description ?? ""))</dd>
+                                        }
+                                        else
+                                        {
+                                        <dd>@((MarkupString)row.Label)</dd>
+                                        }
 
-                                    @if (row.Article != null && ShowArticles)
-                                    {
-                                    <dt>artikel</dt>
-                                    <dd>@row.Article</dd>
-                                    }
+                                        @if (row.Article != null && ShowArticles)
+                                        {
+                                        <dt>artikel</dt>
+                                        <dd>@row.Article</dd>
+                                        }
 
-                                    @if (row.Formula != null && ShowFormulas)
-                                    {
-                                    <dt>vgl.</dt>
-                                    <dd>
-                                        <KaTexFormula Value="@row.Formula?.GetValue()"
-                                                      Label="@row.Formula?.Name"
-                                                      Small="true"
-                                                      DisplayMode="false" />
-                                    </dd>
-                                    }
-                                </dl>
+                                        @if (row.Formula != null && ShowFormulas)
+                                        {
+                                        <dt>vgl.</dt>
+                                        <dd>
+                                            <KaTexFormula Value="@row.Formula?.GetValue()"
+                                                          Label="@row.Formula?.Name"
+                                                          Small="true"
+                                                          DisplayMode="false" />
+                                        </dd>
+                                        }
+                                    </dl>
                         
 
-                            </td>
-
-                            @* 2e kolom *@
-                            <td class="katex-like">
-                                @((MarkupString)((row.Symbol ?? "") + (!string.IsNullOrEmpty(row.Symbol) ? " =" : "")))
-                            </td>
-
-                            @* 3e kolom *@
-                            @if (row.Editable && !ReadOnly)
-                            {
-                                @RenderInput(row.Property)
-                            }
-                            else
-                            {
-                                <td>
-                                    @row.DisplayValue
                                 </td>
-                            }
 
-                            <td>@((MarkupString)(row.Unit ?? ""))</td>
+                                @* 2e kolom *@
+                                <td class="katex-like">
+                                    @((MarkupString)((row.Symbol ?? "") + (!string.IsNullOrEmpty(row.Symbol) ? " =" : "")))
+                                </td>
+
+                                @* 3e kolom *@
+                                @if (row.Editable && !ReadOnly)
+                                {
+                                    @RenderInput(row.Property)
+                                }
+                                else
+                                {
+                                    <td>
+                                        @row.DisplayValue
+                                    </td>
+                                }
+
+                                <td>@((MarkupString)(row.Unit ?? ""))</td>
 
 
 
 
-                        </tr>
+                            </tr>
 
-                    } // end if (iRow is PropertyRow row)
-                    else if (iRow is SubPropertyRow subRow)
-                    {   
-                        <tr @key=subRow.Id>
-                            @* 1e kolom over 4 kolommen*@
-                            <td colspan="4">
-                                <dl>
-                                    <dt>@subRow.Label</dt>
-                                    <dd>@((MarkupString)subRow.Value)</dd>
-                                </dl>
+                        } // end if (iRow is PropertyRow row)
+                        else if (iRow is SubPropertyRow subRow)
+                        {   
+                            <tr @key=subRow.Id>
+                                @* 1e kolom over 4 kolommen*@
+                                <td colspan="4">
+                                    <dl>
+                                        <dt>@subRow.Label</dt>
+                                        <dd>@((MarkupString)subRow.Value)</dd>
+                                    </dl>
 
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        }
                     }
                 }
-            }
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
+
 </div>
+
+
+
+
+<FluentMenu Anchor="@GridId" Trigger="MouseButton.Right" Anchored="false" @onmenuchange="OnMenuChange">
+    
+    <FluentMenuItem Id="ckDesc" Role="MenuItemRole.MenuItemCheckbox" @bind-Checked=ShowDescription>
+        Omschrijving
+    </FluentMenuItem>
+    <FluentMenuItem Id="ckArt" Role="MenuItemRole.MenuItemCheckbox" @bind-Checked=ShowArticles>
+        Artikel
+    </FluentMenuItem>
+    <FluentMenuItem Id="ckFormulas" Role="MenuItemRole.MenuItemCheckbox" @bind-Checked=ShowFormulas>
+        Formules
+    </FluentMenuItem>
+
+
+    <FluentDivider></FluentDivider>
+
+    <FluentSwitch @bind-Value="ShowNonEditables"
+                  @bind-Value:after="OnShowNonEditablesChanged"
+                  Style="margin-left: 20px;"
+                  UncheckedMessage="toon invoer"
+                  CheckedMessage="alle rijen" />
+</FluentMenu>
+
 
 
 @code {
@@ -174,8 +161,8 @@
     [Parameter] public bool ReadOnly { get; set; } = false; // standaard bewerkbaar
     [Parameter] public EventCallback<bool> ReadOnlyChanged { get; set; }
 
-    [Parameter] public bool IsInklapbaar{ get; set; }
-
+    //[Parameter] public bool IsInklapbaar{ get; set; }
+    [Parameter] public bool ShowCaption { get; set; } = true;
 
 
     [Parameter] public bool ShowDescription { get; set; } = !true; // standaard uit, toont label
@@ -196,8 +183,56 @@
     [Parameter] public HashSet<string> VisibleColumns { get; set; } = new();
     [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
 
+    private string GridId => $"grid_{Model.Id:N}";
+    private string status = "";
+
+    private void OnMenuChange(MenuChangeEventArgs args)
+    {
+        if (args is not null && args.Value is not null)
+            status = $"Item \"{args.Value}\" clicked";
+    }
+
+
+
+
+    private FluentMenu? ContextMenuRef;
+
+    private void HandleMouseDown(MouseEventArgs e)
+    {
+        if (e.Button == 2) // rechter muisklik
+        {
+            MenuX = e.ClientX;
+            MenuY = e.ClientY;
+            IsMenuOpen = true;
+            StateHasChanged();
+        }
+        else
+        {
+            IsMenuOpen = false; // sluit menu bij linkermuisklik
+        }
+    }
+
+
+
+    private void OnTableRightClick(MouseEventArgs e)
+    {
+        if (ContextMenuRef != null)
+        {
+            // open FluentMenu programmatically bij cursor
+            MenuX = e.ClientX;
+            MenuY = e.ClientY;
+            IsMenuOpen = true;
+        }
+    }
+
+
 
     private bool IsMenuOpen { get; set; } = false;
+    private double MenuX;
+    private double MenuY;
+    private string MenuStyle => $"position:absolute; left:{MenuX}px; top:{MenuY}px;";
+
+
 
     private void ToggleMenu()
     {
