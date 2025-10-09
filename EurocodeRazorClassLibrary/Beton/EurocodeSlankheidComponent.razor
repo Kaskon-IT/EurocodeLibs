@@ -7,6 +7,9 @@
 
 @if (Model != null)
 {
+    <EurocodeRazorClassLibrary.Shared.EcTree Context="Model" />
+
+
     if (ReadOnly)
     {
         <EurocodeInputNumber ReadOnly=true Value="Model.LengteOverspanning" Key="@K.Slankheid_LengteOverspanning" Unit="mm" MinValue="1" ></EurocodeInputNumber>

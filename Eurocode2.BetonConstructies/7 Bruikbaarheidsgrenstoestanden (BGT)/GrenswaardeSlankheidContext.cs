@@ -25,7 +25,7 @@ namespace Eurocode.BetonConstructies
         private double _lengteOverspanning = 2000;
         private BendingResults? _bendingResults;
 
-        [TableColumn("l [mm]", Key = K.Slankheid_LengteOverspanning)]
+        [TableColumn(Label = "Lengte", Symbol = "<i>l</i>", Unit = "mm", Key = K.Slankheid_LengteOverspanning)]
         public double LengteOverspanning
         {
             get => _lengteOverspanning;
@@ -40,7 +40,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("d [mm]", Key = K.Slankheid_EffectieveDikte)]
+        [TableColumn(Label = "effectieve dikte", Symbol = "<i>d</i>", Unit = "mm", Key = K.Slankheid_EffectieveDikte)]
         public double EffectieveDikte
         {
             get => BendingResults?.D ?? 100;
@@ -67,7 +67,7 @@ namespace Eurocode.BetonConstructies
 
 
         // gevolgen
-        [TableColumn("grens (l/d)", Key = K.Slankheid_Grenswaarde)]
+        [TableColumn(Label = "grenswaarde slankheid", Symbol = "(<i>l/d</i><sub>max</sub>", Key = K.Slankheid_Grenswaarde)]
         public double GrenswaardeSlankheid
         {
             get
@@ -77,7 +77,7 @@ namespace Eurocode.BetonConstructies
             }
         } // Grenswaarde van de slankheid van het element
 
-        [TableColumn("(l/d)", Key = K.Slankheid_Slankheid)]
+        [TableColumn(Label = "slankheid", Symbol = "(<i>l/d</i>)", Key = K.Slankheid_Slankheid)]
         public double Slankheid
         {
             get
@@ -111,7 +111,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// is de referentiewaarde van de wapeningsverhouding = 10-3 · √fck;
         /// </summary>
-        [TableColumn("ρ~0~", Key = K.Slankheid_WapeningsVerhoudingReferentiewaarde, StringFormat = "0.####")]
+        [TableColumn(Label = "wapeningsverhouding (referentiewaarde)", Symbol = "<i>ρ</i><sub>0</sub>", Key = K.Slankheid_WapeningsVerhoudingReferentiewaarde, StringFormat = "0.####")]
         public double Rho0
         {
             get
@@ -120,7 +120,7 @@ namespace Eurocode.BetonConstructies
             }
         } // is de referentiewaarde van de wapeningsverhouding = 10-3 · √fck;
 
-        [TableColumn("ρ", Key = K.Slankheid_WapeningsVerhoudingTrekVereist, StringFormat = "0.####")]
+        [TableColumn(Label = "wapeningsverhouding (vereist)", Symbol = "<i>ρ</i>", Key = K.Slankheid_WapeningsVerhoudingTrekVereist, StringFormat = "0.####")]
         public double Rho
         {
             get
@@ -156,6 +156,8 @@ namespace Eurocode.BetonConstructies
         }
 
         private ConstructiefSysteemEnum? _constructiefSysteem = ConstructiefSysteemEnum.VrijOpgelegd;
+
+        [TableColumn(Label = "constructief systeem")]
         public ConstructiefSysteemEnum? ConstructiefSysteem
         {
             get => _constructiefSysteem;

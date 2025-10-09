@@ -1,0 +1,156 @@
+﻿@using System.Globalization
+
+<svg viewBox="0 0 @Width @Height" width="100%" height="100%">
+    <!-- Achtergrond -->
+    <rect width="@Width" height="@Height" fill="white" />
+
+    <!-- Definities voor pijlen -->
+    <defs>
+        <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3"
+                orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L6,3 z" fill="black" />
+        </marker>
+    </defs>
+
+    <!-- Assen met pijlen -->
+    <line x1="@MarginLeft" y1="@(Height - MarginBottom)"
+          x2="@(Width - MarginRight / 2.0)" y2="@(Height - MarginBottom)"
+          stroke="black" stroke-width="1"
+          marker-end="url(#arrowhead)" />
+
+    <line x1="@MarginLeft" y1="@(Height - MarginBottom)"
+          x2="@MarginLeft" y2="@(MarginTop /2.0)"
+          stroke="black" stroke-width="1"
+          marker-end="url(#arrowhead)" />
+
+    <!-- Aslabels -->
+    <text x="@(Width - MarginRight / 3.0)" y="@(Height - MarginBottom)"
+          font-size="@FontSize" text-anchor="start">
+        ε [‰]
+    </text>
+
+    <text x="@(MarginLeft)" y="@(MarginTop/3.0)"
+          font-size="@FontSize" text-anchor="middle">
+        σ [N/mm²]
+    </text>
+
+       <!-- Horizontale lijn bij fcd -->
+    <line x1="@X(0)" y1="@Y(Beton.Fcd)" x2="@X(Beton.EpsilonBetonStuik)" y2="@Y(Beton.Fcd)"
+          stroke="grey" stroke-dasharray="4" />
+
+    <!-- Tick bij fcd -->
+    <line x1="@(MarginLeft - 5)" x2="@(MarginLeft + 5)"
+          y1="@Y(Beton.Fcd)" y2="@Y(Beton.Fcd)"
+          stroke="black" stroke-width="1" />
+
+    <!-- Label bij fcd -->
+    <text x="@(MarginLeft + 10)" y="@(Y(Beton.Fcd) - 5)"
+          font-size="@FontSize" fill="steelblue" text-anchor="start">
+        f<tspan dy="@SubOffset" font-size="@SubFont">cd</tspan>=@Beton.Fcd.ToString("0.##")
+    </text>
+
+    <!-- Verticale lijnen bij εc en εcu -->
+    <line x1="@X(Beton.EpsilonBetonStuik)" y1="@MarginTop" x2="@X(Beton.EpsilonBetonStuik)" y2="@(Height - MarginBottom)"
+          stroke="grey" stroke-dasharray="4" />
+
+    <line x1="@X(Beton.EpsilonCu)" y1="@MarginTop" x2="@X(Beton.EpsilonCu)" y2="@(Height - MarginBottom)"
+          stroke="grey" stroke-dasharray="4" />
+
+    <!-- Ticks bij rekken -->
+    <line x1="@X(Beton.EpsilonBetonStuik)" x2="@X(Beton.EpsilonBetonStuik)"
+          y1="@(Height - MarginBottom -5)" y2="@(Height - MarginBottom + 5)"
+          stroke="black" stroke-width="1" />
+
+    <line x1="@X(Beton.EpsilonCu)" x2="@X(Beton.EpsilonCu)"
+          y1="@(Height - MarginBottom - 5)" y2="@(Height - MarginBottom + 5)"
+          stroke="black" stroke-width="1" />
+
+
+    <!-- Labels εc en εcu -->
+    <text x="@X(Beton.EpsilonBetonStuik)" y="@(Height - MarginBottom + 15)"
+          font-size="@FontSize" fill="steelblue" text-anchor="end" >
+        ε<tspan dy="@SubOffset" font-size="@SubFont">@SubscriptC</tspan>
+    </text>
+
+    <text x="@X(Beton.EpsilonCu)" y="@(Height - MarginBottom + 15)"
+          font-size="@FontSize" fill="steelblue" text-anchor="start" >
+        ε<tspan dy="@SubOffset" font-size="@SubFont">@SubscriptCu</tspan>
+    </text>
+
+    <!-- Spanningsrek-curve -->
+    <path d="@PathData"
+          stroke="steelblue"
+          stroke-width="2"
+          fill="none" />
+</svg>
+
+@code {
+    [Parameter] public Eurocode.BetonConstructies.BetonContext Beton { get; set; } = new();
+    [Parameter] public double Width { get; set; } = 400;
+    [Parameter] public double Height { get; set; } = 300;
+
+    // 🔹 Nieuwe parameter voor fontgrootte
+    [Parameter] public double FontSize { get; set; } = 12;
+
+    private double SubFont => FontSize * 0.7;
+    private double SubOffset => FontSize * 0.2;
+
+    private string SubscriptC => Beton.SpanningRekDiagram == EC2.BetonContext.SpanningRekDiagramType.Parabolisch ? "c2" : "c3";
+    private string SubscriptCu => Beton.SpanningRekDiagram == EC2.BetonContext.SpanningRekDiagramType.Parabolisch ? "cu2" : "cu3";
+    
+
+    // Marges iets vergroot ivm pijlen & labels
+    private double MarginLeft => 45;
+    private double MarginRight => 90;
+    private double MarginTop => 45;
+    private double MarginBottom => 45;
+
+    private double MaxSigma => Beton.Fcd;
+    private double MaxEps => Beton.EpsilonCu;
+
+    private double X(double eps)
+        => MarginLeft + eps / MaxEps * (Width - MarginLeft - MarginRight);
+
+    private double Y(double sigma)
+        => (Height - MarginBottom) - sigma / MaxSigma * (Height - MarginBottom - MarginTop);
+
+    private string PathData => GenerateSvgPath();
+
+    private string GenerateSvgPath()
+    {
+        var points = new List<(double eps, double sig)>();
+
+        if (Beton.SpanningRekDiagram == EC2.BetonContext.SpanningRekDiagramType.BiLineair)
+            GenerateBiLineair(points);
+        else
+            GenerateParabolisch(points);
+
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < points.Count; i++)
+        {
+            double x = X(points[i].eps);
+            double y = Y(points[i].sig);
+            sb.Append(i == 0 ? $"M {x:F1},{y:F1} " : $"L {x:F1},{y:F1} ");
+        }
+
+        return sb.ToString();
+    }
+
+    private void GenerateParabolisch(List<(double eps, double sig)> points)
+    {
+        for (double eps = 0; eps <= Beton.EpsilonBetonStuik; eps += Beton.EpsilonBetonStuik / 20)
+        {
+            double sigma = Beton.Fcd * (1 - Math.Pow(1 - eps / Beton.EpsilonBetonStuik, Beton.FactorN));
+            points.Add((eps, sigma));
+        }
+
+        points.Add((Beton.EpsilonCu, Beton.Fcd));
+    }
+
+    private void GenerateBiLineair(List<(double eps, double sig)> points)
+    {
+        points.Add((0, 0));
+        points.Add((Beton.EpsilonBetonStuik, Beton.Fcd));
+        points.Add((Beton.EpsilonCu, Beton.Fcd));
+    }
+}

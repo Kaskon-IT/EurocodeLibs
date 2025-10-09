@@ -1,6 +1,15 @@
 ﻿@using Eurocode.BetonConstructies
 @* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@ <!-- debug only -->
 
+<div style="width:500px;">
+    <BetonSpanningRekDiagram Beton=@Model />
+</div>
+
+<div style="width:500px;">
+    <BetonMateriaalSpanningRekDiagrammen Beton=@Model ToonBetonstaal=true />
+</div>
+
+
 @if (ShowUserFriendly)
 {
     <p>

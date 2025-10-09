@@ -37,11 +37,14 @@ namespace Eurocode.BetonConstructies
 
             public BetonDekkingContext DekkingEnDuurzaamheid { get; set; } = new();
             public NationaleBijlageEnum NationaleBijlage { get; set; } = NationaleBijlageEnum.EU;
+
             public ElementType ElementType { get; set; } = ElementType.Standaard;
 
 
 
             private double _factorKx = 1.0;
+
+            [TableColumn(Label = "factor", Symbol = "<i>k</i><sub>x</sub>")]
             public double FactorKx
             {
                 get { return _factorKx; }
@@ -49,6 +52,8 @@ namespace Eurocode.BetonConstructies
 
 
             private double _wMax = 0.10;
+
+            [TableColumn(Label = "grenswaarde scheurwijdte", Symbol = "<i>w</i><sub>max</sub>")]
             public double Wmax
             {
                 get

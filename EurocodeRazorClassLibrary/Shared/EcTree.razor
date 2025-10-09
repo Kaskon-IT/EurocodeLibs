@@ -79,6 +79,7 @@
                     itemContent.SetKey(child.Id);
                     itemContent.AddAttribute(t++, "Model", child);
                     itemContent.AddAttribute(t++, "ReadOnly", child.ReadOnly);
+                    itemContent.AddAttribute(t++, "ShowCaption", ShowCaptions);
                     itemContent.CloseComponent();
                 }));
                 builder.CloseComponent();

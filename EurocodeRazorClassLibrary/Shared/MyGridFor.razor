@@ -38,6 +38,7 @@
 
                 @if (!Hidden)
                 {
+
                     @foreach (var iRow in _rows)
                     {
                         if (iRow is PropertyRow row)
@@ -155,33 +156,33 @@
 
 
 @code {
-    [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
-    [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
+        [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
+        [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
 
-    [Parameter] public bool ReadOnly { get; set; } = false; // standaard bewerkbaar
-    [Parameter] public EventCallback<bool> ReadOnlyChanged { get; set; }
+        [Parameter] public bool ReadOnly { get; set; } = false; // standaard bewerkbaar
+        [Parameter] public EventCallback<bool> ReadOnlyChanged { get; set; }
 
-    //[Parameter] public bool IsInklapbaar{ get; set; }
-    [Parameter] public bool ShowCaption { get; set; } = true;
-
-
-    [Parameter] public bool ShowDescription { get; set; } = !true; // standaard uit, toont label
-
-    [Parameter] public bool ShowArticles { get; set; } = !true; // standaard geen artikelen tonen
-
-    [Parameter] public bool ShowFormulas { get; set; } = !true; // standaard geen formules tonen
+        //[Parameter] public bool IsInklapbaar{ get; set; }
+        [Parameter] public bool ShowCaption { get; set; } = true;
 
 
-    [Parameter] public bool ShowNonEditables { get; set; } = !true; // standaard alleen invoer tonen
-    [Parameter] public EventCallback<bool> ShowNonEditablesChanged { get; set; }
+        [Parameter] public bool ShowDescription { get; set; } = !true; // standaard uit, toont label
+
+        [Parameter] public bool ShowArticles { get; set; } = !true; // standaard geen artikelen tonen
+
+        [Parameter] public bool ShowFormulas { get; set; } = !true; // standaard geen formules tonen
 
 
+        [Parameter] public bool ShowNonEditables { get; set; } = !true; // standaard alleen invoer tonen
+        [Parameter] public EventCallback<bool> ShowNonEditablesChanged { get; set; }
 
 
 
-    // Geef parent de mogelijkheid runtime kolommen te tonen/verbergen.
-    [Parameter] public HashSet<string> VisibleColumns { get; set; } = new();
-    [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
+
+
+        // Geef parent de mogelijkheid runtime kolommen te tonen/verbergen.
+        [Parameter] public HashSet<string> VisibleColumns { get; set; } = new();
+        [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
 
     private string GridId => $"grid_{Model.Id:N}";
     private string status = "";
@@ -238,8 +239,8 @@
     {
         IsMenuOpen = !IsMenuOpen;
     }
-    
-   
+
+
 
 
     private bool AllRowsOpen { get; set; } = false;
@@ -342,6 +343,13 @@
         .ThenByNatural(r => (r as PropertyRow)?.Formula?.Name)
 
         .ToList();
+
+        // geen info gevonden
+        if (_rows.Count == 0)
+        {
+            _rows.Add(new SubPropertyRow(Guid.NewGuid().ToString(), "📭", "geen eigenschappen gevonden", ""));
+        }
+
     }
 
     private void OnShowNonEditablesChanged()
