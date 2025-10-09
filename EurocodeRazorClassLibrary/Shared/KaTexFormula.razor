@@ -21,6 +21,7 @@
     private string ContainerId = $"katex-{Guid.NewGuid():N}";
 
     private string _value = string.Empty;
+    private bool _displayMode;
 
     [Parameter]
     public string Value
@@ -43,8 +44,17 @@
 
 
 
-    [Parameter]
-    public bool DisplayMode { get; set; } = true; // true = blokweergave, false = inline
+    [Parameter] public bool DisplayMode { 
+        get => _displayMode; 
+        set { if (_displayMode != value)
+            {
+                _displayMode = value;
+                _ = RenderMathAsync();
+                DisplayModeChanged.InvokeAsync(value);
+            } 
+        } 
+    } 
+    [Parameter] public EventCallback<bool> DisplayModeChanged{ get; set; }
 
     [Parameter] public string? Label { get; set; }   // <--- nieuw
     [Parameter] public bool Small { get; set; } = true;

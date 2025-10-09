@@ -3,16 +3,18 @@
 
 <h3>KaTeX Component Full Demo</h3>
 
+
 <label>Formule:</label>
-<input @bind="Formula" placeholder="Typ TeX hier..." class="mt-1 p-1 border w-full" />
+<input @bind="Formula" placeholder="Typ TeX hier..." class="mt-1 p-1 border w-full" style="width:100%" />
+<label>DisplayMode:</label>
+<input type="checkbox" @bind="@DisplayMode" />
 
-<p>Inline KaTeX:</p>
-<KaTexFormula @bind-Value="Formula" DisplayMode="false" />
+<br />
+<KaTexFormula @bind-Value="Formula" @bind-DisplayMode="@DisplayMode" />
 
 
-<p>Blok KaTeX:</p>
-<KaTexFormula @bind-Value="Formula" DisplayMode="true" />
 
 @code {
     private string Formula = @"\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}";
+    private bool DisplayMode{ get; set; }
 }

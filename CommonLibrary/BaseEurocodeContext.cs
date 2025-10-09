@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -10,8 +11,15 @@ namespace CommonLibrary
 {
     public abstract class BaseEurocodeContext : IEurocodeContext, IContext, IMarkupConvertible, INotifyPropertyChanged
     {
+        protected BaseEurocodeContext()
+        {
+            Debug.WriteLine($"Nieuw object aangemaakt: {GetType().Name}");
+        }
+
+
         public Guid Id { get; set; } = Guid.NewGuid();
         public virtual string Heading { get; set; } = "Onbekend";
+        public virtual bool ReadOnly { get; set; } = false; // mogelijkheid om de gebruiker alleen te laten lezen.
 
         public virtual void Init()
         {
@@ -84,6 +92,11 @@ namespace CommonLibrary
 
         private void NestedPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            // Filter ruis van ObservableCollection
+            if (e.PropertyName is "Count" or "Item[]")
+                return;
+
+
             // Bubbel property change omhoog
             OnPropertyChanged(e.PropertyName);
 
@@ -91,17 +104,42 @@ namespace CommonLibrary
             if (_isCalculating)
                 return;
 
-            try
+            DebounceBerekening(() =>
             {
-                _isCalculating = true;
-                BerekenEnValideer();
-            }
-            finally
-            {
-                _isCalculating = false;
-            }
+                try
+                {
+                    _isCalculating = true;
+                    BerekenEnValideer();
+                }
+                finally
+                {
+                    _isCalculating = false;
+                }
+            }, delayMs: 200);
         }
 
+        private CancellationTokenSource? _debounceToken;
+
+        private void DebounceBerekening(Action action, int delayMs = 100)
+        {
+            _debounceToken?.Cancel();
+            _debounceToken = new CancellationTokenSource();
+            var token = _debounceToken.Token;
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await Task.Delay(delayMs, token);
+                    if (!token.IsCancellationRequested)
+                        action();
+                }
+                catch (TaskCanceledException)
+                {
+                    // genegeerd, nieuwe update kwam sneller binnen
+                }
+            });
+        }
 
 
 

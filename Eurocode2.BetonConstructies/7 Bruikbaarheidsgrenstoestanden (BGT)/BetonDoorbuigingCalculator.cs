@@ -46,6 +46,7 @@ namespace Eurocode.BetonConstructies
 
 
 
+
         private double _d, _lengteMM, _lijnlast, _lijnlastG;
 
         [TableColumn(Label = "nuttige hoogte", Symbol = "d", Unit = "mm")]
@@ -57,8 +58,13 @@ namespace Eurocode.BetonConstructies
         //[TableColumn(Label = "lijnlast voor w1", Symbol = "q<sub>p</sub>")]
         //public double LijnlastBijvend { get => _qBlijvend; set => SetProperty(ref _qBlijvend, value); }
 
-        [TableColumn(Label = "lijnlast voor w_tot", Symbol = "q<sub>...</sub>")]
+        [TableColumn(Label = "lijnlast (bijkomende doorbuiging)", Symbol = "q<sub>...</sub>")]
         public double Lijnlast { get => _lijnlast; set => SetProperty(ref _lijnlast, value); }
+        public string LijnlastSymbol => $"<i>q</i><sub>{BelastingenHelpers.GetSubscript(CombinatieType)}</sub>";
+
+
+
+
 
         [TableColumn(Label = "lijnlast voor <i>w</i><sub>on,G</sub>", Symbol = "q<sub>G,k</sub>")]
         public double LijnlastG { get => _lijnlastG; set => SetProperty(ref _lijnlastG, value); }
@@ -71,15 +77,35 @@ namespace Eurocode.BetonConstructies
         public BelastingCombinatieTypeEnum CombinatieType { get; set; } = BelastingCombinatieTypeEnum.Frequent;
 
 
-
-
+        /// <summary>
+        /// De doorbuiging als gevolg van blijvende combinatie, korteduur   
+        /// </summary>
         public double W1
         {
             get; set;
 
         }
-        public double Wtot { get; set; }
-        public double Wbijk => Wtot - W1;
+
+
+        /// <summary>
+        /// De totale doorbuiging (voor de toetsing van de bijkomende doorbuiging)
+        /// </summary>
+        public double Wtotaal { get; set; }
+
+        /// <summary>
+        /// De totale doorbuiging (voor de toetsing van de doorbuiging in de eindfase)
+        /// </summary>
+
+
+
+        /// <summary>
+        /// De bijkomende doorbuiging
+        /// </summary>
+        public double Wbijk => Wtotaal - W1;
+
+        public double Weind => Wtotaal - Wzeeg;
+
+        public double Wzeeg => 0;
 
 
         private BetonContext _beton = new();
@@ -331,7 +357,7 @@ namespace Eurocode.BetonConstructies
                 var l = Ctx.LengteMM;
 
                 var wTot = ((5.0 / 48.0) * kmax * Math.Pow(l, 2));
-                Ctx.Wtot = wTot;
+                Ctx.Wtotaal = wTot;
 
                 // geef ook w1
                 // test
@@ -348,33 +374,23 @@ namespace Eurocode.BetonConstructies
             DynamicValue = $"= \\frac{{5}}{{48}} \\cdot {TotaleKromming.ToTeX()} \\cdot {Ctx.LengteMM.ToEng()}^2 = {DoorbuigingLangeduur.ToTeX()}"
         };
 
-        [TableColumn(Label = "context.q")]
-        public string Debug
-        {
-            get
-            {
-                return $"q={this.Ctx.Lijnlast}";
-            }
-        }
 
 
 
 
-        [TableColumn("moment", Symbol = "<i>M</i><sub>Eqp</sub>")]
-        public double M
+
+        [TableColumn("moment", Symbol = "<i>M</i><sub>...</sub>")]
+        public double MomentBijk
         {
             get
             {
                 return Ctx.Moment;
-
-
-                var mEqp = _combinationForces
-                    .FirstOrDefault(sf => sf.CombinatieType == BelastingCombinatieTypeEnum.QuasiBlijvend);
-
-                return mEqp?.My ?? 500;
-
             }
         }
+
+
+
+
 
         [TableColumn("moment", Symbol = "<i>M</i><sub>G</sub>")]
         public double Mg
@@ -385,11 +401,11 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        public double MomentNmm
+        public double MomentBijkNmm
         {
             get
             {
-                return M * 1e6;
+                return MomentBijk * 1e6;
             }
         }
         //public double ScheurMoment { get; set; } = 150e6;
@@ -634,11 +650,11 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Label = "kromming (ongescheurd)", Symbol = "<i>κ</i><sub>I</sub>", Description = "is de kromming in het ongescheurde stadium", Unit = "mm<sup>-1</sup>")]
-        public double KappaI { get { return MomentNmm / StijfheidI; } }
+        public double KappaI { get { return MomentBijkNmm / StijfheidI; } }
         public Formula KappaIFormula => new()
         {
             StaticValue = "\\kappa_I = \\frac{M_{Eqp}}{(EI)_I}",
-            DynamicValue = $"= \\frac{{{MomentNmm.ToTeX(forcedExponent: 6)}}}{{{StijfheidI.ToTeX()}}} = {KappaI.ToTeX()}"
+            DynamicValue = $"= \\frac{{{MomentBijkNmm.ToTeX(forcedExponent: 6)}}}{{{StijfheidI.ToTeX()}}} = {KappaI.ToTeX()}"
         };
 
 
@@ -647,11 +663,11 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Label = "kromming (gescheurd)", Symbol = "<i>κ</i><sub>II</sub>", Description = "is de kromming in het gescheurde stadium", Unit = "mm<sup>-1</sup>")]
-        public double KappaII { get { return MomentNmm / StijfheidII; } }
+        public double KappaII { get { return MomentBijkNmm / StijfheidII; } }
         public Formula KappaIIFormula => new()
         {
             StaticValue = "\\kappa_{II} = \\frac{M_{Eqp}}{(EI)_{II}}",
-            DynamicValue = $"= \\frac{{{MomentNmm.ToTeX()}}}{{{StijfheidII.ToTeX()}}} = {KappaII.ToTeX()}"
+            DynamicValue = $"= \\frac{{{MomentBijkNmm.ToTeX()}}}{{{StijfheidII.ToTeX()}}} = {KappaII.ToTeX()}"
         };
 
 
@@ -667,9 +683,9 @@ namespace Eurocode.BetonConstructies
             {
                 // aanvulling met Abs
 
-                if (Mcr > Math.Abs(M)) return 0;
+                if (Mcr > Math.Abs(MomentBijk)) return 0;
 
-                return 1 - BetaLangeduur * Math.Pow(Mcr / Math.Abs(M), 2);
+                return 1 - BetaLangeduur * Math.Pow(Mcr / Math.Abs(MomentBijk), 2);
 
             }
         }
@@ -680,11 +696,11 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                if (Mcr > Math.Abs(M)) return new() { Name = "(7.19)", StaticValue = @"\zeta = 0\; voor\; ongescheurde \;doorsnede" };
+                if (Mcr > Math.Abs(MomentBijk)) return new() { Name = "(7.19)", StaticValue = @"\zeta = 0\; voor\; ongescheurde \;doorsnede" };
 
                 return new("(7.19)",
             @"\zeta = 1 - \beta \left( \frac{M_{cr}}{M} \right)^2",
-            $@"\zeta = 1 - {BetaLangeduur.ToTeX()} \left( \frac{{{Mcr.ToTeX()}}}{{{Math.Abs(M).ToTeX()}}} \right)^2 = {Zeta.ToTeX()}");
+            $@"\zeta = 1 - {BetaLangeduur.ToTeX()} \left( \frac{{{Mcr.ToTeX()}}}{{{Math.Abs(MomentBijk).ToTeX()}}} \right)^2 = {Zeta.ToTeX()}");
             }
         }
 

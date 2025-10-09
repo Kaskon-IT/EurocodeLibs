@@ -35,6 +35,32 @@ namespace Eurocode.Belastingen
     }
 
 
+    public class BelastingenHelpers
+    {
+        public static string GetSubscript(BelastingCombinatieTypeEnum belastingCombinatieType)
+        {
+            switch (belastingCombinatieType)
+            {
+                default:
+                case BelastingCombinatieTypeEnum.Fundamenteel_A:
+                case BelastingCombinatieTypeEnum.Fundamenteel_B:
+                    return "Ed";
+                case BelastingCombinatieTypeEnum.Brand:
+                    return "Efi";
+                case BelastingCombinatieTypeEnum.Aardbeving:
+                    return "Eeq";
+                case BelastingCombinatieTypeEnum.Karakteristiek:
+                    return "k";
+                case BelastingCombinatieTypeEnum.Frequent:
+                    return "Efr";
+                case BelastingCombinatieTypeEnum.QuasiBlijvend:
+                    return "Eqp";
+                case BelastingCombinatieTypeEnum.Blijvend:
+                    return "G";
+
+            }
+        }
+    }
 
 
 

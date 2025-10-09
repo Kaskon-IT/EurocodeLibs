@@ -10,7 +10,7 @@
             <FluentAccordionItem Heading="@Context.Heading">
                 <MyGridFor @bind-Model="Context" 
                            @key="Context.Id"
-                           @bind-ReadOnly="ReadOnly"
+                           @bind-ReadOnly="Context.ReadOnly"
                            ShowCaption="false"
                            ShowNonEditables="ShowNonEditables"
                            />
@@ -24,7 +24,7 @@
         <div class="ctx-block">
             <MyGridFor @bind-Model="Context"
                        @key="Context.Id"
-                       @bind-ReadOnly="ReadOnly"
+                       @bind-ReadOnly="Context.ReadOnly"
                        ShowNonEditables="ShowNonEditables"
                        ShowCaption="ShowCaptions"
                         />
@@ -78,7 +78,7 @@
                     itemContent.OpenComponent(t++, typeof(MyGridFor<BaseEurocodeContext>));
                     itemContent.SetKey(child.Id);
                     itemContent.AddAttribute(t++, "Model", child);
-                    itemContent.AddAttribute(t++, "ReadOnly", ReadOnly);
+                    itemContent.AddAttribute(t++, "ReadOnly", child.ReadOnly);
                     itemContent.CloseComponent();
                 }));
                 builder.CloseComponent();
@@ -257,7 +257,7 @@
                 builder.OpenComponent(seq++, typeof(MyGridFor<BaseEurocodeContext>));
                 builder.SetKey(child.Id);
                 builder.AddAttribute(seq++, "Model", child);
-                builder.AddAttribute(seq++, "ReadOnly", ReadOnly);
+                builder.AddAttribute(seq++, "ReadOnly", child.ReadOnly);
                 builder.CloseComponent();
 
                 // Recursief alle children van deze child

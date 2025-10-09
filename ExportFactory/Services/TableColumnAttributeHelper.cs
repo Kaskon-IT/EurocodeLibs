@@ -110,6 +110,14 @@ namespace ExportFactory.Services
                     if (symbolOverrideProp?.GetValue(model) is string sym)
                         symbol = sym;
 
+                    var visibleOverrideProp = model.GetType().GetProperty(prop.Name + "Visible");
+                    if (visibleOverrideProp?.GetValue(model) is bool visible)
+                    {
+                        if (!visible)
+                            continue; // skip deze property
+                    }
+
+
                     yield return new PropertyRow(
                         label: DeCapitalizeFirstLetter(label) ?? "",
                         symbol: symbol,
@@ -160,140 +168,7 @@ namespace ExportFactory.Services
         }
 
 
-        public static IEnumerable<IPropertyRow> GetRowsBAK<T>(T model)
-        {
-            foreach (var prop in model!.GetType().GetProperties())
-            {
-                Formula? formula = null;
 
-                // aanvulling => haal de meldingen apart op
-                if (prop.PropertyType.IsGenericType)
-                {
-                    // Pak de generieke argumenten, bv. Melding bij ObservableCollection<Melding>
-                    var genericArgs = prop.PropertyType.GetGenericArguments();
-
-                    if (genericArgs.Length == 1)
-                    {
-                        var elementType = genericArgs[0];
-                        var enumerableType = typeof(IEnumerable<>).MakeGenericType(elementType);
-
-                        // Controleer of de property een IEnumerable<T> implementeert
-                        if (enumerableType.IsAssignableFrom(prop.PropertyType))
-                        {
-                            // Titel-row voor de collectie
-                            // Mocht je een titel willen, dan zou je die hier kunnen toevoegen
-
-
-                            // Haal de waarde op en cast naar IEnumerable
-                            var value = prop.GetValue(model) as System.Collections.IEnumerable;
-                            if (value != null)
-                            {
-
-                                foreach (var item in value)
-                                {
-                                    if (item is Melding m)
-                                    {
-                                        yield return new SubPropertyRow(m.Id.ToString(), m.GetEmoji, m.ToMarkupString().Value, m);
-                                    }
-
-
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-
-
-                var attr = prop.GetCustomAttribute<TableColumnAttribute>();
-
-                if (attr == null)
-                    continue; // alleen properties met [TableColumn]
-
-                var rawValue = prop.GetValue(model);
-                string displayValue = rawValue?.ToString() ?? "DEBUG";
-
-
-                if (displayValue == "DEBUG")
-                {
-                    bool error = true;
-                }
-
-                if (rawValue != null)
-                {
-                    var type = rawValue.GetType();
-
-                    // ✅ Eerst: Enum afvangen
-                    if (rawValue is Enum enumValue)
-                    {
-                        displayValue = enumValue.GetDisplayName(); // mijn extension
-                    }
-                    // ✅ Dan: numerieke types zonder StringFormat
-                    else if (rawValue is IFormattable && string.IsNullOrEmpty(attr.StringFormat))
-                    {
-                        displayValue = ((double)Convert.ChangeType(rawValue, typeof(double)))
-                            .ToEng();
-                    }
-                    // ✅ Als StringFormat wél is opgegeven (gebruik custom formatter!)
-                    else if (!string.IsNullOrEmpty(attr.StringFormat))
-                    {
-                        string format = attr.StringFormat;
-
-                        // Als de gebruiker alleen "SIG3E6" geeft → maak er "{0:SIG3E6}" van
-                        if (!format.Contains("{0"))
-                        {
-                            format = "{0:" + format + "}";
-                        }
-
-                        displayValue = string.Format(_sciSciFmt, format, rawValue);
-                    }
-                }
-
-                // Afgesproken conventie: als er een property bestaat met de naam <prop.Name>Formula
-                var formulaProp = model?.GetType().GetProperty(prop.Name + "Formula");
-                if (formulaProp != null)
-                {
-                    var formulaValue = formulaProp.GetValue(model);
-                    if (formulaValue is Formula f)
-                    {
-                        formula = f;
-                    }
-                }
-
-                bool editable = prop.GetSetMethod(nonPublic: false) != null; // alleen publieke setters!
-
-                var label = attr?.Label ?? prop.Name;
-                var symbol = attr?.Symbol;
-
-                // overrides
-                var symbolOverrideProp = model?.GetType().GetProperty(prop.Name + "Symbol");
-                if (symbolOverrideProp != null)
-                {
-                    // Eerst runtime label
-                    var symbolOverrideValue = symbolOverrideProp.GetValue(model);
-                    if (symbolOverrideValue is String sym)
-                    {
-                        symbol = sym;
-                    }
-                }
-
-
-                yield return new PropertyRow(
-                    label: DeCapitalizeFirstLetter(label) ?? "",
-                    symbol: symbol,
-                    unit: attr?.Unit,
-                    rawValue: rawValue,
-                    displayValue: displayValue,
-                    description: attr?.Description,
-                    article: attr?.Article,
-                    formula: formula,
-                    editable: editable,
-                    property: prop
-                );
-
-            }
-        }
 
 
         private static string? DeCapitalizeFirstLetter(string? input)
