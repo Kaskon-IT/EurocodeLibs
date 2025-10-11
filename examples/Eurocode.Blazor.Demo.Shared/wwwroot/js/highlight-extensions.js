@@ -103,3 +103,22 @@ function hljs_addInlineStylesheet(code) {
 
     return stylesheet;
 }
+
+// Dit heb ik toegevoegd om de huidige thema-modus (dark, light, system) te kunnen opvragen vanuit Blazor
+// bijvoorbeeld bij grafische componenten die ook een dark/light mode hebben
+window.registerThemeChangedHandler = (dotnetHelper) => {
+    const theme = document.querySelector('loading-theme > fluent-design-theme');
+    if (theme) {
+        theme.addEventListener('onchange', (e) => {
+            if (e.detail?.name === 'mode') {
+                if (window.Blazor && window.Blazor._internal?.connection?.state === 'Connected') {
+                    dotnetHelper.invokeMethodAsync('OnThemeChanged', e.detail.newValue)
+                        .catch(err => console.warn("Theme change ignored:", err));
+                } else {
+                    console.warn("Blazor not connected, skipping theme event");
+                }
+            }
+        });
+    }
+};
+

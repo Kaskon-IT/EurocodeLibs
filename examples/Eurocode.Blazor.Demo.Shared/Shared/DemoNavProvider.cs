@@ -156,9 +156,9 @@ public class DemoNavProvider
                     ),
 
                      new NavLink(
-                        href: "/lab/displaymodel",
-                        icon: new Icons.Regular.Size20.Symbols(),
-                        title: "ListFor(Model)"
+                        href: "/lab/live-test",
+                        icon: new Icons.Regular.Size20.BugProhibited(),
+                        title: "Debug"
                     ),
 
                     new NavLink(

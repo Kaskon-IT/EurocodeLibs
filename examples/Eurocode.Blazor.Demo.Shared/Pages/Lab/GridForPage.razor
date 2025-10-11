@@ -28,7 +28,7 @@ else
 
     @if(EurocodeContext != null)
     {
-        <EcTree Context="EurocodeContext" 
+        <EcTree @bind-Model="EurocodeContext" 
             @bind-ReadOnly="readOnly" 
             ShowAccordion="showChildren"
              />

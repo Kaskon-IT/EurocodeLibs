@@ -1,35 +1,37 @@
-﻿@using CommonLibrary
+﻿@typeparam TModel where TModel : BaseEurocodeContext
+
+@using CommonLibrary
 @using CommonLibrary.Models
 @using CommonLibrary.Extensions
 
-@if (Context != null)
+@if (Model != null)
 {
     @if (ShowAccordion)
     {
         <FluentAccordion Id="ctxAccordion">
-            <FluentAccordionItem Heading="@Context.Heading">
-                <MyGridFor @bind-Model="Context" 
-                           @key="Context.Id"
-                           @bind-ReadOnly="Context.ReadOnly"
+            <FluentAccordionItem Heading="@Model.Heading">
+                <MyGridFor @bind-Model="Model" 
+                           @key="Model.Id"
+                           @bind-ReadOnly="Model.ReadOnly"
                            ShowCaption="false"
                            ShowNonEditables="ShowNonEditables"
                            />
             </FluentAccordionItem> 
 
-            @RenderChildrenAccordionItems(Context)
+            @RenderChildrenAccordionItems(Model)
         </FluentAccordion>
     }
     else
     {
         <div class="ctx-block">
-            <MyGridFor @bind-Model="Context"
-                       @key="Context.Id"
-                       @bind-ReadOnly="Context.ReadOnly"
+            <MyGridFor @bind-Model="Model"
+                       @key="Model.Id"
+                       @bind-ReadOnly="Model.ReadOnly"
                        ShowNonEditables="ShowNonEditables"
                        ShowCaption="ShowCaptions"
                         />
 
-            @RenderChildren(Context, new HashSet<Guid>())
+            @RenderChildren(Model, new HashSet<Guid>())
         </div>
     }
 
@@ -41,8 +43,12 @@
 } 
 
 @code {
-    [Parameter] public BaseEurocodeContext Context { get; set; } = default!;
-    [Parameter] public EventCallback<BaseEurocodeContext> ContextChanged { get; set; }
+
+    [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
+    [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
+
+    //[Parameter] public BaseEurocodeContext Context { get; set; } = default!;
+    //[Parameter] public EventCallback<BaseEurocodeContext> ContextChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; } = false;
     [Parameter] public EventCallback<bool> ReadOnlyChanged{ get; set; }
     [Parameter] public bool ShowAccordion { get; set; } = false;
@@ -190,7 +196,7 @@
     protected override void OnInitialized()
     {
         // Recursief subscriben op Context en alle nested children
-        SubscribeToContextRecursively(Context);
+        SubscribeToContextRecursively(Model);
     }
 
     private void SubscribeToContextRecursively(BaseEurocodeContext ctx)

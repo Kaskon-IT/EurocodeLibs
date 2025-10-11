@@ -38,6 +38,24 @@
 
                 @if (!Hidden)
                 {
+                    // uitzonderingen
+                    if (Model is Eurocode.BetonConstructies.BetonContext c)
+                    {
+                        <FluentCard Height="200px" Width="100%">
+                            <EurocodeRazorClassLibrary.Beton.BetonMateriaalSpanningRekDiagrammen Beton="c" />
+
+                        </FluentCard>
+                    }
+                    if (Model is Eurocode.BetonConstructies.BetonStaalContext s)
+                    {
+                        <FluentCard Height="200px" Width="100%">
+                            <EurocodeRazorClassLibrary.Beton.BetonMateriaalSpanningRekDiagrammen BetonStaal="s" />
+
+                        </FluentCard>
+                    }
+
+
+
 
                     @foreach (var iRow in _rows)
                     {

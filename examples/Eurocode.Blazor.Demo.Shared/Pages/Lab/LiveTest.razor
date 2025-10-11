@@ -1,0 +1,15 @@
+﻿@page "/lab/live-test"
+
+<h3>LiveTest</h3>
+<p>Test pagina voor debug van componenten... </p>
+
+<FluentCard Width="400px" Height="auto">
+    <BetonMateriaalSpanningRekDiagrammen @bind-Beton="Beton" FontSize="24" Width="600" Height="400" />
+</FluentCard>
+<EurocodeBetonMaterialen @bind-Model="Beton" ToonBetonstaal=true ToonBetonSpanningRekDiagram=true ToonBetonStaalSpanningRekDiagram=true/>
+
+@code {
+    public BetonContext Beton { get; set; } = new();
+
+
+}

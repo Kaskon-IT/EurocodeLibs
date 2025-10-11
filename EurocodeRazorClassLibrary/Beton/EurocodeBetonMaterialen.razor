@@ -1,13 +1,13 @@
 ﻿@using Eurocode.BetonConstructies
 @* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@ <!-- debug only -->
 
-<div style="width:500px;">
-    <BetonSpanningRekDiagram Beton=@Model />
-</div>
 
-<div style="width:500px;">
-    <BetonMateriaalSpanningRekDiagrammen Beton=@Model ToonBetonstaal=true />
-</div>
+
+
+
+
+
+
 
 
 @if (ShowUserFriendly)
@@ -50,7 +50,25 @@ else
         @bind-EnumSelectedValue="@Model.BetonStaal.SpanningRekDiagram"
         Disabled="@Disabled" />
     }
+
+
+
 }
+
+<div style="display: flex; gap: 20px;">
+    <FluentCard Width="400px" Height="auto" >
+        <span>Beton spanning-rekdiagram</span>
+        <BetonMateriaalSpanningRekDiagrammen Beton="@Model" />
+
+    </FluentCard>
+    <FluentCard Width="400px" Height="auto">
+        <span>Betonstaal spanning-rekdiagram</span>
+        <BetonMateriaalSpanningRekDiagrammen BetonStaal="@Model.BetonStaal" />
+
+    </FluentCard>
+
+
+</div>
 
 
 

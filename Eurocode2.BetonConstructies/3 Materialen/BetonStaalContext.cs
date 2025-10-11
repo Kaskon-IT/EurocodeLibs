@@ -263,20 +263,24 @@ namespace Eurocode.BetonConstructies
         public double EpsilonYd { get { return Fyd / Es; } }
 
 
-        public double GetFactorFyd()
+        public double GetFactorFyd(double staalrek)
         {
 
-            if (this.SpanningRekDiagram != SpanningRekDiagramType.HellendeTak && this.EpsilonS >= this.EpsilonYd) return 1; // geen hellende tak boven de vloeigrens
-            if (this.SpanningRekDiagram != SpanningRekDiagramType.HorizontaleTak && this.EpsilonS < this.EpsilonYd) return (this.EpsilonS / this.EpsilonYd);    // vloeigrens nog niet bereikt
+            if (this.SpanningRekDiagram != SpanningRekDiagramType.HellendeTak && staalrek >= this.EpsilonYd) return 1; // geen hellende tak boven de vloeigrens
 
-            if (this.EpsilonS < this.EpsilonYd) return (this.EpsilonS / this.EpsilonYd);    // vloeigrens nog niet bereikt
+            if (staalrek < this.EpsilonYd)
+                return (staalrek / this.EpsilonYd);    // vloeigrens nog niet bereikt
 
-            if (this.EpsilonS > this.EpsilonUd) this.EpsilonS = this.EpsilonUd; // maximale rek bereikt
-            if (this.EpsilonS < this.EpsilonYd) return (this.EpsilonS / this.EpsilonYd);    // vloeigrens nog niet bereikt
+
+            if (staalrek > this.EpsilonUd) staalrek = this.EpsilonUd; // maximale rek bereikt
+
             double fydMaalFactor =
-                this.Fyd + ((this.EpsilonS - this.EpsilonYd) / (this.EpsilonUk - this.EpsilonYd)) * (this.Kfyd - this.Fyd);
+                this.Fyd + ((staalrek - this.EpsilonYd) / (this.EpsilonUk - this.EpsilonYd)) * (this.Kfyd - this.Fyd);
+
             return fydMaalFactor / this.Fyd;
         }
+
+        public double GetFydByStaalrek(double staalrek) => GetFactorFyd(staalrek) * this.Fyd;
 
 
 

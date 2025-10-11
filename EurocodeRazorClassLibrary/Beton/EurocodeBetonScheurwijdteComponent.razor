@@ -9,7 +9,7 @@
 
 @if(Model != null)
 {
-    <EurocodeRazorClassLibrary.Shared.EcTree Context="@Model" />
+    <EurocodeRazorClassLibrary.Shared.EcTree @bind-Model="@Model" />
 }
 else
 {
