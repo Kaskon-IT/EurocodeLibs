@@ -3,13 +3,22 @@
 <h3>LiveTest</h3>
 <p>Test pagina voor debug van componenten... </p>
 
-<FluentCard Width="400px" Height="auto">
+
+<EurocodeRazorClassLibrary.Shared.EcTree @bind-Model=DoorbuigingValidatie />
+
+
+@* <FluentCard Width="400px" Height="auto">
     <BetonMateriaalSpanningRekDiagrammen @bind-Beton="Beton" FontSize="24" Width="600" Height="400" />
 </FluentCard>
-<EurocodeBetonMaterialen @bind-Model="Beton" ToonBetonstaal=true ToonBetonSpanningRekDiagram=true ToonBetonStaalSpanningRekDiagram=true/>
+<EurocodeBetonMaterialen @bind-Model="Beton" ToonBetonstaal=true ToonBetonSpanningRekDiagram=true ToonBetonStaalSpanningRekDiagram=true/> *@
 
 @code {
     public BetonContext Beton { get; set; } = new();
 
+    public DoorbuigingValidatieContext DoorbuigingValidatie { get; set; } = new(
+        new BetonContext(), 
+        new ParametrischeProfielen.ParametrischProfielContext(), 
+        new WapeningContext()
+    );
 
 }

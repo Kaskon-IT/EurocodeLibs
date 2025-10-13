@@ -27,7 +27,7 @@ namespace Eurocode.Belastingen
         /// Nullable waarde voor als er een momentaan-factor is toegepast
         /// </summary>
         public double? MomentFactor { get; private set; }
-        public string MomentaanTekst { get; private set; }
+        public string MomentaanTekst { get; private set; } = "";
 
         /// <summary>
         /// De uiteindelijke factor van het belastinggeval
@@ -53,7 +53,7 @@ namespace Eurocode.Belastingen
 
 
 
-        //public BelastingCombinatieItem() { }
+        public BelastingCombinatieItem() { } // ✅ Nodig voor deserialisatie
 
         [SetsRequiredMembers]
         public BelastingCombinatieItem(BelastingenContext context, BelastingCombinatie combinatie, BelastingGeval geval, bool permanentIsGunstig = false)
@@ -79,6 +79,11 @@ namespace Eurocode.Belastingen
         private double GetFactoren()
         {
             double factorNetto = 1.0;
+
+            if (Combinatie == null || Geval == null || Context == null || Context.Grondslagen == null)
+            {
+                return factorNetto;
+            }
 
             switch (Geval.Type)
             {

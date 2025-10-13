@@ -41,8 +41,15 @@ namespace Eurocode.Belastingen
 
         public BelastOnbelastTypeEnum? BelastOnbelastType { get; set; } = BelastOnbelastTypeEnum.AllesTegelijk;
 
+
+        private GebruiksklasseEnum? _gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen;
+
         [TableColumn("gebruiksklasse", order: 20, width: 8.0)]
-        public GebruiksklasseEnum? Gebruiksklasse { get; set; } = GebruiksklasseEnum.A_gemeenschappelijke_trappen;
+        public GebruiksklasseEnum? Gebruiksklasse
+        {
+            get => _gebruiksklasse;
+            set => SetProperty(ref _gebruiksklasse, value);
+        }
 
         public string GebruiksklasseUserFriendly
         {

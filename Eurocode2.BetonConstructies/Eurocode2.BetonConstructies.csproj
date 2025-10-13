@@ -8,7 +8,7 @@
 	<!-- NuGet-package instellingen -->
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageId>Kaskon.Eurocode2.BetonConstructies</PackageId>
-	<Version>1.11.0</Version>
+	<Version>1.13.0</Version>
 	<Authors>Bart van der Linden</Authors>
 	<Company>Kaskon</Company>
 	<Description>Eurocode 2 Betonconstructies</Description>

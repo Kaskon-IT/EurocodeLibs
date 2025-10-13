@@ -36,8 +36,8 @@
 
 
 
-    private double SubFont => FontSize * 0.7;
-    private double SubOffset => FontSize * 0.2;
+    private string SubFont => Inv(FontSize * 0.7);
+    private string SubOffset => Inv(FontSize * 0.2);
 
     private double MarginLeft => 90;
     private double MarginRight => 90;
@@ -49,6 +49,9 @@
 
     private double X(double eps) => MarginLeft + eps / MaxEps * (Width - MarginLeft - MarginRight);
     private double Y(double sigma) => (Height - MarginBottom) - sigma / MaxSigma * (Height - MarginBottom - MarginTop);
+
+    private string Inv(double val) => val.ToString("0.###", CultureInfo.InvariantCulture);
+
 
     // 🔹 Voeg propertychange handlers toe
     private PropertyChangedEventHandler? _betonChangedHandler;
@@ -134,26 +137,37 @@
 
     private void TekenBetonDiagram(System.Text.StringBuilder sb, Eurocode.BetonConstructies.BetonContext beton)
     {
-        var subFont = SubFont;
-        var subOffset = SubOffset;
+       
+        // x.waardes
+        string x0 = Inv(X(0));
+        string xStuik = Inv(X(beton.EpsilonBetonStuik));
+        string xCu = Inv(X(beton.EpsilonCu));
+
+        // y.waardes
+        string y0 = Inv(Y(0));
+        string yFcd = Inv(Y(beton.Fcd));
 
         // hor.lines (line, tick, text text)
-        sb.AppendLine($@"<line x1='{X(0)}' y1='{Y(beton.Fcd)}' x2='{X(beton.EpsilonBetonStuik)}' y2='{Y(beton.Fcd)}' stroke='{DashKleur}' stroke-dasharray='4' />");
-        sb.AppendLine($@"<line x1='{MarginLeft - 5}' x2='{MarginLeft + 5}' y1='{Y(beton.Fcd)}' y2='{Y(beton.Fcd)}' stroke='{TekstKleur}' stroke-width='1' />");
+        sb.AppendLine($@"<line x1='{x0}' y1='{yFcd}' x2='{xStuik}' y2='{yFcd}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{Inv(MarginLeft - 5)}' x2='{Inv(MarginLeft + 5)}' y1='{yFcd}' y2='{yFcd}' stroke='{TekstKleur}' stroke-width='1' />");
         //sb.AppendLine($@"<text x='{MarginLeft + 10}' y='{Y(beton.Fcd) - 5}' font-size='{FontSize}' fill='{BetonKleur}' text-anchor='start'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>cd</tspan>={beton.Fcd:0.#}</text>");
-        sb.AppendLine($@"<text x='{MarginLeft - 6}' y='{Y(beton.Fcd) - 0.0*FontSize}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='end'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>cd</tspan>={beton.Fcd:0.#}</text>");
+        sb.AppendLine($@"<text x='{Inv(MarginLeft - 6)}' y='{yFcd}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='end'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>cd</tspan>={beton.Fcd:0.#}</text>");
 
 
-        sb.AppendLine($@"<line x1='{X(beton.EpsilonBetonStuik)}' y1='{MarginTop}' x2='{X(beton.EpsilonBetonStuik)}' y2='{Height - MarginBottom}' stroke='{DashKleur}' stroke-dasharray='4' />");
-        sb.AppendLine($@"<line x1='{X(beton.EpsilonCu)}' y1='{MarginTop}' x2='{X(beton.EpsilonCu)}' y2='{Height - MarginBottom}' stroke='{DashKleur}' stroke-dasharray='4' />");
-        sb.AppendLine($@"<line x1='{X(beton.EpsilonBetonStuik)}' x2='{X(beton.EpsilonBetonStuik)}' y1='{Height - MarginBottom - 5}' y2='{Height - MarginBottom + 5}' stroke='{TekstKleur}' stroke-width='1' />");
-        sb.AppendLine($@"<line x1='{X(beton.EpsilonCu)}' x2='{X(beton.EpsilonCu)}' y1='{Height - MarginBottom - 5}' y2='{Height - MarginBottom + 5}' stroke='{TekstKleur}' stroke-width='1' />");
+       
+
+        sb.AppendLine($@"<line x1='{xStuik}' y1='{Inv(MarginTop)}' x2='{xStuik}' y2='{Inv(Height - MarginBottom)}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{xCu}' y1='{Inv(MarginTop)}' x2='{xCu}' y2='{Inv(Height - MarginBottom)}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{xStuik}' x2='{xStuik}' y1='{Inv(Height - MarginBottom - 5)}' y2='{Inv(Height - MarginBottom + 5)}' stroke='{TekstKleur}' stroke-width='1' />");
+        sb.AppendLine($@"<line x1='{xCu}' x2='{xCu}' y1='{Inv(Height - MarginBottom - 5)}' y2='{Inv(Height - MarginBottom + 5)}' stroke='{TekstKleur}' stroke-width='1' />");
 
         var subscriptC = beton.SpanningRekDiagram == EC2.BetonContext.SpanningRekDiagramType.Parabolisch ? "c2" : "c3";
         var subscriptCu = beton.SpanningRekDiagram == EC2.BetonContext.SpanningRekDiagramType.Parabolisch ? "cu2" : "cu3";
 
-        sb.AppendLine($@"<text x='{X(beton.EpsilonBetonStuik)}' y='{Height - MarginBottom + 15}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='end'>ε<tspan dy='{subOffset}' font-size='{subFont}'>{subscriptC}</tspan></text>");
-        sb.AppendLine($@"<text x='{X(beton.EpsilonCu)}' y='{Height - MarginBottom + 15}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='start'>ε<tspan dy='{subOffset}' font-size='{subFont}'>{subscriptCu}</tspan></text>");
+        sb.AppendLine($@"<text x='{xStuik}' y='{Inv(Height - MarginBottom + 15)}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='end'>ε<tspan dy='{SubOffset}' font-size='{SubFont}'>{subscriptC}</tspan></text>");
+        sb.AppendLine($@"<text x='{xCu}' y='{Height - MarginBottom + 15}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='start'>ε<tspan dy='{SubOffset}' font-size='{SubFont}'>{subscriptCu}</tspan></text>");
+        
+        // grafiek
         sb.AppendLine($@"<path d='{GenerateSvgPathBeton(beton)}' stroke='{BetonKleur}' stroke-width='2' fill='none' />");
     }
 
@@ -161,24 +175,35 @@
     {
         var type = staal.SpanningRekDiagram ?? EC2.BetonStaalContext.SpanningRekDiagramType.HorizontaleTak;
 
+        // x.waardes
+        string x0 = Inv(X(0));
+        string x1 = Inv(X(staal.EpsilonYd));
+        string x2 = Inv(X(staal.EpsilonUd));
+        string x3 = Inv(X(staal.EpsilonUk));
+
+        // y.waardes
+        string y0 = Inv(Y(0));
+        string y1 = Inv(Y(staal.Fyd));
+        string y2 = Inv(Y(staal.Kfyd));
+
+
         // hor.lines (line, tick, text)
-        sb.AppendLine($@"<line x1='{X(0)}' y1='{Y(staal.Fyd)}' x2='{X(staal.EpsilonYd)}' y2='{Y(staal.Fyd)}' stroke='{DashKleur}' stroke-dasharray='4' />");
-        sb.AppendLine($@"<line x1='{MarginLeft - 5}' y1='{Y(staal.Fyd)}' x2='{MarginLeft + 5}' y2='{Y(staal.Fyd)}' stroke='{TekstKleur}' stroke-width='1' />");
-        sb.AppendLine($@"<text x='{MarginLeft - 6}' y='{Y(staal.Fyd) - 0.0 * FontSize}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='end'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>yd</tspan>={staal.Fyd:0}</text>");
+        sb.AppendLine($@"<line x1='{x0}' y1='{y1}' x2='{x1}' y2='{y1}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{Inv(MarginLeft - 5)}' y1='{y1}' x2='{Inv(MarginLeft + 5)}' y2='{y1}' stroke='{TekstKleur}' stroke-width='1' />");
+        sb.AppendLine($@"<text x='{Inv(MarginLeft - 6)}' y='{y1}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='end'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>yd</tspan>={staal.Fyd:0}</text>");
 
         @if(type == EC2.BetonStaalContext.SpanningRekDiagramType.HellendeTak)
         {
             // hor.lines (line, tick, text)
-            var y = Y(staal.Kfyd);
-            sb.AppendLine($@"<line x1='{X(0)}' y1='{y}' x2='{X(staal.EpsilonUk)}' y2='{y}' stroke='{DashKleur}' stroke-dasharray='4' />");
-            sb.AppendLine($@"<line x1='{MarginLeft - 5}' y1='{y}' x2='{MarginLeft + 5}' y2='{y}' stroke='{TekstKleur}' stroke-width='1' />");
-            sb.AppendLine($@"<text x='{MarginLeft - 6}' y='{y - 0.0 * FontSize}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='end'>k*f<tspan dy='{SubOffset}' font-size='{SubFont}'>yd</tspan>={staal.Kfyd:0}</text>");
+            sb.AppendLine($@"<line x1='{X(0)}' y1='{y2}' x2='{x3}' y2='{y2}' stroke='{DashKleur}' stroke-dasharray='4' />");
+            sb.AppendLine($@"<line x1='{Inv(MarginLeft - 5)}' y1='{y2}' x2='{Inv(MarginLeft + 5)}' y2='{y2}' stroke='{TekstKleur}' stroke-width='1' />");
+            sb.AppendLine($@"<text x='{Inv(MarginLeft - 6)}' y='{y2}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='end'>k*f<tspan dy='{SubOffset}' font-size='{SubFont}'>yd</tspan>={staal.Kfyd:0}</text>");
 
         }
 
 
-        sb.AppendLine($@"<line x1='{X(staal.EpsilonYd)}' y1='{Y(staal.Fyd)}' x2='{X(staal.EpsilonYd)}' y2='{Height - MarginBottom}' stroke='{DashKleur}' stroke-dasharray='4' />");
-        sb.AppendLine($@"<line x1='{X(staal.EpsilonYd)}' y1='{Height - MarginBottom -5}' x2='{X(staal.EpsilonYd)}' y2='{Height - MarginBottom +5}' stroke='{TekstKleur}' />");
+        sb.AppendLine($@"<line x1='{x1}' y1='{y1}' x2='{x1}' y2='{Inv(Height - MarginBottom)}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{x1}' y1='{Inv(Height - MarginBottom -5)}' x2='{x1}' y2='{Inv(Height - MarginBottom +5)}' stroke='{TekstKleur}' />");
 
 
         //sb.AppendLine($@"<text x='{X(staal.EpsilonYd)}' y='{Height - MarginBottom + 15}' font-size='{FontSize}' fill='{BetonStaalKleur}' text-anchor='middle'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>yd</tspan>/E<tspan dy='{SubOffset}' font-size='{SubFont}'>s</tspan></text>");
@@ -186,17 +211,17 @@
 
 
         // Epsilon Ud
-        sb.AppendLine($@"<line x1='{X(staal.EpsilonUd)}' y1='{Y(staal.GetFydByStaalrek(staal.EpsilonUd))}' x2='{X(staal.EpsilonUd)}' y2='{Height - MarginBottom}' stroke='{DashKleur}' stroke-dasharray='4' />");
-        sb.AppendLine($@"<line x1='{X(staal.EpsilonUd)}' y1='{Height - MarginBottom - 5}' x2='{X(staal.EpsilonUd)}' y2='{Height - MarginBottom + 5}' stroke='{TekstKleur}' />");
+        sb.AppendLine($@"<line x1='{x2}' y1='{Inv(Y(staal.GetFydByStaalrek(staal.EpsilonUd)))}' x2='{x2}' y2='{Height - MarginBottom}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{x2}' y1='{Inv(Height - MarginBottom - 5)}' x2='{x2}' y2='{Height - MarginBottom + 5}' stroke='{TekstKleur}' />");
 
-        sb.AppendLine($@"<text x='{X(staal.EpsilonUd)}' y='{Height - MarginBottom + 1.2*FontSize}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='end'> ε<tspan dy='{SubOffset}' font-size='{SubFont}'>ud</tspan>    </text>");
+        sb.AppendLine($@"<text x='{x2}' y='{Inv(Height - MarginBottom + 1.2*FontSize)}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='end'> ε<tspan dy='{SubOffset}' font-size='{SubFont}'>ud</tspan>    </text>");
 
 
         // Epsilon Uk
-        sb.AppendLine($@"<line x1='{X(staal.EpsilonUk)}' y1='{MarginTop}' x2='{X(staal.EpsilonUk)}' y2='{Height - MarginBottom}' stroke='{DashKleur}' stroke-dasharray='4' />");
-        sb.AppendLine($@"<line x1='{X(staal.EpsilonUk)}' y1='{Height - MarginBottom - 5}' x2='{X(staal.EpsilonUk)}' y2='{Height - MarginBottom + 5}' stroke='{TekstKleur}' />");
+        sb.AppendLine($@"<line x1='{x3}' y1='{Inv(MarginTop)}' x2='{x3}' y2='{Inv(Height - MarginBottom)}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{x3}' y1='{Inv(Height - MarginBottom - 5)}' x2='{X(staal.EpsilonUk)}' y2='{Inv(Height - MarginBottom + 5)}' stroke='{TekstKleur}' />");
 
-        sb.AppendLine($@"<text x='{X(staal.EpsilonUk)}' y='{Height - MarginBottom + 1.2*FontSize}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='left'> ε<tspan dy='{SubOffset}' font-size='{SubFont}'>uk</tspan>  </text>");
+        sb.AppendLine($@"<text x='{x3}' y='{Inv(Height - MarginBottom + 1.2*FontSize)}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='left'> ε<tspan dy='{SubOffset}' font-size='{SubFont}'>uk</tspan>  </text>");
 
         if (type == EC2.BetonStaalContext.SpanningRekDiagramType.HorizontaleTak)
         {
@@ -206,11 +231,12 @@
         }
         else
         {
-            var x1 = X(staal.EpsilonUd);
-            var y1 = Y(staal.GetFydByStaalrek(staal.EpsilonUd));
-            var x2 = X(staal.EpsilonUk);
-            var y2 = Y(staal.Kfyd);
-            sb.AppendLine($@"<line x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' stroke='red' stroke-width='2' stroke-dasharray='4' />");
+            // losse lijn van Sigma(Ud) naar Sigma(Uk)
+            var xd = Inv(X(staal.EpsilonUd));
+            var yd = Inv(Y(staal.GetFydByStaalrek(staal.EpsilonUd)));
+            var xk = Inv(X(staal.EpsilonUk));
+            var yk = Inv(Y(staal.Kfyd));
+            sb.AppendLine($@"<line x1='{xd}' y1='{yd}' x2='{xk}' y2='{yk}' stroke='red' stroke-width='2' stroke-dasharray='4' />");
         }
 
         sb.AppendLine($@"<path d='{GenerateSvgPathBetonstaal(staal)}' stroke='{BetonStaalKleur}' stroke-width='2' fill='none' />");

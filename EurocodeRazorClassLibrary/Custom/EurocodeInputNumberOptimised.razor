@@ -1,0 +1,182 @@
+﻿@using System.Globalization
+@typeparam T where T : notnull
+
+<FluentTextField class="eurocode-input"
+                 TextFieldType="TextFieldType.Text"
+                 @bind-Value="InputText"
+                 Placeholder="@Placeholder"
+                 ReadOnly="@ReadOnly"
+                 Disabled="@Disabled"
+                 Id="@Id"
+                 @onblur="OnBlurAsync"
+                 @onkeydown="HandleKeyDown"
+                 Style="@style">
+    @if (!string.IsNullOrEmpty(Label) && LabelPosition == LabelPosition.Top)
+    {
+        <span class="truncate-1">@Label</span>
+    }
+</FluentTextField>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div style="color:var(--warning); font-weight:600; margin-top:6px">@ErrorMessage</div>
+}
+
+@code {
+    // --- Parameters (Key toegevoegd) ---
+    [Parameter, EditorRequired] public string Key { get; set; } = string.Empty;
+    [Parameter] public T? Value { get; set; }
+    [Parameter] public EventCallback<T?> ValueChanged { get; set; }
+    [Parameter] public string StringFormat { get; set; } = "0.##";
+    [Parameter] public bool ReadOnly { get; set; } = false;
+    [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public double MinValue { get; set; } = double.MinValue;
+    [Parameter] public double MaxValue { get; set; } = double.MaxValue;
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Unit { get; set; } = string.Empty;
+    [Parameter] public string? Id { get; set; } = Guid.NewGuid().ToString();
+    [Parameter] public LabelPosition LabelPosition { get; set; } = LabelPosition.Left;
+
+    // --- Internals ---
+    private string InputText { get; set; } = string.Empty;
+    private string? ErrorMessage { get; set; }
+    private bool _updatingInternally = false;
+    private string style => "width:100%;min-width:0;padding:4px 6px;border:1px solid #d1d1d1;border-radius:4px;box-sizing:border-box;font-size:0.9rem;";
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        // voorkom dat we tijdens een interne update de tekst overschrijven
+        if (_updatingInternally) return;
+
+        // toon de huidige waarde (gebruik CurrentCulture voor presentatie)
+        InputText = FormatValue(Value);
+    }
+
+    private async Task OnBlurAsync(FocusEventArgs _)
+    {
+        ErrorMessage = null;
+
+        var text = (InputText ?? string.Empty).Trim();
+
+        if (string.IsNullOrEmpty(text))
+        {
+            // lege waarde -> reset
+            _updatingInternally = true;
+            Value = default;
+            await ValueChanged.InvokeAsync(default);
+            _updatingInternally = false;
+            return;
+        }
+
+        // Als user per ongeluk afrondingspunt aan het eind heeft: trim trailing '.' of ','
+        if (text.EndsWith('.') || text.EndsWith(','))
+            text = text.Substring(0, text.Length - 1);
+
+        // accepteer zowel ',' als '.'
+        var normalized = text.Replace(',', '.');
+
+        // Probeer te parsen naar het type T
+        if (TryParseValue(normalized, out T? parsedValue))
+        {
+            // optionele min/max controle (doe clamp als gewenst)
+            if (parsedValue is IConvertible conv)
+            {
+                var asDouble = conv.ToDouble(CultureInfo.InvariantCulture);
+                if (asDouble < MinValue || asDouble > MaxValue)
+                {
+                    ErrorMessage = $"⚠️ Waarde moet tussen {FormatNumber(MinValue)} en {FormatNumber(MaxValue)} liggen.";
+                    return;
+                }
+            }
+
+            _updatingInternally = true;
+            Value = parsedValue;
+            await ValueChanged.InvokeAsync(parsedValue);
+            // update de zichtbare tekst naar nette formatting (zg. consistente weergave)
+            InputText = FormatValue(parsedValue);
+            _updatingInternally = false;
+        }
+        else
+        {
+            ErrorMessage = "⚠️ Ongeldige invoer — gebruik een getal of wetenschappelijke notatie.";
+        }
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        // Enter commit: voor gebruiksvriendelijkheid triggeren we dezelfde flow als blur
+        if (e.Key == "Enter")
+        {
+            _ = OnBlurAsync(new FocusEventArgs());
+        }
+    }
+
+    private string FormatValue(T? value)
+    {
+        if (value is null) return string.Empty;
+
+        // Gebruik CurrentCulture voor weergave (zodat NL gebruiker komma's ziet)
+        if (value is IFormattable formattable)
+            return formattable.ToString(StringFormat, CultureInfo.CurrentCulture) ?? string.Empty;
+
+        return value.ToString() ?? string.Empty;
+    }
+
+    private string FormatNumber(double number)
+    {
+        return number.ToString(StringFormat, CultureInfo.CurrentCulture);
+    }
+
+    private bool TryParseValue(string input, out T? value)
+    {
+        value = default;
+
+        // int
+        if (typeof(T) == typeof(int))
+        {
+            if (int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var i))
+            {
+                value = (T)(object)i;
+                return true;
+            }
+            return false;
+        }
+
+        // double
+        if (typeof(T) == typeof(double))
+        {
+            if (double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out var d))
+            {
+                value = (T)(object)d;
+                return true;
+            }
+            return false;
+        }
+
+        // decimal
+        if (typeof(T) == typeof(decimal))
+        {
+            if (decimal.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out var m))
+            {
+                value = (T)(object)m;
+                return true;
+            }
+            return false;
+        }
+
+        // fallback: probeer Convert.ChangeType (voor andere numerieke types)
+        try
+        {
+            var converted = (T)Convert.ChangeType(input, typeof(T), CultureInfo.InvariantCulture)!;
+            value = converted;
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+}

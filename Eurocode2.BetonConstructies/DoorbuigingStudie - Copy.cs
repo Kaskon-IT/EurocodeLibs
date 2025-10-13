@@ -17,7 +17,7 @@ namespace Eurocode.BetonConstructies
         public BetonDoorbuigingContext Ctx
         {
             get => _ctx;
-            set => SetNestedProperty(ref _ctx, value);
+            set => SetNestedProperty(ref _ctx!, value);
         }
 
 

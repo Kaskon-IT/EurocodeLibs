@@ -73,8 +73,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Naam van de betondekking context, bijvoorbeeld 'bovenzijde' of 'onderzijde' 
         /// </summary>
-        [TableColumn("positie", order: 0
-            )]
+        //[TableColumn("positie", order: 0 )]
         public string Naam { get; set; } = "Bovenzijde";
 
 
@@ -84,6 +83,8 @@ namespace Eurocode.BetonConstructies
 
 
         private double _dekkingToe = 20;
+
+        [TableColumn(Label = "toegepaste dekking", Symbol = "<i>c</i><sub>prov</sub>", Unit = "mm", StringFormat = "0")]
         public double DekkingToe
         {
             get => _dekkingToe;
@@ -351,11 +352,12 @@ namespace Eurocode.BetonConstructies
         /// De grootste korreldiameter. Heeft invloed op de dekking c,min,b 
         /// </summary>
         [TableColumn(
-            label: "korrelafmeting",
-            description: "de nominale maximale korrelafmeting",
+            Label = "korrelafmeting",
+            Description = "de nominale maximale korrelafmeting",
             Symbol = "<i>d</i><sub>g</sub>",
-            Order = 5,
             Unit = "mm",
+            StringFormat = "0.0",
+            Order = 5,
             Article = "4.4.1.2 (3)")]
         public double GrootsteKorrelDiameter
         {

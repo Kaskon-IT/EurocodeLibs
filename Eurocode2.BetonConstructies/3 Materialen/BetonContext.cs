@@ -323,6 +323,24 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
+
+        public double SetFctmFl(double h)
+        {
+            var fctmfl = Math.Max((1.6 - (h / 1000.0)) * Fctm, Fctm);
+            FctmFlFormula = new()
+            {
+                Name = "(3.23)",
+                StaticValue = "f_{ctm,fl} = \\max \\left\\{ (1.6 - \\frac{h}{1000}) f_{ctm},\\; f_{ctm} \\right\\}",
+                DynamicValue = $" = \\max \\left\\{{ (1.6 - \\frac{{{h:0}}}{{1000}} ) f_{{ctm}},\\; f_{{ctm}} \\right\\}}"
+            };
+            FctmFl = fctmfl;
+            return fctmfl;
+        }
+
+        [TableColumn(Label = "gem. buigtrekstertke (zuivere buiging)", Symbol = "<i>f</i><sub>ctm,fl</sub>", Article = "3.1.8", Unit = "N/mm²")]
+        public double FctmFl { get; private set; }
+        public Formula FctmFlFormula { get; private set; }
+
         public Formula FctmFormula
         {
             get

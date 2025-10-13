@@ -161,6 +161,13 @@
         Formules
     </FluentMenuItem>
 
+   
+
+    <FluentButton Id="btnBijwerken" @onclick="Bijwerken" 
+        IconStart="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.New())">
+        Bijwerken
+    </FluentButton>
+
 
     <FluentDivider></FluentDivider>
 
@@ -174,33 +181,33 @@
 
 
 @code {
-        [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
-        [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
+    [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
+    [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
 
-        [Parameter] public bool ReadOnly { get; set; } = false; // standaard bewerkbaar
-        [Parameter] public EventCallback<bool> ReadOnlyChanged { get; set; }
+    [Parameter] public bool ReadOnly { get; set; } = false; // standaard bewerkbaar
+    [Parameter] public EventCallback<bool> ReadOnlyChanged { get; set; }
 
-        //[Parameter] public bool IsInklapbaar{ get; set; }
-        [Parameter] public bool ShowCaption { get; set; } = true;
-
-
-        [Parameter] public bool ShowDescription { get; set; } = !true; // standaard uit, toont label
-
-        [Parameter] public bool ShowArticles { get; set; } = !true; // standaard geen artikelen tonen
-
-        [Parameter] public bool ShowFormulas { get; set; } = !true; // standaard geen formules tonen
+    //[Parameter] public bool IsInklapbaar{ get; set; }
+    [Parameter] public bool ShowCaption { get; set; } = true;
 
 
-        [Parameter] public bool ShowNonEditables { get; set; } = !true; // standaard alleen invoer tonen
-        [Parameter] public EventCallback<bool> ShowNonEditablesChanged { get; set; }
+    [Parameter] public bool ShowDescription { get; set; } = !true; // standaard uit, toont label
+
+    [Parameter] public bool ShowArticles { get; set; } = !true; // standaard geen artikelen tonen
+
+    [Parameter] public bool ShowFormulas { get; set; } = !true; // standaard geen formules tonen
 
 
+    [Parameter] public bool ShowNonEditables { get; set; } = !true; // standaard alleen invoer tonen
+    [Parameter] public EventCallback<bool> ShowNonEditablesChanged { get; set; }
 
 
 
-        // Geef parent de mogelijkheid runtime kolommen te tonen/verbergen.
-        [Parameter] public HashSet<string> VisibleColumns { get; set; } = new();
-        [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
+
+
+    // Geef parent de mogelijkheid runtime kolommen te tonen/verbergen.
+    [Parameter] public HashSet<string> VisibleColumns { get; set; } = new();
+    [Parameter] public EventCallback<HashSet<string>> VisibleColumnsChanged { get; set; }
 
     private string GridId => $"grid_{Model.Id:N}";
     private string status = "";
@@ -211,7 +218,12 @@
             status = $"Item \"{args.Value}\" clicked";
     }
 
+    private void Bijwerken()
+    {
+        Model.BerekenEnValideer(); // WERKT ALS EEN MALLE, maar de gebruiker ziet NIETS!!!
+        StateHasChanged(); // anders zie je nog de 'vorige' berekende waarde (WERKT NIET!!!)
 
+    }
 
 
     private FluentMenu? ContextMenuRef;
