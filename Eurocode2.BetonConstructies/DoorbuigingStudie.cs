@@ -234,7 +234,7 @@ namespace Eurocode.BetonConstructies
                 var moment = this.MomentEqp;
 
                 DoorbuigingBerekening.BerekenEnValideer();
-                return DoorbuigingBerekening.DoorbuigingLangeduur;
+                return DoorbuigingBerekening.Wtot;
             }
         }
 
@@ -270,7 +270,7 @@ namespace Eurocode.BetonConstructies
         protected override bool Valideer()
         {
             Meldingen.Clear();
-            if (DoorbuigingBerekening.DoorbuigingLangeduur > ToelaatbareDoorbuiging)
+            if (DoorbuigingBerekening.Wtot > ToelaatbareDoorbuiging)
             {
 
 

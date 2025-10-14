@@ -141,18 +141,18 @@ namespace Eurocode.BetonConstructies
         //}
 
         [TableColumn(Label = "doorbuiging (bijkomend)", Symbol = "<i>w</i><sub>bijk</sub>", Unit = "mm")]
-        public double DoorbuigingBijk
+        public double Wbijk
         {
             get
             {
-                return DoorbuigingLangeduur - DoorbuigingW1;
+                return Wtot - W1;
             }
         }
 
         private double _doorbuigingZeeg = 0;
 
         [TableColumn(Label = "doorbuiging zeeg", Symbol = "<i>w</i><sub>c</sub>", Unit = "mm")]
-        public double DoorbuigingZeeg
+        public double Wc
         {
             get => _doorbuigingZeeg;
             set => SetProperty(ref _doorbuigingZeeg, value);
@@ -160,11 +160,11 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(Label = "doorbuiging eind", Symbol = "<i>w</i><sub>eind</sub>", Unit = "mm")]
 
-        public double DoorbuigingEind
+        public double Wmax
         {
             get
             {
-                return DoorbuigingLangeduur - DoorbuigingZeeg;
+                return Wtot + Wc;
             }
         }
 
@@ -190,7 +190,7 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Label = "doorbuiging (tgv blijvende belasting G)", Symbol = "<i>w</i><sub>on,G</sub>", Unit = "mm")]
-        public double DoorbuigingW1
+        public double W1
         {
             get
             {
@@ -199,15 +199,15 @@ namespace Eurocode.BetonConstructies
                 return Ctx.W1;
             }
         }
-        public Formula DoorbuigingW1Formula => new()
+        public Formula W1Formula => new()
         {
             StaticValue = @"w_{on,G} = \frac{5}{384} \frac{q_G l^4}{\delta_{cs,0} (EI)_0}",
-            DynamicValue = $@"= \frac{{5}}{{384}} \frac{{{Ctx.LijnlastG} \cdot {Ctx.LengteMM}^4 }}{{ {Delta_cs0.ToTeX()} \cdot {Buigstijfheid_0.ToTeX()}}} = {DoorbuigingW1.ToTeX()}"
+            DynamicValue = $@"= \frac{{5}}{{384}} \frac{{{Ctx.LijnlastG} \cdot {Ctx.LengteMM}^4 }}{{ {Delta_cs0.ToTeX()} \cdot {Buigstijfheid_0.ToTeX()}}} = {W1.ToTeX()}"
         };
 
 
-        [TableColumn(Label = "doorbuiging benadering", Symbol = "<i>w</i><sub>∞</sub>", Unit = "mm")]
-        public double DoorbuigingLangeduur
+        [TableColumn(Label = "doorbuiging benadering", Symbol = "<i>w</i><sub>tot</sub>", Unit = "mm")]
+        public double Wtot
         {
             get
             {
@@ -234,10 +234,10 @@ namespace Eurocode.BetonConstructies
                 return wTot;
             }
         }
-        public Formula DoorbuigingBenaderingFormula => new()
+        public Formula WtotFormula => new()
         {
             StaticValue = "u^{*} = \\frac{5}{48} \\cdot \\kappa_{max} \\cdot l^2 ",
-            DynamicValue = $"= \\frac{{5}}{{48}} \\cdot {TotaleKromming.ToTeX()} \\cdot {Ctx.LengteMM.ToEng()}^2 = {DoorbuigingLangeduur.ToTeX()}"
+            DynamicValue = $"= \\frac{{5}}{{48}} \\cdot {TotaleKromming.ToTeX()} \\cdot {Ctx.LengteMM.ToEng()}^2 = {Wtot.ToTeX()}"
         };
 
 
@@ -246,7 +246,7 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn("moment", Symbol = "<i>M</i><sub>...</sub>")]
-        public double MomentBijk
+        public double Moment
         {
             get
             {
@@ -271,7 +271,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return MomentBijk * 1e6;
+                return Moment * 1e6;
             }
         }
         //public double ScheurMoment { get; set; } = 150e6;
@@ -576,9 +576,9 @@ namespace Eurocode.BetonConstructies
             {
                 // aanvulling met Abs
 
-                if (Mcr > Math.Abs(MomentBijk)) return 0;
+                if (Mcr > Math.Abs(Moment)) return 0;
 
-                return 1 - BetaLangeduur * Math.Pow(Mcr / Math.Abs(MomentBijk), 2);
+                return 1 - BetaLangeduur * Math.Pow(Mcr / Math.Abs(Moment), 2);
 
             }
         }
@@ -589,11 +589,11 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                if (Mcr > Math.Abs(MomentBijk)) return new() { Name = "(7.19)", StaticValue = @"\zeta = 0\; voor\; ongescheurde \;doorsnede" };
+                if (Mcr > Math.Abs(Moment)) return new() { Name = "(7.19)", StaticValue = @"\zeta = 0\; voor\; ongescheurde \;doorsnede" };
 
                 return new("(7.19)",
             @"\zeta = 1 - \beta \left( \frac{M_{cr}}{M} \right)^2",
-            $@"\zeta = 1 - {BetaLangeduur.ToTeX()} \left( \frac{{{Mcr.ToTeX()}}}{{{Math.Abs(MomentBijk).ToTeX()}}} \right)^2 = {Zeta.ToTeX()}");
+            $@"\zeta = 1 - {BetaLangeduur.ToTeX()} \left( \frac{{{Mcr.ToTeX()}}}{{{Math.Abs(Moment).ToTeX()}}} \right)^2 = {Zeta.ToTeX()}");
             }
         }
 
@@ -899,6 +899,15 @@ namespace Eurocode.BetonConstructies
         protected override void Bereken()
         {
             // optie om berekeningen toe te voegen
+
+            //Console.WriteLine("Berekening gestart");
+            //Console.WriteLine($"Moment crack: {this.Mcr} kNm");
+            //Console.WriteLine($"Moment bijk: {this.MomentBijk} kNm");
+            //Console.WriteLine($"MomentG: {this.Mg} kNm");
+            //Console.WriteLine($"Zeta: {this.Zeta}");
+
+
+
         }
 
         protected override bool Valideer()

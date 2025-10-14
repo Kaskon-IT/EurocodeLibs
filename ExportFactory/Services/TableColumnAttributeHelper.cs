@@ -128,7 +128,8 @@ namespace ExportFactory.Services
                         article: attr?.Article,
                         formula: formula,
                         editable: editable,
-                        property: prop
+                        property: prop,
+                        target: model
                     );
 
                     continue;

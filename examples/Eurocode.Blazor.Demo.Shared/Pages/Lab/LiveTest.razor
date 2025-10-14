@@ -1,4 +1,5 @@
 ﻿@page "/lab/live-test"
+@using CommonLibrary
 
 <h3>LiveTest</h3>
 <p>Test pagina voor debug van componenten... </p>
@@ -14,11 +15,49 @@
 
 @code {
     public BetonContext Beton { get; set; } = new();
+    public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
+    public WapeningContext Wapening { get; set; } = new();
+    public BetonDekkingContext Dekking { get; set; } = new();
 
-    public DoorbuigingValidatieContext DoorbuigingValidatie { get; set; } = new(
-        new BetonContext(), 
-        new ParametrischeProfielen.ParametrischProfielContext(), 
-        new WapeningContext()
-    );
+    public Ref<double> L = new(7200.0);
+    public Ref<double> QG = new(-5.0);
+    public Ref<double> QBijk = new(-6.5);
+    public Ref<double> QEind = new(-5.9);
+
+
+    List<DoorbuigingCombinatieContext> CombinatieContexts { get; set; } = [];
+
+
+    public DoorbuigingValidatieContext DoorbuigingValidatie { get; set; } = new();
+
+
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Dekking.Beton = Beton;
+        Wapening.Dekking = Dekking;
+        CombinatieContexts = [
+            new DoorbuigingCombinatieContext()
+            {
+                CombinatieType = BelastingCombinatieTypeEnum.Blijvend,
+                Lijnlast = -5.0,
+            },
+            new DoorbuigingCombinatieContext()
+            {
+                CombinatieType = BelastingCombinatieTypeEnum.QuasiBlijvend,
+                Lijnlast = -5.9,
+            },
+            new DoorbuigingCombinatieContext()
+            {
+                CombinatieType = BelastingCombinatieTypeEnum.Frequent,
+                Lijnlast = -6.5,
+            }
+        ];
+
+        DoorbuigingValidatie = new(this.Beton, this.Profiel, this.Wapening, this.L, this.CombinatieContexts);
+
+    }
 
 }

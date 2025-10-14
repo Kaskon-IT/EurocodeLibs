@@ -62,7 +62,7 @@
                         if (iRow is PropertyRow row)
                         {
                             // geef een key mee voor
-                            <tr @key=row.Id>
+                            <tr @key=row.Key>
 
                                 @* 1e kolom *@
                                 <td>
@@ -107,7 +107,7 @@
                                 @* 3e kolom *@
                                 @if (row.Editable && !ReadOnly)
                                 {
-                                    @RenderInput(row.Property)
+                                    @RenderInput(row)
                                 }
                                 else
                                 {
@@ -126,7 +126,7 @@
                         } // end if (iRow is PropertyRow row)
                         else if (iRow is SubPropertyRow subRow)
                         {   
-                            <tr @key=subRow.Id>
+                            <tr @key=subRow.Key>
                                 @* 1e kolom over 4 kolommen*@
                                 <td colspan="4">
                                     <dl>
@@ -377,7 +377,7 @@
         // geen info gevonden
         if (_rows.Count == 0)
         {
-            _rows.Add(new SubPropertyRow(Guid.NewGuid().ToString(), "📭", "geen eigenschappen gevonden", ""));
+            _rows.Add(new SubPropertyRow(Guid.NewGuid().ToString(), "📭", "geen eigenschappen gevonden", "" ));
         }
 
     }
@@ -391,27 +391,59 @@
 
     protected override void OnInitialized()
     {
-        _rawRows = TableColumnAttributeHelper.GetRows(Model!)
-        .ToList();
+        // NB. Gebruik OnUpdated in plaats van PropertyChanged
+        // dit voorkomt het ophalen van 'oude' data. 
+        // of data die nog niet bijgewerkt is.
+        // OnUpdated wordt pas afgevuurd als alles klaar is.
+
+        // eerste keer sowieso ophalen
+        _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
+        ResetRows();
+
+        // dan als het model klaar is (na alle wijzigingen)
+        Model.OnUpdated += () =>
+        {
+            _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
+            ResetRows();
+            InvokeAsync(StateHasChanged);
+        };
     }
+
+
 
     protected override void OnParametersSet()
     {
-        if (_previousModel is INotifyPropertyChanged old)
-            old.PropertyChanged -= OnModelPropertyChanged;
+        // if (_previousModel is INotifyPropertyChanged old)
+        //     old.PropertyChanged -= OnModelPropertyChanged;
 
-        if (Model is INotifyPropertyChanged npc)
-            npc.PropertyChanged += OnModelPropertyChanged;
+        // if (Model is INotifyPropertyChanged npc)
+        //     npc.PropertyChanged += OnModelPropertyChanged;
 
-        _previousModel = Model;
+        // _previousModel = Model;
 
-        // dit wil ik eigenlijk niet 
-        _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
-        ResetRows();
+        // // dit wil ik eigenlijk niet 
+        // _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
+        // ResetRows();
 
     }
 
     private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // kleine delay zodat dependent properties klaar zijn
+        // als we dit niet doen worden is het Model mogelijk nog niet bijgewerkt.
+        _ = InvokeAsync(async () =>
+        {
+            await Task.Yield(); // laat UI thread even terugkeren
+            _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
+            ResetRows();
+            StateHasChanged();
+        });
+    }
+
+
+
+
+    private void OnModelPropertyChangedBAK(object? sender, PropertyChangedEventArgs e)
     {
         // deze methode wordt afgevuurd als een property van het model wordt aangepast
         // bijvoorbeeld Beton.Fck
@@ -609,9 +641,35 @@
     }
 
 
-    private RenderFragment RenderInput(PropertyInfo property) => builder =>
+    private RenderFragment RenderInput(IPropertyRow row) => builder =>
 {
-    var value = property.GetValue(Model);
+
+    try
+    {
+        if (row.Target == null || row.Property == null)
+        {
+            Console.WriteLine($"⚠️ Null Target/Property in row for {row}");
+            return;
+        }
+
+        var debugValue = row.Property.GetValue(row.Target);
+        // render input...
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"⚠️ RenderInput crash for {row.Property?.Name}: {ex}");
+        throw;
+    }
+
+
+    var target = row.Target;
+    var property = row.Property;
+
+    if (target == null || property == null)
+        return;
+
+    var value = property.GetValue(target);
+
     var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
 
     // Wrappen in <td>

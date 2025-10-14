@@ -294,7 +294,7 @@ namespace Eurocode.BetonConstructies
                 var moment = this.Moment;
 
                 //CalculatorDoorbuigingQuasiBlijvend.BerekenEnValideer();
-                return CalculatorDoorbuiging.DoorbuigingEind;
+                return CalculatorDoorbuiging.Wmax;
 
             }
         }

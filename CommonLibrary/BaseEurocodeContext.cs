@@ -24,6 +24,17 @@ namespace CommonLibrary
         public virtual void Init()
         {
             SubscribeAllNestedProperties(this);
+            // Trigger een eerste OnUpdated, tenzij een afgeleide dit overschrijft
+            OnInitialized();
+        }
+
+        /// <summary>
+        /// Wordt standaard opgeroepen aan het einde van Init.
+        /// Afgeleiden kunnen overrideen als ze initieel andere logica willen.
+        /// </summary>
+        protected virtual void OnInitialized()
+        {
+            OnUpdated?.Invoke();
         }
 
         public DateTime AangemaaktOp { get; private set; } = DateTime.UtcNow;
@@ -56,15 +67,22 @@ namespace CommonLibrary
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             OnUpdated?.Invoke();
 #if DEBUG
-            Console.WriteLine($"{GetType().Name}: {propertyName} changed");
+            //Console.WriteLine($"{GetType().Name}: {propertyName} changed ({DateTime.Now})");
 #endif
         }
 
         protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (Equals(field, value)) return false;
+            var oldValue = field;
             field = value;
             OnPropertyChanged(propertyName);
+
+#if DEBUG
+            //var ust = value?.GetType().UnderlyingSystemType.ToString() ?? "onbekend";
+            //Console.WriteLine($"SetProperty<{ust}> uit {GetType().Name}: {propertyName} changed from {oldValue} to {value}");
+#endif
+
             return true;
         }
 
