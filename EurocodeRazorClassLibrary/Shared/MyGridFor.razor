@@ -397,13 +397,13 @@
         // OnUpdated wordt pas afgevuurd als alles klaar is.
 
         // eerste keer sowieso ophalen
-        _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
+        _rawRows = TableColumnAttributeHelper.GetRows(Model, 0, 0).ToList();
         ResetRows();
 
         // dan als het model klaar is (na alle wijzigingen)
         Model.OnUpdated += () =>
         {
-            _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
+            _rawRows = TableColumnAttributeHelper.GetRows(Model, 0, 0).ToList();
             ResetRows();
             InvokeAsync(StateHasChanged);
         };

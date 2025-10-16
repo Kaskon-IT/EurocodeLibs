@@ -105,10 +105,30 @@ namespace ExportFactory.Services
 
                     var label = attr?.Label ?? prop.Name;
                     var symbol = attr?.Symbol;
+                    var unit = attr?.Unit;
+                    var description = attr?.Description;
+                    var article = attr?.Article;
 
                     var symbolOverrideProp = model.GetType().GetProperty(prop.Name + "Symbol");
                     if (symbolOverrideProp?.GetValue(model) is string sym)
                         symbol = sym;
+
+                    var unitOverrideProp = model.GetType().GetProperty(prop.Name + "Unit");
+                    if (unitOverrideProp?.GetValue(model) is string unitOverride)
+                        unit = unitOverride;
+
+                    var labelOverrideProp = model.GetType().GetProperty(prop.Name + "Label");
+                    if (labelOverrideProp?.GetValue(model) is string labelOverride)
+                        label = labelOverride;
+
+                    var descOverrideProp = model.GetType().GetProperty(prop.Name + "Description");
+                    if (descOverrideProp?.GetValue(model) is string descOverride)
+                        description = descOverride;
+
+                    var articleOverrideProp = model.GetType().GetProperty(prop.Name + "Article");
+                    if (articleOverrideProp?.GetValue(model) is string articleOverride)
+                        article = articleOverride;
+
 
                     var visibleOverrideProp = model.GetType().GetProperty(prop.Name + "Visible");
                     if (visibleOverrideProp?.GetValue(model) is bool visible)
@@ -117,15 +137,18 @@ namespace ExportFactory.Services
                             continue; // skip deze property
                     }
 
+                    var editableOverrideProp = model.GetType().GetProperty(prop.Name + "Editable");
+                    if (editableOverrideProp?.GetValue(model) is bool editableOverride)
+                        editable = editableOverride;
 
                     yield return new PropertyRow(
                         label: DeCapitalizeFirstLetter(label) ?? "",
                         symbol: symbol,
-                        unit: attr?.Unit,
+                        unit: unit,
                         rawValue: rawValue,
                         displayValue: displayValue,
-                        description: attr?.Description,
-                        article: attr?.Article,
+                        description: description,
+                        article: article,
                         formula: formula,
                         editable: editable,
                         property: prop,

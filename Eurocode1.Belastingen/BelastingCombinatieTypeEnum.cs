@@ -5,30 +5,37 @@ namespace Eurocode.Belastingen
 {
     public enum BelastingCombinatieTypeEnum
     {
-        [Display(Name = "Fundamenteel (6.10a)")]
+        [Display(Name = "Fundamenteel (6.10a)", ShortName = "Fundamenteel")]
         [Description("Fundamenteel (6.10a)")]
         Fundamenteel_A = 1001,
 
-        [Display(Name = "Fundamenteel (6.10b)")]
+        [Display(Name = "Fundamenteel (6.10b)", ShortName = "Fundamenteel")]
         [Description("Fundamenteel (6.10b)")]
         Fundamenteel_B = 1002,
 
-
+        [Display(Name = "Brand (6.11b)", ShortName = "Brand")]
         [Description("Brand (6.11b)")]
         Brand = 1101,
 
+        [Display(Name = "Aardbeving (6.12b)", ShortName = "Aardbeving")]
         [Description("Aardbeving (6.12b)")]
         Aardbeving = 1201,
 
+
+        [Display(Name = "Karakteristiek (6.14b)", ShortName = "Karakteristiek")]
         [Description("Karakteristiek (6.14b)")]
         Karakteristiek = 1401,
+
+        [Display(Name = "Frequent (6.15b)", ShortName = "Frequent")]
 
         [Description("Frequent (6.15b)")]
         Frequent = 1501,
 
+        [Display(Name = "Quasi-blijvend (6.16b)", ShortName = "Quasi-blijvend")]
         [Description("Quasi-blijvend (6.16b)")]
         QuasiBlijvend = 1601,
 
+        [Display(Name = "Blijvend", ShortName = "Blijvend")]
         [Description("Blijvend")]
         Blijvend = 9999,
 

@@ -23,7 +23,7 @@
     public Ref<double> QG = new(-5.0);
     public Ref<double> QBijk = new(-6.5);
     public Ref<double> QEind = new(-5.9);
-
+    public double LengteMM = 7200.0;
 
     List<DoorbuigingCombinatieContext> CombinatieContexts { get; set; } = [];
 
@@ -56,7 +56,7 @@
             }
         ];
 
-        DoorbuigingValidatie = new(this.Beton, this.Profiel, this.Wapening, this.L, this.CombinatieContexts);
+        DoorbuigingValidatie = new(this.Beton, this.Profiel, this.Wapening, this.LengteMM, this.CombinatieContexts);
 
     }
 

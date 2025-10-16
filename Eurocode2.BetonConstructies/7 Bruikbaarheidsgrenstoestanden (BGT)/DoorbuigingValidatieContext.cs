@@ -7,7 +7,7 @@ namespace Eurocode.BetonConstructies
 {
     public class DoorbuigingCombinatieContext
     {
-        //[TableColumn(Label = "combinatie")]
+        [TableColumn(Label = "combinatie")]
         public BelastingCombinatieTypeEnum CombinatieType { get; set; } = BelastingCombinatieTypeEnum.Frequent;
 
         public double Lijnlast { get; set; } = -5.0; // kN/m
@@ -55,32 +55,32 @@ namespace Eurocode.BetonConstructies
 
         }
 
-        public DoorbuigingValidatieContext(BetonContext beton, ParametrischProfielContext profiel, WapeningContext wapening, Ref<double> l, List<DoorbuigingCombinatieContext> combinaties)
+        public DoorbuigingValidatieContext(BetonContext beton, ParametrischProfielContext profiel, WapeningContext wapening, double lengteMM, List<DoorbuigingCombinatieContext> combinaties)
         {
             Beton = beton;
             Profiel = profiel;
             Wapening = wapening;
 
-            _lengteMM = l.Value;
+            _lengteMM = lengteMM;
 
             //this.QG = qG;
             //this.QEind = qEind;
             //this.QBijk = qBijk;
-            this.L = l;
+            //this.L = l;
             this.CombinatieContexts = combinaties;
 
             Kruipkrimp.Beton = beton;
             Kruipkrimp.Profiel = profiel;
 
             // Automatisch herberekenen bij wijziging
-            L.ValueChanged += _ => BerekenEnValideer();
+            //L.ValueChanged += _ => BerekenEnValideer();
 
 
 
             BerekenEnValideer();
         }
 
-        public Ref<double> L { get; }
+        //public Ref<double> L { get; }
         public List<DoorbuigingCombinatieContext> CombinatieContexts { get; } = [];
 
 
@@ -91,7 +91,7 @@ namespace Eurocode.BetonConstructies
         // lengte
         private double _lengteMM = 7200;
         [TableColumn(Label = "lengte", Symbol = "<i>L</i><sub>t</sub>", Unit = "mm")]
-        public double LengteMM { get => _lengteMM; }
+        public double LengteMM { get => _lengteMM; set => SetProperty(ref _lengteMM, value); }
 
 
         private bool _gebruikFctmlFl = true;
@@ -146,6 +146,10 @@ namespace Eurocode.BetonConstructies
         public Formula GrenswaardeEindFormula => new() { StaticValue = @$" = \max \left\{{ {FactorEind}\cdot{LengteMM:0} ,\;{GrenswaardeEind2:0.##} \right\}}" };
 
 
+        public double UnityCheckBijkomend => Wbijk / GrenswaardeBijkomend;
+        public double UnityCheckEind => Wmax / GrenswaardeEind;
+
+
 
         // backing fields
         private ParametrischProfielContext _profiel = new();
@@ -166,7 +170,7 @@ namespace Eurocode.BetonConstructies
 
         // results
         [TableColumn(Label = "zeeg", Symbol = "<i>w</i><sub>c</sub>", StringFormat = "0.#", Unit = "mm")]
-        public double Wc { get; private set; }
+        public double Wc => LengteMM * FactorZeeg; // doorbuiging door zeeg in mm
 
         [TableColumn(Label = "doorbuiging blijvend (zonder kruip)", Symbol = "<i>w</i><sub>1</sub>", StringFormat = "0.00", Unit = "mm")]
         public double W1 { get; private set; } // onmiddelijke doorbuiging bij blijvende belasting
@@ -174,19 +178,28 @@ namespace Eurocode.BetonConstructies
         [TableColumn(Label = "doorbuiging blijvend (incl. kruip)", Symbol = "<i>w</i><sub>2</sub>", StringFormat = "0.00", Unit = "mm")]
         public double W2 { get; internal set; } // bijkomende doorbuiging bij blijvende belasting
 
-        //[TableColumn(Label = "maximale doorbuiging", Symbol = "<i>w</i><sub>max</sub>", StringFormat = "0.#", Unit = "mm")]
+        [TableColumn(Label = "maximale doorbuiging", Symbol = "<i>w</i><sub>max</sub>", StringFormat = "0.#", Unit = "mm")]
         public double Wmax { get; private set; }
 
+        [TableColumn(Label = "toets maximale doorbuiging", Symbol = "<i>UC</i><sub>max</sub>", StringFormat = "0.00")]
+        public double UnityCheckMax => Wmax / GrenswaardeEind;
+        public string UnityCheckMaxUnit => UnityCheckMax > 1.01 ? "✔️" : "❌";
 
 
-        //[TableColumn(Label = "bijkomende doorbuiging", Symbol = "<i>w</i><sub>bijk</sub>", StringFormat = "0.#", Unit = "mm")]
+        [TableColumn(Label = "bijkomende doorbuiging", Symbol = "<i>w</i><sub>bijk</sub>", StringFormat = "0.#", Unit = "mm")]
         public double Wbijk { get; private set; }
 
+        [TableColumn(Label = "toets bijkomende doorbuiging", Symbol = "<i>UC</i><sub>bijk</sub>", StringFormat = "0.00")]
+        public double UcBijk => Wbijk / GrenswaardeBijkomend;
+        public string UcBijkUnit => UcBijk > 1.01 ? "✔️" : "❌";
 
 
 
-        //[TableColumn(Label = "totale doorbuiging", Symbol = "<i>w</i><sub>tot</sub>", StringFormat = "0.#", Unit = "mm")]
+
+        [TableColumn(Label = "totale doorbuiging", Symbol = "<i>w</i><sub>tot</sub>", StringFormat = "0.#", Unit = "mm")]
         public double Wtot { get; private set; }
+
+
 
 
         private double D => Profiel.Hoogte - Wapening.ZRef;
@@ -198,13 +211,13 @@ namespace Eurocode.BetonConstructies
 
         private double QG => CombinatieContexts.FirstOrDefault(c => c.CombinatieType == BelastingCombinatieTypeEnum.Blijvend)?.Lijnlast ?? 0.0;
 
-        [TableColumn(Label = "combinaties")]
-        public string CombiTest => this.CombinatieContexts == null || CombinatieContexts.Count == 0
-           ? "n.v.t."
-           : string.Join(" \r\n",
-           CombinatieContexts
-               .Where(p => p.CombinatieType != BelastingCombinatieTypeEnum.Blijvend)
-               .Select(p => $"{p.CombinatieType}:Wbij{p.Wbijk:0.0} Wtot{p.Wtot:0.0}"));
+        //[TableColumn(Label = "combinaties")]
+        //public string CombiTest => this.CombinatieContexts == null || CombinatieContexts.Count == 0
+        //   ? "n.v.t."
+        //   : string.Join(" \r\n",
+        //   CombinatieContexts
+        //       .Where(p => p.CombinatieType != BelastingCombinatieTypeEnum.Blijvend)
+        //       .Select(p => $"{p.CombinatieType}:Wbij{p.Wbijk:0.0} Wtot{p.Wtot:0.0}"));
 
 
 
@@ -214,7 +227,7 @@ namespace Eurocode.BetonConstructies
         {
             BetonDoorbuigingContext ctx = new()
             {
-                LengteMM = this.L.Value,
+                LengteMM = this.LengteMM,
                 Profiel = this.Profiel,
                 Beton = this.Beton,
                 Wapening = this.Wapening,
@@ -228,7 +241,7 @@ namespace Eurocode.BetonConstructies
 
             BetonDoorbuigingCalculator calculator = new(ctx);
             calculator.GebruikFctmFl = GebruikFctmFl;
-            calculator.Wc = this.L.Value * FactorZeeg;
+            calculator.Wc = this.LengteMM * FactorZeeg;
 
             calculator.BerekenEnValideer();
 
@@ -243,6 +256,16 @@ namespace Eurocode.BetonConstructies
             {
                 this.W1 = calculator.W1;
                 this.W2 = calculator.Wtot;
+            }
+
+            if (combinatie.CombinatieType == this.CombinatieTypeBijkomend)
+            {
+                this.Wbijk = combinatie.Wbijk;
+            }
+
+            if (combinatie.CombinatieType == this.CombinatieTypeEind)
+            {
+                this.Wmax = combinatie.Wmax;
             }
 
 
