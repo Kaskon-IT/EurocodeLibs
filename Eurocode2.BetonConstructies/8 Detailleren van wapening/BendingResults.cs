@@ -233,7 +233,9 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Symbol = "<i>M</i><sub>Ed</sub>", Label = "moment rekenwaarde", Unit = "kN", Order = 1,
+        [TableColumn(Symbol = "<i>M</i><sub>Ed</sub>", Label = "moment rekenwaarde", Unit = "kN",
+            Order = 1,
+            Width = 2.0,
             Key = K.MomentRekenwaarde,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Moment
@@ -274,6 +276,7 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Symbol = "<i>b</i>", Label = "breedte", Unit = "mm",
+            Width = 2.0,
             Key = K.ProfielBreedte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Breedte
@@ -287,6 +290,7 @@ namespace Eurocode.BetonConstructies
         }
 
         [TableColumn(Symbol = "<i>h</i>", Label = "hoogte", Unit = "mm",
+            Width = 2.0,
             Key = K.ProfielHoogte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Hoogte
@@ -317,6 +321,7 @@ namespace Eurocode.BetonConstructies
             }
         }
         [TableColumn(Symbol = "<i>d</i>", Label = "nuttige hoogte", Unit = "mm",
+            Width = 2.0,
             Key = K.NuttigeHoogte,
             StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double D { get { return Hoogte - ZRef; } }
@@ -324,7 +329,9 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(Symbol = "<i>x</i><sub>u</sub>", Label = "hoogte drukzone", Unit = "mm",
             Key = K.Xu,
-            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+            StringFormat = "0.#",
+            Width = 2.0,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Xu
         {
             get
@@ -357,6 +364,7 @@ namespace Eurocode.BetonConstructies
         }
 
         [TableColumn(Symbol = "<i>z</i>", Unit = "mm", Label = "inwendige hefboomsarm",
+            Width = 2.0,
             // Key = K.InwendigeHefboom,
             StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Z
@@ -441,6 +449,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             Symbol = "<i>A</i><sub>s,req</sub>",
             Unit = "mm²", Label = "benodigde wapening",
+            Width = 2.0,
             Order = 40,
             Key = K.AsBen,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
@@ -473,6 +482,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "<i>A</i><sub>s,toe</sub>",
             Unit = "mm²",
             Label = "toegepaste wapening",
+            Width = 2.0,
             Order = 41,
             Key = K.AsToe,
             StringFormat = "0",

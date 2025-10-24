@@ -7,33 +7,20 @@ using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using MigraDoc.DocumentObjectModel.Tables;
 using PdfSharp.Fonts;
-using SkiaSharp;
-using Svg.Skia;
+
+//using Svg.Skia;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-//using System.Reflection.Metadata;
-
-//
-
-
-
-//using System.Reflection.Metadata;
 using static ExportFactory.MigraDocContentModels.ExampleDocumentContent;
 
 namespace ExportFactory.Services
 {
-
-
-
-
-
-
-
     public class MigraDocCreator
     {
         private static readonly CustomTempFileCollection _tempFiles = new();
+        private static bool _isRtfContent = false;
         //private SvgImageCache _cache { get; set; } = new SvgImageCache();
 
 
@@ -42,8 +29,9 @@ namespace ExportFactory.Services
         /// </summary>
         /// <param name="content">DocumentContent for creating the document</param>
         /// <returns>A Migradoc Document</returns>
-        public static Document GenerateDocument(DocumentContent content, SvgImageCache? cache, bool includeToc = false)
+        public static Document GenerateDocument(DocumentContent content, SvgImageCache? cache, bool includeToc = false, bool isRtfContent = false)
         {
+            _isRtfContent = isRtfContent;
             // Font resolver mag maar 1x gedaan worden!
             if (GlobalFontSettings.FontResolver is not CustomFontResolver)
             {
@@ -126,13 +114,23 @@ namespace ExportFactory.Services
             }
             rtfRenderer.Render(document, filename, null);
 
+            //string rtfPath = Path.Combine(tempDir, "document.rtf");
+            //MigraDocCreator.ExportToRtf(document, filename);
+
+            // Post-process: vervang EMF-markers
+            EmfPostProcessor.ReplaceEmfMarkersInFile(filename);
         }
 
         public static string ExportToRtfString(Document document)
         {
             // Save the document as RTF
             var rtfRenderer = new MigraDoc.RtfRendering.RtfDocumentRenderer();
-            return rtfRenderer.RenderToString(document, null);
+            var rtf = rtfRenderer.RenderToString(document, null);
+
+            // Post-process: vervang EMF-markers
+            rtf = EmfPostProcessor.ReplaceEmfMarkersInText(rtf);
+
+            return rtf;
         }
 
         public static void ExportToPdf(Document document, string filename)
@@ -756,6 +754,7 @@ namespace ExportFactory.Services
                         try
                         {
                             var svgContent = rowCells[i].SvgImage;
+
                             var imgStream = SvgService.ConvertSvgToPngStream(svgContent, out double width, out double height);
 
                             if (imgStream != null)
@@ -1059,9 +1058,23 @@ namespace ExportFactory.Services
             }
 
             // Add document title in header
-            var par = headerRow.Cells[0].AddParagraph(); AddMarkdownToParagraph(par, content.PageHeader.Text1); par.Format.Alignment = ParagraphAlignment.Left;
-            par = headerRow.Cells[1].AddParagraph(); AddMarkdownToParagraph(par, content.PageHeader.Text2); par.Format.Alignment = ParagraphAlignment.Center;
-            par = headerRow.Cells[2].AddParagraph(); AddMarkdownToParagraph(par, content.PageHeader.Text3); par.Format.Alignment = ParagraphAlignment.Right;
+            var par = headerRow.Cells[0].AddParagraph();
+            AddMarkdownToParagraph(par, content.PageHeader.Text1); par.Format.Alignment = ParagraphAlignment.Left;
+            par = headerRow.Cells[1].AddParagraph();
+            if (!string.IsNullOrEmpty(content.CoverPage.CompanyLogoPath))
+            {
+                var logo = par.AddImage(content.CoverPage.CompanyLogoPath);
+                logo.Height = "4mm";
+                logo.LockAspectRatio = true;
+            }
+            else
+            {
+                AddMarkdownToParagraph(par, content.PageHeader.Text2); par.Format.Alignment = ParagraphAlignment.Center;
+            }
+
+
+            par = headerRow.Cells[2].AddParagraph();
+            AddMarkdownToParagraph(par, content.PageHeader.Text3); par.Format.Alignment = ParagraphAlignment.Right;
 
 
             headerRow.Shading.Color = content.HeaderBackgroundColor;
@@ -1374,40 +1387,17 @@ namespace ExportFactory.Services
             section.PageSetup = CoverPageSetup.Clone();
 
 
-            if (!string.IsNullOrEmpty(coverPage.CompanyLogoPath))
-            {
-                var logo = section.Headers.Primary.AddImage(coverPage.CompanyLogoPath);
-                logo.Width = "5cm";
-                logo.LockAspectRatio = true;
 
-            }
 
             // Voeg een afbeelding toe via de CustomTempFileCollection
             string tempImagePath = _tempFiles.AddFile(coverPage.CompanyLogoPath);
 
             Image image = section.AddImage(tempImagePath);
             image.LockAspectRatio = true;
-            image.Width = "16cm";  // pas aan naar wens
+            image.Width = "10cm";  // pas aan naar wens
             image.Top = ShapePosition.Center;
             image.Left = ShapePosition.Center;
 
-
-            //var tempFiles = new System.IO.Internal.TempFileCollection(keepFiles: true);
-
-            // Genereer zelf het temp-bestandspad
-            //string tempLogo = Path.Combine(Path.GetTempPath(), $"logo_{Guid.NewGuid()}.png");
-            //File.Copy(originalLogoPath, tempLogo, overwrite: true);
-
-            // Voeg toe aan de collection zodat het bij cleanup wordt beheerd
-            //tempFiles.AddFile(tempLogo, keepFile: true);
-
-            // Voeg het toe aan je MigraDoc document
-            //section.AddImage(tempLogo);
-
-
-
-
-            //var tempFiles = new TempFileCollection(Path.GetTempPath(), keepFiles: true);
 
             if (!string.IsNullOrEmpty(coverPage.CompanyLogoPath))
             {
@@ -1415,9 +1405,11 @@ namespace ExportFactory.Services
                 //string tempLogo = tempFiles.AddFile(coverPage.CompanyLogoPath,true);
                 //var tempLogoPath = tempFiles.AddFile(, true);
 
-                var logo = section.Headers.Primary.AddImage(coverPage.CompanyLogoPath);
-                logo.Width = "8cm";
-                logo.LockAspectRatio = true;
+                //var logo = section.Headers.Primary.AddImage(coverPage.CompanyLogoPath);
+                //logo.Width = "8cm";
+                //logo.LockAspectRatio = true;
+
+                //Console.WriteLine($"Added logo from path: {coverPage.CompanyLogoPath}");
             }
 
 
@@ -1428,9 +1420,9 @@ namespace ExportFactory.Services
 
             if (File.Exists(coverPage.CompanyLogoPath))
             {
-                var logo = section.Headers.Primary.AddImage(coverPage.CompanyLogoPath);
-                logo.Width = "5cm";
-                logo.LockAspectRatio = true;
+                //var logo = section.Headers.Primary.AddImage(coverPage.CompanyLogoPath);
+                //logo.Width = "5cm";
+                //logo.LockAspectRatio = true;
             }
 
 
@@ -1535,52 +1527,61 @@ namespace ExportFactory.Services
         }
 
 
-        public static byte[] ConvertSvgToPng(string svgXml, int width, int height)
+        //public static byte[] ConvertSvgToPngDELETE(string svgXml, int width, int height)
+        //{
+        //    using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(svgXml));
+
+        //    //var svg = new Svg.Skia.SKSvg();
+        //    //svg.Load(stream);
+
+        //    //using var bitmap = new SkiaSharp.SKBitmap(width, height);
+        //    //using var canvas = new SkiaSharp.SKCanvas(bitmap);
+        //    //canvas.Clear(SkiaSharp.SKColors.Transparent);
+        //    //canvas.DrawPicture(svg.Picture);
+        //    //canvas.Flush();
+
+        //    //using var img = SkiaSharp.SKImage.FromBitmap(bitmap);
+        //    //using var pngData = img.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
+        //    //return pngData.ToArray();
+        //    return Array.Empty<byte>();
+        //}
+
+        public static void AddEmfPlaceholderBySvgXml(Section section, string svgXml)
         {
-            using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(svgXml));
+            // van svg naar emf (tijdelijk bestand)
+            var tempMetaFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".emf");
+            SvgToMetaFileConverter.ConvertSvgToMetafile(svgXml, tempMetaFilePath);
+            _tempFiles.AddFile(tempMetaFilePath); // zodat we later kunnen opruimen
 
-            var svg = new Svg.Skia.SKSvg();
-            svg.Load(stream);
-
-            using var bitmap = new SkiaSharp.SKBitmap(width, height);
-            using var canvas = new SkiaSharp.SKCanvas(bitmap);
-            canvas.Clear(SkiaSharp.SKColors.Transparent);
-            canvas.DrawPicture(svg.Picture);
-            canvas.Flush();
-
-            using var img = SkiaSharp.SKImage.FromBitmap(bitmap);
-            using var pngData = img.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
-            return pngData.ToArray();
+            // schrijf placeholder {{EMF:trap_schets.emf}}
+            section.AddParagraph($"{{EMF:path={tempMetaFilePath};x=8cm;y=2cm;rel=page;wrap=square;}}");
         }
 
 
-        /// <summary>
-        /// Render SVG naar PNG via SkiaSharp.Svg
-        /// </summary>
-        private static byte[] RenderSvgToPng(string svgXml, int widthPx, int heightPx)
+        public static void AddSvgImage(Section section, string svgXml)
         {
-            using var svgStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(svgXml));
-            var svg = new SKSvg();
-            svg.Load(svgStream);
+            var tempMetaFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".wmf");
 
-            using var bitmap = new SKBitmap(widthPx, heightPx);
-            using var canvas = new SKCanvas(bitmap);
-            canvas.Clear(SKColors.Transparent);
 
-            // Schaal zodat de SVG past in de bitmap
-            float scaleX = widthPx / svg.Picture.CullRect.Width;
-            float scaleY = heightPx / svg.Picture.CullRect.Height;
-            canvas.Scale(scaleX, scaleY);
-            canvas.DrawPicture(svg.Picture);
-            canvas.Flush();
 
-            using var image = SKImage.FromBitmap(bitmap);
-            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-            return data.ToArray();
+
+
+            SvgToMetaFileConverter.ConvertSvgToMetafile(svgXml, tempMetaFilePath);
+            var image = section.AddImage(tempMetaFilePath);
+            image.LockAspectRatio = true;
+            image.Width = Unit.FromCentimeter(10);
+            image.WrapFormat.Style = WrapStyle.None;
+            image.RelativeVertical = RelativeVertical.Margin;
+            image.RelativeHorizontal = RelativeHorizontal.Margin;
+            image.Left = "0mm";
+            image.Top = "10mm";
+
+            //image.WrapFormat = WrapFormat
+            _tempFiles.AddFile(tempMetaFilePath); // zodat we later kunnen opruimen
         }
 
 
-        public static Image AddSvgViaTempFile(Paragraph paragraph, string svgXml, double widthPx, double heightPx)
+        public static Image AddSvgViaTempFileDELETE(Paragraph paragraph, string svgXml, double widthPx, double heightPx)
         {
             // viewbox
             var viewBox = ParseViewBox(svgXml);
@@ -1606,7 +1607,7 @@ namespace ExportFactory.Services
 
             // SVG → PNG (byte[]). Deze helper moet jij zelf implementeren
             // bv. via SkiaSharp, Svg.Skia of een ander svg-renderer.
-            byte[] pngBytes = ConvertSvgToPng(svgXml, renderWidth, rendereHeight);
+            byte[] pngBytes = [];
 
             // schrijf naar temp-bestand
             string fileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".png");
@@ -1640,6 +1641,7 @@ namespace ExportFactory.Services
 
             var regex = new Regex(
                 @"(?<svg>\<svg.*?\</svg\>)|" +  // <-- nieuwe groep voor SVG
+                @"(?<png>data:image\/png;base64,[A-Za-z0-9+/=]+)|" +   // <-- nieuwe groep voor PNG!
                 @"(?<bold>\*\*(.*?)\*\*|<b>(.*?)</b>)|" +
                 @"(?<italic>\*(.*?)\*|<i>(.*?)</i>)|" +
                 @"(?<underline>__(.*?)__|<u>(.*?)</u>)|" +
@@ -1658,29 +1660,30 @@ namespace ExportFactory.Services
                 {
                     string svgString = match.Value;
 
-                    //AddSvgViaTempFile(paragraph, svgString, 600, 600);
 
-                    // SVG toevoegen (10 cm breed, maximaal 15 cm hoog)
-                    cache?.AddSvg(paragraph, svgString, widthCm: 10, maxHeightCm: 15);
+                    // gebruik een placeholder
+                    // later met PostProcessor vervangen we dit deel van de .rtf met EMFcode
+                    // alleen indien Rtf
+                    if (_isRtfContent)
+                        AddEmfPlaceholderBySvgXml(paragraph.Section, svgString);
 
-
-
-
-
-                    // hier je SVG omzetten naar PNG via SkiaSharp en toevoegen aan MigraDoc
-                    //AddSvgToParagraph(paragraph, svgString);
 
                     // gebruik de Tag om het SVG object in te bewaren
                     // dit wordt gebruikt bij conversie naar HTML.
                     paragraph.Tag = svgString;
-
-                    //paragraph.AddImage();
-
-                    //paragraph.AddImage();
-
-
                 }
-                else if (match.Groups["bold"].Success)
+
+                if (match.Groups["png"].Success)
+                {
+                    var dataUri = match.Value;
+                    var base64 = dataUri.Substring(dataUri.IndexOf(",") + 1);
+                    byte[] pngBytes = Convert.FromBase64String(base64);
+
+                    //cache?.AddSvgFromBytes(paragraph, pngBytes, widthCm: 10, maxHeightCm: 15);
+                    cache?.AddPngBytesToSection(paragraph.Section, pngBytes, widthCm: 10, maxHeightCm: 15);
+                }
+
+                if (match.Groups["bold"].Success)
                 {
                     var inner = StripTags(match.Value, "**", "<b>", "</b>");
                     var tempPara = new Paragraph();

@@ -1,6 +1,6 @@
 ﻿using MigraDoc.DocumentObjectModel;
 using SkiaSharp;
-using Svg.Skia;
+//using Svg.Skia;
 using System.Xml;
 
 public static class DocumentHelper
@@ -24,7 +24,7 @@ public static class DocumentHelper
 
 
 
-    public static void AddTableWithSvg(Document document, string svgContent)
+    public static void AddTableWithSvgDELETE(Document document, string svgContent)
     {
         // Create a section
         var section = document.AddSection();
@@ -51,7 +51,7 @@ public static class DocumentHelper
         var cell2 = row.Cells[1];
         try
         {
-            var svgStream = ConvertSvgToImageStream(svgContent, out double width, out double height);
+            var svgStream = ConvertSvgToImageStreamDelete(svgContent, out double width, out double height);
             if (svgStream != null)
             {
 
@@ -77,7 +77,7 @@ public static class DocumentHelper
     }
 
 
-    public static Stream ConvertSvgToImageStream(string svgContent, out double width, out double height)
+    public static Stream ConvertSvgToImageStreamDelete(string svgContent, out double width, out double height)
     {
         width = 0;
         height = 0;
@@ -100,22 +100,22 @@ public static class DocumentHelper
                 throw new Exception("SVG width and height must be greater than 0.");
 
             // Render SVG to a bitmap
-            using var svg = new SKSvg();
-            try
-            {
-                svg.FromSvg(svgContent);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading SVG content: {ex.Message}");
-                // Handle the error (e.g., log, provide a fallback, or rethrow)
-            }
+            //using var svg = new SKSvg();
+            //try
+            //{
+            //    svg.FromSvg(svgContent);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Error loading SVG content: {ex.Message}");
+            //    // Handle the error (e.g., log, provide a fallback, or rethrow)
+            //}
 
 
             using var bitmap = new SKBitmap((int)width, (int)height);
             using var canvas = new SKCanvas(bitmap);
             canvas.Clear(SKColors.Transparent);
-            canvas.DrawPicture(svg.Picture);
+            //canvas.DrawPicture(svg.Picture);
             canvas.Flush();
 
             // Save the bitmap to a memory stream as PNG
@@ -137,54 +137,6 @@ public static class DocumentHelper
     }
 
 
-    public static Stream ConvertSvgToImageStreamBAK1(string svgContent, out double width, out double height)
-    {
-        width = 0;
-        height = 0;
-
-        try
-        {
-            // Parse the SVG for size
-            var svgDoc = new XmlDocument();
-            svgDoc.LoadXml(svgContent);
-            var svgNode = svgDoc.DocumentElement;
-
-            if (svgNode == null || svgNode.Name != "svg")
-                throw new Exception("Invalid SVG: Root element is not <svg>.");
-
-            // Extract width and height from the SVG
-            width = ExtractSvgDimension(svgNode, "width");
-            height = ExtractSvgDimension(svgNode, "height");
-
-            if (width <= 0 || height <= 0)
-                throw new Exception("SVG width and height must be greater than 0.");
-
-            // Render SVG to a bitmap
-            using var svg = new SKSvg();
-            svg.Load(svgContent);
-
-            using var bitmap = new SKBitmap((int)width, (int)height);
-            using var canvas = new SKCanvas(bitmap);
-            canvas.Clear(SKColors.Transparent);
-            canvas.DrawPicture(svg.Picture);
-            canvas.Flush();
-
-            // Save the bitmap to a memory stream as PNG
-            var memoryStream = new MemoryStream();
-            using var image = SKImage.FromBitmap(bitmap);
-            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-            data.SaveTo(memoryStream);
-
-            memoryStream.Position = 0;
-            return memoryStream;
-        }
-        catch
-        {
-            width = 0;
-            height = 0;
-            return null;
-        }
-    }
 
     private static double ExtractSvgDimension(XmlNode svgNode, string attribute)
     {

@@ -135,7 +135,7 @@ namespace ExportFactory.Services
             { "GebruikteNorm", new(sym: null, desc: "gebruikte norm", norm: null, art: null ) },
             { "Gevolgklasse", new(sym:"", desc: "gevolgklasse (Consequence Class)", norm: "EC0", art:"2.3") },
             { "OntwerpLevensduur", new(sym: null, desc: "ontwerplevensduur", norm:"EC0", art: "", vgl: "") },
-            { "Kfi", new(sym : "K~FI~ =", desc : "belastingfactor tbv de betrouwbaarheidsdifferentiatie", norm: "EC0", art: "B.3.3", vgl: "tabel B3")},
+            { "Kfi", new(sym : "K~FI~ =", desc : "belastingfactor t.b.v. de betrouwbaarheidsdifferentiatie", norm: "EC0", art: "B.3.3", vgl: "tabel B3")},
             { "Xi", new(sym: "|xi| =", desc: "reductiefactor voor ongunstige blijvende belastingen", norm:"EC0", art: "6.4.3.2 (3)", vgl: "(6.10b)") },
             { "Betrouwbaarheidsklasse", new(sym : "", desc : "betrouwbaarheidsklasse (Reliability Class)", norm : "EC0", art : "B.3.2") },
             { "FlagEmoji", new(sym: null, desc: "Land", norm: "", art: ""  ) },

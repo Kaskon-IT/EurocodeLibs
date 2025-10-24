@@ -39,7 +39,7 @@
       "_appName": "eurocode",
       "_appTitle": "eurocode",
       "_enableSearch": true,
-      "pdf": true
+      "pdf": false
     }
   }
 }

@@ -1,5 +1,4 @@
 ﻿using CommonLibrary;
-using ExportFactory.Shared;
 using System.ComponentModel;
 using System.Data;
 using System.Reflection;
@@ -20,6 +19,90 @@ namespace ExportFactory.Extensions
             return ToDataTableInternal(list.ToList());
         }
 
+
+
+        private static DataTable ToDataTableInternalOPT<T>(List<T> list) where T : BaseEurocodeContext
+        {
+            ArgumentNullException.ThrowIfNull(list);
+            if (list.Count == 0)
+                return new DataTable(typeof(T).Name);
+
+            var type = list.First().GetType();
+            var dataTable = new DataTable(type.Name);
+
+            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            // === KOLOMMEN AANMAKEN ===
+            foreach (var prop in properties)
+            {
+                // Check zichtbaarheid per object (dynamisch)
+                var visibleOverrideProp = type.GetProperty(prop.Name + "Visible");
+                if (visibleOverrideProp?.GetValue(list.First()) is bool visible && !visible)
+                    continue;
+
+                var columnAttribute = prop.GetCustomAttribute<TableColumnAttribute>();
+
+                // Bepaal kolomnaam (voorkom mismatchen)
+                var columnName = columnAttribute?.Label ?? prop.Name;
+
+                // Controleer of kolom al bestaat (veiligheid bij duplicate namen)
+                if (dataTable.Columns.Contains(columnName))
+                    continue;
+
+                // Kies correcte type (nullable afhandelen)
+                var columnType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+
+                var column = new DataColumn(columnName, columnType)
+                {
+                    // optioneel: standaardwaarde
+                    AllowDBNull = true
+                };
+
+                // Extra eigenschappen uit attribute
+                if (columnAttribute is not null)
+                {
+                    column.ExtendedProperties["Visible"] = columnAttribute.Visible;
+                    if (!string.IsNullOrEmpty(columnAttribute.StringFormat))
+                        column.ExtendedProperties["StringFormat"] = columnAttribute.StringFormat;
+                }
+
+                dataTable.Columns.Add(column);
+            }
+
+            // === RIJEN VULLEN ===
+            foreach (var item in list)
+            {
+                var row = dataTable.NewRow();
+
+                foreach (var prop in properties)
+                {
+                    // Zichtbaarheid check opnieuw (voor object-specifieke overrides)
+                    var visibleOverrideProp = type.GetProperty(prop.Name + "Visible");
+                    if (visibleOverrideProp?.GetValue(item) is bool visible && !visible)
+                        continue;
+
+                    var columnAttribute = prop.GetCustomAttribute<TableColumnAttribute>();
+                    var columnName = columnAttribute?.Label ?? prop.Name;
+
+                    if (!dataTable.Columns.Contains(columnName))
+                        continue;
+
+                    var value = prop.GetValue(item);
+
+                    // Enum → Description
+                    if (TryGetEnumDescription(value, prop, out string description))
+                        value = description;
+
+                    row[columnName] = value ?? DBNull.Value;
+                }
+
+                dataTable.Rows.Add(row);
+            }
+
+            return dataTable;
+        }
+
+
         // Extensiemethode om een List<T> om te zetten naar een DataTable, inclusief kolominstellingen zoals header, uitlijning en zichtbaarheid
         private static DataTable ToDataTableInternal<T>(List<T> list) where T : BaseEurocodeContext
         {
@@ -27,6 +110,7 @@ namespace ExportFactory.Extensions
             ArgumentNullException.ThrowIfNull(list.FirstOrDefault());
 
             var type = list.FirstOrDefault()?.GetType();
+
             ArgumentNullException.ThrowIfNull(type);
 
             var dataTable = new DataTable();
@@ -35,6 +119,8 @@ namespace ExportFactory.Extensions
             {
                 return dataTable;
             }
+
+            var fod = list.FirstOrDefault();
 
             try
             {
@@ -49,11 +135,31 @@ namespace ExportFactory.Extensions
                     // Haal het ColumnAttribute op (indien aanwezig)
                     var columnAttribute = prop.GetCustomAttribute<TableColumnAttribute>();
 
+                    // zichtbaarheid per object (dynamisch) 
+                    //var visibleOverrideProp = type.GetProperty(prop.Name + "Visible");
+                    //if (visibleOverrideProp?.GetValue(fod) is bool visible)
+                    //{
+                    //    if (!visible)
+                    //        continue; // skip kolom, zorg ervoor dat deze niet wordt toegevoegd aan de datatable
+                    //}
+
+
+
+
+
                     // Aanvulling dynamisch vullen mbv Dictionary 
                     if (columnAttribute != null)
                     {
                         string columnName = prop.Name;
+
+
+
+
                     }
+
+
+
+
 
                     //if (columnAttribute == null)
                     //    continue;
@@ -103,19 +209,39 @@ namespace ExportFactory.Extensions
                 // Add rows to the DataTable
                 foreach (var item in list)
                 {
+
+
+
                     // Create a new DataRow for each item
                     var row = dataTable.NewRow();
 
                     foreach (var prop in properties)
                     {
-                        // Assign the property value to the corresponding column in the DataRow
-                        row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
 
-                        // description
-                        if (TryGetEnumDescription(row[prop.Name], prop, out string description))
+                        // zichtbaarheid per object (dynamisch) 
+                        //var visibleOverrideProp = type.GetProperty(prop.Name + "Visible");
+                        //if (visibleOverrideProp?.GetValue(fod) is bool visible)
+                        //{
+                        //    if (!visible)
+                        //        continue;
+                        //}
+
+
+                        // Assign the property value to the corresponding column in the DataRow
+                        if (dataTable.Columns.Contains(prop.Name))
                         {
-                            row[prop.Name] = description;
+                            row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
+
+                            // description
+                            if (TryGetEnumDescription(row[prop.Name], prop, out string description))
+                            {
+                                row[prop.Name] = description;
+                            }
+
                         }
+
+
+
                     }
                     // Add the populated row to the DataTable
                     dataTable.Rows.Add(row);

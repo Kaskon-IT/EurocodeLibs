@@ -36,7 +36,7 @@ namespace Eurocode.Belastingen
         public string Naam { get { return "BG" + Nr.ToString("D1"); } }
         public string Omschrijving { get; set; } = "G";
 
-        [TableColumn("type", order: 10, width: 4.0)]
+        [TableColumn("type", order: 10, width: 3.0)]
         public BelastingGevalTypeEnum? Type { get; set; } = BelastingGevalTypeEnum.Permanent;
 
         public BelastOnbelastTypeEnum? BelastOnbelastType { get; set; } = BelastOnbelastTypeEnum.AllesTegelijk;
@@ -44,7 +44,7 @@ namespace Eurocode.Belastingen
 
         private GebruiksklasseEnum? _gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen;
 
-        [TableColumn("gebruiksklasse", order: 20, width: 8.0)]
+        [TableColumn("gebruiksklasse", order: 20, width: 6.0)]
         public GebruiksklasseEnum? Gebruiksklasse
         {
             get => _gebruiksklasse;
@@ -67,7 +67,7 @@ namespace Eurocode.Belastingen
         }
 
 
-        [TableColumn("opm.", order: 9999, width: 8.0)]
+        [TableColumn("opm.", order: 9999, width: 4.0)]
         public string Opmerking { get; set; } = "";
 
 
@@ -80,9 +80,9 @@ namespace Eurocode.Belastingen
 
         public enum BelastingGevalTypeEnum
         {
-            [Description("Permanent")]
+            [Description("permanent")]
             Permanent,
-            [Description("Veranderlijk")]
+            [Description("veranderlijk")]
             Veranderlijk,
         }
 

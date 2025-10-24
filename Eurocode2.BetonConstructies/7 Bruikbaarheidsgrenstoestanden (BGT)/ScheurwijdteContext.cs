@@ -95,7 +95,9 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             Label = "moment BGT",
             Description = "Moment in de bruikbaarheidsgrenstoestand (BGT)",
-            Symbol = "<i>M</i><sub>E,freq</sub>",
+            Symbol = "<i>M</i><sub>E,fr</sub>",
+            Width = 2.0,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left,
             Unit = "kNm")]
         public double MomentFrequent { get { return Snedekrachten.My; } }
 
@@ -110,6 +112,8 @@ namespace Eurocode.BetonConstructies
             Label = "scheurmoment",
             Symbol = "<i>M</i><sub>cr</sub>",
             Description = "scheurmoment",
+            Width = 2.0,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left,
             Unit = "kNm")]
         public double Mcr { get; internal set; }
 
@@ -151,12 +155,12 @@ namespace Eurocode.BetonConstructies
         public double FactorK { get; set; } = 1.0;
 
 
-        [TableColumn(Visible = false, Label = "factor", Symbol = "<i>k</i><sub>t</sub>", Article = "7.3.4 (2)", Description = "is een factor die afhangt van de belastingsduur: <ul>" +
-            "<li><i>k</i><sub>t</sub> = 0,6 voor kortdurende belasting; " +
-            "<li><i>k</i><sub>t</sub> = 0,4 voor langdurende belasting. </ul>"
-            )]
+        //[TableColumn(Visible = false, Label = "factor", Symbol = "<i>k</i><sub>t</sub>", Article = "7.3.4 (2)", Description = "is een factor die afhangt van de belastingsduur: <ul>" +
+        //    "<li><i>k</i><sub>t</sub> = 0,6 voor kortdurende belasting; " +
+        //    "<li><i>k</i><sub>t</sub> = 0,4 voor langdurende belasting. </ul>"
+        //    )]
         public double FactorKt { get; internal set; } = 0.6;
-
+        public bool FactorKtVisible { get; set; } = false;
 
         public double FactorKc { get; internal set; } = 0.4; // naar 7.3.2
 
@@ -250,6 +254,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "s<sub>r,max</sub>",
             Description = "maximale scheurafstand",
             Article = "7.3.4 (1)",
+            Width = 2.0,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
         public double SrMax { get; internal set; }
@@ -291,6 +296,7 @@ namespace Eurocode.BetonConstructies
             Article = "7.3.4 (2)",
             Description = "mag zijn berekend uit de vergelijking (7.9)",
             StringFormat = "0.0000",
+            Width = 2.0,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
         public double EpsSmMinusEpsCm { get; set; }
@@ -315,6 +321,7 @@ namespace Eurocode.BetonConstructies
             Unit = "mm",
             Description = "De scheurwijdte <i>w</i><sub>k</sub> mag zijn berekend met vergelijking (7.8):",
             StringFormat = "0.##",
+            Width = 2.0,
             Key = K.ScheurwijdteBerekend,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
@@ -341,6 +348,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "<i>k</i><sub>x</sub>",
             Description = " voor de bepaling van de duurzaamheid, mogen de waarden in tabel 7.1N zijn vermenigvuldigd met een factor kx.",
             Key = K.ScheurwijdteKx,
+            Width = 2.0,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double ScheurwijdteGrenswaardeFactorKx
         {
@@ -365,6 +373,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "<i>w</i><sub>max</sub>",
             Unit = "mm",
             Label = "grenswaarde scheurwijdte",
+            Width = 2.0,
             Key = K.ScheurwijdteMax,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double ScheurwijdteMax
@@ -394,11 +403,13 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn(Symbol = "<i>α</i><sub>e<sub>",
-            Label = "verhouding",
-            Article = "7.3.4 (2)",
-            Description = "is de verhouding <i>E</i><sub>s</sub>/<i>E</i><sub>cm</sub>"
-            )]
+        //[TableColumn(Symbol = "<i>α</i><sub>e</sub>",
+        //    Label = "verhouding",
+        //    Article = "7.3.4 (2)",
+        //    Description = "is de verhouding <i>E</i><sub>s</sub>/<i>E</i><sub>cm</sub>",
+        //    Width = 2.0,
+        //    Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
+        //    )]
         public double ScheurwijdteVerhoudingElasticiteitsmodulusStaalBeton
         {
             get
@@ -407,6 +418,7 @@ namespace Eurocode.BetonConstructies
                 return Beton.BetonStaal.ElasticiteitsModulus / (Ec); // Ec in N/mm² (gewijzigd 9-9-2025)
             }
         }
+        public bool ScheurwijdteVerhoudingElasticiteitsmodulusStaalBetonVisible { get; set; } = false;
 
 
 
@@ -414,7 +426,9 @@ namespace Eurocode.BetonConstructies
             Article = "7.3.2 (2)",
             Label = "minimale wapening scheurbeheersing",
             Symbol = "<i>A</i><sub>s,min</sub>",
-            Unit = "mm²"
+            Unit = "mm²",
+            Width = 2.0,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
         public double ScheurwijdteAsMin { get; set; }
 
@@ -422,15 +436,18 @@ namespace Eurocode.BetonConstructies
 
         public WapeningContext Wapening { get; set; } = new() { Tekst = "8-100" };
 
-        [TableColumn(
-            Symbol = "<i>A</i><sub>s,toe</sub>",
-            Label = "toegepast wapening",
-            Unit = "mm²"
-            )]
+        //[TableColumn(
+        //    Symbol = "<i>A</i><sub>s,toe</sub>",
+        //    Label = "toegepast wapening",
+        //    Unit = "mm²"
+        //    )]
         public double AsToe
         {
             get { return Wapening.As; }
         }
+        public bool AsToeVisible { get; set; } = false;
+
+
         public double AsBen { get; set; }
 
 

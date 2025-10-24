@@ -1,0 +1,110 @@
+﻿@using ExportFactory.MigraDocContentModels
+@using ExportFactory.Services
+@inject IWebHostEnvironment Env
+@inject IJSRuntime JS
+
+
+<h3>LabDocument</h3>
+
+<button class="btn btn-primary" @onclick="GenerateDocument">Genereer Document</button>
+
+@if (Document != null)
+{
+    <div class="mt-3">
+        <button class="btn btn-secondary me-2" @onclick="ExportPdf">📄 Exporteer als PDF</button>
+        <button class="btn btn-secondary me-2" @onclick="ExportRtf">📝 Exporteer als RTF</button>
+        <button class="btn btn-secondary" @onclick="ExportHtml">🌐 Exporteer als HTML</button>
+    </div>
+
+    <div>
+        @((MarkupString)Html)
+    </div>
+}
+
+@code {
+    private DocumentContent Content { get; set; } = new();
+    private MigraDoc.DocumentObjectModel.Document? Document { get; set; }
+    private string svgXml = @"<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'>
+  <rect width='100' height='100' fill='blue' />
+</svg>";
+    private string Html = "";
+    private bool isRtfContent = false;
+    private readonly string _loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin feugiat ullamcorper nisl et commodo. Morbi gravida egestas magna vel cursus. Nulla congue pharetra mi quis mollis. Suspendisse vehicula purus sit amet nulla pulvinar pellentesque. Maecenas sagittis odio sed dapibus luctus. Mauris aliquet lectus eu semper rutrum. Sed consectetur maximus leo, vitae lacinia ipsum sodales eget. Suspendisse vel lacus porta, tempus ante nec, aliquam sapien. Ut a accumsan nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Praesent id ante id nisi eleifend ultricies eget at ligula. Etiam pulvinar nisi ex, quis pellentesque mauris vulputate non.";
+
+
+    private void GenerateDocument()
+    {
+        Content = new DocumentContent();
+        Content.PageMarginSetting = DocumentContent.PageMarginAndPageNumberSettingsEnum.Gecentreerd;
+        Content.PageHeader.Text1 = "Voorbeeld Document";
+        Content.PageHeader.Text2 = DateTime.Now.ToString("dd-MM-yyyy");
+        Content.PageHeader.Text3 = "Eurocode.Blazor Demo";
+
+        Content.PageFooter.Text1 = "Gegenereerd met Eurocode.Blazor";
+        Content.PageFooter.Text2 = "Hello Blazor";
+
+        //var section = new SectionContent();
+        Content.Sections.Add(new());
+
+        var section = Content.Sections.Last();
+
+        section.AddParagraph("Dit is een test van het genereren van een document met Eurocode.Blazor.");
+        section.AddParagraph("Hier zijn een aantal par's met SVG:");
+        section.AddParagraph(_loremIpsum + svgXml);
+
+        // section.AddParagraph(svgXml);
+
+
+
+        Content.Sections.Add(new());
+        section = Content.Sections.Last();
+        section.AddParagraph("Dit is een nieuwe sectie, kop1", "kop 1");
+        section.AddParagraph("Hier is een nog een SVG:");
+        section.AddParagraph(svgXml);
+
+
+
+
+        // Maak MigraDoc-document
+
+        Document = MigraDocCreator.GenerateDocument(Content, null, false, isRtfContent);
+    }
+
+    private async Task ExportPdf()
+    {
+        if (Document is null) return;
+        isRtfContent = false;
+        var fileName = "output.pdf";
+        var outputPath = Path.Combine(Env.WebRootPath, fileName);
+        MigraDocCreator.ExportToPdf(Document, outputPath);
+        Console.WriteLine($"PDF geëxporteerd: {outputPath}");
+        await OpenFileInBrowser(fileName);
+
+    }
+
+    private async Task ExportRtf()
+    {
+        if (Document is null) return;
+        isRtfContent = true;
+        var fileName = "output.rtf";
+        var outputPath = Path.Combine(Env.WebRootPath, fileName);
+        MigraDocCreator.ExportToRtf(Document, outputPath);
+        Console.WriteLine($"RTF geëxporteerd: {outputPath}");
+        await OpenFileInBrowser(fileName);
+    }
+
+    private void ExportHtml()
+    {
+        if (Document is null) return;
+        isRtfContent = false;
+        //var outputPath = Path.Combine(Env.WebRootPath, "output.html");
+        Html = HtmlCreator.GenerateHtmlFromDocument(Document);
+    }
+
+    private async Task OpenFileInBrowser(string fileName)
+    {
+        var fileUrl = $"/{fileName}";
+        await JS.InvokeVoidAsync("window.open", fileUrl, "_blank", "noopener,noreferrer");
+    }
+
+}

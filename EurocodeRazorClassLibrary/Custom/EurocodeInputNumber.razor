@@ -41,10 +41,9 @@
     }
     else
     {
-        <div @onblur="OnBlurred">
+        <div>
             <FluentTextField Class="number-field"
             @bind-Value="InputValue"
-            @oninput="ValidateInput"
             @bind-MinValue="MinValue"
             @bind-MaxValue="MaxValue"
             Id="@Id"
@@ -54,11 +53,13 @@
             Size=12
             Style="@style"
             Appearance=@appearance
-            TextFieldType=TextFieldType.Text>
+            TextFieldType=TextFieldType.Text
+            @onblur="OnBlurred">
                 @if (LabelPosition == LabelPosition.Top)
                 {
                     <span class="truncate-1">@GetLabel(LabelType == LabelType.SymbolAndDescription) </span>
                 }
+
             </FluentTextField>
         </div>
 
@@ -275,7 +276,14 @@
 
     private async Task OnBlurred(FocusEventArgs e)
     {
-        Console.WriteLine($"TextField is verlaten (@onblur) ({Label})");
+        ValidateMinMax(InputValue);
+
+        var normalizedInput = InputValue.Replace(",", ".");
+        if (TryParseValue(normalizedInput, out T? newValue))
+        {
+            await SetValueAsync(newValue);
+        }
+
         await NotifyParentAsync();
     }
 
@@ -372,6 +380,8 @@
         }
     }
 
+
+   
 
     private async Task ForceValidation()
     {

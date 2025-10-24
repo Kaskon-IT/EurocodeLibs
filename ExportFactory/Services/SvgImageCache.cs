@@ -1,65 +1,74 @@
 ﻿using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
-using SkiaSharp;
-using Svg.Skia;
-using System.Text;
+//using Svg.Skia;
 using System.Text.RegularExpressions;
 
 namespace ExportFactory.Services
 {
 
+
+
     public class SvgImageCache
     {
         private readonly List<string> _tempFiles = new();
+        //private readonly SvgExportInterop _svgInterop;
 
-        /// <summary>
-        /// Voegt een SVG-string toe aan een MigraDoc Paragraph als Image.
-        /// </summary>
-        /// <param name="paragraph">Doel-paragraph</param>
-        /// <param name="svgXml">SVG XML string</param>
-        /// <param name="widthCm">Gewenste breedte in cm (hoogte schaalt automatisch mee)</param>
-        /// <param name="maxHeightCm">Optioneel: maximale hoogte in cm (default = 0 = onbeperkt)</param>
-        /// <param name="center">Centreren in de paragraph</param>
-        /// <returns>Het toegevoegde MigraDoc Image</returns>
-        public Image AddSvg(Paragraph paragraph, string svgXml, double widthCm, double maxHeightCm = 0, bool center = true)
+        //public SvgImageCache(IJSRuntime jsRuntime)
+        //{
+        //    _svgInterop = new SvgExportInterop(jsRuntime);
+        //}
+
+
+        public Image AddSvgFromBytes(Paragraph paragraph, byte[] pngBytes, double widthCm, double maxHeightCm = 0, bool center = true)
         {
-            // ---- 1. Parse viewBox
-            var viewBox = ParseViewBox(svgXml);
-            double aspect = viewBox.width / viewBox.height;
-
-            // ---- 2. Rendergrootte in pixels (hoge resolutie)
-            int renderWidthPx = 1200;
-            int renderHeightPx = (int)(renderWidthPx / aspect);
-            double scale = renderHeightPx / viewBox.width;
-
-            // ---- 3. Render SVG naar PNG-bytes
-            byte[] pngBytes = RenderSvgToPng(svgXml, renderWidthPx, renderHeightPx, scale);
-
-            // ---- 4. Temp bestand
             string fileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".png");
             File.WriteAllBytes(fileName, pngBytes);
             _tempFiles.Add(fileName);
 
-            // ---- 5. MigraDoc Image
             var image = paragraph.AddImage(fileName);
             image.LockAspectRatio = true;
             image.Width = Unit.FromCentimeter(widthCm);
 
             if (maxHeightCm > 0 && image.Height.Centimeter > maxHeightCm)
-            {
                 image.Height = Unit.FromCentimeter(maxHeightCm);
-            }
 
             if (center)
-            {
                 paragraph.Format.Alignment = ParagraphAlignment.Center;
-            }
 
             return image;
         }
 
+        public Image AddPngBytesToSection(Section section, byte[] pngBytes, double widthCm, double maxHeightCm = 0)
+        {
+            string fileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".png");
+            File.WriteAllBytes(fileName, pngBytes);
+            _tempFiles.Add(fileName);
+
+            var image = section.AddImage(fileName);
+            image.LockAspectRatio = true;
+            image.Width = Unit.FromCentimeter(widthCm);
+            image.Left = $"{18 - widthCm}cm";
+            image.Top = "0cm";
+            image.WrapFormat.Style = WrapStyle.None;
+            image.RelativeVertical = RelativeVertical.Margin;
+            image.RelativeHorizontal = RelativeHorizontal.Margin;
+
+
+            if (maxHeightCm > 0 && image.Height.Centimeter > maxHeightCm)
+                image.Height = Unit.FromCentimeter(maxHeightCm);
+
+
+
+
+            return image;
+        }
+
+
+
+
+
         /// <summary>
-        /// Ruimt alle tijdelijke bestanden op. Aanroepen NA het wegschrijven van het document!
+        /// Ruimt alle tijdelijke bestanden op.
         /// </summary>
         public void Cleanup()
         {
@@ -93,28 +102,9 @@ namespace ExportFactory.Services
             double h = double.Parse(m.Groups[4].Value, System.Globalization.CultureInfo.InvariantCulture);
             return (x, y, w, h);
         }
-
-        private byte[] RenderSvgToPng(string svgXml, int widthPx, int heightPx, double scale)
-        {
-            using var svgStream = new MemoryStream(Encoding.UTF8.GetBytes(svgXml));
-            var svg = new SKSvg();
-            svg.Load(svgStream);
-
-            using var bitmap = new SKBitmap(widthPx, heightPx);
-            using var canvas = new SKCanvas(bitmap);
-            canvas.Clear(SKColors.Transparent);
-
-            //float scaleX = widthPx / svg.Picture.CullRect.Width;
-            //float scaleY = heightPx / svg.Picture.CullRect.Height;
-            canvas.Scale((float)scale);
-            canvas.DrawPicture(svg.Picture);
-            canvas.Flush();
-
-            using var image = SKImage.FromBitmap(bitmap);
-            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-            return data.ToArray();
-        }
     }
+
+
 
 
 

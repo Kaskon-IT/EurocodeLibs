@@ -5,38 +5,38 @@ namespace Eurocode.Belastingen
 {
     public enum BelastingCombinatieTypeEnum
     {
-        [Display(Name = "Fundamenteel (6.10a)", ShortName = "Fundamenteel")]
-        [Description("Fundamenteel (6.10a)")]
+        [Display(Name = "fundamenteel (6.10a)", ShortName = "fundamenteel")]
+        [Description("fundamenteel (6.10a)")]
         Fundamenteel_A = 1001,
 
-        [Display(Name = "Fundamenteel (6.10b)", ShortName = "Fundamenteel")]
-        [Description("Fundamenteel (6.10b)")]
+        [Display(Name = "fundamenteel (6.10b)", ShortName = "fundamenteel")]
+        [Description("fundamenteel (6.10b)")]
         Fundamenteel_B = 1002,
 
-        [Display(Name = "Brand (6.11b)", ShortName = "Brand")]
-        [Description("Brand (6.11b)")]
+        [Display(Name = "brand (6.11b)", ShortName = "brand")]
+        [Description("brand (6.11b)")]
         Brand = 1101,
 
-        [Display(Name = "Aardbeving (6.12b)", ShortName = "Aardbeving")]
-        [Description("Aardbeving (6.12b)")]
+        [Display(Name = "aardbeving (6.12b)", ShortName = "aardbeving")]
+        [Description("aardbeving (6.12b)")]
         Aardbeving = 1201,
 
 
-        [Display(Name = "Karakteristiek (6.14b)", ShortName = "Karakteristiek")]
-        [Description("Karakteristiek (6.14b)")]
+        [Display(Name = "karakteristiek (6.14b)", ShortName = "karakteristiek")]
+        [Description("karakteristiek (6.14b)")]
         Karakteristiek = 1401,
 
-        [Display(Name = "Frequent (6.15b)", ShortName = "Frequent")]
+        [Display(Name = "frequent (6.15b)", ShortName = "frequent")]
 
-        [Description("Frequent (6.15b)")]
+        [Description("frequent (6.15b)")]
         Frequent = 1501,
 
-        [Display(Name = "Quasi-blijvend (6.16b)", ShortName = "Quasi-blijvend")]
-        [Description("Quasi-blijvend (6.16b)")]
+        [Display(Name = "quasi-blijvend (6.16b)", ShortName = "quasi-blijvend")]
+        [Description("quasi-blijvend (6.16b)")]
         QuasiBlijvend = 1601,
 
-        [Display(Name = "Blijvend", ShortName = "Blijvend")]
-        [Description("Blijvend")]
+        [Display(Name = "blijvend", ShortName = "blijvend")]
+        [Description("blijvend")]
         Blijvend = 9999,
 
     }

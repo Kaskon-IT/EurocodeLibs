@@ -260,11 +260,34 @@ namespace CommonLibrary
         protected abstract void Bereken();
         protected abstract bool Valideer();
 
-        public void AddMelding(Melding melding)
+        public void AddMelding(Melding? melding)
         {
-            if (!Meldingen.Any(m => m.Bericht == melding.Bericht))
+            if (melding is null)
+                return;
+
+            // Zorg dat de collectie bestaat
+            Meldingen ??= new ObservableCollection<Melding>();
+
+            // Verwijder per ongeluk toegevoegde null-items
+            for (int i = Meldingen.Count - 1; i >= 0; i--)
+            {
+                if (Meldingen[i] is null)
+                    Meldingen.RemoveAt(i);
+            }
+
+            // Controleer of er al een melding met dezelfde code of bericht bestaat
+            bool bestaatAl = Meldingen.Any(m =>
+                m is not null &&
+                ((m.Code.HasValue && melding.Code.HasValue && m.Code == melding.Code) ||
+                 (!string.IsNullOrEmpty(m.Bericht) &&
+                  m.Bericht == melding.Bericht)));
+
+            if (!bestaatAl)
+            {
                 Meldingen.Add(melding);
+            }
         }
+
 
         public void AddMelding(int code)
         {

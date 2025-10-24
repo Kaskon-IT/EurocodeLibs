@@ -89,8 +89,6 @@
                 // Italic: *text* -> <em>text</em>
                 markdown = Regex.Replace(markdown, @"\*(.*?)\*", "<em>$1</em>");
 
-
-
                 // Line breaks: dubbele nieuwe regel -> <br/>
                 markdown = Regex.Replace(markdown, @"\n\s*\n", "<br/>");
 
@@ -153,6 +151,11 @@
                     var guid = Guid.NewGuid();
                     htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{section.Tag}</button>");
                     htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                    htmlBuilder.AppendLine(@"<div class='page-header'>");
+                    htmlBuilder.AppendLine(@$"<span class='left'>LINKS</span>");
+                    htmlBuilder.AppendLine(@$"<span class='middle'>MIDDEN</span>");
+                    htmlBuilder.AppendLine(@$"<span class='right'>RECHTS</span>");
+                    htmlBuilder.AppendLine("@</div>");
 
                 }
 
@@ -547,7 +550,10 @@
 
             if (paragraph.Tag is string tagString && tagString.StartsWith("<svg"))
             {
+
+                //sb.AppendLine("<div class=\"svg-container\">");
                 sb.AppendLine(tagString);
+                //sb.AppendLine("</div>");
                 return sb.ToString();
             }
 
