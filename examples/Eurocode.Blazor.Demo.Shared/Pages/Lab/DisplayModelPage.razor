@@ -1,0 +1,54 @@
+﻿@page "/lab/displaymodel"
+
+<p>Demo voor display van attributen</p>
+
+
+@if (SampleProject == null)
+{
+    <p>Geen model geladen</p>
+
+}
+else
+{
+
+    <p>
+        Zo maak je annotatie voor een property.
+    </p>
+
+    <pre><code>
+    [TableColumn(HeaderText = "Elasticiteitsmodulus", Symbol = "E", Unit = "N/mm²", StringFormat = "{0:N0}", Description = "Stijfheid van het materiaal")]
+    public double ElasticModulus { get; set; }
+    public Formula ElasticModelusFormula => new("E_c = 22000 \\cdot (f_{cm}/10)^{0.3}");
+    </code></pre>
+
+    <CodeSnippet>
+        [TableColumn(HeaderText = "Elasticiteitsmodulus", Symbol = "E", Unit = "N/mm²", StringFormat = "{0:N0}", Description = "Stijfheid van het materiaal")]
+        public double ElasticModulus { get; set; }
+        public Formula ElasticModelusFormula => new("E_c = 22000 \\cdot (f_{cm}/10)^{0.3}");    
+
+    </CodeSnippet>
+
+
+
+
+    <h6>Beton</h6>
+    <EurocodeRazorClassLibrary.Shared.ListFor TModel="BetonContext" Item="SampleProject.Beton" />
+
+    <h6>Dekking en duurzaamheid</h6>
+    <EurocodeRazorClassLibrary.Shared.ListFor TModel="BetonDekkingContext" Item="SampleProject.Dekking" />
+
+    <h6>Scheurwijdte</h6>
+    <EurocodeRazorClassLibrary.Shared.ListFor TModel="ScheurwijdteContext" Item="SampleProject.ScheurwijdteDemo" />
+
+
+}
+
+
+
+
+
+@code {
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+}

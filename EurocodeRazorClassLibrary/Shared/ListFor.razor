@@ -1,0 +1,197 @@
+﻿@typeparam TModel 
+@using System.Reflection
+@using CommonLibrary
+@using ExportFactory.Services
+@using ExportFactory.Shared
+
+<div class="space-y-2">
+    @foreach (var prop in TableColumnAttributeHelper.GetTableColumns<TModel>())
+    {
+        if (Item == null) continue;
+
+        // filter op properties nader toe te voegen
+
+        //var info = TableColumnAttributeHelper.GetColumnInfo(prop, Item);
+
+        TableColumnDto meta = TableColumnAttributeHelper.GetMetaDto(prop, Item);
+
+        Console.WriteLine("Meta-label:" + meta.Symbol);
+
+
+        // Formules bepalen
+        //var hasStatic = !string.IsNullOrWhiteSpace(info.Formula);
+        //var hasDynamic = !string.IsNullOrWhiteSpace(info.DynamicFormula);
+
+        //var hasFormula = info.Vergelijking != null;
+        var tooltipIcon = meta.Formula?.Name ?? "?";
+
+        var label = (MarkupString)meta.Label;
+        var symbol = (MarkupString)(meta.Symbol ?? "");
+        var value = (MarkupString)(meta.Value ?? "-");
+        var article = (MarkupString)(meta.Article ?? "");
+
+
+        @* Alleen tooltip renderen als er minstens één formule is *@
+        if (meta.Formula != null)
+        {
+            <div class="table-grid"
+                 style="display:grid; gap:.5rem; grid-template-columns:@GridTemplateColumns"
+                 @key="prop.Name">
+
+                @if (VisibleParts.HasFlag(ColumnPart.Header))
+                {
+                    <div class="header">@label</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Symbol))
+                {
+                    <div class="symbol">@symbol</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Value))
+                {
+                    <div>@value</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Article))
+                {
+                    <div class="article">@article</div>
+                }
+
+                @* Tooltip voor beide formules *@
+                <div class="tooltip-container">
+                    <span class="tooltip-icon">@tooltipIcon</span>
+                    <div class="tooltip-content">
+
+                        @if (meta.Formula != null)
+                        {
+                            tooltipIcon = meta.Formula?.Name;
+    
+                            <div>
+                                @if (meta.Formula?.StaticValue != null)
+                                {
+
+                                    <KaTexFormula Value="@meta.Formula?.StaticValue" Label="@meta.Formula?.Name" />
+
+                                }
+                                @if(meta.Formula?.DynamicValue != null)
+                                {
+                                    <KaTexFormula Value="@meta.Formula?.DynamicValue" />
+    
+                                }
+                                </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="table-grid"
+                 style="display:grid; gap:.5rem; grid-template-columns:@GridTemplateColumns"
+                 @key="prop.Name">
+
+                @if (VisibleParts.HasFlag(ColumnPart.Header))
+                {
+                    <div class="header">@label</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Symbol))
+                {
+                    <div class="symbol">@symbol</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Value))
+                {
+                    <div>@value</div>
+                }
+
+                @if (VisibleParts.HasFlag(ColumnPart.Article))
+                {
+                    <div class="article">@article</div>
+                }
+            </div>
+        }
+    }
+</div>
+
+
+
+@* <div class="space-y-2">
+    @foreach (var prop in TableColumnAttributeHelper.GetTableColumns<TModel>())
+    {
+        if (Item == null) continue;
+
+        var info = TableColumnAttributeHelper.GetColumnInfo(prop, Item);
+
+        <div class="table-grid" @key="Guid.NewGuid()">
+            <div class="header">@info.Header</div>
+            <div>@info.Symbol</div>
+            <div>@info.Value</div>
+            <div class="article">@info.Article</div>
+            @if (!string.IsNullOrEmpty(info.Formula))
+            {
+                <div><KaTexFormula Value="@info.Formula"/></div>
+            }
+            else if (!string.IsNullOrEmpty(info.DynamicFormula))
+            {
+                <div><KaTexFormula Value="@info.DynamicFormula" /></div>
+            }
+
+        </div>
+    }
+</div> *@
+
+@code
+{ 
+    [Parameter, EditorRequired] public TModel Item { get; set; } = default!; 
+    [Parameter] public EventCallback<TModel> ItemChanged { get; set; }
+    
+    // zichtbaarheidsmasker voor kolommen
+    [Parameter] public ColumnPart VisibleParts { get; set; } =
+        ColumnPart.Header | ColumnPart.Symbol | ColumnPart.Value | ColumnPart.Article | ColumnPart.Formula;
+
+    private static readonly ColumnPart[] _partsOrder = new[]
+    {
+    ColumnPart.Header, ColumnPart.Symbol, ColumnPart.Value, ColumnPart.Article, ColumnPart.Formula
+    };
+
+    private string GridTemplateColumns =>
+        string.Join(" ",
+            _partsOrder
+               .Where(p => VisibleParts.HasFlag(p))
+            .Select(_ => "1fr")); // i.p.v. auto vs 1fr → altijd 1fr
+
+
+    private BaseEurocodeContext? _previousContext;
+
+    protected override void OnParametersSet()
+    {
+        // afmelden van vorige context
+        if (_previousContext is not null)
+        {
+            _previousContext.OnUpdated -= StateHasChanged;
+        }
+
+        // als Item een BaseEurocodeContext is → aanmelden
+        if (Item is BaseEurocodeContext ctx)
+        {
+            _previousContext = ctx;
+            ctx.OnUpdated += StateHasChanged;
+        }
+        else
+        {
+            _previousContext = null;
+        }
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (_previousContext is not null)
+        {
+            _previousContext.OnUpdated -= StateHasChanged;
+        }
+    }
+}

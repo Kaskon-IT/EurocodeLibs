@@ -1,0 +1,137 @@
+﻿@inject IJSRuntime JS
+
+<div id="@Id" @ref="formulaDiv">@((MarkupString)("$" + Formula + "$"))</div>
+
+@code {
+    [Parameter]
+    public string Formula { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> FormulaChanged { get; set; }
+
+    [Parameter]
+    public string Id { get; set; } = "formulaDiv";
+
+    private ElementReference formulaDiv;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await SafeRenderAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (formulaDiv.Context != null)
+        {
+            await SafeRenderAsync();
+        }
+    }
+
+    private async Task SafeRenderAsync()
+    {
+        // Wacht tot element in DOM staat
+        await Task.Yield();
+
+        try
+        {
+            await JS.InvokeVoidAsync("MathJax.typesetPromise", new[] { formulaDiv });
+        }
+        catch (JSDisconnectedException)
+        {
+            // SignalR nog niet connected → veilig negeren
+        }
+    }
+}
+
+
+
+@* @inject IJSRuntime JS
+
+<div id="@Id" @ref="formulaDiv">
+    @((MarkupString)("$" + Formula + "$"))
+</div>
+
+@code {
+    [Parameter] public string Formula { get; set; } = string.Empty;
+    [Parameter] public EventCallback<string> FormulaChanged { get; set; }
+    [Parameter] public string Id { get; set; } = "formulaDiv";
+
+    private ElementReference formulaDiv;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("MathJax.typesetPromise", new[] { formulaDiv });
+        }
+        catch (JSDisconnectedException)
+        {
+            // SignalR nog niet connected, veilig negeren
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (formulaDiv.Context != null)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("MathJax.typesetPromise", new[] { formulaDiv });
+            }
+            catch (JSDisconnectedException)
+            {
+                // Veilig negeren
+            }
+        }
+    }
+
+    public async Task<string?> GetSvgAsync()
+    {
+        try
+        {
+            return await JS.InvokeAsync<string>("formulaHelper.getSvg", Id);
+        }
+        catch (JSDisconnectedException)
+        {
+            return null;
+        }
+    }
+} *@
+
+
+
+@* @inject IJSRuntime JS
+
+<div id="@Id" @ref="formulaDiv">
+    @((MarkupString)("$" + Formula + "$"))
+</div>
+
+@code {
+    [Parameter] public string Formula { get; set; } = string.Empty;
+    [Parameter] public EventCallback<string> FormulaChanged { get; set; }
+    
+    [Parameter] public string Id { get; set; } = "formulaDiv";
+
+    private ElementReference formulaDiv;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Render de formule elke keer als hij verandert
+        await JS.InvokeVoidAsync("MathJax.typesetPromise", new[] { formulaDiv });
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Her-render bij parameter updates
+        if (formulaDiv.Context != null)
+        {
+            await JS.InvokeVoidAsync("MathJax.typesetPromise", new[] { formulaDiv });
+        }
+    }
+
+    /// Haal de SVG-string van deze formule op (voor export, PDF, enz.)
+    public async Task<string?> GetSvgAsync()
+    {
+        return await JS.InvokeAsync<string>("formulaHelper.getSvg", Id);
+    }
+} *@

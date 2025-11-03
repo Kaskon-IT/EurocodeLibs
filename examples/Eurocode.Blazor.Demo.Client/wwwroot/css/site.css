@@ -26,3 +26,39 @@
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+
+.ec-tree {
+    list-style-type: none;
+    margin-left: 1rem;
+    padding-left: 0.5rem;
+    border-left: 1px dashed #ccc;
+}
+
+.ec-node {
+    font-family: Consolas, monospace;
+    font-size: 0.9rem;
+}
+
+    .ec-node small {
+        color: #666;
+    }
+
+
+.table-input {
+    width: 100%;
+    min-width: 0; /* belangrijk voor number inputs */
+    box-sizing: border-box;
+    padding: 4px 6px;
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* verberg spinners in webkit als je dat wilt */
+input[type="number"].table-input::-webkit-outer-spin-button,
+input[type="number"].table-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+

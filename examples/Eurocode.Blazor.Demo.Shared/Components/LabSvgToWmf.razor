@@ -1,0 +1,86 @@
+﻿@page "/svg-to-wmf-test"
+@inject IWebHostEnvironment Env
+
+<h3>SVG naar WMF/EMF Converter Test</h3>
+
+<div>
+    <label for="svgInput">Plak hier je SVG XML:</label><br />
+    <textarea id="svgInput" @bind="svgXml" rows="10" cols="80"></textarea>
+</div>
+
+
+
+
+    <FluentRadioGroup Name="strings" @bind-Value=SelectedFormat Label="Format">
+        <FluentRadio Value="@("emf")">.EMF</FluentRadio>
+        <FluentRadio Value="@("wmf")">.WMF</FluentRadio>
+    </FluentRadioGroup>
+    <p>Selected: @SelectedFormat (@SelectedFormat?.GetType())</p>
+
+
+
+
+
+<div style="margin-top: 1em;">
+    <button @onclick="ConvertSvgToMetaFile">Converteer naar @SelectedFormat</button>
+</div>
+
+
+
+@if (!string.IsNullOrEmpty(resultMessage))
+{
+    <p style="color: green">@resultMessage</p>
+}
+
+@if (!string.IsNullOrEmpty(downloadPathRelative))
+{
+    <a href="@downloadPathRelative" download target="_blank">Download bestand</a>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color: red">@errorMessage</p>
+}
+
+@code {
+    private string SelectedFormat = "emf"; // standaardwaarde
+    private string svgXml = @"<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'>
+  <circle cx='50' cy='50' r='40' stroke='green' stroke-width='4' fill='yellow' />
+</svg>";
+    private string? resultMessage;
+    private string? errorMessage;
+    private string? downloadPathRelative;
+
+    private async Task ConvertSvgToMetaFile()
+    {
+        resultMessage = null;
+        resultMessage = "...even geduld aub";
+        StateHasChanged();
+        await Task.Delay(100); // anders zien we niets
+
+        errorMessage = null;
+        downloadPathRelative = null;
+
+        try
+        {
+            var fileName = $"converted_{Guid.NewGuid()}.{SelectedFormat}";
+            var wwwrootPath = Path.Combine(Env.WebRootPath, $"{SelectedFormat}_output");
+
+            if (!Directory.Exists(wwwrootPath))
+                Directory.CreateDirectory(wwwrootPath);
+
+            var outputPath = Path.Combine(wwwrootPath, fileName);
+            SvgToMetaFileConverter.ConvertSvgToMetafile(svgXml, outputPath);
+            //SvgToWmfConverter.ConvertSvgToMetafile(svgXml, outputPath);
+
+            resultMessage = "Conversie geslaagd!";
+            downloadPathRelative = $"/{SelectedFormat}_output/{fileName}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Fout tijdens conversie: {ex.Message}";
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+}

@@ -155,6 +155,23 @@ public class DemoNavProvider
                         title: "Symbolen (TEST)"
                     ),
 
+                     new NavLink(
+                        href: "/lab/live-test",
+                        icon: new Icons.Regular.Size20.BugProhibited(),
+                        title: "Debug"
+                    ),
+
+                    new NavLink(
+                        href: "/lab/gridforpage",
+                        icon: new Icons.Regular.Size20.Table(),
+                        title: "GridFor demonstratie"
+                    ),
+
+                    new NavLink(
+                        href: "/lab/eenheden-demo",
+                        icon: new Icons.Regular.Size20.MathSymbols(),
+                        title: "Eenheden demonstratie"
+                        )
                 ]
             )
         ];

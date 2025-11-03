@@ -1,0 +1,316 @@
+﻿@typeparam TModel where TModel : BaseEurocodeContext
+
+@using CommonLibrary
+@using CommonLibrary.Models
+@using CommonLibrary.Extensions
+
+@if (Model != null)
+{
+    @if (ShowAccordion)
+    {
+        <FluentAccordion Id="ctxAccordion">
+            <FluentAccordionItem Heading="@Model.Heading">
+                <MyGridFor @bind-Model="Model" 
+                           @key="Model.Id"
+                           @bind-ReadOnly="Model.ReadOnly"
+                           ShowCaption="false"
+                           ShowNonEditables="ShowNonEditables"
+                           />
+            </FluentAccordionItem> 
+
+            @RenderChildrenAccordionItems(Model)
+        </FluentAccordion>
+    }
+    else
+    {
+        <div class="ctx-block">
+            <MyGridFor @bind-Model="Model"
+                       @key="Model.Id"
+                       @bind-ReadOnly="Model.ReadOnly"
+                       ShowNonEditables="ShowNonEditables"
+                       ShowCaption="ShowCaptions"
+                        />
+
+            @RenderChildren(Model, new HashSet<Guid>())
+        </div>
+    }
+
+
+
+
+
+
+} 
+
+@code {
+
+    [Parameter, EditorRequired] public TModel Model { get; set; } = default!;
+    [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
+
+    //[Parameter] public BaseEurocodeContext Context { get; set; } = default!;
+    //[Parameter] public EventCallback<BaseEurocodeContext> ContextChanged { get; set; }
+    [Parameter] public bool ReadOnly { get; set; } = false;
+    [Parameter] public EventCallback<bool> ReadOnlyChanged{ get; set; }
+    [Parameter] public bool ShowAccordion { get; set; } = false;
+    [Parameter] public EventCallback<bool> ShowAccordionChanged { get; set; }
+
+    //[Parameter] public bool ShowCaptions { get; set; } = true;
+    //[Parameter] public EventCallback<bool> ShowCaptionsChanged { get; set; }
+
+    [Parameter] public bool ShowNonEditables { get; set; } = true;
+    [Parameter] public EventCallback<bool> ShowNonEditablesChanged { get; set; }
+
+
+    private bool ShowCaptions => !ShowAccordion;
+
+    private RenderFragment RenderChildrenAccordionItems(BaseEurocodeContext rootCtx)
+    {
+        var visited = new HashSet<Guid>();
+        var allChildren = GetAllChildContexts(rootCtx, visited)
+            .DistinctBy(c => c.Id)
+            .ToList();
+
+        return builder =>
+        {
+            int seq = 0;
+
+            foreach (var child in allChildren)
+            {
+                builder.OpenComponent<FluentAccordionItem>(seq++);
+                builder.AddAttribute(seq++, "Heading", child.Heading ?? child.GetType().Name);
+                builder.AddAttribute(seq++, "ChildContent", (RenderFragment)(itemContent =>
+                {
+                    int t = 0;
+                    itemContent.OpenComponent(t++, typeof(MyGridFor<BaseEurocodeContext>));
+                    itemContent.SetKey(child.Id);
+                    itemContent.AddAttribute(t++, "Model", child);
+                    itemContent.AddAttribute(t++, "ReadOnly", child.ReadOnly);
+                    itemContent.AddAttribute(t++, "ShowCaption", ShowCaptions);
+                    itemContent.CloseComponent();
+                }));
+                builder.CloseComponent();
+            }
+        };
+    }
+
+
+    private RenderFragment RenderChildrenAccordion(BaseEurocodeContext rootCtx)
+    {
+        var visited = new HashSet<Guid>();
+        var allChildren = GetAllChildContexts(rootCtx, visited)
+            .DistinctBy(c => c.Id)
+            .ToList();
+
+        return builder =>
+        {
+            if (allChildren.Count == 0)
+                return;
+
+            int seq = 0;
+
+            builder.OpenComponent<FluentAccordion>(seq++);
+            builder.AddAttribute(seq++, "ChildContent", (RenderFragment)(accordionBuilder =>
+            {
+                int s = 0;
+
+                // AccordionItem voor de parent
+                accordionBuilder.OpenComponent<FluentAccordionItem>(s++);
+                accordionBuilder.AddAttribute(s++, "Title", rootCtx.Heading ?? rootCtx.GetType().Name);
+                accordionBuilder.AddAttribute(s++, "ChildContent", (RenderFragment)(itemContent =>
+                {
+                    int t = 0;
+                    itemContent.OpenComponent(t++, typeof(MyGridFor<BaseEurocodeContext>));
+                    itemContent.SetKey(rootCtx.Id);
+                    itemContent.AddAttribute(t++, "Model", rootCtx);
+                    itemContent.AddAttribute(t++, "ReadOnly", ReadOnly);
+                    itemContent.CloseComponent();
+                }));
+                accordionBuilder.CloseComponent();
+
+                // AccordionItems voor alle distinct children
+                foreach (var child in allChildren)
+                {
+                    accordionBuilder.OpenComponent<FluentAccordionItem>(s++);
+                    accordionBuilder.AddAttribute(s++, "Title", child.Heading ?? child.GetType().Name);
+                    accordionBuilder.AddAttribute(s++, "ChildContent", (RenderFragment)(itemContent =>
+                    {
+                        int t = 0;
+                        itemContent.OpenComponent(t++, typeof(MyGridFor<BaseEurocodeContext>));
+                        itemContent.SetKey(child.Id);
+                        itemContent.AddAttribute(t++, "Model", child);
+                        itemContent.AddAttribute(t++, "ReadOnly", ReadOnly);
+                        itemContent.CloseComponent();
+                    }));
+                    accordionBuilder.CloseComponent();
+                }
+            }));
+            builder.CloseComponent();
+        };
+    }
+
+
+
+    private RenderFragment RenderChildTabs(BaseEurocodeContext ctx, HashSet<Guid> visited) => builder =>
+    {
+          if (ctx == null) return;
+
+    // alleen checken als het ID eerder écht voorkomt (cyclus)
+    if (!visited.Add(ctx.Id))
+        return;
+
+        //var children = ctx.GetChildContexts(); // verondersteld dat jij deze helper hebt
+        var infos = GetNestedInfos(ctx).ToList();
+
+        int seq = 100;
+        int tabIndex = 1;
+
+        foreach (var info in infos)
+        {
+            var child = info.Child;
+
+            var label = child.Heading ?? child.GetType().Name;
+            var tabId = $"tab{tabIndex++}";
+
+            builder.OpenComponent<FluentTab>(seq++);
+            builder.AddAttribute(seq++, "TabId", tabId);
+            builder.AddAttribute(seq++, "Label", label);
+            builder.AddAttribute(seq++, "ChildContent", (RenderFragment)(b =>
+            {
+                int s = 0;
+                b.OpenComponent(s++, typeof(MyGridFor<BaseEurocodeContext>));
+                b.SetKey(child.Id);
+                b.AddAttribute(s++, "Model", child);
+                b.AddAttribute(s++, "ReadOnly", ReadOnly);
+                b.CloseComponent();
+
+                // recursieve children
+                b.AddContent(s++, RenderChildTabs(child, visited));
+            }));
+            builder.CloseComponent();
+        }
+    };
+
+
+    private HashSet<Guid> _subscribedContexts = new();
+
+    protected override void OnInitialized()
+    {
+        // Recursief subscriben op Context en alle nested children
+        SubscribeToContextRecursively(Model);
+    }
+
+    private void SubscribeToContextRecursively(BaseEurocodeContext ctx)
+    {
+        if (ctx == null || _subscribedContexts.Contains(ctx.Id))
+            return;
+
+        _subscribedContexts.Add(ctx.Id);
+
+        // Luister naar wijzigingen in deze context
+        ctx.PropertyChanged += (s, e) => InvokeAsync(StateHasChanged);
+
+        // Subscriben op alle children
+        foreach (var info in ctx.GetNestedContexts())
+        {
+            SubscribeToContextRecursively(info.Child);
+        }
+    }
+
+
+
+    private IEnumerable<BaseEurocodeContext> GetAllChildContexts(BaseEurocodeContext ctx, HashSet<Guid> visited)
+    {
+        if (ctx == null || !visited.Add(ctx.Id))
+            yield break;
+
+        var infos = GetNestedInfos(ctx);
+        foreach (var info in infos)
+        {
+            var child = info.Child;
+            if (child == null)
+                continue;
+
+            yield return child;
+
+            // recursief verder
+            foreach (var sub in GetAllChildContexts(child, visited))
+                yield return sub;
+        }
+    }
+
+
+
+
+
+    private IEnumerable<NestedContextInfo> GetNestedInfos(BaseEurocodeContext ctx)
+    {
+        return ctx.GetNestedContexts();
+    }
+
+    private RenderFragment RenderChildren(BaseEurocodeContext parent, HashSet<Guid> rendered) => builder =>
+    {
+        int seq = 0;
+        var nestedInfos = GetNestedInfos(parent).ToList();
+
+        foreach (var info in nestedInfos)
+        {
+            var child = info.Child;
+            if (!rendered.Contains(child.Id))
+            {
+                rendered.Add(child.Id);
+
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", "nested-block");
+                builder.OpenComponent(seq++, typeof(MyGridFor<BaseEurocodeContext>));
+                builder.SetKey(child.Id);
+                builder.AddAttribute(seq++, "Model", child);
+                builder.AddAttribute(seq++, "ReadOnly", child.ReadOnly);
+                builder.CloseComponent();
+
+                // Recursief alle children van deze child
+                builder.AddContent(seq++, RenderChildren(child, rendered));
+                builder.CloseElement(); // div.nested-block
+            }
+        }
+    };
+
+    private IEnumerable<string> GetParentChains(BaseEurocodeContext child) =>
+    GetParentChains(child, new HashSet<Guid>());
+
+    private IEnumerable<string> GetParentChains(BaseEurocodeContext child, HashSet<Guid> visited)
+    {
+        if (child == null || !visited.Add(child.Id))
+            yield break; // al gezien → stop
+
+        var infos = GetNestedInfos(child);
+
+        foreach (var info in infos)
+        {
+            foreach (var parent in info.Parents)
+            {
+                var prefix = $"{parent.Parent.GetType().Name}.{parent.PropertyName}";
+
+                var grandParents = GetParentChains(parent.Parent, visited).ToList();
+
+                if (grandParents.Any())
+                {
+                    foreach (var gp in grandParents)
+                        yield return $"{gp} → {prefix}";
+                }
+                else
+                {
+                    yield return prefix;
+                }
+            }
+        }
+    }
+
+
+
+
+
+}
+
+
+
+

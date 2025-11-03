@@ -1,5 +1,6 @@
 ﻿using CommonLibrary.Interfaces;
 using Microsoft.AspNetCore.Components;
+using System.ComponentModel;
 
 namespace CommonLibrary
 {
@@ -43,7 +44,11 @@ namespace CommonLibrary
         }
     }
 
-    public class Snedekrachten : IMarkupConvertible
+
+
+
+    [Obsolete("Gebruik SectionForces")]
+    public class Snedekrachten : IMarkupConvertible, INotifyPropertyChanged
     {
 
         public Snedekrachten(DubbeleWaarde my = default, DubbeleWaarde mz = default,
@@ -57,6 +62,8 @@ namespace CommonLibrary
             Nx = nx ?? new();
             Tx = tx ?? new();
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         // Static helper om verwarring te vermijden
         public static Snedekrachten FromDoubles(double my = 0, double mz = 0, double vy = 0, double vz = 0, double nx = 0, double tx = 0)
@@ -98,9 +105,6 @@ namespace CommonLibrary
 
         public override string ToString() => ToString("0.##");
     }
-
-
-
 
     public class SnedekrachtenDELETE(double my = 0, double mz = 0, double vy = 0, double vz = 0, double nx = 0, double tx = 0) : IMarkupConvertible
     {

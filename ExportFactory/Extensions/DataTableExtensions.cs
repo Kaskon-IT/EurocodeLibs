@@ -1,5 +1,6 @@
 ﻿namespace ExportFactory.Extensions
 {
+    using CommonLibrary;
     using ExportFactory.Shared;
     using MigraDoc.DocumentObjectModel;
     using MigraDoc.DocumentObjectModel.Tables;
@@ -85,9 +86,7 @@
                     Attribute = p.GetCustomAttribute<TableColumnAttribute>()
                 })
                 .Where(pa =>
-                    pa.Attribute != null &&
-                    pa.Attribute.Weergave != WeergaveEnum.Geen &&
-                    (pa.Attribute.Weergave == WeergaveEnum.AlleTabellen || pa.Attribute.Weergave == weergave)) // 2025-02-24
+                    pa.Attribute != null) // 2025-02-24
                 .OrderBy(pa => pa.Attribute.Order) // Sort by ColumnOrder
                 .ToList();
 
@@ -165,7 +164,7 @@
                 {
                     Row row = migraDocTable.AddRow();
                     ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
-                    string headerText = propertyWithAttribute.Attribute.HeaderTextPivot ?? propertyWithAttribute.Attribute.HeaderText ?? propertyWithAttribute.Property.Name;
+                    string headerText = propertyWithAttribute.Attribute.Description ?? propertyWithAttribute.Attribute.Label ?? propertyWithAttribute.Property.Name;
 
                     string? format = null;
 
@@ -206,7 +205,7 @@
 
                                 //parEenvoudigeTekst.AddText(" ");
                                 MigraDocCreator.AddMarkdownToParagraph(parEenvoudgieSymbol, mapping.Symbol);
-                                parEenvoudgieSymbol.AddText(" =");
+                                //parEenvoudgieSymbol.AddText(" =");
                             }
 
                         }
@@ -422,9 +421,6 @@
                 // Add columns to the MigraDoc table based on the property attributes
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
                 {
-
-
-
                     Column migraDocColumn = migraDocTable.AddColumn();
                     migraDocColumn.Format.Alignment = propertyWithAttribute.Attribute.Alignment;
 
@@ -435,29 +431,28 @@
                     }
                 }
 
+                // HEADER
                 // Add the header row
                 Row headerRow = migraDocTable.AddRow();
                 headerRow.Style = "TableHeader";
 
-                foreach (var propertyWithAttribute in propertiesWithAttributes)
+                foreach (var p in propertiesWithAttributes)
                 {
-                    ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
-                    string headerText = propertyWithAttribute.Attribute.HeaderText ?? propertyWithAttribute.Property.Name;
+                    ParagraphAlignment alignment = p.Attribute.Alignment;
+                    string headerText = p.Attribute.Symbol ?? p.Attribute.Label ?? p.Property.Name;
 
                     // add a paragraph with and apply markdown (if any) to it.
-                    var par = headerRow.Cells[propertiesWithAttributes.IndexOf(propertyWithAttribute)].AddParagraph();
+                    var par = headerRow.Cells[propertiesWithAttributes.IndexOf(p)].AddParagraph();
                     MigraDocCreator.AddMarkdownToParagraph(par, headerText);
 
                     // set alignment
-                    headerRow.Cells[propertiesWithAttributes.IndexOf(propertyWithAttribute)].Format.Alignment = alignment;
+                    headerRow.Cells[propertiesWithAttributes.IndexOf(p)].Format.Alignment = alignment;
 
                     // set style
                     //headerRow.Cells[propertiesWithAttributes.IndexOf(propertyWithAttribute)].Format.Font.Italic = true;
-
-
-
                 }
 
+                // ROWS
                 // Add the data rows
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
@@ -468,8 +463,6 @@
                     {
                         //var columnName = dataTable.Columns[i].ColumnName;
                         var value = dataRow[columnName];
-
-
 
 
                         // Get the column's custom string format if applied
@@ -504,8 +497,6 @@
                         }
 
 
-
-
                         // Apply value to the cell (with markdown support)
                         var cellPar = row.Cells[i].AddParagraph();
                         MigraDocCreator.AddMarkdownToParagraph(cellPar, value?.ToString() ?? string.Empty);
@@ -513,19 +504,9 @@
                 }
             }
 
-
-
-
-
             return migraDocTable;
-
 
         }
     }
-
-
-
-
-
 
 }

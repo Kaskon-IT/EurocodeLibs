@@ -6,9 +6,10 @@
 <FluentDataGrid Items="@Model.BelastingGevallen.AsQueryable()"
                 TGridItem="BelastingGeval">
 
-    <PropertyColumn Property="@(c => c.Naam)" Title="naam" Width ="70px"/>
-    <PropertyColumn Property="@(c => c.Type)" Title="type" Width ="140px"/>
-    <PropertyColumn Property="@(c => c.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? c.Gebruiksklasse.ToString(): "")" Title="gebruiksklasse" />
+    <PropertyColumn Property="@(c => c.Naam)" Title="naam" />
+    <PropertyColumn Property="@(c => c.Type)" Title="type" />
+    <PropertyColumn Property="@(c => c.Omschrijving)" Title="" />
+    <PropertyColumn Property="@(c => c.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? c.GebruiksklasseUserFriendly : "")" Title="gebruiksklasse" />
 
     @*  <TemplateColumn 
         Style="overflow:visible" 
@@ -25,8 +26,8 @@
     <PropertyColumn Property="@(item => item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? item.MomentaanFactoren.Mom1.ToString("0.0#") : "")" Title="Ψ₁" Width="70px" />
     <PropertyColumn Property="@(item => item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? item.MomentaanFactoren.Mom2.ToString("0.0#") : "")" Title="Ψ₂" Width="70px" />
 
-    <PropertyColumn Property="@(item => item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? item.OpgelegdeBelastingen.Vlaklast.ToString("0.0 kN/m²") : "")" Title="q;k" Width="95px" />
-    <PropertyColumn Property="@(item => item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? item.OpgelegdeBelastingen.Puntlast.ToString("0.0 kN"): "")" Title="Q;k" Width="90px"/>
+@*     <PropertyColumn Property="@(item => item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? item.OpgelegdeBelastingen.Vlaklast.ToString("0.0 kN/m²") : "")" Title="q;k" Width="95px" />
+    <PropertyColumn Property="@(item => item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk? item.OpgelegdeBelastingen.Puntlast.ToString("0.0 kN"): "")" Title="Q;k" Width="90px"/> *@
 
 
 </FluentDataGrid>

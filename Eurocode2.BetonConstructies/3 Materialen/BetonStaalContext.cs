@@ -1,4 +1,7 @@
-﻿using ExportFactory.Shared;
+﻿using CommonLibrary;
+using CommonLibrary.Extensions;
+using ExportFactory.Services;
+using ExportFactory.Shared;
 
 namespace Eurocode.BetonConstructies
 {
@@ -7,8 +10,14 @@ namespace Eurocode.BetonConstructies
     /// 3.2 Betonstaal
     /// Verzameling gegevens voor betonstaal
     /// </summary>
-    public class BetonStaalContext
+    public class BetonStaalContext : BaseEurocodeContext
     {
+        public override string Heading { get; set; } = "Betonstaal";
+
+        public BetonStaalContext()
+        {
+
+        }
         public override string ToString()
         {
             return $"{BetonStaalKwaliteit}";
@@ -51,27 +60,39 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         //public bool IsHellendeTakDiagram { get; set; }
 
-        [TableColumn("Diagram", Order = 2)]
-        public SpanningRekDiagramType? SpanningRekDiagram { get; set; } = SpanningRekDiagramType.HorizontaleTak;
+
+
+        [TableColumn(Label = "spanning-rekrelatie", Article = "3.2.3")]
+        public SpanningRekDiagramType? SpanningRekDiagram
+        {
+            get => _spanningRekDiagram;
+            set => SetProperty(ref _spanningRekDiagram, value);
+        }
         public enum SpanningRekDiagramType { HellendeTak, HorizontaleTak }
+        private SpanningRekDiagramType? _spanningRekDiagram = SpanningRekDiagramType.HorizontaleTak;
 
 
-        /// <summary>
-        /// Eigen opgave fyk (indien gekozen is voor betonstaalkwaliteit 'eigen opgave')
-        /// </summary>
-        public double EigenFyk { get; set; }
+
+        //3.2.2 (3)P De toepassingsregels voor ontwerp en berekening en detaillering in deze Eurocode zijn geldig voor een
+        //bereik van de gespecificeerde vloeigrens fyk = 400 Mpa tot en met 600 MPa.
+
+        private BetonStaalKwaliteitEnum? _betonStaalKwaliteit = BetonStaalKwaliteitEnum.B500A;
 
         /// <summary>
         /// De betonstaalkwaliteit volgens tabel C.1 
         /// </summary>
-        [TableColumn("Betonstaalkwaliteit", Order = 0)]
-        public BetonStaalKwaliteitEnum? BetonStaalKwaliteit { get; set; }
+        [TableColumn(Label = "Betonstaalkwaliteit", Article = "3.2", Order = 0)]
+        public BetonStaalKwaliteitEnum? BetonStaalKwaliteit
+        {
+            get => _betonStaalKwaliteit;
+            set => SetProperty(ref _betonStaalKwaliteit, value);
+        }
 
 
         /// <summary>
         /// karakteristieke vloeigrens van betonstaal 
         /// </summary>
-        [TableColumn("f~yk~", StringFormat = "0 N/mm²")]
+        [TableColumn(Label = "vloeigrens betonstaal", Description = "is de karakteristieke vloeigrens van betonstaal", Symbol = "<i>f</i><sub>yk</sub>", Unit = "N/mm²", Article = "3.2.3")]
         public double Fyk
         {
             get
@@ -81,7 +102,6 @@ namespace Eurocode.BetonConstructies
                     BetonStaalKwaliteitEnum.B500A or BetonStaalKwaliteitEnum.B500B or BetonStaalKwaliteitEnum.B500C => 500,
                     BetonStaalKwaliteitEnum.B400A or BetonStaalKwaliteitEnum.B400B or BetonStaalKwaliteitEnum.B400C => 400,
                     BetonStaalKwaliteitEnum.B600A or BetonStaalKwaliteitEnum.B600B or BetonStaalKwaliteitEnum.B600C => 600,
-                    BetonStaalKwaliteitEnum.EigenFyk => EigenFyk,
                     _ => 500,
                 };
             }
@@ -97,7 +117,10 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// conform art. 2.4.2.4 Partiële factoren voor materialen
         /// </summary>
-        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn(
+            Article = "2.4.2.4",
+            Label = "Partiële factor voor betonstaal",
+            Symbol = $"<i>{GreekLetters.gamma}</i><sub>S</sub>")]
         public double GammaS
         {
             get
@@ -111,16 +134,18 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// 3.2.7 (2) rekenwaarde van de vloeigrens van betonstaal
         /// </summary>
-        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn(Article = "3.2.7 (2)",
+            Label = "vloeigrens", Description = "is de rekenwaarde van de vloeigrens van betonstaal",
+            Symbol = "<i>f</i><sub>yd</sub>", Unit = "N/mm²"
+            )]
         public double Fyd { get { return Fyk / GammaS; } }  // 3.2.7 (2)
+        public Formula FydFormula => new("", @"f_{yd} = f_{yk} / \gamma_s", $"={Fyk.ToTeX()}/{GammaS.ToTeX()} = {Fyd.ToTeX()}");
 
 
         /// <summary>
         /// 6.2 rekenwaarde van de vloeigrens van dwarskrachtwapening
         /// </summary>
-        [TableColumn(Weergave = WeergaveEnum.DraaiTabel)]
         public double Fywd { get { return Fywk / GammaS; } }	// conform art. 6.2
-
 
 
         public double EpsilonS { get; set; }
@@ -132,7 +157,9 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// karakteristieke rek van betonstaal of voorspanstaal bij maximale belasting
         /// </summary>
-        [TableColumn("|epsilon|~uk~", Order = 2, StringFormat = "0.00 ‰")]
+        [TableColumn(Symbol = $"<i>{GreekLetters.epsilon}</i><sub>uk</sub>", Label = "staalrek",
+            Description = "is de karakteristieke rek van betonstaal bij maximale belasting",
+            StringFormat = "0.00 ‰")]
         public double EpsilonUk
         {
             get
@@ -220,7 +247,7 @@ namespace Eurocode.BetonConstructies
 
         public const double Es = 200000;
 
-        [TableColumn("E~s~", StringFormat = "0 N/mm²")]
+        [TableColumn(Symbol = "<i>E</i><sub>s</sub>", Unit = "N/mm²")]
         public double ElasticiteitsModulus
         {
             get
@@ -236,21 +263,42 @@ namespace Eurocode.BetonConstructies
         public double EpsilonYd { get { return Fyd / Es; } }
 
 
-        public double GetFactorFyd()
+        public double GetFactorFyd(double staalrek)
         {
 
-            if (this.SpanningRekDiagram != SpanningRekDiagramType.HellendeTak && this.EpsilonS >= this.EpsilonYd) return 1; // geen hellende tak boven de vloeigrens
-            if (this.SpanningRekDiagram != SpanningRekDiagramType.HorizontaleTak && this.EpsilonS < this.EpsilonYd) return (this.EpsilonS / this.EpsilonYd);    // vloeigrens nog niet bereikt
+            if (this.SpanningRekDiagram != SpanningRekDiagramType.HellendeTak && staalrek >= this.EpsilonYd) return 1; // geen hellende tak boven de vloeigrens
 
-            if (this.EpsilonS < this.EpsilonYd) return (this.EpsilonS / this.EpsilonYd);    // vloeigrens nog niet bereikt
+            if (staalrek < this.EpsilonYd)
+                return (staalrek / this.EpsilonYd);    // vloeigrens nog niet bereikt
 
-            if (this.EpsilonS > this.EpsilonUd) this.EpsilonS = this.EpsilonUd; // maximale rek bereikt
-            if (this.EpsilonS < this.EpsilonYd) return (this.EpsilonS / this.EpsilonYd);    // vloeigrens nog niet bereikt
+
+            if (staalrek > this.EpsilonUd) staalrek = this.EpsilonUd; // maximale rek bereikt
+
             double fydMaalFactor =
-                this.Fyd + ((this.EpsilonS - this.EpsilonYd) / (this.EpsilonUk - this.EpsilonYd)) * (this.Kfyd - this.Fyd);
+                this.Fyd + ((staalrek - this.EpsilonYd) / (this.EpsilonUk - this.EpsilonYd)) * (this.Kfyd - this.Fyd);
+
             return fydMaalFactor / this.Fyd;
         }
 
+        public double GetFydByStaalrek(double staalrek) => GetFactorFyd(staalrek) * this.Fyd;
+
+
+
+        protected override void Bereken()
+        {
+            // niets te berekenen
+        }
+
+        protected override bool Valideer()
+        {
+            if (BetonStaalKwaliteit == null)
+            {
+                Meldingen.Add(new Melding(MeldingType.Error, "Betonstaalkwaliteit is niet opgegeven"));
+                return false;
+            }
+
+            return true;
+        }
     }
 }
 

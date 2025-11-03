@@ -29,10 +29,11 @@ namespace Eurocode.BetonConstructies
         public void SetZRef()
         {
             this._gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
-            this._zRef = DekkingToegepast + _gemiddeldeDiameter / 2;
+            this._zRef = DekkingToegepast + _gemiddeldeDiameter / 2.0;
         }
 
         private string _tekst = "8-150";
+        [TableColumn(Label = "opgave wapening")]
         public string Tekst
         {
             get => _tekst;
@@ -74,10 +75,78 @@ namespace Eurocode.BetonConstructies
         }
         public override string ToString()
         {
-            return $"{Tekst} | ({As:0} mm²)";
+            return $"{Tekst
+                .Replace("r", "Ø")
+                .Replace("R", "Ø")
+                .Replace("d", "Ø")
+                .Replace("D", "Ø")}  ({As:0} mm²)";
         }
 
+        public string GetUserFriendlyText(string eenheid = "mm²", bool includeGroups = true)
+        {
+            if (string.IsNullOrEmpty(Tekst))
+            {
+                return "Onbekend";
+            }
 
+            string returnString = $"{As:0} {eenheid}";
+
+            _wapgroepen ??= WapeningHelper.GetWapGroepen(Tekst);
+
+
+            if (_wapgroepen != null && includeGroups)
+            {
+                returnString += " (";
+                List<string> userFriendlys = [];
+
+                foreach (var groep in _wapgroepen)
+                {
+                    if (groep.Contains("-"))
+                    {
+                        var parts = groep.Split('-');
+
+                        // Haal alleen de cijfers en eventueel wat erna uit parts[0], door alles vóór het eerste cijfer te verwijderen
+                        string firstPart = parts[0];
+                        int firstDigitIndex = -1;
+
+                        for (int i = 0; i < firstPart.Length; i++)
+                        {
+                            if (char.IsDigit(firstPart[i]))
+                            {
+                                firstDigitIndex = i;
+                                break;
+                            }
+                        }
+
+                        if (firstDigitIndex != -1)
+                            firstPart = firstPart.Substring(firstDigitIndex);
+                        else
+                            firstPart = ""; // Geen cijfers gevonden, dan leeg
+
+                        userFriendlys.Add($"Ø{firstPart}-{parts[1]}");
+                    }
+                    else
+                    {
+                        // Vervang alle 'r', 'R', 'd', 'D' door 'Ø'
+                        string replaced = groep.Replace('r', 'Ø')
+                                              .Replace('R', 'Ø')
+                                              .Replace('d', 'Ø')
+                                              .Replace('D', 'Ø');
+
+                        userFriendlys.Add(replaced);
+                    }
+                }
+
+                returnString += string.Join(" + ", userFriendlys);
+                returnString += ")";
+
+            }
+
+
+
+            return returnString;
+
+        }
 
 
 
@@ -114,34 +183,27 @@ namespace Eurocode.BetonConstructies
 
 
 
-        //public double ZRef
-        //{
-        //    get
-        //    {
-        //        return DekkingToegepast + 0.5 * GemiddeldeDiameter;
-        //    }
-        //}
-
-        //public double GemiddeldeDiameter
-        //{
-        //    get
-        //    {
-        //        return WapeningHelper.GetGemiddeldeDiameter(Tekst);
-        //    }
-        //}
 
 
 
 
+        [TableColumn(Label = "Doorsnedeoppervlakte wapening", Symbol = "<i>A</i><sub>s</sub>", Unit = "mm²", StringFormat = "0")]
         public double As { get { return WapeningHelper.GetDsnOpp(Tekst); } }
 
         private List<string>? _wapgroepen;
         public List<WapeningContext> _subgroepen { get; set; } = new();
 
 
-        public double HohMaat { get { return WapeningHelper.GetKleinsteHohMaat(_wapgroepen); } }
+        public double HohMaat
+        {
+            get
+            {
+                return OpgaveGrootsteHohMaatTenBehoeveVanControleScheurwijdte ?? WapeningHelper.GetKleinsteHohMaat(_wapgroepen);
+            }
+        }
 
 
+        public double? OpgaveGrootsteHohMaatTenBehoeveVanControleScheurwijdte { get; set; } = 80;
 
 
 
@@ -155,19 +217,16 @@ namespace Eurocode.BetonConstructies
             _zRef = DekkingToegepast + 0.5 * _gemiddeldeDiameter;
         }
 
-        public override bool IsAkkoord()
-        {
 
-            return true;
-        }
-
-
+        private List<double> _diameters = [5, 6, 8, 10, 12, 16, 20, 25, 32, 40];
 
         protected override bool Valideer()
         {
             Meldingen.Clear();
 
-            AddMeldingOpmerking("bijgewerkt");
+
+
+            //AddMeldingOpmerking("bijgewerkt");
 
             return true;
 

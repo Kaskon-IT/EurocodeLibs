@@ -9,16 +9,16 @@
 
         public static readonly Melding MinimaleWapening = new(
             MeldingType.Neutraal,
-            "Eisen met betrekking tot minimale wapening toegepast conform artikel 9.2.1.1 (1)",
+            "Eisen met betrekking tot minimale wapening toegepast volgens artikel 9.2.1.1 (1)",
             1001);
 
         public static readonly Melding MinimaleWapeningScheurwijdte = new(
             MeldingType.Neutraal,
-            "Eisen met betrekking tot minimale wapening scheurwijdte toegepast conform artikel 7.3.2", 1002);
+            "Eisen met betrekking tot minimale wapening scheurwijdte toegepast volgns artikel 7.3.2", 1002);
 
         public static readonly Melding GedrongenLigger = new(
             MeldingType.Neutraal,
-            "Beschouwd als gedrongen ligger conform 6.1 (10)", 1003);
+            "Beschouwd als gedrongen ligger volgens artikel 6.1 (10)", 1003);
 
         public static readonly Melding GedrongenLiggerNietMaatgevend = new(
            MeldingType.Neutraal,

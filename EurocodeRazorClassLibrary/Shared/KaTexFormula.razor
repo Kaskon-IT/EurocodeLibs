@@ -1,0 +1,109 @@
+﻿@* <div class="formula-container">
+    <div @ref="Container" id="@ContainerId" class="formula"></div>
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <div class="formula-label">@Label</div>
+    }
+</div> *@
+
+<div class="formula-container">
+    <div @ref="Container" id="@ContainerId" class="@GetCssClass()"></div>
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <div class="formula-label">@Label</div>
+    }
+</div>
+
+
+
+@code {
+    private ElementReference Container;
+    private string ContainerId = $"katex-{Guid.NewGuid():N}";
+
+    private string _value = string.Empty;
+    private bool _displayMode;
+
+    [Parameter]
+    public string Value
+    {
+        get => _value;
+        set
+        {
+            if (_value != value)
+            {
+                _value = value ?? string.Empty;
+                _ = RenderMathAsync();
+                ValueChanged.InvokeAsync(value);
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+
+
+
+    [Parameter] public bool DisplayMode { 
+        get => _displayMode; 
+        set { if (_displayMode != value)
+            {
+                _displayMode = value;
+                _ = RenderMathAsync();
+                DisplayModeChanged.InvokeAsync(value);
+            } 
+        } 
+    } 
+    [Parameter] public EventCallback<bool> DisplayModeChanged{ get; set; }
+
+    [Parameter] public string? Label { get; set; }   // <--- nieuw
+    [Parameter] public bool Small { get; set; } = true;
+
+    private string GetCssClass() => Small ? "katex-small" : "katex";
+
+
+
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await RenderMathAsync();
+        }
+    }
+
+    private async Task RenderMathAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_value))
+        {
+            // nieuw, betere aanpak:
+            await JS.InvokeVoidAsync("setInnerHtml", Container, "");
+            return;
+
+            // Leegmaken bij geen content
+            // oude mogelijk foutieve aanpak:
+            //await JS.InvokeVoidAsync("eval", $"document.querySelector('#{Container.Id}').innerHTML = '';");
+            //return;
+        }
+
+        var cssClass = Small ? "katex-small" : "katex";
+
+        try
+        {
+            await JS.InvokeVoidAsync("katex.render", _value, Container, new
+            {
+                throwOnError = false,
+                displayMode = DisplayMode,
+                strict = "ignore",
+                
+            });
+        }
+        catch
+        {
+            // fallback: toon gewoon de tekst
+            await JS.InvokeVoidAsync("eval", $"document.querySelector('#{Container.Id}').innerText = `{_value}`;");
+        }
+    }
+}

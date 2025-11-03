@@ -1,4 +1,6 @@
-﻿namespace Eurocode.BetonConstructies
+﻿using System.Globalization;
+
+namespace Eurocode.BetonConstructies
 {
 
     public class WapeningHelper
@@ -20,6 +22,9 @@
             Char[] splitChars = ['+'];
             return [.. wapening.Split(splitChars)];
         }
+
+
+
 
 
         /// <summary>
@@ -150,7 +155,25 @@
 
                 return (GetDsnOpp(n: n, d: d), d, null, n);
             }
-            else return (0, 0, 1000.0, 0);
+            else if (!string.IsNullOrWhiteSpace(wapgroep))
+            {
+                if (double.TryParse(
+                        wapgroep,
+                        NumberStyles.Any,               // zodat ook 1.23 of 1,23 werkt
+                        CultureInfo.InvariantCulture,   // of CultureInfo.CurrentCulture
+                        out double dsnOpp))
+                {
+                    return (dsnOpp, 0, 0, 1);
+                }
+                else
+                {
+                    // fallback als het geen geldig getal was
+                    return (0, 0, 0, 1);
+                }
+            }
+
+
+            return (0, 0, 1000.0, 0);
         }
 
 
@@ -166,6 +189,8 @@
                 if (hohMaat.HasValue)
                     hohMaten.Add(hohMaat.Value);
             }
+
+
 
 
 

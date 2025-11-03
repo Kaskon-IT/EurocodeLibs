@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>Kaskon.BetonProfielen</PackageId>
+		<!-- Kies een naam voor je NuGet-pakket -->
+
+
+		<Version>1.1.500</Version>
+		<!-- Versie van het pakket -->
+
+		<Authors>Kaskon IT</Authors>
+		<!-- Jouw bedrijfsnaam of naam -->
+
+		<Description>Betonprofielen voor gebruik in doorsnede toetsen.</Description>
+		<PackageTags>profielen, kaskon, parametrische profielen, profielendatabase, nuget, library</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<!-- Licentie van je pakket -->
+		<PackageProjectUrl>https://kaskon.nl</PackageProjectUrl>
+		<!-- Je website of repo link -->
+		<RepositoryUrl>https://github.com/jouwbedrijf/jouwrepository</RepositoryUrl>
+		<!-- Repository link -->
+		
+		<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
+		<Copyright>Copyright © 2025 Kaskon</Copyright>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+	
+	
+  <ItemGroup>
+    <ProjectReference Include="..\ParametrischeProfielen\ParametrischeProfielen.csproj" />
+  </ItemGroup>
+</Project>

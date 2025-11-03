@@ -34,6 +34,9 @@ namespace Eurocode.Belastingen
 
         public GrondslagenContext Grondslagen { get; set; }
 
+
+
+
         public List<BelastingGeval> BelastingGevallen { get; set; } =
             [
                 new BelastingGeval(){
@@ -42,20 +45,22 @@ namespace Eurocode.Belastingen
                     Type = BelastingGeval.BelastingGevalTypeEnum.Permanent,
                     Gebruiksklasse = null,
                 },
+
                 new BelastingGeval(){
                     Nr = 2,
+                    Omschrijving = "q",
+                    Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
+                    Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen,
+                    Opmerking = "vlaklast"
+                },
+
+                new BelastingGeval(){
+                    Nr = 3,
                     Omschrijving = "Q",
                     Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
                     Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen,
                     Opmerking = "puntlast"
                 },
-                new BelastingGeval(){
-                    Nr = 3,
-                    Omschrijving = "q",
-                    Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
-                    Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen,
-                    Opmerking = "vlaklast"
-                }
             ];
 
 
@@ -63,10 +68,14 @@ namespace Eurocode.Belastingen
             BelastingCombinatieTypeEnum.Fundamenteel_A,
             BelastingCombinatieTypeEnum.Fundamenteel_B,
             BelastingCombinatieTypeEnum.Frequent,
-            //BelastingCombinatieTypeEnum.QuasiBlijvend,
-            BelastingCombinatieTypeEnum.Karakteristiek
+            BelastingCombinatieTypeEnum.QuasiBlijvend,
+            //BelastingCombinatieTypeEnum.Karakteristiek
 
             ];
+
+
+
+
 
 
         public List<BelastingCombinatie> BelastingCombinaties { get; set; } = [];
@@ -206,10 +215,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         protected override void Bereken()
         {

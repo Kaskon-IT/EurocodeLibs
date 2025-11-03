@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Helpers;
+using Eurocode.Belastingen;
 using ExportFactory.Shared;
 using System.ComponentModel;
 using K = CommonLibrary.EurocodeKeys;
@@ -20,8 +21,17 @@ namespace Eurocode.BetonConstructies
         private double _breedte = 300;
         private double _hoogte = 400;
         private double _moment = 80.80;
-        private Snedekrachten? _snedekrachten;
+        private SectionForces? _snedekrachten;
         private VerankeringLangswapeningContext? _verankeringsLengte;
+
+        public string MeldingTeksten
+        {
+            get
+            {
+                return string.Join("; ", Meldingen.Select(m => m.ToMarkDownString()));
+            }
+        }
+
 
         public override string ToString()
         {
@@ -55,7 +65,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public BendingResults(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, WapeningContext wapening, Snedekrachten snedekrachten)
+        public BendingResults(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, WapeningContext wapening, SectionForces snedekrachten)
         {
             Beton = beton;
             Profiel = profiel;
@@ -136,94 +146,192 @@ namespace Eurocode.BetonConstructies
 
 
         public BetonContext Beton { get; set; }
-        public ParametrischeProfielen.ParametrischProfielContext? Profiel { get; set; } // als geen profiel, dan rechthoek BxH
-        public Snedekrachten? Snedekrachten
+
+
+        private ParametrischeProfielen.ParametrischProfielContext? _profiel;
+        public ParametrischeProfielen.ParametrischProfielContext? Profiel
         {
-            get => _snedekrachten;
+            get => _profiel;
             set
             {
-                if (_snedekrachten != value)
-                {
-                    _snedekrachten = value;
-                    OnPropertyChanged(nameof(Snedekrachten));
+                if (_profiel != null)
+                    _profiel.PropertyChanged -= Profiel_PropertyChanged;
 
-                    // Automatisch Moment bijwerken als Snedekrachten verandert
-                    if (_snedekrachten != null)
-                    {
-                        Moment = _snedekrachten.My.Ed;
-                    }
-                }
+                _profiel = value;
+
+                if (_profiel != null)
+                    _profiel.PropertyChanged += Profiel_PropertyChanged;
+
+                // Laat OnPropertyChanged/OnUpdated weten dat Profiel is veranderd
+                OnPropertyChanged(nameof(Profiel));
             }
+        }
+
+        private void Profiel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Profiel.Hoogte))
+            {
+                // Trigger recalculatie automatisch (hier kom je terecht als je het Profiel.Hoogte aanpast)
+                // dus buiten deze class om. Dit is de enige juiste methode.
+                BerekenEnValideer();
+                // Event ook melden voor bindingen
+                OnPropertyChanged(nameof(Hoogte));
+            }
+            if (e.PropertyName == nameof(Profiel.Breedte))
+            {
+                BerekenEnValideer();
+                OnPropertyChanged(nameof(Profiel.Breedte));
+            }
+        }
+
+        private void Snedekrachten_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Snedekrachten.My))
+            {
+                BerekenEnValideer();
+                OnPropertyChanged(nameof(Moment));
+            }
+        }
+
+
+        public SectionForces? Snedekrachten
+        {
+            get => _snedekrachten;
+            set => SetNestedProperty(ref _snedekrachten, value);
+            //{
+
+
+
+
+            //    _snedekrachten = value;
+            //    SubscribeNestedProperty(_snedekrachten); // event subscriben
+            //    Moment = _snedekrachten?.My.Ed ?? 0;
+            //    OnPropertyChanged(nameof(Snedekrachten));
+
+            //    //ReplaceNestedProperty(ref _snedekrachten, value);
+            //    //Moment = _snedekrachten?.My.Ed ?? 0;
+
+            //    //if (_snedekrachten != value)
+            //    //{
+            //    //    _snedekrachten = value;
+            //    //    OnPropertyChanged(nameof(Snedekrachten));
+
+            //    //    // Automatisch Moment bijwerken als Snedekrachten verandert
+            //    //    if (_snedekrachten != null)
+            //    //    {
+            //    //        Moment = _snedekrachten.My.Ed;
+            //    //    }
+            //    //}
+            //}
         } // als er geen snedekrachten opgegeven dan Moment opgave.
 
 
-        [TableColumn("positie", order: 0, Weergave = WeergaveEnum.StandaardTabel)]
-        public string Name { get; set; } = "Schil";
+        public string Name { get; set; } = "-";
+
+        //[TableColumn(Label = "DEBUG", Symbol = "Beta")]
+        public double Beta => Beton.GetBeta();
 
 
-        [TableColumn("M~Ed~ [kNm]", StringFormat = "0.0", Order = 1,
+
+        [TableColumn(Symbol = "<i>M</i><sub>Ed</sub>", Label = "moment rekenwaarde", Unit = "kN",
+            Order = 1,
+            Width = 2.0,
             Key = K.MomentRekenwaarde,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Moment
         {
-            get => Snedekrachten != null ? Snedekrachten.My.Ed : _moment;
-            set
+            get
             {
+                if (Snedekrachten != null && Snedekrachten.My != _moment)
+                {
+                    _moment = Snedekrachten.My;
+                    BerekenEnValideer();
+                }
+                return Snedekrachten != null ? Snedekrachten.My : _moment;
+
+            }
+            internal set
+            {
+                double newValue;
+
                 if (Snedekrachten != null)
                 {
-                    // Als Snedekrachten niet null is, zet _moment gelijk aan Snedekrachten.My
-                    _moment = Snedekrachten.My.Ed;
+                    // Als Snedekrachten is ingesteld, override met de waarde uit Snedekrachten
+                    newValue = Snedekrachten.My;
                 }
                 else
                 {
-                    // Als Snedekrachten null is, gebruik de gegeven waarde
-                    _moment = value;
+                    // Anders gebruik de opgegeven waarde
+                    newValue = value;
+                }
+
+                if (!newValue.Equals(_moment)) // alleen updaten bij verandering
+                {
+                    _moment = newValue;
+                    BerekenEnValideer();
+                    OnPropertyChanged(nameof(Moment));
                 }
             }
         }
 
 
-        [TableColumn("b [mm]", order: 2,
-            Weergave = WeergaveEnum.DraaiTabel,
+        [TableColumn(Symbol = "<i>b</i>", Label = "breedte", Unit = "mm",
+            Width = 2.0,
             Key = K.ProfielBreedte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Breedte
         {
             get => Profiel != null ? Profiel.Breedte : _breedte;
-            set => _breedte = value;
+            internal set
+            {
+                _breedte = value;
+                BerekenEnValideer();
+            }
         }
 
-        [TableColumn("h [mm]", order: 3,
-            Weergave = WeergaveEnum.DraaiTabel,
+        [TableColumn(Symbol = "<i>h</i>", Label = "hoogte", Unit = "mm",
+            Width = 2.0,
             Key = K.ProfielHoogte,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Hoogte
         {
             get => Profiel != null ? Profiel.Hoogte : _hoogte;
-            set => _hoogte = value;
+            internal set
+            {
+                _hoogte = value;
+                BerekenEnValideer();
+                OnPropertyChanged(nameof(Hoogte));
+            }
+
         }
+
+
+        public double ZRefZonderDekking { get; set; } = 50;
+
 
         public double ZRef
         {
             get
             {
-                if (Wapening == null) return 50;
-                else
-                {
+                if (Wapening == null || Wapening.Dekking == null)
+                    return ZRefZonderDekking;
 
-                    return Wapening.ZRef;
-                }
+                return Wapening.ZRef;
+
             }
         }
-        [TableColumn("d [mm]", order: 4,
+        [TableColumn(Symbol = "<i>d</i>", Label = "nuttige hoogte", Unit = "mm",
+            Width = 2.0,
             Key = K.NuttigeHoogte,
             StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double D { get { return Hoogte - ZRef; } }
 
 
-        [TableColumn("x~u~ [mm]", order: 5,
+        [TableColumn(Symbol = "<i>x</i><sub>u</sub>", Label = "hoogte drukzone", Unit = "mm",
             Key = K.Xu,
-            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+            StringFormat = "0.#",
+            Width = 2.0,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Xu
         {
             get
@@ -255,7 +363,8 @@ namespace Eurocode.BetonConstructies
             get { return Xu / D; }
         }
 
-        [TableColumn("z [mm]", order: 21,
+        [TableColumn(Symbol = "<i>z</i>", Unit = "mm", Label = "inwendige hefboomsarm",
+            Width = 2.0,
             // Key = K.InwendigeHefboom,
             StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Z
@@ -305,12 +414,11 @@ namespace Eurocode.BetonConstructies
                     default:
                     case null:
                     case Schematisering.GedrongenEnum.Uitkraging:
-                        return "a";
+                        return "<i>a</i>";
                     case Schematisering.GedrongenEnum.StatischBepaald:
-                        return "l";
+                        return "<i>l</i>";
                     case Schematisering.GedrongenEnum.StatischOnbepaald:
-                        return "l~0~";
-
+                        return "<i>l</i><sub>0</sub>";
                 }
             }
         }
@@ -338,7 +446,11 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("A~s,req~ [mm²]", Order = 40,
+        [TableColumn(
+            Symbol = "<i>A</i><sub>s,req</sub>",
+            Unit = "mm²", Label = "benodigde wapening",
+            Width = 2.0,
+            Order = 40,
             Key = K.AsBen,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsRequired
@@ -366,13 +478,20 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("A~s,toe~ [mm²]", Order = 41,
+        [TableColumn(
+            Symbol = "<i>A</i><sub>s,toe</sub>",
+            Unit = "mm²",
+            Label = "toegepaste wapening",
+            Width = 2.0,
+            Order = 41,
             Key = K.AsToe,
-            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+            StringFormat = "0",
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
+            )]
         public double AsApplied
         {
             get => _asApplied;
-            set
+            internal set
             {
                 if (_asApplied != value)
                 {
@@ -452,6 +571,8 @@ namespace Eurocode.BetonConstructies
         {
             get { return Beton.GetAlpha() * Breedte * XeMin * Beton.Fcd / Beton.BetonStaal.Fyd; }
         }
+
+
         public double AsMin2
         {
             get
@@ -459,6 +580,9 @@ namespace Eurocode.BetonConstructies
                 return 1.25 * AsBerekend;
             }
         }
+
+
+        //[TableColumn(Label = "minimale wapening", Symbol = "<i>A</i><sub>s,min</sub>", Unit = "mm²", StringFormat = "0")]
         public double AsMin
         {
             get
@@ -466,6 +590,11 @@ namespace Eurocode.BetonConstructies
                 return Math.Min(AsMin1, AsMin2);
             }
         }
+        public Formula AsMinFormula => new()
+        {
+            StaticValue = "A_{s,min} = min (A_{s,min1}; A_{s,min2})",
+            DynamicValue = $"= min({AsMin1:0};{AsMin2:0}) = {AsMin:0}"
+        };
 
         /// <summary>
         /// Gebruik artikel 7.3.1 minimale wapening voor gecontroleerde scheurbeheersing.
@@ -533,7 +662,6 @@ namespace Eurocode.BetonConstructies
 
         //private List<int> _meldingCodes = [];
 
-        [TableColumn("opm.", Order = 9999)]
         public string MeldingNummers
         {
             get
@@ -550,11 +678,24 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-
-        public override bool IsAkkoord()
+        //[TableColumn(Label = "moment opneembaar", Symbol = "<i>M</i><sub>Rd</sub>", Unit = "kNm" )]
+        public double MRd
         {
-            return Valideer();
+            get
+            {
+                if (Wapening != null)
+                {
+                    // nakijken of dit altijd klopt, zo niet dan aanpassen
+                    if (MinimaleWapeningToegepast)
+                        return Moment * AsApplied / (AsRequired / 1.25);
+                    else
+                        return Moment * AsApplied / AsRequired;
+                }
+                else return 0;
+            }
         }
+
+
 
         protected override void Bereken()
         {

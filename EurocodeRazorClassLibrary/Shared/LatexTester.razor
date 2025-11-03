@@ -1,0 +1,53 @@
+﻿@page "/latex-tester"
+@inject IJSRuntime JS
+
+<h3>LaTeX Tester</h3>
+
+<FluentTextField @bind-Value="Formula" Label="Voer LaTeX in" Placeholder="bv: E=mc^2" />
+
+<!-- Gebruik jouw werkende FormulaRenderer -->
+<FormulaRenderer Formula="@Formula" Id="testerFormula" @ref="renderer" />
+
+<div style="margin-top:1rem;">
+    <FluentButton @onclick="GetSvgSafeAsync">Haal SVG op</FluentButton>
+</div>
+
+@if (!string.IsNullOrEmpty(SvgResult))
+{
+    <div style="margin-top:1rem;">
+        <h4>SVG Output</h4>
+        <textarea style="width:100%; height:200px;" readonly>@SvgResult</textarea>
+
+        <h4>Inline SVG Preview</h4>
+        <div>@((MarkupString)SvgResult)</div>
+    </div>
+}
+
+@code {
+    private string Formula { get; set; } = "E=mc^2";
+    private string SvgResult { get; set; } = string.Empty;
+
+    private FormulaRenderer? renderer;
+
+    /// <summary>
+    /// Haal SVG veilig op, alleen als de component gerenderd is en SignalR connected
+    /// </summary>
+    private async Task GetSvgSafeAsync()
+    {
+        if (renderer == null) return;
+
+        try
+        {
+            // Roep de werkende GetSvgAsync van FormulaRenderer aan
+            //SvgResult = await renderer.GetSvgAsync() ?? string.Empty;
+        }
+        catch (JSDisconnectedException)
+        {
+            SvgResult = "SignalR niet verbonden, probeer opnieuw.";
+        }
+        catch (Exception ex)
+        {
+            SvgResult = $"Fout bij ophalen SVG: {ex.Message}";
+        }
+    }
+}

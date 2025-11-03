@@ -1,5 +1,4 @@
 ﻿using CommonLibrary;
-using ExportFactory.Shared;
 using K = CommonLibrary.EurocodeKeys;
 
 namespace Eurocode.BetonConstructies
@@ -23,31 +22,52 @@ namespace Eurocode.BetonConstructies
         //eventuele zeeg.
 
         // oorzaken
+        private double _lengteOverspanning = 2000;
+        private BendingResults? _bendingResults;
 
-        [TableColumn("l [mm]", Key = K.Slankheid_LengteOverspanning)]
-        public double LengteOverspanning { get; set; } // Lengte van de overspanning van het element in mm
+        [TableColumn(Label = "Lengte", Symbol = "<i>l</i>", Unit = "mm", Key = K.Slankheid_LengteOverspanning)]
+        public double LengteOverspanning
+        {
+            get => _lengteOverspanning;
+            set
+            {
+                if (SetProperty(ref _lengteOverspanning, value))
+                {
+                    BerekenEnValideer();
+                }
+            }
+        } // Lengte van de overspanning van het element in mm
 
-        [TableColumn("d [mm]", Key = K.Slankheid_EffectieveDikte)]
+
+
+        [TableColumn(Label = "effectieve dikte", Symbol = "<i>d</i>", Unit = "mm", Key = K.Slankheid_EffectieveDikte)]
         public double EffectieveDikte
         {
-            get
-            {
-                if (BendingResults == null) return 100;
+            get => BendingResults?.D ?? 100;
 
-                var nuttigeHoogte = BendingResults.D;
-                return nuttigeHoogte;
-            }
 
         } // Effectieve dikte van het element in mm
 
 
         public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
 
-        public required BendingResults BendingResults { get; set; }
+        public required BendingResults BendingResults
+        {
+            get => _bendingResults;
+            set
+            {
+                if (SetNestedProperty(ref _bendingResults, value))
+                {
+                    BerekenEnValideer();
+                }
+            }
+
+
+        }
 
 
         // gevolgen
-        [TableColumn("grens (l/d)", Key = K.Slankheid_Grenswaarde)]
+        [TableColumn(Label = "grenswaarde slankheid", Symbol = "(<i>l/d</i><sub>max</sub>", Key = K.Slankheid_Grenswaarde)]
         public double GrenswaardeSlankheid
         {
             get
@@ -57,7 +77,7 @@ namespace Eurocode.BetonConstructies
             }
         } // Grenswaarde van de slankheid van het element
 
-        [TableColumn("(l/d)", Key = K.Slankheid_Slankheid)]
+        [TableColumn(Label = "slankheid", Symbol = "(<i>l/d</i>)", Key = K.Slankheid_Slankheid)]
         public double Slankheid
         {
             get
@@ -91,7 +111,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// is de referentiewaarde van de wapeningsverhouding = 10-3 · √fck;
         /// </summary>
-        [TableColumn("ρ~0~", Key = K.Slankheid_WapeningsVerhoudingReferentiewaarde, StringFormat = "0.####")]
+        [TableColumn(Label = "wapeningsverhouding (referentiewaarde)", Symbol = "<i>ρ</i><sub>0</sub>", Key = K.Slankheid_WapeningsVerhoudingReferentiewaarde, StringFormat = "0.####")]
         public double Rho0
         {
             get
@@ -100,7 +120,7 @@ namespace Eurocode.BetonConstructies
             }
         } // is de referentiewaarde van de wapeningsverhouding = 10-3 · √fck;
 
-        [TableColumn("ρ", Key = K.Slankheid_WapeningsVerhoudingTrekVereist, StringFormat = "0.####")]
+        [TableColumn(Label = "wapeningsverhouding (vereist)", Symbol = "<i>ρ</i>", Key = K.Slankheid_WapeningsVerhoudingTrekVereist, StringFormat = "0.####")]
         public double Rho
         {
             get
@@ -135,30 +155,22 @@ namespace Eurocode.BetonConstructies
             Uitkraging
         }
 
+        private ConstructiefSysteemEnum? _constructiefSysteem = ConstructiefSysteemEnum.VrijOpgelegd;
 
-        public ConstructiefSysteemEnum? ConstructiefSysteem { get; set; } = ConstructiefSysteemEnum.VrijOpgelegd; // Constructief systeem van het element
-
-        public override bool IsAkkoord()
+        [TableColumn(Label = "constructief systeem")]
+        public ConstructiefSysteemEnum? ConstructiefSysteem
         {
-            Meldingen.Clear();
-
-            if (GrenswaardeSlankheid > 0 && Slankheid > 0)
+            get => _constructiefSysteem;
+            set
             {
-                if (Slankheid > GrenswaardeSlankheid)
+                if (SetProperty(ref _constructiefSysteem, value))
                 {
-                    AddMeldingWaarschuwing($"De slankheid (l/d) van het element ({Slankheid:0.#}) is groter dan de grenswaarde ({GrenswaardeSlankheid:0.#}). Toetsing doorbuiging noodzakelijk.");
-                    return false;
+                    Valideer();
                 }
-
-                return Slankheid <= GrenswaardeSlankheid;
             }
-            else
-            {
-                AddMeldingWaarschuwing("Onbekende fout");
-                return false;
-            }
-            throw new NotImplementedException();
         }
+
+
 
 
 
@@ -172,9 +184,25 @@ namespace Eurocode.BetonConstructies
 
         protected override bool Valideer()
         {
+            Meldingen.Clear();
+
+            bool returnVal = true;
+            if (GrenswaardeSlankheid > 0 && Slankheid > 0)
+            {
+                if (Slankheid > GrenswaardeSlankheid)
+                {
+                    AddMeldingWaarschuwing($"De slankheid (l/d) van het element ({Slankheid:0.#}) is groter dan de grenswaarde ({GrenswaardeSlankheid:0.#}). Toetsing doorbuiging noodzakelijk.");
+                }
+
+                if (Slankheid < GrenswaardeSlankheid)
+                {
+                    AddMeldingOpmerking("Toetsing doorbuiging kan achterwege blijven.");
+                }
+            }
 
 
-            return IsAkkoord();
+
+            return returnVal;
         }
 
         public override string ToString()

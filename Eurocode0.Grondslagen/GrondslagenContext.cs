@@ -6,7 +6,6 @@
 using CommonLibrary;
 using CommonLibrary.Interfaces;
 using ExportFactory.MigraDocContentModels;
-using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using MigraDoc.DocumentObjectModel;
 using System.ComponentModel;
@@ -16,63 +15,15 @@ namespace Eurocode.Grondslagen
 {
     public class GrondslagenContext : BaseEurocodeContext, IMarkupConvertible, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        //public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        /// <summary>
-        /// Synchronous CSV Export 
-        /// </summary>
-        /// <param name="excludeHeaders">Optional without headers</param>
-        /// <returns>A string</returns>
-        //string IExportableCsv.Export(bool excludeHeaders)
+        //protected void OnPropertyChanged(string propertyName)
         //{
-        //    // call shared logic (async=false)
-        //    return ExportCsvLogic(excludeHeaders, async: false).GetAwaiter().GetResult();
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         //}
 
-        /// <summary>
-        /// Asynchronous CSV Export
-        /// </summary>
-        /// <param name="excludeHeaders">Optional without headers</param>
-        /// <returns>A string</returns>
-        //public async Task<string> ExportAsync(bool excludeHeaders)
-        //{
-        //    return await ExportCsvLogic(excludeHeaders, async: true);
-        //}
+        // check of alles nog werkt, met bovenstaande uitgecommentarieerde code
 
-        //// Shared logic for both synchronous and async method
-        //private async Task<string> ExportCsvLogic(bool excludeHeaders, bool async)
-        //{
-        //    var creator = new ExportFactory.Services.CsvFileCreator();
-        //    creator.SetColumnHeaders(Headers);
-
-        //    // headers?
-        //    if (!excludeHeaders)
-        //        creator.AddRow(Headers);
-
-        //    // there is only on row 
-        //    creator.AddRow(RowData);
-
-
-        //    //var stringBuilder = creator.GetCsvStringBuilder();
-        //    string result = creator.GetCsvStringWriter().ToString();
-
-        //    if (async)
-        //    {
-        //        await ExportHelper.WriteToStreamAsync(result);
-        //    }
-        //    else
-        //    {
-        //        ExportHelper.WriteToStream(result);
-        //    }
-
-        //    // Return the generated CSV content as a string
-        //    return result;
-
-        //}
 
         public override string ToString()
         {
@@ -151,7 +102,7 @@ namespace Eurocode.Grondslagen
 
 
 
-        [TableColumn("ontwerplevensduur", order: 0)]
+        [TableColumn(Label = "ontwerplevensduur", Article = "2.3")]
         public OntwerpLevensduurEnum? OntwerpLevensduur { get; set; } = OntwerpLevensduurEnum.Vijftig;
 
 
@@ -162,7 +113,7 @@ namespace Eurocode.Grondslagen
         /// constructie
         /// </summary>
         /// 
-        [TableColumn("gevolgklasse", order: 1, width: 4)]
+        [TableColumn(Label = "gevolgklasse", Article = "Bijlage B")]
         public GevolgklasseEnum? Gevolgklasse
         {
             get => _gevolgklasse;
@@ -179,7 +130,7 @@ namespace Eurocode.Grondslagen
 
 
 
-        [TableColumn("betrouwbaarheidsklasse", order: 2, width: 5)]
+        [TableColumn(Label = "betrouwbaarheidsklasse", Article = "Bijlage B")]
         public BetrouwbaarheidsklasseEnum Betrouwbaarheidsklasse
         {
             get { return this.Gevolgklasse.GetBetrouwbaarheidsklasse(); }
@@ -190,7 +141,12 @@ namespace Eurocode.Grondslagen
         /// B.3.3
         /// Vermenigvuldigingsfactor KFI die wordt toegepast op de partiele factoren.
         /// </summary>
-        [TableColumn("K~FI~", stringFormat: "0.0", order: 3, width: 1.5, HeaderTextPivot = "K~FI~\tfactor toepasbaar op belastingen ten behoeve van de betrouwbaarheidsdifferentiatie")]
+        [TableColumn(
+            Symbol = "<i>K</i><sub>FI</sub>",
+            StringFormat = "0.##",
+            Article = "Bijlage B",
+            Label = "betrouwbaarheidsdifferentiatie",
+            Description = "factor toepasbaar op belastingen ten behoeve van de betrouwbaarheidsdifferentiatie")]
         public double Kfi
         {
             get { return this.Betrouwbaarheidsklasse.GetKfi(); }
@@ -200,30 +156,17 @@ namespace Eurocode.Grondslagen
         /// ξ (xi) is een reductiefactor voor ongunstige, blijvende belastingen G
         /// Deze wordt gebruikt in de fundamentele combinatie (6.10b) en is afhankelijk van de nationale bijlage.
         /// </summary>
-        [TableColumn("|xi|", order: 4, stringFormat: "0.00", width: 1.5, HeaderTextPivot = "|xi|\treductiefactor voor ongunstige blijvende belastingen (nationale bijlage)")]
+        [TableColumn(
+            Symbol = "ξ",
+            StringFormat = "0.##",
+            Label = "reductiefactor",
+            Article = "Tabel NB.4",
+            Description = "reductiefactor voor ongunstige blijvende belastingen (nationale bijlage)")]
         public double Xi
         {
             get { return this.NationaleBijlage.GetReductieFactorVoorOngunstigeBlijvendeBelastingen(); }
         }
 
-        /// <summary>
-        /// Obsolete, use Custom Attributes 'TableColumn' for export
-        /// </summary>
-        //public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>()
-        //{
-        //    { "NationaleBijlage", "Eurocode [NB]"},
-        //    { "Gevolgklasse", "Gevolgklasse [CC]" },
-        //    { "OntwerpLevensduur", "Levensduur [jaren]"},
-        //    { "Betrouwbaarheidsklasse", "Reliability Class RC" },
-        //    { "Kfi", "K_FI~" },
-        //    { "Xi", "ξ" },
-        //};
-
-
-        /// <summary>
-        /// Obsolete, generic DataTable with Custom Attributes.
-        /// </summary>
-        //public Dictionary<string, string> RowData { get { return this.GetRowData(); } }
 
 
         public void AddToSection(Section section)
@@ -234,22 +177,17 @@ namespace Eurocode.Grondslagen
         }
 
 
-        public MarkupString ToMarkupString()
-        {
-            return ToMarkupString(false);
-        }
+        //public MarkupString ToMarkupString()
+        //{
+        //    return ToMarkupString(false);
+        //}
 
-        public MarkupString ToMarkupString(bool alleenFactoren)
+        public new MarkupString ToMarkupString(bool alleenFactoren)
         {
             return CommonLibrary.Helpers.MarkupHelper.ToMarkupString(this.ToString(alleenFactoren));
-
-            //throw new NotImplementedException();
         }
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         protected override void Bereken()
         {
@@ -258,65 +196,16 @@ namespace Eurocode.Grondslagen
 
         protected override bool Valideer()
         {
+            Meldingen.Clear();
+            if (NationaleBijlage == null)
+            {
+                Meldingen.Add(new Melding(MeldingType.Error, "Nationale bijlage is niet opgegeven"));
+                return false;
+            }
+
+
             return true;
         }
 
-        //public override MarkupString ToHtml(bool isDraaiTabel = true)
-        //{
-        //    return this.ToHtmlTable(isDraaiTabel: isDraaiTabel);
-        //    throw new NotImplementedException();
-        //}
-
-
-
-        //public string CreateCsv()
-        //{
-        //    var creator = new CsvFileCreator();
-        //    creator.SetColumnHeaders(Headers);
-        //    creator.AddRow(RowData);
-        //    var stringBuilder = creator.GetCsvStringBuilder();
-        //    return stringBuilder.ToString();
-
-        //    throw new NotImplementedException();
-        //}
-
-
-        //MigraDoc IExportableMigraDoc.Table
-
-
-        //string IExportableRtf.Export()
-        //{
-
-
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<string> ExportAsync()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Table ExportTable()
-        //{
-        //    Table table = new Table();
-
-        //    table.AddColumn(Unit.FromMillimeter(30));
-        //    table.AddColumn(Unit.FromMillimeter(100));
-
-        //    var row = table.AddRow();
-        //    for (int i = 0; i < table.Columns.Count; i++)
-        //    {
-        //        row.Cells[i].AddParagraph($"cells[{i}]");
-        //    }
-
-
-        //    return table;
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<Table> ExportTableAsync()
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

@@ -38,11 +38,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Klasse N (Normal)
         /// </summary>
-        [Description("Klasse N (Normal)")] N = 2,
+        [Description("Klasse N (Normal)")]
+        N = 2,
         /// <summary>
         /// Klasse S (Slow)
         /// </summary>
-        [Description("Klasse S (Slow")] S = 3,
+        [Description("Klasse S (Slow)")]
+        S = 3,
     }
 
 
@@ -58,7 +60,6 @@ namespace Eurocode.BetonConstructies
         B600A = 21,
         B600B = 22,
         B600C = 23,
-        EigenFyk = 31,
     }
 
     public enum BetonStaalSpanningRekDiagramEnum

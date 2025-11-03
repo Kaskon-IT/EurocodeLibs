@@ -1,0 +1,75 @@
+﻿@using System.Globalization
+@using Eurocode.Belastingen
+
+<h3>Eenheden Grootheden Demo</h3>
+
+<label>Kies systeem:</label>
+<select @bind="_selectedEenheid">
+    @foreach (var unit in Enum.GetValues<EenheidSysteem>())
+    {
+        <option value="@unit">@unit</option>
+    }
+</select>
+
+<button @onclick="ResetToDefault">Reset naar 1</button>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Grootheid</th>
+            <th>Waarde</th>
+            <th>Eenheid</th>
+            
+            <th>Basis (N, mm)</th>
+            <th>Factor</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var grootheid in Enum.GetValues<Grootheid>())
+        {
+            var currentValue = _model.GetValue(_selectedEenheid, grootheid);
+
+            var unit = UnitHelper.GetUnit(_selectedEenheid, grootheid);
+
+            //var unit = UnitHelper.GetUnitSymbol(_selectedEenheid, grootheid);
+            //var factor = UnitHelper.GetFactor(_selectedEenheid, grootheid);
+            var baseValue = _model.BasisWaarden[grootheid];
+
+            <tr>
+                <td>@grootheid</td>
+                <td>
+                    <input type="number"
+                           value="@currentValue.ToString(CultureInfo.InvariantCulture)"
+                           @onchange="e => OnValueChanged(e, grootheid)"
+                           step="any"
+                           style="width:120px" />
+                </td>
+                <td>@unit.Symbool</td>
+                <td>@baseValue.ToString("E4", CultureInfo.InvariantCulture) @UnitHelper.GetUnitSymbol(EenheidSysteem.NewtonMillimeter, grootheid)</td>
+                <td>(× @unit.FactorToBase.ToString("E1", CultureInfo.InvariantCulture))</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private EenheidSysteem _selectedEenheid = EenheidSysteem.NewtonMillimeter;
+    private EenhedenGroothedenDemoModel _model = new();
+
+    private void OnValueChanged(ChangeEventArgs e, Grootheid grootheid)
+    {
+        if (double.TryParse(Convert.ToString(e.Value, CultureInfo.InvariantCulture), NumberStyles.Any, CultureInfo.InvariantCulture, out var parsed))
+        {
+            _model.SetValue(_selectedEenheid, grootheid, parsed);
+        }
+    }
+
+    private void ResetToDefault()
+    {
+        foreach (var val in _model.BasisWaarden)
+        {
+            _model.SetValue(_selectedEenheid, val.Key, 1);
+        }
+    }
+}

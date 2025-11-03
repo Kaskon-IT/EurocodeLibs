@@ -1,4 +1,4 @@
-﻿using CommonLibrary;
+﻿using Eurocode.Belastingen;
 
 namespace Eurocode.BetonConstructies
 {
@@ -54,7 +54,7 @@ namespace Eurocode.BetonConstructies
         public BendingResults Buiging1 { get; set; }
 
         public DwarskrachtWapContext TandShear { get; set; }
-        public Snedekrachten Snedekrachten { get; set; } = new Snedekrachten();
+        public SectionForces Snedekrachten { get; set; } = new();
 
 
 

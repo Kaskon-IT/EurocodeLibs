@@ -1,0 +1,45 @@
+﻿@using System.Linq
+@using CommonLibrary
+@using CommonLibrary.Models
+@using CommonLibrary.Extensions
+
+<ul class="ec-tree">
+    <li>
+        <span class="ec-node">
+            📂 @Context.GetType().Name (@Context.Id)
+        </span>
+
+        @if (NestedInfos.Any())
+        {
+            <ul>
+                @foreach (var info in NestedInfos)
+                {
+                    <li>
+                        <span class="ec-node">
+                            📄 @info.Child.GetType().Name (@info.Child.Id)
+                            <br />
+                            <small>
+                                Afkomstig van:
+                                @string.Join(", ", info.Parents.Select(p => $"{p.Parent.GetType().Name}.{p.PropertyName}"))
+                            </small>
+                        </span>
+
+                        <EurocodeContextTreeViewDemo Context="info.Child" />
+                    </li>
+                }
+            </ul>
+        }
+    </li>
+</ul>
+
+@code {
+    [Parameter, EditorRequired]
+    public BaseEurocodeContext Context { get; set; } = default!;
+
+    private List<NestedContextInfo> NestedInfos = [];
+
+    protected override void OnParametersSet()
+    {
+        NestedInfos = Context.GetNestedContexts().ToList();
+    }
+}

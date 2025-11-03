@@ -2,6 +2,36 @@
 @using CommonLibrary.Extensions
 @using System.Collections.ObjectModel
 
+@if (FilteredMeldingen.Any())
+{
+    @foreach (var melding in FilteredMeldingen)
+    {
+        <div>
+            <EurocodeMeldingComponent Melding="@melding" />
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public ObservableCollection<Melding> Meldingen { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<ObservableCollection<Melding>> MeldingenChanged { get; set; }
+
+    // Nieuw: filteroptie via flags
+    [Parameter]
+    public MeldingType FilterTypes { get; set; } = (MeldingType)~0; // alles standaard
+
+    private IEnumerable<Melding> FilteredMeldingen =>
+        Meldingen?.Where(m => (m.Type & FilterTypes) != 0) ?? Enumerable.Empty<Melding>();
+}
+
+
+@* @using CommonLibrary
+@using CommonLibrary.Extensions
+@using System.Collections.ObjectModel
+
 
 @if (Meldingen.Any())
 {
@@ -19,4 +49,4 @@
     public ObservableCollection<Melding> Meldingen { get; set; } = [];
     [Parameter] 
     public EventCallback<ObservableCollection<Melding>> MeldingenChanged { get; set; }
-}
+} *@

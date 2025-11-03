@@ -27,52 +27,26 @@
     }
 }
 
-@* @if (Model.Beton != null)
-{
-    <p>this.Beton = @Model.Beton.ToMarkupString()</p>
-}
 
-@if (Model.VerankeringsLengte != null)
-{
-    <p>this.VerankeringsLengte = @Model.VerankeringsLengte.ToMarkupString()</p>
-} *@
-
-
-
-@* <FluentSelectEnum 
-Label="type berekening"
-TEnum="BerekeningTypeEnum"
-OnStateChanged="NotifyParentAsync"
-@bind-EnumSelectedValue="@Model.BerekeningType" /> *@
-
-@* <FluentSelectEnum Label="schematisering"
-TEnum="@Schematisering.ConstructiefModelEnum"
-@bind-EnumSelectedValue="@Model.ConstructiefModel" /> *@
 
 
 
 
 @if(Model.Snedekrachten == null)
 {
-    <EurocodeInputNumber @bind-Value=Model.Moment Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
+    <p>Niet akkoord, snedekrachten verplicht..</p>
 }
 else
 {
-    <EurocodeInputNumber ReadOnly=true @bind-Value=Model.Snedekrachten.My.Ed Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
+    <EurocodeInputNumber ReadOnly=true @bind-Value="Model.Snedekrachten.My" Key="@K.MomentRekenwaarde" Unit="kNm"></EurocodeInputNumber>
 }
 
 @if(Model.Profiel == null)
 {
-    <EurocodeInputNumber @bind-Value=Model.Breedte Key="@K.ProfielBreedte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
-    <EurocodeInputNumber @bind-Value=Model.Hoogte Key="@K.ProfielHoogte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+    <EurocodeInputNumber Readonly=true Value=Model.Breedte Key="@K.ProfielBreedte" Unit="mm" ></EurocodeInputNumber>
+    <EurocodeInputNumber Readonly=true Value=Model.Hoogte Key="@K.ProfielHoogte" Unit="mm" ></EurocodeInputNumber>
     <EurocodeInputNumber Readonly=true Value=Model.ZRef Key="ReferentieAfstandVoorNuttigeHoogte" Unit="mm"></EurocodeInputNumber>
 }
-else
-{
-   @*  <EurocodeInputNumber @bind-Value=Model.Profiel.Breedte Key="@K.ProfielBreedte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
-    <EurocodeInputNumber @bind-Value=Model.Profiel.Hoogte Key="@K.ProfielHoogte" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber> *@
-}
-
 
 
 <EurocodeInputNumber ReadOnly=true Value=Model.D Key="NuttigeHoogte" Unit="mm"></EurocodeInputNumber>
@@ -95,7 +69,7 @@ else
 @if (Model.IsGedrongenLigger)
 {
     <p>Deze doorsnede is beschouwd als gedrongen ligger voor de berekening van de benodigde wapening.</p>
-    <EurocodeInputNumber @bind-Value=Model.LengteMaatBijGedrongenLiggerInMM Key="@Model.LengteMaatBijGedrongenLiggerSymbool" Unit="mm" OnStateChanged="NotifyParentAsync"></EurocodeInputNumber>
+    <EurocodeInputNumber @bind-Value=Model.LengteMaatBijGedrongenLiggerInMM Key="@Model.LengteMaatBijGedrongenLiggerSymbool" Unit="mm" ></EurocodeInputNumber>
     <FluentSelectEnum Label="type gedrogen"
     TEnum="Schematisering.GedrongenEnum"
     @bind-EnumSelectedValue="@Model.Gedrongen" />
@@ -132,6 +106,8 @@ else
             @voorstel
         </FluentButton>
     }
+
+    
 
     <EurocodeInputContainer Key="@K.WapeningToegepast" Unit="">
         <ChildContent>

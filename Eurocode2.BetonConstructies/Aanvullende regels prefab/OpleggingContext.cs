@@ -1,7 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
 using CommonLibrary.Helpers;
-using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
@@ -71,18 +70,18 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// a of a~nom~
         /// </summary>
-        [TableColumn("a~nom~", "nominale opleglengte")]
+        [TableColumn("<i>a</i>~nom~", "nominale opleglengte")]
         public double OplegLengteNominaal { get { return this.SetOplegLengteNominaal(); } }
 
         /// <summary>
         /// a~1~
         /// </summary>
-        [TableColumn("a~1~", "netto opleglengte")]
+        [TableColumn("<i>a</i>~1~", "netto opleglengte")]
         public double OplegLengteNetto
         {
             get
             {
-                BerekenEnValideer();
+                //BerekenEnValideer(); // StackOverflow
                 return this.SetOplegLengteNetto();
             }
         }
@@ -100,7 +99,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// b~1~
         /// </summary>
-        [TableColumn("b~1~", "oplegbreedte netto")]
+        [TableColumn("<i>b</i>~1~", "oplegbreedte netto")]
         public double OplegBreedteNetto { get; set; } = 1000;
 
         /// <summary>
@@ -198,11 +197,11 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("droge verbinding?", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("droge verbinding?")]
         public bool DrogeVerbinding { get; set; } = false;
 
 
-        [TableColumn("vellingkanten noodzakelijk?", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("vellingkanten noodzakelijk?")]
         public bool VellingkantenNoodzakelijk { get; set; } = false;
 
         /// <summary>
@@ -241,15 +240,15 @@ namespace Eurocode.BetonConstructies
             get { return OplegSpanningRekenwaarde / LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement; }
         }
 
-        [TableColumn("oplegmat.", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("oplegmateriaal")]
         public OplegMateriaalEnum? OplegMateriaal { get; set; } = OplegMateriaalEnum.PREFAB_BETON;
 
-        [TableColumn("type", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("type oplegging")]
         public OplegTypeEnum? OplegType { get; set; } = OplegTypeEnum.LIJNVORMIG;
 
 
 
-        [TableColumn("detaillering", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("detaillering wapening")]
         public DetailleringWapeningEnum? DetailleringWapening { get; set; } = DetailleringWapeningEnum.VerticaleHaarspelden;
         public enum DetailleringWapeningEnum
         {
@@ -263,7 +262,7 @@ namespace Eurocode.BetonConstructies
             VerticaleHaarspelden
         }
 
-        [TableColumn("elementtype", Weergave = WeergaveEnum.DraaiTabel)]
+        [TableColumn("elementtype")]
 
         public OpleggingElementTypeEnum? OpleggingElementType { get; set; } = OpleggingElementTypeEnum.AfzonderlijkElement;
 
@@ -341,31 +340,7 @@ namespace Eurocode.BetonConstructies
             return MarkupHelper.ToMarkupString(this.ToLongstring());
         }
 
-        //public MarkupString ToMarkupString()
-        //{
-        //    return MarkupHelper.ToMarkupString(this.ToString());
-        //}
 
-        public override bool IsAkkoord()
-        {
-            // de aanwezige opleglengte moet groter of gelijk zijn aan de nominale opleglengte
-            if (OplegLengteNettoAanwezig < OplegLengteNominaal)
-            {
-                this.AddMeldingWaarschuwing("onvoldoende opleglengte aanwezig");
-                return false;
-            }
-
-            // de oplegspanning mag niet groter zijn dan de oplegsterkte rekenwaarde
-            if (OplegSpanningRekenwaarde > OplegSterkteRekenwaarde)
-            {
-                this.AddMeldingWaarschuwing("overschrijding oplegspanning");
-                return false;
-            }
-
-
-            return true;
-            //throw new NotImplementedException();
-        }
 
         protected override void Bereken()
         {
@@ -375,16 +350,28 @@ namespace Eurocode.BetonConstructies
 
         protected override bool Valideer()
         {
+            Meldingen.Clear();
+
+            // de aanwezige opleglengte moet groter of gelijk zijn aan de nominale opleglengte
+            if (OplegLengteNettoAanwezig < OplegLengteNominaal)
+            {
+                this.AddMeldingError("onvoldoende opleglengte aanwezig");
+                return false;
+            }
+
+            // de oplegspanning mag niet groter zijn dan de oplegsterkte rekenwaarde
+            if (OplegSpanningRekenwaarde > OplegSterkteRekenwaarde)
+            {
+                this.AddMeldingError("overschrijding oplegspanning");
+                return false;
+            }
+
+            // alles ok
+
             return true;
-            //throw new NotImplementedException();
         }
 
-        //public override MarkupString ToHtml(bool isDraaiTabel = true)
-        //{
-        //    return this.ToHtmlTable(isDraaiTabel);
 
-        //    //throw new NotImplementedException();
-        //}
     }
 
     public enum OplegMateriaalEnum

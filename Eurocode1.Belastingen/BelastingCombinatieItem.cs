@@ -1,33 +1,34 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Eurocode.Belastingen
 {
     public class BelastingCombinatieItem
     {
 
-
+        [JsonInclude]
         public required BelastingenContext Context;
-
 
         /// <summary>
         /// De belastingcombinatie van het item
         /// </summary>
+        [JsonInclude]
         public required BelastingCombinatie Combinatie { get; set; }
+
         /// <summary>
         /// Het belastinggeval van het item
         /// </summary>
+        [JsonInclude]
         public required BelastingGeval Geval { get; set; }
 
         private readonly double _basisFactorPermanentFundamenteel = 1.35;
         private readonly double _basisFactorVeranderlijkFundamenteel = 1.50;
 
-
-
         /// <summary>
         /// Nullable waarde voor als er een momentaan-factor is toegepast
         /// </summary>
         public double? MomentFactor { get; private set; }
-        public string MomentaanTekst { get; private set; }
+        public string MomentaanTekst { get; private set; } = "";
 
         /// <summary>
         /// De uiteindelijke factor van het belastinggeval
@@ -36,7 +37,6 @@ namespace Eurocode.Belastingen
         {
             get { return GetFactoren(); }
         }
-
 
         /// <summary>
         /// De basisfactor voor permanente gevallen, inclusief de factoren KFI en/of Xi.
@@ -49,11 +49,7 @@ namespace Eurocode.Belastingen
         public double FactorQ { get; private set; }
 
 
-
-
-
-
-        //public BelastingCombinatieItem() { }
+        public BelastingCombinatieItem() { } // ✅ Nodig voor deserialisatie
 
         [SetsRequiredMembers]
         public BelastingCombinatieItem(BelastingenContext context, BelastingCombinatie combinatie, BelastingGeval geval, bool permanentIsGunstig = false)
@@ -66,9 +62,6 @@ namespace Eurocode.Belastingen
         }
 
 
-
-
-
         /// <summary>
         /// De NETTO factor wordt bepaald inclusief:
         /// - factor Xi (zie Eurocode 0)
@@ -79,6 +72,11 @@ namespace Eurocode.Belastingen
         private double GetFactoren()
         {
             double factorNetto = 1.0;
+
+            if (Combinatie == null || Geval == null || Context == null || Context.Grondslagen == null)
+            {
+                return factorNetto;
+            }
 
             switch (Geval.Type)
             {
@@ -148,25 +146,11 @@ namespace Eurocode.Belastingen
 
             //this.FactorNetto = factorNetto;
             return factorNetto;
-
-
         }
-
-
-
         /// <summary>
         /// Voor als de permanente belasting als gunstig beschouwd dient te worden.
         /// </summary>
         public bool PermanentIsGunstig { get; set; } = false;
 
-
-
-
-
-
-
     }
-
-
-
 }

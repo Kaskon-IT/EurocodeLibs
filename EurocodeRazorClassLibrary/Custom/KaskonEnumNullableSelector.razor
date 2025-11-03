@@ -1,0 +1,99 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components
+@using CommonLibrary.Extensions; 
+@typeparam TEnum where TEnum : struct, Enum
+
+
+<FluentSelect TOption="Option<int>"
+              Items="_enumOptions"
+              OptionText="@(i => i.Text)"
+              OptionValue="@(i => i.Value.ToString())"
+              OptionDisabled="@(i => i.Disabled)"
+              OptionSelected="@(i => i.Selected)"
+              @bind-Value="_selectedValue"
+              @bind-SelectedOption=_selectedIntOption
+              Placeholder="@Placeholder"
+              AdditionalAttributes="@AdditionalAttributes"
+              Disabled="@Disabled"
+              Style="@Style"
+              Multiple="@Multiple" />
+
+
+
+@code {
+    [Parameter] public TEnum? Value { get; set; }
+    [Parameter] public EventCallback<TEnum?> ValueChanged { get; set; }
+    [Parameter] public EventCallback OnStateChanged { get; set; }
+    [Parameter] public TEnum[] ExcludeEnumItems { get; set; } = [];
+    [Parameter] public TEnum[] DisabledEnumItems { get; set; } = [];
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; } = new();
+    private bool ShowDescription { get; set; } = true;
+    private bool Multiple = false; // geen multiple mogelijk
+    [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public string? Style { get; set; } = "width: 100%; max-height: 200px;";
+
+
+    private Option<int> _selectedIntOption { get; set; } = new();
+    private List<Option<int>> _enumOptions = [];
+    private string? _selectedValue
+    {
+        get { return _enumOptions.FirstOrDefault(e => e.Value.Equals(GetEnumInt(Value)))?.Value.ToString(); }
+        set
+        {
+            if (value is null || !Enum.TryParse<TEnum>(value, out var result)) return;
+            Value = result;
+            ValueChanged.InvokeAsync(result);
+            OnStateChanged.InvokeAsync();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (!typeof(TEnum).IsEnum)
+        {
+            throw new InvalidOperationException($"{typeof(TEnum).Name} is not an enum type");
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ShowDescription)
+        {
+            _enumOptions = Enum.GetValues(typeof(TEnum))
+           .Cast<TEnum>()
+           .Where(e => !ExcludeEnumItems.Contains(e))
+           .Select(e => new Option<int>
+               {
+                   Value = GetEnumInt(e).GetValueOrDefault(),
+                   Text = e.GetDisplayName(),
+                   //Text = e.GetDescription(false),
+                   Selected = e.Equals(Value),
+                   Disabled = DisabledEnumItems.Contains(e),
+               })
+           .ToList();
+        }
+        else
+        {
+            _enumOptions = Enum.GetValues(typeof(TEnum))
+          .Cast<TEnum>()
+          .Where(e => !ExcludeEnumItems.Contains(e))
+          .Select(e => new Option<int>
+              {
+                  Value = GetEnumInt(e).GetValueOrDefault(),
+                  Text = e.ToString(),
+                  Selected = e.Equals(Value),
+                  Disabled = DisabledEnumItems.Contains(e),
+              })
+          .ToList();
+        }
+
+    }
+
+    private static int? GetEnumInt(TEnum? value)
+    {
+        if (!typeof(TEnum).IsEnum || value is null)
+            return null;
+        return (int)Convert.ChangeType(value, typeof(TEnum));
+    }
+}

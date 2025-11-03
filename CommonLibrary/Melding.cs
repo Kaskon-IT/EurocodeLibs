@@ -3,13 +3,14 @@
 namespace CommonLibrary
 {
 
+    [Flags]
     public enum MeldingType
     {
-        Opmerking,
-        Waarschuwing,
-        Neutraal,
-        Hint,
-        Error,
+        Opmerking = 1,
+        Waarschuwing = 2,
+        Neutraal = 4,
+        Hint = 8,
+        Error = 16,
     }
 
 
@@ -18,7 +19,18 @@ namespace CommonLibrary
     public class Melding
     {
 
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         public int? Code { get; set; } // Optioneel, kan gebruikt worden voor catalogus
+
+        public string GetCode
+        {
+            get
+            {
+                if (Code == null) return "";
+                return (Code.Value % 1000).ToString();
+            }
+        }
 
 
         // kleuren voor meldingen
@@ -53,20 +65,28 @@ namespace CommonLibrary
             }
         }
 
+        public string GetEmoji
+        {
+            get
+            {
+                return Type switch
+                {
+                    MeldingType.Opmerking => emojiInfo,
+                    MeldingType.Hint => emojiHint,
+                    MeldingType.Error => emojiError,
+                    MeldingType.Waarschuwing => emojiWaarschuwing,
+                    _ => "",
+                };
+            }
+        }
+
         private string? Emoji
         {
             get
             {
                 if (ShowEmoji)
                 {
-                    return Type switch
-                    {
-                        MeldingType.Opmerking => emojiInfo,
-                        MeldingType.Hint => emojiHint,
-                        MeldingType.Error => emojiError,
-                        MeldingType.Waarschuwing => emojiWaarschuwing,
-                        _ => "",
-                    };
+                    return GetEmoji;
                 }
                 else
                 {

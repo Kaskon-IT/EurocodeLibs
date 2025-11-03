@@ -6,17 +6,20 @@
 
 
 <FluentSelectEnum Label="nationale bijlage" 
+                  ReadOnly="ReadOnly"
                   Placeholder="Selecteer..."
                   TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
                   ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
 
 <FluentSelectEnum Label="gevolgklasse (Consequence Class)"
+                  ReadOnly="ReadOnly"
                   Placeholder="Selecteer..."
                   TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
                   ShowDescription="false"
                   @bind-EnumSelectedValue="@Model.Gevolgklasse" />
 
 <FluentSelectEnum Label="ontwerplevensduur"
+                  ReadOnly="ReadOnly"
                   TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum"
                   @bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
 
@@ -52,17 +55,12 @@
 
 
 @code {
-    [Parameter]
-    public required GrondslagenContext Model { get; set; }
-
-    [Parameter]
-    public bool ToonGevolgEigenschappen { get; set; } = false;
-
-    [Parameter]
-    public EventCallback<GrondslagenContext> ModelChanged { get; set; }
-    
+    [Parameter] public required GrondslagenContext Model { get; set; }
+    [Parameter] public EventCallback<GrondslagenContext> ModelChanged { get; set; }
 
 
+    [Parameter] public bool ToonGevolgEigenschappen { get; set; } = false;
+    [Parameter] public bool ReadOnly { get; set; } = false;
 
 
 
@@ -82,39 +80,7 @@
         
     }
 
-    //private string csvContent { get; set; } = "";
-    //private string? rtfContent { get; set; } = "";
-
-
-    //async Task ExportPdf(){
-
-        // altijd bijwerken
-        //await ExportCsv();
-        //var pdfCreator = new CsvFactory.CsvToRtfService();
-        //rtfContent = pdfCreator.CreateRtfFromCsvUsingMigradoc(csvContent: csvContent, "output.pdf");
-
    
-    //}
-
-
-
-    // public void ExportCsv(bool excludeHeaders = false){
-    //     if (Model is IExportableCsv csvExporter){
-    //         csvContent = csvExporter.Export(excludeHeaders);
-    //     }
-    // }
-
-    // async Task ExportCsvAsync(bool excludeHeaders = false){
-    //     if (Model is IExportableCsv csvExporter){
-    //         csvContent = await csvExporter.ExportAsync(excludeHeaders);
-    //     }
-    // }
-
-    // public void ExportTable(){
-    //     if (Model is IExportableMigraDoc migraDocExporter){
-    //         var demo = migraDocExporter.ExportTable();
-    //     }
-    // }
 
            
 

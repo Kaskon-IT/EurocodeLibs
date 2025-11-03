@@ -1,0 +1,173 @@
+﻿@page "/Lab/gridforpage"
+@using System.Collections.Generic
+@using CommonLibrary
+@using CommonLibrary.Extensions
+@using EurocodeRazorClassLibrary.Shared
+@using System.Reflection
+
+
+@if (SampleProject == null)
+{
+    <p>Geen model geladen</p>
+}
+else
+{
+    <div>
+        <label><input type="checkbox" @bind="readOnly" /> ReadOnly</label>
+        <label><input type="checkbox" @bind="showNonEditables" /> Non-Input</label>
+     
+        <label><input type="checkbox" @bind="showCaptions" /> Caption</label>
+        <label><input type="checkbox" @bind="showChildren" /> Children</label>
+
+
+    </div>
+
+    @* <NumberFormatterSettings /> *@
+
+    @* <p>Count: @MyContexts.Count</p> *@
+
+    @if(EurocodeContext != null)
+    {
+        <EcTree @bind-Model="EurocodeContext" 
+            @bind-ReadOnly="readOnly" 
+            ShowAccordion="showChildren"
+             />
+
+       
+
+        
+    }
+
+
+   @*  if (Ctx2 != null)
+    {
+        <EcTree Context="Ctx2">
+            
+        </EcTree>
+
+    } *@
+
+
+   
+
+   
+  
+
+
+    @* <pre>@modelDump</pre> *@
+}
+
+
+
+@code {
+
+    [CascadingParameter]
+    public SampleProject? SampleProject { get; set; }
+
+
+    //private List<BaseEurocodeContext> MyContexts { get; set; } = [];
+    private BaseEurocodeContext? EurocodeContext { get; set; } = null;
+
+    private BaseEurocodeContext? Ctx2 { get; set; } = null;
+
+
+    [Obsolete("Gebruik extension method")]
+    private IEnumerable<BaseEurocodeContext> GetNestedContexts(object obj)
+    {
+        if (obj == null)
+            yield break;
+
+        var type = obj.GetType();
+
+        var debugProps = type.GetProperties();
+
+
+
+
+        foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (typeof(BaseEurocodeContext).IsAssignableFrom(prop.PropertyType))
+            {
+                var value = prop.GetValue(obj) as BaseEurocodeContext;
+                if (value != null)
+                    yield return value;
+            }
+
+            if (typeof(IEnumerable<BaseEurocodeContext>).IsAssignableFrom(prop.PropertyType))
+            {
+                var collection = prop.GetValue(obj) as IEnumerable<BaseEurocodeContext>;
+                if (collection != null)
+                {
+                    foreach (var item in collection)
+                        yield return item;
+                }
+            }
+        }
+    }
+
+    //private SampleModel model = new();
+    private HashSet<string> visibleCols = new();
+    //private string modelDump => System.Text.Json.JsonSerializer.Serialize(SampleProject?.Beton, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+
+    private bool readOnly = !true;
+    private bool showNonEditables = !true;
+    private bool showCaptions = true;
+    private bool showChildren = true;
+
+    protected override void OnInitialized()
+    {
+        visibleCols = new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
+
+        if (SampleProject?.DoorbuigingTrap != null)
+        {
+            EurocodeContext = SampleProject.DoorbuigingTrap;
+        }
+
+        if (SampleProject?.DoorbuigingTrap2 != null)
+        {
+            Ctx2 = SampleProject.DoorbuigingTrap2;
+        }
+
+        //if(SampleProject?.DoorbuigingDemo != null)
+        //{
+        //    EurocodeContext = SampleProject.DoorbuigingDemo;
+        //}
+
+      
+
+
+        UpdateVisibility();
+    }
+
+    private void ToggleAll()
+    {
+        UpdateVisibility();
+
+        
+
+        //if (visibleCols.Count > 0) visibleCols.Clear();
+        //else visibleCols = new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Description", "Formula" });
+    }
+
+    // bind checkboxes to update visibleCols
+    private void UpdateVisibility()
+    {
+        visibleCols.Clear();
+        //if (showLabel) visibleCols.Add("Label");
+        //if (showSymbol) visibleCols.Add("Symbol");
+        //if (showValue) visibleCols.Add("Value");
+        //if (showUnit) visibleCols.Add("Unit");
+        //if (showArticle) visibleCols.Add("Article");
+        //if (showFormula) visibleCols.Add("Formula");
+    }
+
+    // hook checkboxes so changing them updates visibleCols immediately
+    // simplest approach: use property setters that call UpdateVisibility,
+    // but here call UpdateVisibility from UI events or two-way bind with onchange.
+    // for brevity, call UpdateVisibility in OnParametersSet of parent as needed
+    private Task OnModelChanged(BetonContext m)
+    {
+        // model bijgewerkt door GridFor
+        return Task.CompletedTask;
+    }
+}

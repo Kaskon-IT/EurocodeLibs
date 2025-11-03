@@ -1,11 +1,18 @@
+using CommonLibrary.Extensions;
 using Eurocode.Blazor.Demo.Shared.Extensions;
 using Eurocode.Blazor.Demo.Shared.SampleData;
 using Eurocode.Grondslagen;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.FluentUI.AspNetCore.Components;
+using System.Globalization;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+NumberFormatter.DefaultSignificantDigits = 3;
+
+
 
 StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
@@ -39,6 +46,10 @@ builder.Services.AddCascadingValue(sp =>
 
 //builder.WebHost.UseStaticWebAssets(); // < -- nodig voor wwwroot?
 
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("nl-NL");
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +63,18 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 //app.UseStaticFiles(); // <-- nodig voor files in wwwroot?
+
+// Zorg dat .emf toegestaan is
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".emf"] = "image/x-emf";
+provider.Mappings[".wmf"] = "image/x-wmf"; // optioneel, voor consistentie
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = provider
+});
+
+
 app.MapStaticAssets();
 app.UseRouting();
 app.MapBlazorHub();

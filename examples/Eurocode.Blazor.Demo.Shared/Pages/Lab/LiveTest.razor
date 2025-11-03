@@ -1,0 +1,68 @@
+﻿@page "/lab/live-test"
+@using CommonLibrary
+
+
+<h3>LiveTest</h3>
+<p>Test pagina voor debug van componenten... </p>
+
+
+<LabSvgToWmf />
+
+<LabDocument />
+
+<EurocodeRazorClassLibrary.Shared.EcTree @bind-Model=DoorbuigingValidatie />
+
+
+@* <FluentCard Width="400px" Height="auto">
+    <BetonMateriaalSpanningRekDiagrammen @bind-Beton="Beton" FontSize="24" Width="600" Height="400" />
+</FluentCard>
+<EurocodeBetonMaterialen @bind-Model="Beton" ToonBetonstaal=true ToonBetonSpanningRekDiagram=true ToonBetonStaalSpanningRekDiagram=true/> *@
+
+@code {
+    public BetonContext Beton { get; set; } = new();
+    public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
+    public WapeningContext Wapening { get; set; } = new();
+    public BetonDekkingContext Dekking { get; set; } = new();
+
+    public Ref<double> L = new(7200.0);
+    public Ref<double> QG = new(-5.0);
+    public Ref<double> QBijk = new(-6.5);
+    public Ref<double> QEind = new(-5.9);
+    public double LengteMM = 7200.0;
+
+    List<DoorbuigingCombinatieContext> CombinatieContexts { get; set; } = [];
+
+
+    public DoorbuigingValidatieContext DoorbuigingValidatie { get; set; } = new();
+
+
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Dekking.Beton = Beton;
+        Wapening.Dekking = Dekking;
+        CombinatieContexts = [
+            new DoorbuigingCombinatieContext()
+            {
+                CombinatieType = BelastingCombinatieTypeEnum.Blijvend,
+                Lijnlast = -5.0,
+            },
+            new DoorbuigingCombinatieContext()
+            {
+                CombinatieType = BelastingCombinatieTypeEnum.QuasiBlijvend,
+                Lijnlast = -5.9,
+            },
+            new DoorbuigingCombinatieContext()
+            {
+                CombinatieType = BelastingCombinatieTypeEnum.Frequent,
+                Lijnlast = -6.5,
+            }
+        ];
+
+        DoorbuigingValidatie = new(this.Beton, this.Profiel, this.Wapening, this.LengteMM, this.CombinatieContexts);
+
+    }
+
+}

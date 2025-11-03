@@ -5,14 +5,15 @@ namespace Eurocode.BetonConstructies
 {
     public partial class Scheurbeheersing : BaseEurocodeContext
     {
-        public override string Heading { get; set; } = "Scheurbeheersing";
-        public override bool IsAkkoord()
+        /// <summary>
+        /// Lege constructor voor serialisatie doeleinden.
+        /// </summary>
+        public Scheurbeheersing()
         {
-            if (Meldingen.Any(m => m.Type == MeldingType.Waarschuwing)) return false;
 
-            return true;
-            throw new NotImplementedException();
         }
+        public override string Heading { get; set; } = "Scheurbeheersing";
+
 
         public override string? ToString()
         {

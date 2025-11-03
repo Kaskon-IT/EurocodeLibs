@@ -1,0 +1,45 @@
+﻿@page "/latex-tester-render"
+@inject IJSRuntime JS
+
+<h3>LaTeX Tester - Safe Render</h3>
+
+<div style="display:flex; gap:2rem;">
+    <!-- Input links -->
+    <div style="flex:1;">
+        <input type="text" @bind="LaTex" placeholder="bv: E=mc^2" />
+        <div>Waarde: @LaTex</div>
+        <button @onclick="RenderFormula">Render Formule</button>
+    </div>
+
+    <!-- Render rechts -->
+    <div style="flex:1">
+        <div id="formulaDisplay">@((MarkupString)FormulaHtml)</div>
+    </div>
+</div>
+
+@code {
+    private string LaTex { get; set; } = "E=mc^2";
+
+    // Dit bevat de echte HTML die MathJax moet verwerken
+    private string FormulaHtml { get; set; } = "";
+
+    private async Task RenderFormula()
+    {
+        // Zet LaTeX in MathJax format
+        FormulaHtml = @"\(" + LaTex + @"\)"; // inline math
+        StateHasChanged(); // force re-render zodat div in DOM staat
+
+        // Wacht even zodat element in DOM is
+        await Task.Delay(50);
+
+        try
+        {
+            // MathJax rendert element op basis van ID
+            await JS.InvokeVoidAsync("MathJax.typesetPromise", new object[] { new[] { "formulaDisplay" } });
+        }
+        catch (JSDisconnectedException)
+        {
+            // SignalR nog niet connected, veilig negeren
+        }
+    }
+}

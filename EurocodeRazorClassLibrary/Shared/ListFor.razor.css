@@ -1,0 +1,72 @@
+﻿.table-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem; /* komt overeen met gap-2 */
+    border-bottom: 1px solid #e5e7eb; /* border-b */
+    padding-bottom: 0.25rem; /* pb-1 */
+}
+
+    .table-grid .header {
+        font-weight: 600; /* font-semibold */
+    }
+
+    .table-grid .article {
+        color: #6b7280; /* text-gray-500 */
+        font-style: italic;
+    }
+
+    .table-grid .symbol {
+        font-family: "KaTeX_Main", "Times New Roman", serif;
+    }
+
+
+.formula-name {
+    margin-left: 0.5rem; /* ruimte tussen formule en naam */
+    font-style: italic; /* optioneel */
+    color: #666; /* optioneel */
+}
+
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+
+
+.tooltip-icon {
+    background: none;
+    color: darkblue;
+    border-radius: 5px;
+    padding: 0 6px;
+    font-family: "KaTeX_Main", "Times New Roman", serif;
+    line-height: 1.2rem;
+}
+
+
+
+.tooltip-content {
+    visibility: hidden;
+    
+    /*width: max-content;*/
+    min-width: 11cm;
+    width: max-content;
+    max-width: 95vw;
+    background-color: ghostwhite;
+    color: black;
+    text-align: left;
+    border: 1px solid gray;
+    padding: 1rem 3rem;
+    border-radius: 4px;
+    position: absolute;
+    z-index: 100;
+    top: 120%;
+    left: -25%;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.tooltip-container:hover .tooltip-content {
+    visibility: visible;
+}

@@ -1,6 +1,8 @@
 ﻿@page "/lab/datagrid-test-lab"
 
 
+
+
 <FluentDataGrid Items="@people">
     <PropertyColumn Property="@(p => p.PersonId)" Sortable="true" />
     <PropertyColumn Property="@(p => p.Name)" Sortable="true" />
@@ -38,5 +40,7 @@
 
     [CascadingParameter]
     SampleProject? SampleProject { get; set; }
+
+   
 
 }

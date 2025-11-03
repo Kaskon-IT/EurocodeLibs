@@ -10,36 +10,36 @@
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeInputNumber Value="@Model.OplegReactieRekenwaarde" Key="OplegReactieRekenwaarde" Unit="kN"
-        LabelPosition="@LabelPosition" LabelType="@LabelType" 
+        LabelPosition="@LabelPosition"
         ReadOnly=true  />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeInputNumber @bind-Value="@Model.OplegBreedteNetto" Key="OplegBreedteNetto" Unit="mm"
-        LabelPosition="@LabelPosition" LabelType="@LabelType" 
+        LabelPosition="@LabelPosition" 
         ReadOnly="IsFieldReadOnly(nameof(Model.OplegBreedteNetto))" />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeInputNumber ReadOnly=true Value="@Model.OplegLengteNetto" Key="OplegLengteNetto" Unit="mm"
-        LabelPosition="@LabelPosition" LabelType="@LabelType"
+        LabelPosition="@LabelPosition" 
         />
     </FluentGridItem>
 
 
-    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandA2" Key="AfstandA2" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
-    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaA2" Key="AfstandDeltaA2" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
-    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandA3" Key="AfstandA3" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
-    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaA3" Key="AfstandDeltaA3" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
-    @* <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaElementType" Key="AfstandDeltaElementType" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" /> *@
-    <EurocodeInputNumber ReadOnly=true Value="@Model.OplegLengteNominaal" Key="OplegLengteNominaal" Unit="mm" LabelPosition="@LabelPosition" LabelType="@LabelType" />
+    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandA2" Key="AfstandA2" Unit="mm" LabelPosition="@LabelPosition"  />
+    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaA2" Key="AfstandDeltaA2" Unit="mm" LabelPosition="@LabelPosition"/>
+    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandA3" Key="AfstandA3" Unit="mm" LabelPosition="@LabelPosition"  />
+    <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaA3" Key="AfstandDeltaA3" Unit="mm" LabelPosition="@LabelPosition"  />
+    @* <EurocodeInputNumber ReadOnly=true Value="@Model.AfstandDeltaElementType" Key="AfstandDeltaElementType" Unit="mm" LabelPosition="@LabelPosition"  /> *@
+    <EurocodeInputNumber ReadOnly=true Value="@Model.OplegLengteNominaal" Key="OplegLengteNominaal" Unit="mm" LabelPosition="@LabelPosition"  />
 
    
 
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeInputNumber Value="@Model.LengteOndersteundeElement" Key="LengteOndersteundeElement" Unit="mm"
-        LabelPosition="@LabelPosition" LabelType="@LabelType"
+        LabelPosition="@LabelPosition" 
         ReadOnly=true />
     </FluentGridItem>
 
@@ -49,28 +49,28 @@
 <FluentGrid Spacing="0">
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeInputNumber @bind-Value="@Model.RekenwaardeOplegmateriaal" Key="RekenwaardeOplegmateriaal" Unit="N/mm²" 
-        LabelPosition="@LabelPosition" LabelType="@LabelType"
+        LabelPosition="@LabelPosition" 
         ReadOnly=IsFieldReadOnly(nameof(Model.RekenwaardeOplegmateriaal)) />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeInputNumber ReadOnly="true" Value="@Model.OplegSterkteRekenwaarde" Key="OplegSterkteRekenwaarde" Unit="N/mm²" 
-        LabelPosition="@LabelPosition" LabelType="@LabelType" />
+        LabelPosition="@LabelPosition"  />
     </FluentGridItem>
 
     <FluentGridItem xs="@xsSize" md="@mdSize" lg="@lgSize">
         <EurocodeInputNumber ReadOnly=true Value="@Model.LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement"
         Key="LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement" Unit="N/mm²" 
-        LabelPosition="@LabelPosition" LabelType="@LabelType" />
+        LabelPosition="@LabelPosition"  />
     </FluentGridItem>
 
     <EurocodeInputNumber ReadOnly=true Value="@Model.OplegSpanningRekenwaarde"
     Key="OplegSpanningRekenwaarde" Unit="N/mm²"
-    LabelPosition="@LabelPosition" LabelType="@LabelType" />
+    LabelPosition="@LabelPosition"  />
 
     <EurocodeInputNumber ReadOnly=true Value="@Model.RelatieveOplegspanning"
     Key="RelatieveOplegspanning" Unit="-"
-    LabelPosition="@LabelPosition" LabelType="@LabelType" />
+    LabelPosition="@LabelPosition"  />
 
 
 
@@ -243,7 +243,7 @@
 
     protected override void OnParametersSet()
     {
-        Console.WriteLine($"Model R={Model?.OplegReactieRekenwaarde.ToString()}");
+        //Console.WriteLine($"Model R={Model?.OplegReactieRekenwaarde.ToString()}");
         //Model.Update(); // niet doen
     }
 

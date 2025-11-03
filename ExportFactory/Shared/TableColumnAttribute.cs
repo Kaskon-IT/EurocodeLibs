@@ -1,6 +1,5 @@
 ﻿using CommonLibrary;
 using ExportFactory.Services;
-using MigraDoc.DocumentObjectModel;
 
 
 namespace ExportFactory.Shared
@@ -45,10 +44,7 @@ namespace ExportFactory.Shared
         [TableColumn("Vergelijking")]
         public string? Vergelijking { get { return Mapping.Vergelijking; } }
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         //public override MarkupString ToHtml(bool isDraaiTabel = true)
         //{
@@ -68,9 +64,6 @@ namespace ExportFactory.Shared
             return true; // altijd akkoord, geen specifieke validatie nodig
         }
     }
-
-
-
 
 
 
@@ -141,49 +134,19 @@ namespace ExportFactory.Shared
     }
 
 
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
-    public class TableColumnAttribute : Attribute
-    {
-        public string? Key { get; init; }
-        public string? HeaderText { get; set; } = null;
-        public string? HeaderTextPivot { get; set; } = null;
-        public string? StringFormat { get; set; } = null;
-        public ParagraphAlignment Alignment { get; set; } = ParagraphAlignment.Center;
-        public WeergaveEnum Weergave { get; set; } = WeergaveEnum.AlleTabellen;
-        public bool Visible { get; set; } = true;
-        public double Width { get; set; } = 3.00;
-        public int Order { get; set; } = -1;
+    public record TableColumnDto(
+        string Label,
+        string Value,
+        string? Description,
+        string? Symbol,
+        string? Article,
+        string? Unit,
+        Formula? Formula
+    );
 
 
-        public TableColumnAttribute()
-        {
-
-        }
-
-        public TableColumnAttribute(
-            string? headerText = null,
-            string? headerTextPivot = null,
-            string? stringFormat = null,
-            ParagraphAlignment alignment = ParagraphAlignment.Left,
-            bool visible = true,
-            WeergaveEnum weergave = WeergaveEnum.AlleTabellen,
-            double width = 2.00,
-            int order = -1,
-            string? key = null
-            )
-        {
-            Key = key;
-            HeaderText = headerText;
-            HeaderTextPivot = headerTextPivot;
-            StringFormat = stringFormat;
-            Alignment = alignment;
-            Visible = visible;
-            Weergave = weergave;
-            Width = width;
-            Order = order;
-        }
 
 
-    }
+
 
 }

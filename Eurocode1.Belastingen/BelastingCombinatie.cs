@@ -2,7 +2,6 @@
 using CommonLibrary.Extensions;
 using CommonLibrary.Helpers;
 using CommonLibrary.Interfaces;
-using ExportFactory.Shared;
 
 namespace Eurocode.Belastingen
 {
@@ -13,10 +12,7 @@ namespace Eurocode.Belastingen
             return $"{Naam,-8} {Type.GetDisplayName()} {UserFriendlyTextInclusiefMomentaanFactoren}";
         }
 
-        public override bool IsAkkoord()
-        {
-            return true;
-        }
+
 
         protected override void Bereken()
         {
@@ -61,7 +57,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("combinatie factoren", order: 21, width: 11.0)]
+        [TableColumn("combinatie factoren", order: 21, width: 6.0)]
         public string UserFriendlyTextInclusiefMomentaanFactoren
         {
             get

@@ -1,0 +1,294 @@
+﻿@using System.Globalization
+@using System.ComponentModel
+
+@((MarkupString)SvgMarkup)
+
+@code {
+    [Parameter] public Eurocode.BetonConstructies.BetonContext? Beton { get; set; }
+    [Parameter] public EventCallback<Eurocode.BetonConstructies.BetonContext> BetonChanged { get; set; }
+    [Parameter] public Eurocode.BetonConstructies.BetonStaalContext? BetonStaal { get; set; }
+    [Parameter] public EventCallback<Eurocode.BetonConstructies.BetonStaalContext> BetonStaalChanged { get; set; }
+
+    [Parameter] public double Width { get; set; } = 400;
+    [Parameter] public double Height { get; set; } = 300;
+    [Parameter] public double FontSize { get; set; } = 18;
+
+    // 🔹 Kleuren en theming
+    [Parameter] public string Theme { get; set; } = "light";
+
+   
+
+    private string BetonKleur => Theme == "dark" ? "lightsteelblue" : "steelblue";
+    private string BetonStaalKleur => Theme == "dark" ? "orange" : "darkorange";
+    private string AsKleur => Theme == "dark" ? "#ddd" : "#333";
+    private string BgColor => Theme == "dark" ? "none" : "none";
+
+
+
+    //[Parameter] public bool DarkMode { get; set; } = false;
+    //[Parameter] public string BetonKleur { get; set; } = "steelblue";
+    //[Parameter] public string BetonStaalKleur { get; set; } = "darkorange";
+
+    //private string BgColor => DarkMode ? "none" : "none";
+    //private string AsKleur => DarkMode ? "#cccccc" : "black";
+    private string TekstKleur => Theme == "dark" ? "#ffffff" : "black";
+    private string DashKleur => Theme == "dark" ?  "#888888" : "gray";
+
+
+
+    private string SubFont => Inv(FontSize * 0.7);
+    private string SubOffset => Inv(FontSize * 0.2);
+
+    private double MarginLeft => 90;
+    private double MarginRight => 90;
+    private double MarginTop => 45;
+    private double MarginBottom => 45;
+
+    private double MaxSigma => Math.Max(Beton?.Fcd ?? 0, BetonStaal?.Kfyd ?? 0);
+    private double MaxEps => Math.Max(Beton?.EpsilonCu ?? 0, BetonStaal?.EpsilonUk ?? 0);
+
+    private double X(double eps) => MarginLeft + eps / MaxEps * (Width - MarginLeft - MarginRight);
+    private double Y(double sigma) => (Height - MarginBottom) - sigma / MaxSigma * (Height - MarginBottom - MarginTop);
+
+    private string Inv(double val) => val.ToString("0.###", CultureInfo.InvariantCulture);
+
+
+    // 🔹 Voeg propertychange handlers toe
+    private PropertyChangedEventHandler? _betonChangedHandler;
+    private PropertyChangedEventHandler? _staalChangedHandler;
+
+    protected override void OnParametersSet()
+    {
+        // 🔹 Oude handlers ontkoppelen
+        if (Beton is not null && _betonChangedHandler is not null)
+            Beton.PropertyChanged -= _betonChangedHandler;
+        if (BetonStaal is not null && _staalChangedHandler is not null)
+            BetonStaal.PropertyChanged -= _staalChangedHandler;
+
+        // 🔹 Nieuwe handlers koppelen
+        if (Beton is not null)
+        {
+            _betonChangedHandler = (s, e) => InvokeAsync(StateHasChanged);
+            Beton.PropertyChanged += _betonChangedHandler;
+        }
+
+        if (BetonStaal is not null)
+        {
+            _staalChangedHandler = (s, e) => InvokeAsync(StateHasChanged);
+            BetonStaal.PropertyChanged += _staalChangedHandler;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Beton is not null && _betonChangedHandler is not null)
+            Beton.PropertyChanged -= _betonChangedHandler;
+        if (BetonStaal is not null && _staalChangedHandler is not null)
+            BetonStaal.PropertyChanged -= _staalChangedHandler;
+    }
+
+
+
+    private string SvgMarkup => GenerateSvg();
+
+    private string GenerateSvg()
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($@"<svg viewBox='0 0 {Width} {Height}' width='100%' height='100%'>");
+        sb.AppendLine($@"<rect width='{Width}' height='{Height}' fill='{BgColor}' />");
+
+        // Als beide null zijn → fallbacktekst tonen
+        if (Beton is null && BetonStaal is null)
+        {
+            sb.AppendLine($@"<text x='{Width / 2}' y='{Height / 2}' font-size='{FontSize * 1.2}' fill='{DashKleur}' text-anchor='middle' dominant-baseline='middle'>
+                                Geen gegevens beschikbaar
+                             </text>");
+            sb.AppendLine("</svg>");
+            return sb.ToString();
+        }
+
+        // Pijl marker
+        sb.AppendLine(@"
+<marker id='arrowhead'
+        viewBox='0 0 10 10'
+        refX='10' refY='5'
+        markerWidth='6' markerHeight='6'
+        orient='auto'>
+  <path d='M0,0 L10,5 L0,10' fill='none' stroke='context-stroke' stroke-width='1.5' />
+</marker>");
+
+        // Assen
+        sb.AppendLine($@"<line x1='{MarginLeft}' y1='{Height - MarginBottom}' x2='{Width - MarginRight / 2.0}' y2='{Height - MarginBottom}' stroke='{AsKleur}' stroke-width='1' marker-end='url(#arrowhead)' />");
+        sb.AppendLine($@"<line x1='{MarginLeft}' y1='{Height - MarginBottom}' x2='{MarginLeft}' y2='{MarginTop / 2.0}' stroke='{AsKleur}' stroke-width='1' marker-end='url(#arrowhead)' />");
+
+        // Aslabels
+        sb.AppendLine($@"<text x='{Width - MarginRight / 3.0}' y='{Height - MarginBottom}' font-size='{FontSize}' text-anchor='start'>ε</text>");
+        sb.AppendLine($@"<text x='{MarginLeft}' y='{MarginTop / 3.0}' font-size='{FontSize}' text-anchor='middle'>σ</text>");
+
+        if (Beton is not null)
+            TekenBetonDiagram(sb, Beton);
+
+        if (BetonStaal is not null)
+            TekenBetonstaalDiagram(sb, BetonStaal);
+
+        sb.AppendLine("</svg>");
+        return sb.ToString();
+    }
+
+    private void TekenBetonDiagram(System.Text.StringBuilder sb, Eurocode.BetonConstructies.BetonContext beton)
+    {
+       
+        // x.waardes
+        string x0 = Inv(X(0));
+        string xStuik = Inv(X(beton.EpsilonBetonStuik));
+        string xCu = Inv(X(beton.EpsilonCu));
+
+        // y.waardes
+        string y0 = Inv(Y(0));
+        string yFcd = Inv(Y(beton.Fcd));
+
+        // hor.lines (line, tick, text text)
+        sb.AppendLine($@"<line x1='{x0}' y1='{yFcd}' x2='{xStuik}' y2='{yFcd}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{Inv(MarginLeft - 5)}' x2='{Inv(MarginLeft + 5)}' y1='{yFcd}' y2='{yFcd}' stroke='{TekstKleur}' stroke-width='1' />");
+        //sb.AppendLine($@"<text x='{MarginLeft + 10}' y='{Y(beton.Fcd) - 5}' font-size='{FontSize}' fill='{BetonKleur}' text-anchor='start'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>cd</tspan>={beton.Fcd:0.#}</text>");
+        sb.AppendLine($@"<text x='{Inv(MarginLeft - 6)}' y='{yFcd}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='end'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>cd</tspan>={beton.Fcd:0.#}</text>");
+
+
+       
+
+        sb.AppendLine($@"<line x1='{xStuik}' y1='{Inv(MarginTop)}' x2='{xStuik}' y2='{Inv(Height - MarginBottom)}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{xCu}' y1='{Inv(MarginTop)}' x2='{xCu}' y2='{Inv(Height - MarginBottom)}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{xStuik}' x2='{xStuik}' y1='{Inv(Height - MarginBottom - 5)}' y2='{Inv(Height - MarginBottom + 5)}' stroke='{TekstKleur}' stroke-width='1' />");
+        sb.AppendLine($@"<line x1='{xCu}' x2='{xCu}' y1='{Inv(Height - MarginBottom - 5)}' y2='{Inv(Height - MarginBottom + 5)}' stroke='{TekstKleur}' stroke-width='1' />");
+
+        var subscriptC = beton.SpanningRekDiagram == EC2.BetonContext.SpanningRekDiagramType.Parabolisch ? "c2" : "c3";
+        var subscriptCu = beton.SpanningRekDiagram == EC2.BetonContext.SpanningRekDiagramType.Parabolisch ? "cu2" : "cu3";
+
+        sb.AppendLine($@"<text x='{xStuik}' y='{Inv(Height - MarginBottom + 15)}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='end'>ε<tspan dy='{SubOffset}' font-size='{SubFont}'>{subscriptC}</tspan></text>");
+        sb.AppendLine($@"<text x='{xCu}' y='{Height - MarginBottom + 15}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='start'>ε<tspan dy='{SubOffset}' font-size='{SubFont}'>{subscriptCu}</tspan></text>");
+        
+        // grafiek
+        sb.AppendLine($@"<path d='{GenerateSvgPathBeton(beton)}' stroke='{BetonKleur}' stroke-width='2' fill='none' />");
+    }
+
+    private void TekenBetonstaalDiagram(System.Text.StringBuilder sb, Eurocode.BetonConstructies.BetonStaalContext staal)
+    {
+        var type = staal.SpanningRekDiagram ?? EC2.BetonStaalContext.SpanningRekDiagramType.HorizontaleTak;
+
+        // x.waardes
+        string x0 = Inv(X(0));
+        string x1 = Inv(X(staal.EpsilonYd));
+        string x2 = Inv(X(staal.EpsilonUd));
+        string x3 = Inv(X(staal.EpsilonUk));
+
+        // y.waardes
+        string y0 = Inv(Y(0));
+        string y1 = Inv(Y(staal.Fyd));
+        string y2 = Inv(Y(staal.Kfyd));
+
+
+        // hor.lines (line, tick, text)
+        sb.AppendLine($@"<line x1='{x0}' y1='{y1}' x2='{x1}' y2='{y1}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{Inv(MarginLeft - 5)}' y1='{y1}' x2='{Inv(MarginLeft + 5)}' y2='{y1}' stroke='{TekstKleur}' stroke-width='1' />");
+        sb.AppendLine($@"<text x='{Inv(MarginLeft - 6)}' y='{y1}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='end'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>yd</tspan>={staal.Fyd:0}</text>");
+
+        @if(type == EC2.BetonStaalContext.SpanningRekDiagramType.HellendeTak)
+        {
+            // hor.lines (line, tick, text)
+            sb.AppendLine($@"<line x1='{X(0)}' y1='{y2}' x2='{x3}' y2='{y2}' stroke='{DashKleur}' stroke-dasharray='4' />");
+            sb.AppendLine($@"<line x1='{Inv(MarginLeft - 5)}' y1='{y2}' x2='{Inv(MarginLeft + 5)}' y2='{y2}' stroke='{TekstKleur}' stroke-width='1' />");
+            sb.AppendLine($@"<text x='{Inv(MarginLeft - 6)}' y='{y2}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='end'>k*f<tspan dy='{SubOffset}' font-size='{SubFont}'>yd</tspan>={staal.Kfyd:0}</text>");
+
+        }
+
+
+        sb.AppendLine($@"<line x1='{x1}' y1='{y1}' x2='{x1}' y2='{Inv(Height - MarginBottom)}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{x1}' y1='{Inv(Height - MarginBottom -5)}' x2='{x1}' y2='{Inv(Height - MarginBottom +5)}' stroke='{TekstKleur}' />");
+
+
+        //sb.AppendLine($@"<text x='{X(staal.EpsilonYd)}' y='{Height - MarginBottom + 15}' font-size='{FontSize}' fill='{BetonStaalKleur}' text-anchor='middle'>f<tspan dy='{SubOffset}' font-size='{SubFont}'>yd</tspan>/E<tspan dy='{SubOffset}' font-size='{SubFont}'>s</tspan></text>");
+        sb.AppendLine($@"<text x='{X(staal.EpsilonYd)}' y='{Height - MarginBottom + 1.2*FontSize}' font-size='{FontSize}' fill='{TekstKleur}' text-anchor='middle'> f<tspan dy='{SubOffset}' font-size='{SubFont}'>yd</tspan>/E<tspan dy='{SubOffset}' font-size='{SubFont}'>s</tspan>  </text>");
+
+
+        // Epsilon Ud
+        sb.AppendLine($@"<line x1='{x2}' y1='{Inv(Y(staal.GetFydByStaalrek(staal.EpsilonUd)))}' x2='{x2}' y2='{Height - MarginBottom}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{x2}' y1='{Inv(Height - MarginBottom - 5)}' x2='{x2}' y2='{Height - MarginBottom + 5}' stroke='{TekstKleur}' />");
+
+        sb.AppendLine($@"<text x='{x2}' y='{Inv(Height - MarginBottom + 1.2*FontSize)}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='end'> ε<tspan dy='{SubOffset}' font-size='{SubFont}'>ud</tspan>    </text>");
+
+
+        // Epsilon Uk
+        sb.AppendLine($@"<line x1='{x3}' y1='{Inv(MarginTop)}' x2='{x3}' y2='{Inv(Height - MarginBottom)}' stroke='{DashKleur}' stroke-dasharray='4' />");
+        sb.AppendLine($@"<line x1='{x3}' y1='{Inv(Height - MarginBottom - 5)}' x2='{X(staal.EpsilonUk)}' y2='{Inv(Height - MarginBottom + 5)}' stroke='{TekstKleur}' />");
+
+        sb.AppendLine($@"<text x='{x3}' y='{Inv(Height - MarginBottom + 1.2*FontSize)}' font-size='{Inv(FontSize)}' fill='{TekstKleur}' text-anchor='left'> ε<tspan dy='{SubOffset}' font-size='{SubFont}'>uk</tspan>  </text>");
+
+        if (type == EC2.BetonStaalContext.SpanningRekDiagramType.HorizontaleTak)
+        {
+            var lastX = X(staal.EpsilonUk);
+            var lastY = Y(staal.Fyd);
+            sb.AppendLine($@"<line x1='{lastX}' y1='{lastY}' x2='{lastX + 20}' y2='{lastY}' stroke='{BetonStaalKleur}' stroke-width='2' marker-end='url(#arrowhead)' />");
+        }
+        else
+        {
+            // losse lijn van Sigma(Ud) naar Sigma(Uk)
+            var xd = Inv(X(staal.EpsilonUd));
+            var yd = Inv(Y(staal.GetFydByStaalrek(staal.EpsilonUd)));
+            var xk = Inv(X(staal.EpsilonUk));
+            var yk = Inv(Y(staal.Kfyd));
+            sb.AppendLine($@"<line x1='{xd}' y1='{yd}' x2='{xk}' y2='{yk}' stroke='red' stroke-width='2' stroke-dasharray='4' />");
+        }
+
+        sb.AppendLine($@"<path d='{GenerateSvgPathBetonstaal(staal)}' stroke='{BetonStaalKleur}' stroke-width='2' fill='none' />");
+    }
+
+    private string GenerateSvgPathBeton(Eurocode.BetonConstructies.BetonContext beton)
+    {
+        var pts = new List<(double eps, double sig)>();
+        if (beton.SpanningRekDiagram == EC2.BetonContext.SpanningRekDiagramType.BiLineair)
+        {
+            pts.Add((0, 0));
+            pts.Add((beton.EpsilonBetonStuik, beton.Fcd));
+            pts.Add((beton.EpsilonCu, beton.Fcd));
+        }
+        else
+        {
+            for (double eps = 0; eps <= beton.EpsilonBetonStuik; eps += beton.EpsilonBetonStuik / 20.0)
+            {
+                double sigma = beton.Fcd * (1 - Math.Pow(1 - eps / beton.EpsilonBetonStuik, beton.FactorN));
+                pts.Add((eps, sigma));
+            }
+            pts.Add((beton.EpsilonCu, beton.Fcd));
+        }
+
+        return BuildSvgPath(pts);
+    }
+
+    private string GenerateSvgPathBetonstaal(Eurocode.BetonConstructies.BetonStaalContext staal)
+    {
+        var pts = new List<(double eps, double sig)>();
+        for (double eps = 0; eps <= staal.EpsilonYd; eps += staal.EpsilonYd)
+            pts.Add((eps, eps * staal.ElasticiteitsModulus));
+
+        if (staal.SpanningRekDiagram == EC2.BetonStaalContext.SpanningRekDiagramType.HorizontaleTak)
+            pts.Add((staal.EpsilonUk, staal.Fyd));
+        else
+            pts.Add((staal.EpsilonUd, staal.GetFydByStaalrek(staal.EpsilonUd)));
+
+        return BuildSvgPath(pts);
+    }
+
+    private string BuildSvgPath(List<(double eps, double sig)> pts)
+    {
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < pts.Count; i++)
+        {
+            var (x, y) = (X(pts[i].eps), Y(pts[i].sig));
+            sb.Append(i == 0
+                ? $"M {x.ToString("0.###", CultureInfo.InvariantCulture)},{y.ToString("0.###", CultureInfo.InvariantCulture)} "
+                : $"L {x.ToString("0.###", CultureInfo.InvariantCulture)},{y.ToString("0.###", CultureInfo.InvariantCulture)} ");
+        }
+        return sb.ToString();
+    }
+
+}

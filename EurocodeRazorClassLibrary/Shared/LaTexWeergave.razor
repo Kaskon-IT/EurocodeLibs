@@ -1,0 +1,35 @@
+﻿@page "/latex-weergave"
+@inject IJSRuntime JS
+
+<h3>LaTeX Weergave</h3>
+
+<div style="display:flex; gap:2rem;">
+    <!-- Invoer -->
+    <div style="flex:1;">
+        <input type="text" @bind="LaTex" placeholder="bv: E=mc^2" />
+        <div>Waarde: @LaTex</div>
+        <button @onclick="RenderFormula">Render Formule</button>
+    </div>
+
+    <!-- Formuleweergave -->
+    <div style="flex:1">
+        <LaTexRenderer Formula="@CurrentFormula" Id="formulaDisplay" @ref="formulaRef" />
+    </div>
+</div>
+
+@code {
+    private string LaTex { get; set; } = "E=mc^2";
+    private string CurrentFormula { get; set; } = "E=mc^2";
+
+    private LaTexRenderer? formulaRef;
+
+    private async Task RenderFormula()
+    {
+        // Update formule en render MathJax
+        CurrentFormula = LaTex;
+        if (formulaRef != null)
+        {
+            await formulaRef.RenderAsync();
+        }
+    }
+}

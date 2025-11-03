@@ -1,0 +1,22 @@
+﻿@page "/latex-tester-simple"
+
+<h3>LaTeX Tester - Simple</h3>
+
+<div style="display:flex; gap:2rem;">
+    <!-- Input links -->
+    <div style="flex:1;">
+        <input type="text" @bind="LaTex" placeholder="bv: E=mc^2" />
+        <div>Waarde: @LaTex</div>
+    </div>
+
+    <!-- Render rechts -->
+    <div style="flex:1;">
+        <div id="formulaDisplay">
+            @((MarkupString)("$" + LaTex + "$"))
+        </div>
+    </div>
+</div>
+
+@code {
+    private string LaTex { get; set; } = "E=mc^2";
+}
