@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Extensions;
 using Eurocode.Belastingen;
 using ExportFactory.Shared;
 using ParametrischeProfielen;
@@ -182,17 +183,18 @@ namespace Eurocode.BetonConstructies
         public double Wmax { get; private set; }
 
         [TableColumn(Label = "toets maximale doorbuiging", Symbol = "<i>UC</i><sub>max</sub>", StringFormat = "0.00")]
-        public double UnityCheckMax => Wmax / GrenswaardeEind;
-        public string UnityCheckMaxUnit => UnityCheckMax > 1.01 ? "✔️" : "❌";
+        public double UnityCheckMax => Math.Abs(Wmax / GrenswaardeEind);
+        public string UnityCheckMaxUnit => UnityCheckMax < 1.01 ? "✔️" : "❌";
+        public Formula UnityCheckMaxFormula => new() { StaticValue = $"UC = \\left| \\frac{{{Wmax.ToTeX()}}}{{{GrenswaardeEind.ToTeX()}}} \\right|= {UnityCheckMax.ToTeX()}" };
 
 
         [TableColumn(Label = "bijkomende doorbuiging", Symbol = "<i>w</i><sub>bijk</sub>", StringFormat = "0.#", Unit = "mm")]
         public double Wbijk { get; private set; }
 
         [TableColumn(Label = "toets bijkomende doorbuiging", Symbol = "<i>UC</i><sub>bijk</sub>", StringFormat = "0.00")]
-        public double UcBijk => Wbijk / GrenswaardeBijkomend;
-        public string UcBijkUnit => UcBijk > 1.01 ? "✔️" : "❌";
-
+        public double UcBijk => Math.Abs(Wbijk / GrenswaardeBijkomend);
+        public string UcBijkUnit => UcBijk < 1.01 ? "✔️" : "❌";
+        public Formula UcBijkFormula => new() { StaticValue = $"UC =\\left| \\frac{{{Wbijk.ToTeX()}}}{{{GrenswaardeBijkomend.ToTeX()}}} \\right| = {UcBijk.ToTeX()}" };
 
 
 
@@ -330,19 +332,31 @@ namespace Eurocode.BetonConstructies
 
             if (this.Wbijk > this.GrenswaardeBijkomend)
             {
-                AddMeldingWaarschuwing($"overschrijding bijkomende doorbuiging");
+                AddMeldingError($"overschrijding bijkomende doorbuiging");
                 returnVal = false;
+                AddMeldingHint($"pas de hoogte van het element aan, of gebruik meer wapening");
             }
 
             if (this.Wmax > this.GrenswaardeEind)
             {
-                AddMeldingWaarschuwing("overschrijding maximale doorbuiging");
+                AddMeldingError("overschrijding maximale doorbuiging");
                 returnVal = false;
+                if (this.FactorZeeg < 0.004)
+                {
+                    if (this.FactorZeeg == 0)
+                        AddMeldingHint("pas eventueel een zeeg toe");
+                    else
+                        AddMeldingHint("vergroot eventueel de zeeg");
+                }
+
             }
+
+
+
 
             if (this.FactorZeeg > 0.004)
             {
-                AddMeldingOpmerking("een in de bekisting aangebrachte opbuiging (zeeg) behoort in het algemeen niet groter te zijn dan de overspanning/250");
+                AddMeldingWaarschuwing("een in de bekisting aangebrachte opbuiging (zeeg) behoort in het algemeen niet groter te zijn dan de overspanning/250");
             }
 
             return returnVal;

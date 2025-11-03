@@ -335,13 +335,13 @@ namespace Eurocode.BetonConstructies
             bool returnVal = true;
             if (UnityCheckEind > 1 && IsToetsingEind)
             {
-                AddMeldingWaarschuwing($"doorbuiging eindfase te groot (UC {UnityCheckEind:0.00})");
+                AddMeldingError($"doorbuiging eindfase te groot (UC {UnityCheckEind:0.00})");
                 returnVal = false;
             }
 
             if (UnityCheckBijk > 1 && IsToetsingBijk)
             {
-                AddMeldingWaarschuwing($"doorbuiging bijkomend te groot (UC {UnityCheckBijk:0.00})");
+                AddMeldingError($"doorbuiging bijkomend te groot (UC {UnityCheckBijk:0.00})");
                 returnVal = false;
             }
 

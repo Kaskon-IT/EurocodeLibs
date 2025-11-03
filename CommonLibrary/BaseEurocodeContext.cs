@@ -308,8 +308,37 @@ namespace CommonLibrary
             MeldingCodes.Clear();
         }
 
-        public void AddMeldingWaarschuwing(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing, tekst));
-        public void AddMeldingOpmerking(string tekst) => Meldingen.Add(new(MeldingType.Opmerking, tekst));
+        /// <summary>
+        /// Geeft een error + waarschuwing.
+        /// Dit moet opgelost worden door de gebruiker.
+        /// ❌⚠️
+        /// </summary>
+        /// <param name="tekst"></param>
+        public void AddMeldingError(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing | MeldingType.Error, tekst));
+
+        /// <summary>
+        /// Geeft een opmerking.
+        /// Dit is een neutrale melding, dus voor informatie
+        /// ℹ️
+        /// </summary>
+        /// <param name="tekst"></param>
+        public void AddMeldingOpmerking(string tekst) => Meldingen.Add(new(MeldingType.Opmerking | MeldingType.Neutraal, tekst));
+
+        /// <summary>
+        /// Geeft een waarschuwing => let op! zus en zo, maar geen fout foutmelding
+        /// Wees gewaarschuwd, maar op zich niet fout
+        /// ⚠️👈
+        /// </summary>
+        /// <param name="tekst"></param>
+        public void AddMeldingWaarschuwing(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing | MeldingType.Opmerking, tekst));
+
+        /// <summary>
+        /// Geeft de gebruiker een HINT 💡
+        /// </summary>
+        /// <param name="hint"></param>
+        public void AddMeldingHint(string hint) => Meldingen.Add(new(MeldingType.Hint, hint));
+
+
 
         public MarkupString ToMarkupString() => Helpers.MarkupHelper.ToMarkupString(ToString());
         public MarkupString ToMarkupString(bool withUnityCheck) => Helpers.MarkupHelper.ToMarkupString(ToString(), withUnityCheck);

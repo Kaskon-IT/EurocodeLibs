@@ -107,7 +107,13 @@ namespace Eurocode.BetonConstructies
 
         public List<string> Artikelen { get; set; } = [];
 
-        public BerekeningTypeEnum BerekeningType { get; set; } = BerekeningTypeEnum.BepaalBenodigeWapening;
+
+        public BerekeningTypeEnum _berekeningType = BerekeningTypeEnum.ControleerWapening;
+        public BerekeningTypeEnum BerekeningType
+        {
+            get => _berekeningType;
+            set => SetProperty(ref _berekeningType, value);
+        }
 
 
         //[TableColumn("Opm.", "Opmerkingen")]
@@ -121,14 +127,30 @@ namespace Eurocode.BetonConstructies
 
         // Vanuit het beton
         //public double Fck { get; set; }
+        private BetonContext _beton = new();
+        public BetonContext Beton
+        {
 
-        public BetonContext Beton { get; set; }
+            get => _beton;
+            set => SetNestedProperty(ref _beton!, value);
+        }
 
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; }
+        private ParametrischeProfielen.ParametrischProfielContext _profiel = new();
+        public ParametrischeProfielen.ParametrischProfielContext Profiel
+        {
+            get => _profiel;
+            set => SetNestedProperty(ref _profiel!, value);
+        }
 
         //public Snedekrachten Snedekrachten { get; set; } = new();
+        private SectionForces _snedekrachten = new();
+        public SectionForces Snedekrachten
+        {
+            get => _snedekrachten;
+            set => SetNestedProperty(ref _snedekrachten!, value);
+        }
 
-        public SectionForces Snedekrachten { get; set; } = new();
+
 
 
 
@@ -154,7 +176,7 @@ namespace Eurocode.BetonConstructies
             get => _theta;
             set => SetProperty(ref _theta, value);
         }
-
+        public bool ThetaEditable { get; set; } = false;
 
         private double _theta = 21.8;
 
@@ -203,6 +225,7 @@ namespace Eurocode.BetonConstructies
             set => SetProperty(ref _alpha, value);
         }
         private double _alpha = 90;
+        public bool AlphaEditable { get; set; } = false;
 
 
         private double TanAlpha { get { return Math.Tan(Alpha * Math.PI / 180); } }
@@ -229,6 +252,7 @@ namespace Eurocode.BetonConstructies
             get => _asLangs;
             set => SetProperty(ref _asLangs, value);
         }
+        public bool AsLangsEditable { get; set; } = false;
 
         private double _asLangs;
 
@@ -241,7 +265,7 @@ namespace Eurocode.BetonConstructies
             get => _nutHoogte;
             set => SetProperty(ref _nutHoogte, value);
         }
-
+        public bool NutHoogteEditable { get; set; } = false;
         private double _nutHoogte = 90;
 
 
@@ -491,7 +515,7 @@ namespace Eurocode.BetonConstructies
                     {
                         Name = "(6.2a)",
                         StaticValue = @"V_{Rd,c} = \left[C_{Rd,c}k(100 ρ_l f_{ck})^{1/3} + k_1 σ_{cp} \right] b_wd ",
-                        DynamicValue = $@"= \reft[ {Crdc.ToTeX()} {FactorK.ToTeX()} (100 \cdot {RhoLangs.ToTeX()} \cdot {Beton.Fck.ToTeX()})^{{1/3}} + {FactorK1DwarskrachtWeerstandBeton.ToTeX()} \cdot {SigmaCp.ToTeX()} right] \cdot {Breedte.ToTeX()} \cdot{NutHoogte.ToTeX()} = {DwarskrachtWeerstandBeton.ToTeX()}"
+                        DynamicValue = $@"= \left[ {Crdc.ToTeX()} {FactorK.ToTeX()} (100 \cdot {RhoLangs.ToTeX()} \cdot {Beton.Fck.ToTeX()})^{{1/3}} + {FactorK1DwarskrachtWeerstandBeton.ToTeX()} \cdot {SigmaCp.ToTeX()} \right] \cdot {Breedte.ToTeX()} \cdot{NutHoogte.ToTeX()} = {DwarskrachtWeerstandBeton.ToTeX()}"
                     };
                 }
                 else
@@ -528,7 +552,7 @@ namespace Eurocode.BetonConstructies
         }
 
         [TableColumn(Label = "dwarskrachtweerstand", Symbol = "<i>V</i><sub>Rd</sub>", Unit = "kN")]
-        public double DwarskrachtWeerstand { get { return Math.Min(DwarskrachtWeerstandStaal, DwarskrachtWeerstandMax); } }
+        public double DwarskrachtWeerstand { get { return Math.Min(Math.Max(DwarskrachtWeerstandStaal, DwarskrachtWeerstandBeton), DwarskrachtWeerstandMax); } }
         public Formula DwarskrachtWeerstandFormula
         {
             get
@@ -538,7 +562,7 @@ namespace Eurocode.BetonConstructies
                     return new()
                     {
                         StaticValue = "V_{Rd} = min(V_{Rd} ; V_{Rd,max})",
-                        DynamicValue = $"= min({DwarskrachtWeerstandStaal.ToTeX()};{DwarskrachtWeerstandMax.ToTeX()}) = {DwarskrachtWeerstand.ToTeX()}"
+                        DynamicValue = $"= min({Math.Max(DwarskrachtWeerstandStaal, DwarskrachtWeerstandBeton).ToTeX()};{DwarskrachtWeerstandMax.ToTeX()}) = {DwarskrachtWeerstand.ToTeX()}"
                     };
                 }
                 else
@@ -636,13 +660,13 @@ namespace Eurocode.BetonConstructies
 
             if (Ved > DwarskrachtWeerstand)
             {
-                AddMeldingWaarschuwing($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd</sub>) {(Ved / DwarskrachtWeerstand):0.##}");
+                AddMeldingError($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd</sub>) {(Ved / DwarskrachtWeerstand):0.##}");
                 return false;
             }
 
             if (Ved > DwarskrachtWeerstandMax)
             {
-                AddMeldingWaarschuwing($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd,max</sub>) {(Ved / DwarskrachtWeerstandMax):0.##}");
+                AddMeldingError($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd,max</sub>) {(Ved / DwarskrachtWeerstandMax):0.##}");
                 return false;
             }
             return true;

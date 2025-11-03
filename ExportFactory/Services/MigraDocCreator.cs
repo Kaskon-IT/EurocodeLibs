@@ -740,6 +740,14 @@ namespace ExportFactory.Services
                     // alignmet
                     cell.Format.Alignment = rowCells[i].Style.Alignment; // added 26-5-2025
 
+                    if (rowCells[i].RowSpan > 1)
+                    {
+                        cell.MergeDown = rowCells[i].RowSpan;
+                    }
+                    if (rowCells[i].ColSpan > 1)
+                    {
+                        cell.MergeRight = rowCells[i].ColSpan;
+                    }
 
                     // controleer of een override op de width is
                     var currentWidth = table.Columns[i].Width;

@@ -186,19 +186,23 @@ namespace Eurocode.BetonConstructies
         {
             Meldingen.Clear();
 
+            bool returnVal = true;
             if (GrenswaardeSlankheid > 0 && Slankheid > 0)
             {
                 if (Slankheid > GrenswaardeSlankheid)
                 {
                     AddMeldingWaarschuwing($"De slankheid (l/d) van het element ({Slankheid:0.#}) is groter dan de grenswaarde ({GrenswaardeSlankheid:0.#}). Toetsing doorbuiging noodzakelijk.");
-                    return false;
                 }
 
-                return Slankheid <= GrenswaardeSlankheid;
+                if (Slankheid < GrenswaardeSlankheid)
+                {
+                    AddMeldingOpmerking("Toetsing doorbuiging kan achterwege blijven.");
+                }
             }
 
 
-            return true;
+
+            return returnVal;
         }
 
         public override string ToString()

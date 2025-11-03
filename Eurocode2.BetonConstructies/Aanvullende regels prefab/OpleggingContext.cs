@@ -355,14 +355,14 @@ namespace Eurocode.BetonConstructies
             // de aanwezige opleglengte moet groter of gelijk zijn aan de nominale opleglengte
             if (OplegLengteNettoAanwezig < OplegLengteNominaal)
             {
-                this.AddMeldingWaarschuwing("onvoldoende opleglengte aanwezig");
+                this.AddMeldingError("onvoldoende opleglengte aanwezig");
                 return false;
             }
 
             // de oplegspanning mag niet groter zijn dan de oplegsterkte rekenwaarde
             if (OplegSpanningRekenwaarde > OplegSterkteRekenwaarde)
             {
-                this.AddMeldingWaarschuwing("overschrijding oplegspanning");
+                this.AddMeldingError("overschrijding oplegspanning");
                 return false;
             }
 

@@ -6,17 +6,20 @@
 
 
 <FluentSelectEnum Label="nationale bijlage" 
+                  ReadOnly="ReadOnly"
                   Placeholder="Selecteer..."
                   TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
                   ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
 
 <FluentSelectEnum Label="gevolgklasse (Consequence Class)"
+                  ReadOnly="ReadOnly"
                   Placeholder="Selecteer..."
                   TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
                   ShowDescription="false"
                   @bind-EnumSelectedValue="@Model.Gevolgklasse" />
 
 <FluentSelectEnum Label="ontwerplevensduur"
+                  ReadOnly="ReadOnly"
                   TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum"
                   @bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
 
@@ -52,17 +55,12 @@
 
 
 @code {
-    [Parameter]
-    public required GrondslagenContext Model { get; set; }
-
-    [Parameter]
-    public bool ToonGevolgEigenschappen { get; set; } = false;
-
-    [Parameter]
-    public EventCallback<GrondslagenContext> ModelChanged { get; set; }
-    
+    [Parameter] public required GrondslagenContext Model { get; set; }
+    [Parameter] public EventCallback<GrondslagenContext> ModelChanged { get; set; }
 
 
+    [Parameter] public bool ToonGevolgEigenschappen { get; set; } = false;
+    [Parameter] public bool ReadOnly { get; set; } = false;
 
 
 

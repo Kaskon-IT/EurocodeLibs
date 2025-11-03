@@ -151,11 +151,27 @@
                     var guid = Guid.NewGuid();
                     htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{section.Tag}</button>");
                     htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
-                    htmlBuilder.AppendLine(@"<div class='page-header'>");
-                    htmlBuilder.AppendLine(@$"<span class='left'>LINKS</span>");
-                    htmlBuilder.AppendLine(@$"<span class='middle'>MIDDEN</span>");
-                    htmlBuilder.AppendLine(@$"<span class='right'>RECHTS</span>");
-                    htmlBuilder.AppendLine("@</div>");
+                    //htmlBuilder.AppendLine(@"<div class='page-header'>");
+
+                    //var header = section.Headers.Primary;
+                    //string hdr1 = "";
+                    //string hdr2 = "";
+                    //string hdr3 = "";
+
+                    //if (header?.Elements != null && header?.Elements.Count > 0)
+                    //{
+                    //    var hdrFod = header?.Elements[0];
+                    //    if (hdrFod is Table table)
+                    //    {
+                    //        //if (table.Rows[0].Cells[0].Elements.First is string str)
+                    //        //hdr1 = cell0?.ToString();
+                    //    }
+                    //}
+
+                    //htmlBuilder.AppendLine(@$"<span class='left'>LINKS{hdr1}</span>");
+                    //htmlBuilder.AppendLine(@$"<span class='middle'>MIDDEN</span>");
+                    //htmlBuilder.AppendLine(@$"<span class='right'>RECHTS</span>");
+                    //htmlBuilder.AppendLine("@</div>");
 
                 }
 
@@ -278,14 +294,15 @@
 
                         // start <table>
                         htmlBuilder.AppendLine($"<table class='{cssTable}'>");
-                        if (isPivotTable)
+                        if (isPivotTable || hideHeader)
                         {
-                            htmlBuilder.AppendLine("<tbody>");
+                            htmlBuilder.AppendLine("<tbody>");  // geen header bij pivot en als verborgen
                         }
                         else
                         {
                             htmlBuilder.AppendLine("<thead class='ec-table-head'>");
                         }
+
 
                         var rowIndex = 0;
 
@@ -310,10 +327,24 @@
                                 htmlBuilder.AppendLine("<tr class='ec-table-row'>");
                             }
 
+                            string rowspan = string.Empty;
+                            string colspan = string.Empty;
 
                             foreach (Cell cell in row.Cells)
                             {
                                 Paragraph? cellPar = null;
+
+                                // kijk voor spans
+                                if (cell != null)
+                                {
+                                    if (cell.MergeDown > 1)
+                                        rowspan = $" rowspan={cell.MergeDown}";
+                                    if (cell.MergeRight > 1)
+                                        colspan = $" cospan={cell.MergeRight}";
+
+                                }
+
+
 
                                 // Manually iterate through the elements to find the first Paragraph
                                 foreach (var documentElement in cell.Elements)
@@ -401,16 +432,16 @@
                                 }
 
                                 if (cellPar != null)
-                                    htmlBuilder.AppendLine($"<{htmlTag} class='{htmlClass}'>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
+                                    htmlBuilder.AppendLine($"<{htmlTag} class='{htmlClass}' {colspan} {rowspan}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
 
                                 cellIndex++;
                             }
                             htmlBuilder.AppendLine("</tr>");
 
 
-                            if (rowIndex == 0 && !isPivotTable)
+                            if (rowIndex == 0 && !isPivotTable && !hideHeader)
                             {
-                                htmlBuilder.AppendLine("</thead>");
+                                htmlBuilder.AppendLine("</thead>"); // niet bij pivottable of verbogen headers
                             }
 
                             rowIndex++;

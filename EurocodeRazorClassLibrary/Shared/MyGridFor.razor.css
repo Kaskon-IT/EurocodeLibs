@@ -35,17 +35,18 @@
 
 
 .mijn-component {
-    --border-color: #cfcfcf;
+   /* --border-color: #cfcfcf;
     --odd-bg: #f8f8fb;
     --even-bg: #ffffff;
-    --hover-bg: #e6f2ff;
+    --hover-bg: #e6f2ff;*/
 }
 
     .mijn-component .striped-table {
         width: 100%;
         border-collapse: collapse;
         table-layout: fixed;
-        border: 1px solid var(--border-color);
+        /*border: 1px solid var(--border-color);*/
+        border: none;
         margin-bottom: 1px;
     }
   
@@ -136,16 +137,18 @@ thead{
 
         /* striping */
         .mijn-component .striped-table tbody tr:nth-child(odd) {
-            background: var(--odd-bg);
+            /*background: var(--odd-bg);*/
+            
+
         }
 
         .mijn-component .striped-table tbody tr:nth-child(even) {
-            background: var(--even-bg);
+            /*background: var(--even-bg);*/
         }
 
         /* hover */
         .mijn-component .striped-table tbody tr:hover {
-            background: var(--hover-bg);
+            /*background: var(--hover-bg);*/
         }
 
     /* info-cell styling */

@@ -88,18 +88,18 @@ else
     [Parameter]
     public EventCallback<BetonContext> ModelChanged { get; set; }
 
-    protected override void OnInitialized()
-    {
-        Model.OnUpdated += StateHasChanged;
-    }
+    // protected override void OnInitialized()
+    // {
+    //     Model.OnUpdated += StateHasChanged;
+    // }
 
 
-    protected override void OnParametersSet()
-    {
-        // React op modelwijzigingen
-        Console.WriteLine($"Model gewijzigd: {Model?.BetonSterkteKlasseGebruiksvriendelijkeNaam}");
-        StateHasChanged();
-    }
+    // protected override void OnParametersSet()
+    // {
+    //     // React op modelwijzigingen
+    //     Console.WriteLine($"Model gewijzigd: {Model?.BetonSterkteKlasseGebruiksvriendelijkeNaam}");
+    //     StateHasChanged();
+    // }
 
     [Parameter]
     public bool ShowUserFriendly { get; set; } = false;

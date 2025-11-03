@@ -299,7 +299,7 @@ namespace Eurocode.BetonConstructies
             Width = 2.0,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
-        public double EpsSmMinusEpsCm { get; set; }
+        public double EpsSmMinusEpsCm { get; internal set; }
         public Formula EpsSmMinusEpsCmFormula
         {
             get
@@ -427,10 +427,11 @@ namespace Eurocode.BetonConstructies
             Label = "minimale wapening scheurbeheersing",
             Symbol = "<i>A</i><sub>s,min</sub>",
             Unit = "mm²",
+            StringFormat = "0",
             Width = 2.0,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
-        public double ScheurwijdteAsMin { get; set; }
+        public double ScheurwijdteAsMin { get; internal set; }
 
 
 
@@ -488,14 +489,14 @@ namespace Eurocode.BetonConstructies
             // foutmeldingen
             if (Wk > ScheurwijdteGrenswaarde.Wmax)
             {
-                AddMeldingWaarschuwing("overschrijding maximale scheurwijdte");
+                AddMeldingError("overschrijding maximale scheurwijdte");
                 return false;
             }
 
 
             if (AsToe < ScheurwijdteAsMin)
             {
-                AddMeldingWaarschuwing("toegepaste wapening is kleiner dan minimale wapening scheurwijdte");
+                AddMeldingError("toegepaste wapening is kleiner dan minimale wapening scheurwijdte");
                 return false;
             }
 

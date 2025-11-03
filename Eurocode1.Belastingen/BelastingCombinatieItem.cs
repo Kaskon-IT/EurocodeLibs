@@ -1,27 +1,28 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Eurocode.Belastingen
 {
     public class BelastingCombinatieItem
     {
 
-
+        [JsonInclude]
         public required BelastingenContext Context;
-
 
         /// <summary>
         /// De belastingcombinatie van het item
         /// </summary>
+        [JsonInclude]
         public required BelastingCombinatie Combinatie { get; set; }
+
         /// <summary>
         /// Het belastinggeval van het item
         /// </summary>
+        [JsonInclude]
         public required BelastingGeval Geval { get; set; }
 
         private readonly double _basisFactorPermanentFundamenteel = 1.35;
         private readonly double _basisFactorVeranderlijkFundamenteel = 1.50;
-
-
 
         /// <summary>
         /// Nullable waarde voor als er een momentaan-factor is toegepast
@@ -37,7 +38,6 @@ namespace Eurocode.Belastingen
             get { return GetFactoren(); }
         }
 
-
         /// <summary>
         /// De basisfactor voor permanente gevallen, inclusief de factoren KFI en/of Xi.
         /// </summary>
@@ -47,10 +47,6 @@ namespace Eurocode.Belastingen
         /// De basisfactor voor veranderlijke belastingen inclusief KFI maar exclusief MomentaanFactor
         /// </summary>
         public double FactorQ { get; private set; }
-
-
-
-
 
 
         public BelastingCombinatieItem() { } // ✅ Nodig voor deserialisatie
@@ -64,9 +60,6 @@ namespace Eurocode.Belastingen
             PermanentIsGunstig = permanentIsGunstig;
             GetFactoren();
         }
-
-
-
 
 
         /// <summary>
@@ -153,25 +146,11 @@ namespace Eurocode.Belastingen
 
             //this.FactorNetto = factorNetto;
             return factorNetto;
-
-
         }
-
-
-
         /// <summary>
         /// Voor als de permanente belasting als gunstig beschouwd dient te worden.
         /// </summary>
         public bool PermanentIsGunstig { get; set; } = false;
 
-
-
-
-
-
-
     }
-
-
-
 }

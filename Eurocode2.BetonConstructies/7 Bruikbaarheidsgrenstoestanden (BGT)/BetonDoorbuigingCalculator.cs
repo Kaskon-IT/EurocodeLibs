@@ -77,20 +77,14 @@ namespace Eurocode.BetonConstructies
 
 
 
-        private double _kruipfactorOverride = -1;
+        //private double _kruipfactorOverride = -1;
 
-
+        private double _kruipfactor => Ctx.Kruipkrimp.KruipCoefficient;
         [TableColumn(Label = "kruipcoëfficiënt", Symbol = $"<i>{GreekLetters.phi}</i><sub>(t,t<sub>0</sub>)</sub>",
-            Description = "is de kruipcoëfficiënt <br />" +
-            "Leeg laten of '-1' invullen om te automatisch te laten berekenen<br />" +
-            "Er is ook de optie om een eigen waarde op te geven")]
+            Description = "is de kruipcoëfficiënt")]
         public double Kruipfactor
         {
-            get => _kruipfactorOverride < 0 ? Ctx.Kruipkrimp.KruipCoefficient : _kruipfactorOverride;
-            set
-            {
-                SetProperty(ref _kruipfactorOverride, value); // override opslaan
-            }
+            get => _kruipfactor;
         }
 
 
@@ -913,21 +907,21 @@ namespace Eurocode.BetonConstructies
         protected override bool Valideer()
         {
             Meldingen.Clear();
-            if (_kruipfactorOverride > -1)
-            {
-                AddMeldingOpmerking($"De kruipcoëfficiënt is door gebruiker zelf opgegeven");
+            //if (_kruipfactorOverride > -1)
+            //{
+            //    AddMeldingOpmerking($"De kruipcoëfficiënt is door gebruiker zelf opgegeven");
 
 
-            }
+            //}
 
             if (BetaLangeduur < 0)
             {
-                AddMeldingWaarschuwing("factor belastingduur mag niet kleiner dan 0 zijn");
+                AddMeldingError("factor belastingduur mag niet kleiner dan 0 zijn");
             }
 
             if (BetaLangeduur > 1)
             {
-                AddMeldingWaarschuwing("factor belastingduur mag niet gorter dan 1 zijn");
+                AddMeldingError("factor belastingduur mag niet gorter dan 1 zijn");
             }
 
 

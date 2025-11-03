@@ -41,17 +41,17 @@
                     // uitzonderingen
                     if (Model is Eurocode.BetonConstructies.BetonContext c)
                     {
-                        <FluentCard Height="200px" Width="100%">
+                       @*  <FluentCard Height="200px" Width="100%">
                             <EurocodeRazorClassLibrary.Beton.BetonMateriaalSpanningRekDiagrammen Beton="c" />
 
-                        </FluentCard>
+                        </FluentCard> *@
                     }
                     if (Model is Eurocode.BetonConstructies.BetonStaalContext s)
                     {
-                        <FluentCard Height="200px" Width="100%">
+                        @* <FluentCard Height="200px" Width="100%">
                             <EurocodeRazorClassLibrary.Beton.BetonMateriaalSpanningRekDiagrammen BetonStaal="s" />
 
-                        </FluentCard>
+                        </FluentCard> *@
                     }
 
 
@@ -502,7 +502,7 @@
 
         ResetRows();
 
-        
+
 
     }
 
@@ -642,109 +642,150 @@
 
 
     private RenderFragment RenderInput(IPropertyRow row) => builder =>
-{
-
-    try
     {
-        if (row.Target == null || row.Property == null)
+
+        try
         {
-            Console.WriteLine($"⚠️ Null Target/Property in row for {row}");
-            return;
+            if (row.Target == null || row.Property == null)
+            {
+                Console.WriteLine($"⚠️ Null Target/Property in row for {row}");
+                return;
+            }
+
+            var debugValue = row.Property.GetValue(row.Target);
+            // render input...
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️ RenderInput crash for {row.Property?.Name}: {ex}");
+            throw;
         }
 
-        var debugValue = row.Property.GetValue(row.Target);
-        // render input...
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"⚠️ RenderInput crash for {row.Property?.Name}: {ex}");
-        throw;
-    }
 
+        var target = row.Target;
+        var property = row.Property;
 
-    var target = row.Target;
-    var property = row.Property;
+        if (target == null || property == null)
+            return;
 
-    if (target == null || property == null)
-        return;
+        var value = property.GetValue(target);
 
-    var value = property.GetValue(target);
+        var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
 
-    var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+        // Wrappen in <td>
+        builder.OpenElement(0, "td");
 
-    // Wrappen in <td>
-    builder.OpenElement(0, "td");
+        string style = "width:100%; min-width:0; padding:4px 6px; " +
+                       "border:0px solid #d1d1d1; border-radius:4px; " +
+                       "box-sizing:border-box; font-size:0.9rem;";
 
-    string style = "width:100%; min-width:0; padding:4px 6px; " +
-                   "border:1px solid #d1d1d1; border-radius:4px; " +
-                   "box-sizing:border-box; font-size:0.9rem;";
-
-    // Enum → select
-    if (targetType.IsEnum)
-    {
-        builder.OpenElement(1, "select");
-        builder.AddAttribute(2, "style", style);
-        builder.AddAttribute(3, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
-            e => OnValueChanged(property, e?.Value?.ToString())));
-
-        int seq = 4;
-        foreach (var enumVal in Enum.GetValues(targetType))
+        // Enum → select
+        if (targetType.IsEnum)
         {
-            builder.OpenElement(seq++, "option");
-            builder.AddAttribute(seq++, "value", enumVal);
-            builder.AddAttribute(seq++, "selected", value?.ToString() == enumVal.ToString());
-            builder.AddContent(seq++, enumVal.ToString());
+            builder.OpenElement(1, "select");
+            builder.AddAttribute(2, "style", style);
+            builder.AddAttribute(3, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
+                e => OnValueChanged(property, e?.Value?.ToString())));
+
+            int seq = 4;
+            foreach (var enumVal in Enum.GetValues(targetType))
+            {
+                builder.OpenElement(seq++, "option");
+                builder.AddAttribute(seq++, "value", enumVal);
+                builder.AddAttribute(seq++, "selected", value?.ToString() == enumVal.ToString());
+                builder.AddContent(seq++, enumVal.ToString());
+                builder.CloseElement();
+            }
+
             builder.CloseElement();
         }
-
-        builder.CloseElement();
-    }
-    // Boolean → checkbox
-    else if (targetType == typeof(bool))
-    {
-        builder.OpenElement(1, "input");
-        builder.AddAttribute(2, "type", "checkbox");
-        builder.AddAttribute(3, "class", "table-checkbox");
-        builder.AddAttribute(4, "checked", (bool)(value ?? false));
-        builder.AddAttribute(5, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
-            e => OnValueChanged(property, e?.Value?.ToString())));
-        builder.CloseElement();
-    }
-    else if (typeof(BaseEurocodeContext).IsAssignableFrom(targetType))
-    {
-        // recursief
-        RenderDynamic(targetType, Model);
-        builder.OpenElement(1, "p");
-        builder.AddContent(2, "zie tabel");
-        builder.CloseElement();
-    }
-
-    // Alles anders → input type afhankelijk van TypeCode
-    else
-    {
-        string typeAttr = Type.GetTypeCode(targetType) switch
+        // Boolean → checkbox
+        else if (targetType == typeof(bool))
         {
-            TypeCode.Int32 =>"number",
-            TypeCode.Double or TypeCode.Single or TypeCode.Decimal => "text",
-            TypeCode.DateTime => "date",
-            _ => "text"
-        };
+            builder.OpenElement(1, "input");
+            builder.AddAttribute(2, "type", "checkbox");
+            builder.AddAttribute(3, "class", "table-checkbox");
+            builder.AddAttribute(4, "checked", (bool)(value ?? false));
+            builder.AddAttribute(5, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
+                e => OnValueChanged(property, e?.Value?.ToString())));
+            builder.CloseElement();
+        }
+        else if (typeof(BaseEurocodeContext).IsAssignableFrom(targetType))
+        {
+            // recursief
+            RenderDynamic(targetType, Model);
+            builder.OpenElement(1, "p");
+            builder.AddContent(2, "zie tabel");
+            builder.CloseElement();
+        }
+        else
+        {
+            var typeCode = Type.GetTypeCode(targetType);
+            var stringValue = value?.ToString() ?? "";
 
-        string valueAttr = TypeCode.DateTime == Type.GetTypeCode(targetType) && value is DateTime dt
-            ? dt.ToString("yyyy-MM-dd")
-            : value?.ToString() ?? "";
+            switch (typeCode)
+            {
+                case TypeCode.Int32:
+                case TypeCode.Double:
+                case TypeCode.Single:
+                case TypeCode.Decimal:
+                    builder.OpenComponent<FluentNumberField<double>>(1);
+                    builder.AddAttribute(2, "Value", Convert.ToDouble(value));
+                    builder.AddAttribute(3, "Style", style);
+                    builder.AddAttribute(4, "ValueChanged", EventCallback.Factory.Create<double>(this,
+                        v => OnValueChanged(property, v.ToString(CultureInfo.InvariantCulture))));
+                    builder.CloseComponent();
+                    break;
 
-        builder.OpenElement(1, "input");
-        builder.AddAttribute(2, "type", typeAttr);
-        builder.AddAttribute(3, "style", style);
-        builder.AddAttribute(4, "value", valueAttr);
-        builder.AddAttribute(5, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
-            e => OnValueChanged(property, e?.Value?.ToString())));
-        builder.CloseElement();
-    }
+                case TypeCode.DateTime:
+                    builder.OpenComponent<FluentDatePicker>(5);
+                    builder.AddAttribute(6, "Value", (DateTime?)value);
+                    builder.AddAttribute(7, "Style", style);
+                    builder.AddAttribute(8, "ValueChanged", EventCallback.Factory.Create<DateTime?>(this,
+                        v => OnValueChanged(property, v?.ToString("o")))); // ISO-8601
+                    builder.CloseComponent();
+                    break;
 
-    builder.CloseElement(); // td sluiten
-};
+                default:
+                    builder.OpenComponent<FluentTextField>(9);
+                    builder.AddAttribute(10, "Value", stringValue);
+                    builder.AddAttribute(11, "Style", style);
+                    builder.AddAttribute(12, "ValueChanged", EventCallback.Factory.Create<string>(this,
+                        v => OnValueChanged(property, v)));
+                    builder.CloseComponent();
+                    break;
+            }
+        }
+
+
+
+
+        // Alles anders → input type afhankelijk van TypeCode
+        // else
+        // {
+        //     string typeAttr = Type.GetTypeCode(targetType) switch
+        //     {
+        //         TypeCode.Int32 =>"number",
+        //         TypeCode.Double or TypeCode.Single or TypeCode.Decimal => "text",
+        //         TypeCode.DateTime => "date",
+        //         _ => "text"
+        //     };
+
+        //     string valueAttr = TypeCode.DateTime == Type.GetTypeCode(targetType) && value is DateTime dt
+        //         ? dt.ToString("yyyy-MM-dd")
+        //         : value?.ToString() ?? "";
+
+        //     builder.OpenElement(1, "input");
+        //     builder.AddAttribute(2, "type", typeAttr);
+        //     builder.AddAttribute(3, "style", style);
+        //     builder.AddAttribute(4, "value", valueAttr);
+        //     builder.AddAttribute(5, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this,
+        //         e => OnValueChanged(property, e?.Value?.ToString())));
+        //     builder.CloseElement();
+        // }
+
+        builder.CloseElement(); // td sluiten
+    };
 
 
     RenderFragment RenderDynamic(Type t, object model) => builder =>

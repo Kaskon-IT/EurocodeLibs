@@ -124,7 +124,8 @@ namespace Eurocode.BetonConstructies
         public bool IsPlaatGeometrie
         {
             get => _isPlaatGeometrie;
-            set { _isPlaatGeometrie = value; BerekenEnValideer(); }
+            set => SetProperty(ref _isPlaatGeometrie, value);
+            //set { _isPlaatGeometrie = value; BerekenEnValideer(); } // deze code is vervangen door hierboven
         }
 
         /// <summary>
@@ -135,7 +136,8 @@ namespace Eurocode.BetonConstructies
         public bool IsKwaliteitsBeheersing
         {
             get => _isKwaliteitsBeheersing;
-            set { _isKwaliteitsBeheersing = value; BerekenEnValideer(); }
+            set => SetProperty(ref _isKwaliteitsBeheersing, value);
+
         }
 
         /// <summary>
@@ -153,12 +155,13 @@ namespace Eurocode.BetonConstructies
             get => _selectedMilieuklassen;
             set
             {
-
+                // hier werkt net net even anders, omdat we een lijst hebben
 
                 _selectedMilieuklassen = value ?? [MilieuklasseEnum.X0]; // mag niet leeg gelaten worden! 
 
                 //
                 //var mk = this.Milieuklassen;
+                OnPropertyChanged(nameof(SelectedMilieuklassen));
                 BerekenEnValideer(); // Roep de validatie aan
 
             }
@@ -497,7 +500,7 @@ namespace Eurocode.BetonConstructies
             // Waarschuwingen (niet akkoord, aktie vereist)
             if (DekkingNom > DekkingToe)
             {
-                AddMeldingWaarschuwing("<b>nominale dekking c<sub>nom</sub> is groter dan toegepaste dekking c<sub>toe</sub></b>");
+                AddMeldingError("<b>nominale dekking c<sub>nom</sub> is groter dan toegepaste dekking c<sub>toe</sub></b>");
                 return false;
             }
 

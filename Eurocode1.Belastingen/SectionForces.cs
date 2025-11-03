@@ -171,7 +171,7 @@ namespace Eurocode.Belastingen
                 if (numericValue > maxValue)
                 {
                     string name = propertyName ?? "waarde";
-                    AddMeldingWaarschuwing($"Overschrijding maximale waarde ({name}: {obj})");
+                    AddMeldingError($"Overschrijding maximale waarde ({name}: {obj})");
                     return true;
                 }
             }
