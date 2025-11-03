@@ -34,7 +34,7 @@
 									
   <ItemGroup>
     <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.10" />
     <PackageReference Include="MigraDoc.DocumentObjectModel.Core" Version="1.0.0" />
   </ItemGroup>
 
