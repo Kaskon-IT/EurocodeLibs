@@ -1,5 +1,7 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using Profielen.Parametrisch;
+using Profielen.Beton;
 using Eurocode.Belastingen;
 using ExportFactory.MigraDocContentModels;
 using ExportFactory.Services;
@@ -16,48 +18,6 @@ namespace Eurocode.BetonConstructies
         ControleerWapening,
     }
 
-    [Obsolete("classes met korte weergave niet meer nodig, we kunnen de properties filteren, orderen etcetera.")]
-    public class DwarskrachtWapContextKort : DwarskrachtWapContext
-    {
-
-        // deze class heb ik aangemaakt om een korte weergave te hebben in de UI
-        // dit is een tijdelijke oplossing, want uiteindelijk wil ik dat we de properties kunnen filteren
-        // en ordenen op basis van de TableColumn attributes.
-        // Dit is een tussenstap, want ik wil de UI niet teveel aanpassen in één keer.
-        // in de vakantie van Martijn is dit toch gedaan, dus deze class is nu overbodig geworden.
-        // even samen doornemen met Martijn.
-
-        public DwarskrachtWapContextKort()
-        {
-            // lege constructor
-        }
-
-        public DwarskrachtWapContextKort(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, SectionForces snedekrachten)
-            : base(beton, profiel, snedekrachten)
-        {
-            BerekeningType = BerekeningTypeEnum.BepaalBenodigeWapening;
-            // Bereken(); // niet nodig, want we hebben geen meldingen
-        }
-
-        [TableColumn(Symbol = "<i>V</i><sub>Ed</sub>", Unit = "kN")]
-        public string Test
-        {
-            get
-            {
-                return this.Ved.ToString();
-            }
-        }
-
-        [TableColumn("V<sub>Rd,c</sub>")]
-        public string Test2
-        {
-            get
-            {
-                return this.DwarskrachtWeerstandBeton.ToString();
-            }
-        }
-
-    }
 
 
     public class DwarskrachtWapContext : BaseEurocodeContext
@@ -70,13 +30,6 @@ namespace Eurocode.BetonConstructies
             LijstBeugelWap = new List<BeugelWap>();
         }
 
-        // context voor de dwarskrachtwapening volgens art. 6.2
-        // Uitgangspunten voor niet-voorgespannen constructies
-
-        //private List<int> _meldingen { get; set; } = [];
-        //private Dictionary<int, Melding> _betonMeldingen = new MeldingenBeton().Meldingen;
-
-        //public List<Melding> Meldingen { get; set; } = [];
         public override string Heading { get; set; } = "Dwarskracht";
 
         public override string ToString()
@@ -135,8 +88,10 @@ namespace Eurocode.BetonConstructies
             set => SetNestedProperty(ref _beton!, value);
         }
 
-        private ParametrischeProfielen.ParametrischProfielContext _profiel = new();
-        public ParametrischeProfielen.ParametrischProfielContext Profiel
+
+
+        private BetonProfiel _profiel = new();
+        public BetonProfiel Profiel
         {
             get => _profiel;
             set => SetNestedProperty(ref _profiel!, value);
@@ -276,7 +231,7 @@ namespace Eurocode.BetonConstructies
         public double BeugelAfstandDwarsToegepast;
         public double DekkingZijkantToegepast;
 
-        public DwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, SectionForces snedekrachten)
+        public DwarskrachtWapContext(BetonContext beton, BetonProfiel profiel, SectionForces snedekrachten)
         {
             Beton = beton; // materiaal, staal, dekking, etcetera
             Profiel = profiel; // geometrie 

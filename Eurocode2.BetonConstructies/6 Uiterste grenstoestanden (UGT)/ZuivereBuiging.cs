@@ -1,6 +1,7 @@
 ﻿using CommonLibrary;
 using Eurocode.Belastingen;
-using ParametrischeProfielen;
+using Profielen.Parametrisch;
+using Profielen.Beton;
 
 namespace Eurocode.BetonConstructies
 {
@@ -30,7 +31,7 @@ namespace Eurocode.BetonConstructies
         // Input parameters
         // Input Contexten
         public BetonContext Beton { get; set; } = new(BetonsterkteklasseEnum.C30_37);
-        public ParametrischProfielContext Profiel { get; set; } = new() { Breedte = 400, Hoogte = 500 };
+        public BetonProfiel Profiel { get; set; } = new() { Breedte = 400, Hoogte = 500 };
         public WapeningContext Wapening { get; set; } = new() { Tekst = "4x16" };
         public SectionForces Forces { get; set; } = new(my: 188);
 

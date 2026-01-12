@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using Profielen.Parametrisch;
 using K = CommonLibrary.EurocodeKeys;
 
 namespace Eurocode.BetonConstructies
@@ -49,7 +50,7 @@ namespace Eurocode.BetonConstructies
         } // Effectieve dikte van het element in mm
 
 
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
+        public ParametrischProfielContext Profiel { get; set; } = new();
 
         public required BendingResults BendingResults
         {

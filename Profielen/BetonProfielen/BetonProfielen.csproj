@@ -10,7 +10,7 @@
 		<!-- Kies een naam voor je NuGet-pakket -->
 
 
-		<Version>1.1.500</Version>
+		<Version>2.2.2</Version>
 		<!-- Versie van het pakket -->
 
 		<Authors>Kaskon IT</Authors>
@@ -31,9 +31,9 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
-	
-	
-  <ItemGroup>
-    <ProjectReference Include="..\ParametrischeProfielen\ParametrischeProfielen.csproj" />
-  </ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\Profielen\ParametrischeProfielen\ParametrischeProfielen.csproj" />
+	  <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj" />
+	</ItemGroup>
 </Project>

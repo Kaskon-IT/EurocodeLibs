@@ -247,7 +247,7 @@ namespace CommonLibrary
 
         public bool HeeftWaarschuwing() => Meldingen.Any(m => m.Type == MeldingType.Waarschuwing);
 
-        public bool BerekenEnValideer()
+        public virtual bool BerekenEnValideer()
         {
             ClearMeldingen();
             Bereken();

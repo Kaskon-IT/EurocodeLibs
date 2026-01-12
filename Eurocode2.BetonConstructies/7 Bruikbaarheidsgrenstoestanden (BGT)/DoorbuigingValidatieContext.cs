@@ -2,7 +2,7 @@
 using CommonLibrary.Extensions;
 using Eurocode.Belastingen;
 using ExportFactory.Shared;
-using ParametrischeProfielen;
+using Profielen.Parametrisch;
 
 namespace Eurocode.BetonConstructies
 {
@@ -159,7 +159,7 @@ namespace Eurocode.BetonConstructies
         private BetonContextKruipEnKrimpCalculator _kruipkrimp = new();
 
         // reference properties
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get => _profiel; set => SetNestedProperty(ref _profiel!, value); }
+        public ParametrischProfielContext Profiel { get => _profiel; set => SetNestedProperty(ref _profiel!, value); }
         public BetonContext Beton { get => _beton; set => SetNestedProperty(ref _beton!, value); }
         public WapeningContext Wapening { get => _wapening; set => SetNestedProperty(ref _wapening!, value); }
         public BetonContextKruipEnKrimpCalculator Kruipkrimp { get => _kruipkrimp; set => SetNestedProperty(ref _kruipkrimp!, value); }

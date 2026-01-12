@@ -159,23 +159,23 @@ public partial class TableOfContents : IAsyncDisposable
         {
             return new RenderFragment(builder =>
             {
-                var i = 0;
+                //var i = 0;
 
-                builder.OpenElement(i++, "ul");
+                builder.OpenElement(0, "ul");
                 foreach (Anchor item in items)
                 {
-                    builder.OpenElement(i++, "li");
-                    builder.OpenComponent<FluentAnchor>(i++);
-                    builder.AddAttribute(i++, "Href", item.Href);
-                    builder.AddAttribute(i++, "Appearance", Appearance.Hypertext);
-                    builder.AddAttribute(i++, "ChildContent", (RenderFragment)(content =>
+                    builder.OpenElement(1, "li");
+                    builder.OpenComponent<FluentAnchor>(2);
+                    builder.AddAttribute(3, "Href", item.Href);
+                    builder.AddAttribute(4, "Appearance", Appearance.Hypertext);
+                    builder.AddAttribute(5, "ChildContent", (RenderFragment)(content =>
                     {
-                        content.AddContent(i++, item.Text);
+                        content.AddContent(5, item.Text);
                     }));
                     builder.CloseComponent();
                     if (item.Anchors is not null)
                     {
-                        builder.AddContent(i++, GetTocItems(item.Anchors));
+                        builder.AddContent(6, GetTocItems(item.Anchors));
                     }
                     builder.CloseElement();
                 }

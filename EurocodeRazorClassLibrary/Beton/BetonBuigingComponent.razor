@@ -1,5 +1,6 @@
 ﻿@using CommonLibrary
 @using Eurocode.BetonConstructies
+@using Profielen.Parametrisch
 @using Eurocode.Belastingen
 @using EurocodeRazorClassLibrary.Shared
 
@@ -52,7 +53,7 @@
     private SectionForces forces = new() { My = 100};
     private BetonContext betonContext = new BetonContext();
     private WapeningContext wapeningContext = new WapeningContext();
-    private ParametrischeProfielen.ParametrischProfielContext profiel = new();
+    private Profielen.Beton.BetonProfiel profiel = new();
 
     protected override void OnInitialized()
     {

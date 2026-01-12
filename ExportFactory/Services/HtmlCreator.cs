@@ -329,6 +329,7 @@
 
                             string rowspan = string.Empty;
                             string colspan = string.Empty;
+                            string style = string.Empty;
 
                             foreach (Cell cell in row.Cells)
                             {
@@ -426,13 +427,13 @@
                                     if (thisColumn != null && !thisColumn.Width.IsNull)
                                     {
                                         //
-                                        var width = thisColumn.Width.Centimeter.ToString("0"); // alleen hele cm ondersteund!
-                                        htmlClass += $" ec-width-{width}";
+                                        var width = thisColumn.Width.Millimeter.ToString("0mm"); // let op geen spatie
+                                        style = $"style = 'min-width: {width};'";
                                     }
                                 }
 
                                 if (cellPar != null)
-                                    htmlBuilder.AppendLine($"<{htmlTag} class='{htmlClass}' {colspan} {rowspan}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
+                                    htmlBuilder.AppendLine($"<{htmlTag} {style} class='{htmlClass}' {colspan} {rowspan}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
 
                                 cellIndex++;
                             }

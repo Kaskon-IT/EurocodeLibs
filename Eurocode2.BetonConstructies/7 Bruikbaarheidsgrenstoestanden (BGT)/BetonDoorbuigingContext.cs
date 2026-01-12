@@ -1,6 +1,6 @@
 ﻿using CommonLibrary;
 using Eurocode.Belastingen;
-using ParametrischeProfielen;
+using Profielen.Parametrisch;
 
 namespace Eurocode.BetonConstructies
 {

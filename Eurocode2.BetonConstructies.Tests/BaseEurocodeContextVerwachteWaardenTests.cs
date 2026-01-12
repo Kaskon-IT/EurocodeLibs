@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using Profielen.Parametrisch;
 using Eurocode.BetonConstructies;
 using System.Reflection;
 
@@ -21,7 +22,7 @@ namespace Eurocode2.BetonConstructies.Tests
             var studie = new DoorbuigingStudie(L, lijnlast)
             {
                 Optrede = 0, // geen optrede zodat het de lengte niet wordt beïnvloed
-                Profiel = new ParametrischeProfielen.ParametrischProfielContext { Breedte = b, Hoogte = h }
+                Profiel = new ParametrischProfielContext { Breedte = b, Hoogte = h }
             };
 
             // Act

@@ -1,7 +1,9 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using CommonLibrary.Models;
 using ExportFactory.Extensions;
 using ExportFactory.Shared;
+using Microsoft.AspNetCore.Builder;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
@@ -12,17 +14,25 @@ namespace Eurocode.BetonConstructies
     /// 3.1 Beton en 3.2 Betonstaal
     /// Verzameling gegevens voor berekening van betonconstructies.
     /// </summary>
-    public partial class BetonContext : BaseEurocodeContext
+    public partial class BetonContext : BaseMateriaal
     {
-        public BetonContext()
-        {
+        public override MateriaalType MateriaalType => MateriaalType.Beton;
+        public override double SoortelijkGewicht => 2500; // kg/m³
+        public override string UserFriendlyName => $"{BetonSterkteKlasseGebruiksvriendelijkeNaam}";
+        public override string Naam => UserFriendlyName;
+        public override string Eurocode => "EC2 - Betonconstructies";
+        public override double E => Ecm;
 
+
+        public BetonContext() 
+        {
+            PartieleFactor = 1.5;
         }
         /// <summary>
         /// Maakt een kopie.
         /// </summary>
         /// <param name="vorige"></param>
-        public BetonContext(BetonContext vorige)
+        public BetonContext(BetonContext vorige) 
         {
             Betonsterkteklasse = vorige.Betonsterkteklasse;
             IsOntwerpSituatieBuitenGewoon = vorige.IsOntwerpSituatieBuitenGewoon;
@@ -30,6 +40,8 @@ namespace Eurocode.BetonConstructies
             Alpha = vorige.Alpha;
             Beta = vorige.Beta;
             BetonStaal = new BetonStaalContext(vorige.BetonStaal);
+            PartieleFactor = vorige.PartieleFactor;
+
         }
 
         public override string Heading { get; set; } = "Beton";
@@ -339,7 +351,11 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(Label = "gem. buigtrekstertke (zuivere buiging)", Symbol = "<i>f</i><sub>ctm,fl</sub>", Article = "3.1.8", Unit = "N/mm²")]
         public double FctmFl { get; private set; }
-        public Formula FctmFlFormula { get; private set; }
+        public Formula FctmFlFormula { get; private set; } = new()
+        {
+            Name = "(3.23)",
+            StaticValue = "f_{ctm,fl} = \\max \\left\\{ (1.6 - \\frac{h}{1000}) f_{ctm},\\; f_{ctm} \\right\\}",
+        };
 
         public Formula FctmFormula
         {
@@ -399,7 +415,11 @@ namespace Eurocode.BetonConstructies
             Description = "is de partiële factor voor beton",
             Article = "2.4.2.4"
             )]
+
+        [Obsolete("Gebruik BaseMateriaal.PartieleFactor")]
         public double GammaC { get; private set; } = 1.5;
+        
+
 
 
         [TableColumn("druksterkte", Symbol = "<i>f</i><sub>cd</sub>",
@@ -734,6 +754,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        //public override string Eurocode => "EC2 - 3.1 Beton";
 
         public BetonContext(string sterkteklasse)
         {

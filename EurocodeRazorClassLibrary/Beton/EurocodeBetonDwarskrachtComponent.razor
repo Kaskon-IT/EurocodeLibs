@@ -1,4 +1,5 @@
-﻿@using Eurocode.BetonConstructies
+﻿@using Profielen.Parametrisch
+@using Eurocode.BetonConstructies
 @using Eurocode.BetonConstructies.SpecifiekeRegels
 @using K = CommonLibrary.EurocodeKeys
 
@@ -75,7 +76,7 @@ else
     //public BetonContext Beton { get; set; } = new();
 
     [Parameter]
-    public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
+    public ParametrischProfielContext Profiel { get; set; } = new();
 
 
     //[Parameter]

@@ -3,6 +3,88 @@
 namespace Eurocode.BetonConstructies
 {
 
+
+
+    public class PlaatWapening : BaseEurocodeContext
+    {
+        public override string Heading { get; set; } = "plaatwapening";
+        public PlaatWapeningGroep? Boven { get; set; }
+        public PlaatWapeningGroep? Onder { get; set; }
+
+        protected override void Bereken()
+        {
+            //throw new NotImplementedException();
+        }
+        protected override bool Valideer()
+        {
+            Meldingen.Clear();
+            if (Boven == null && Onder == null)
+            {
+                AddMeldingError("Minstens één van de plaatwapening groepen (boven of onder) moet worden opgegeven.");
+                return false;
+            }
+            return true;
+        }
+    }
+
+    public class PlaatWapeningGroep : BaseEurocodeContext
+    {
+        public override string Heading { get; set; } = "plaatwapening";
+        
+        private BetonDekkingContext _dekking = new BetonDekkingContext();
+        private WapeningContext _basisWapening = new();
+        private WapeningContext? _bijlegWapening;
+        private double _diameterVerdeel = 6;
+        private int _laagHoofdwapening = 1;
+
+
+        public BetonDekkingContext Dekking
+        {
+            get => _dekking;
+            set => SetNestedProperty(ref _dekking!, value);
+        }
+
+        public WapeningContext BasisWapening
+        {
+            get => _basisWapening;
+            set => SetNestedProperty(ref _basisWapening!, value);
+        }
+
+        public WapeningContext? BijlegWapening 
+        {
+            get => _bijlegWapening;
+            set => SetNestedProperty(ref _bijlegWapening, value);
+        }
+
+        public double DiameterVerdeel
+        {
+            get => _diameterVerdeel;
+            set => SetProperty(ref _diameterVerdeel, value);
+        }
+        
+        public int LaagHoofdwapening
+        {
+            get => _laagHoofdwapening;
+            set => SetProperty(ref _laagHoofdwapening, value);
+        }
+
+
+
+
+
+        protected override void Bereken()
+        {
+            
+        }
+        protected override bool Valideer()
+        {
+            Meldingen.Clear();
+            return true;
+        }
+
+    }
+
+
     public class WapeningContext : BaseEurocodeContext
     {
         public override string Heading { get; set; } = "Wapening";
@@ -183,12 +265,70 @@ namespace Eurocode.BetonConstructies
 
 
 
+        private double _breedte = 1000;
+        private double _diameterBijlegStaven = 8;
+        private double _aantalBijlegStaven = 0;
+
+        /// <summary>
+        /// Werkende breedte van de wapening in mm. 
+        /// Wanneer niet opgegeven, wordt standaard 1000 mm aangehouden.
+        /// Bij hoh-maat berekeningen wordt deze waarde gebruikt om het aantal staven en As,prov te bepalen.
+        /// Bijvoorbeeld bij een plaat met een breedte van 500 mm en r8-150, resulteert dit in 500/150 = 3.33 staven x de doorsnede van een r8 staaf = 50.3 mm², dus As,prov = 3.33 x 50.3 = 167.7 mm².
+        /// </summary>
+        public double Breedte
+        {
+            get => _breedte;
+            set => SetProperty(ref _breedte, value);
+        }
+
+        public double DiameterBijlegStaven { get => _diameterBijlegStaven; set => SetProperty(ref _diameterBijlegStaven, value); }
+        public double AantalBijlegStaven { get => _aantalBijlegStaven; set => SetProperty(ref _aantalBijlegStaven, value); }
 
 
+
+        [TableColumn(Label = "Doorsnedeeoppervlakte basis", Symbol = "<i>A</i><sub>s</sub>", Unit = "mm", StringFormat = "0")]
+        public double AsBasis
+        {
+            get 
+            {
+                return WapeningHelper.GetDsnOpp(Tekst, Breedte); 
+            }
+        }
+
+        [TableColumn(Label = "Bijlegwapening", Symbol = "")]
+        public string BijlegWapening
+        {
+            get
+            {
+                if (_aantalBijlegStaven > 0 && _diameterBijlegStaven > 0)
+                {
+                    return $"{_aantalBijlegStaven}Ø{_diameterBijlegStaven:0.#}";
+                }
+                else return "";
+            }
+        }
+
+        public double AsBijleg
+        {
+            get
+            {
+                if (_aantalBijlegStaven > 0 && _diameterBijlegStaven > 0)
+                {
+                    return WapeningHelper.GetDsnOpp(_aantalBijlegStaven, _diameterBijlegStaven);
+                }
+                else return 0;
+            }
+        }
 
 
         [TableColumn(Label = "Doorsnedeoppervlakte wapening", Symbol = "<i>A</i><sub>s</sub>", Unit = "mm²", StringFormat = "0")]
-        public double As { get { return WapeningHelper.GetDsnOpp(Tekst); } }
+        public double As 
+        { 
+            get 
+            {
+                return AsBasis + AsBijleg;
+            } 
+        }
 
         private List<string>? _wapgroepen;
         public List<WapeningContext> _subgroepen { get; set; } = new();

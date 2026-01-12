@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using Profielen.Parametrisch;
 using Eurocode.Belastingen;
 using Eurocode.Grondslagen;
 using ExportFactory.Shared;
@@ -41,7 +42,7 @@ namespace Eurocode.BetonConstructies
             SectionForces snedekrachten,
             BetonContext beton,
             BetonDekkingContext dekking,
-            ParametrischeProfielen.ParametrischProfielContext profiel,
+            ParametrischProfielContext profiel,
             WapeningContext wapening,
             NationaleBijlageEnum nationaleBijlage)
         {
@@ -91,12 +92,30 @@ namespace Eurocode.BetonConstructies
         //[TableColumn(label: "positie", Description = "gebied waar deze toets van toepassing is", Width = 2)]
         public string Naam { get; set; } = "";
 
+
+        [TableColumn(Label = "pos", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.0)]
+        public string PosLabel { get; set; } = "";
+        public bool PosLabelVisible { get; set; } = true;
+
+        [TableColumn(Label = "b/o", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.0)]
+        public string PosWapBovenOnder
+        {
+            get
+            {
+                if (MomentFrequent == 0) return "-";
+                else if (MomentFrequent > 0) return "boven";
+                else return "onder";
+            }
+        }
+
+
+
         // input
         [TableColumn(
             Label = "moment BGT",
             Description = "Moment in de bruikbaarheidsgrenstoestand (BGT)",
             Symbol = "<i>M</i><sub>E,fr</sub>",
-            Width = 2.0,
+            Width = 1.5,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left,
             Unit = "kNm")]
         public double MomentFrequent { get { return Snedekrachten.My; } }
@@ -112,7 +131,7 @@ namespace Eurocode.BetonConstructies
             Label = "scheurmoment",
             Symbol = "<i>M</i><sub>cr</sub>",
             Description = "scheurmoment",
-            Width = 2.0,
+            Width = 1.5,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left,
             Unit = "kNm")]
         public double Mcr { get; internal set; }
@@ -127,7 +146,7 @@ namespace Eurocode.BetonConstructies
         public double DekkingOpLangsWapening { get; set; }
         public double AfstandVerdeelWapening { get; set; } = 0;
 
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; }
+        public ParametrischProfielContext Profiel { get; set; }
 
         public double Breedte { get; set; } = 1000; // todo Profiel gebruiken
         public double Hoogte { get; set; } = 100;
@@ -254,7 +273,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "s<sub>r,max</sub>",
             Description = "maximale scheurafstand",
             Article = "7.3.4 (1)",
-            Width = 2.0,
+            Width = 1.5,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
         public double SrMax { get; internal set; }

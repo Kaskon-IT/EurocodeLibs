@@ -5,6 +5,94 @@ using System.ComponentModel;
 
 namespace Eurocode.Belastingen
 {
+    public static class SectionForcesHelper
+    {
+        public static SectionForcesEnvelope MaakOmhulling(IEnumerable<SectionForces> forces)
+        {
+            double minTx = double.PositiveInfinity, maxTx = double.NegativeInfinity;
+            double minMy = double.PositiveInfinity, maxMy = double.NegativeInfinity;
+            double minMz = double.PositiveInfinity, maxMz = double.NegativeInfinity;
+            double minNx = double.PositiveInfinity, maxNx = double.NegativeInfinity;
+            double minVy = double.PositiveInfinity, maxVy = double.NegativeInfinity;
+            double minVz = double.PositiveInfinity, maxVz = double.NegativeInfinity;
+
+            foreach (var f in forces)
+            {
+                minTx = Math.Min(minTx, f.Tx); maxTx = Math.Max(maxTx, f.Tx);
+                minMy = Math.Min(minMy, f.My); maxMy = Math.Max(maxMy, f.My);
+                minMz = Math.Min(minMz, f.Mz); maxMz = Math.Max(maxMz, f.Mz);
+                minNx = Math.Min(minNx, f.Nx); maxNx = Math.Max(maxNx, f.Nx);
+                minVy = Math.Min(minVy, f.Vy); maxVy = Math.Max(maxVy, f.Vy);
+                minVz = Math.Min(minVz, f.Vz); maxVz = Math.Max(maxVz, f.Vz);
+            }
+
+            return new SectionForcesEnvelope(
+                new SectionForcesSnapshot(minTx, minMy, minMz, minNx, minVy, minVz) ,
+                new SectionForcesSnapshot(maxTx, maxMy, maxMz, maxNx, maxVy, maxVz)
+            );
+        }
+    }
+
+    public record SectionForcesEnvelopePerType(BelastingCombinatieTypeEnum Type, SectionForcesEnvelope Envelope);
+
+   
+
+
+
+
+
+    public record SectionForcesSnapshot(double Tx, double My, double Mz, double Nx, double Vy, double Vz)
+    {
+        public static SectionForcesSnapshot From(SectionForces f) =>
+            new(f.Tx, f.My, f.Mz, f.Nx, f.Vy, f.Vz);
+    }
+
+
+    public sealed record SectionForcesEntry(double Tx, double My, double Mz, double Nx,  double Vy,  double Vz);
+
+
+    public record SectionForcesEnvelope(SectionForcesSnapshot Min, SectionForcesSnapshot Max)
+    {
+        public static SectionForcesEnvelope From(IEnumerable<SectionForcesEntry> entries)
+        {
+            double minTx = double.PositiveInfinity, maxTx = double.NegativeInfinity;
+            double minMy = double.PositiveInfinity, maxMy = double.NegativeInfinity;
+            double minMz = double.PositiveInfinity, maxMz = double.NegativeInfinity;
+            double minNx = double.PositiveInfinity, maxNx = double.NegativeInfinity;
+            double minVy = double.PositiveInfinity, maxVy = double.NegativeInfinity;
+            double minVz = double.PositiveInfinity, maxVz = double.NegativeInfinity;
+
+            foreach (var entry in entries)
+            {
+                minTx = Math.Min(minTx, entry.Tx);
+                maxTx = Math.Max(maxTx, entry.Tx);
+
+                minMy = Math.Min(minMy, entry.My);
+                maxMy = Math.Max(maxMy, entry.My);
+
+                minMz = Math.Min(minMz, entry.Mz);
+                maxMz = Math.Max(maxMz, entry.Mz);
+
+                minNx = Math.Min(minNx, entry.Nx);
+                maxNx = Math.Max(maxNx, entry.Nx);
+
+                minVy = Math.Min(minVy, entry.Vy);
+                maxVy = Math.Max(maxVy, entry.Vy);
+
+                minVz = Math.Min(minVz, entry.Vz);
+                maxVz = Math.Max(maxVz, entry.Vz);
+            }
+
+            return new SectionForcesEnvelope(
+                new SectionForcesSnapshot(minTx, minMy, minMz, minNx, minVy, minVz),
+                new SectionForcesSnapshot(maxTx, maxMy, maxMz, maxNx, maxVy, maxVz)
+            );
+        }
+    }
+
+
+
+
     public class SectionForces : BaseEurocodeContext, INotifyPropertyChanged
     {
         // backing fields

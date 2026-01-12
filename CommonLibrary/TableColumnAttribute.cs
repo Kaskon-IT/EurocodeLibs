@@ -55,7 +55,6 @@ namespace CommonLibrary
         //public Formula? Vergelijking { get; set; } = null;
 
 
-        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public ParagraphAlignment Alignment { get; set; } = ParagraphAlignment.Center;
 
         //[Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]

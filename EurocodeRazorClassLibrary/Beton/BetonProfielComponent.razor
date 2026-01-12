@@ -1,12 +1,15 @@
-﻿@using BetonProfielen
-@using ParametrischeProfielen
+﻿@using Profielen.Beton
+@using Profielen.Parametrisch
 @using System.ComponentModel
-@using K = CommonLibrary.EurocodeKeys;
+@using K = CommonLibrary.EurocodeKeys
 @inherits Custom.EurocodeComponentBase
 
 
+@* WAT IS HIER AAN DE HAND? *@
+@* TODO oplossen *@
+@* TODO oplossen *@
 
-<EurocodeRazorClassLibrary.Shared.MyGridFor @bind-Model="Model.Profiel" />
+@* <EurocodeRazorClassLibrary.Shared.MyGridFor @bind-Model="Model" />  *@
 
 
 @* <FluentSelectEnum Label="vorm"
@@ -54,9 +57,9 @@
 
 
 @code {
-    [Parameter, EditorRequired] public BetonProfielen.BetonProfiel Model { get; set; } = new();
-    [Parameter] public EventCallback<BetonProfielen.BetonProfiel> ModelChanged { get; set; }
-    [Parameter] public ParametrischeProfielen.ParametrischeProfielVormEnum[] DisabledProfielVormen{ get; set; } = [
+    [Parameter, EditorRequired] public Profielen.Beton.BetonProfiel Model { get; set; } = new();
+    [Parameter] public EventCallback<Profielen.Beton.BetonProfiel> ModelChanged { get; set; }
+    [Parameter] public ParametrischeProfielVormEnum[] DisabledProfielVormen{ get; set; } = [
         ParametrischeProfielVormEnum.Rond,
         ParametrischeProfielVormEnum.Buis,
         ParametrischeProfielVormEnum.Koker,
@@ -84,16 +87,17 @@
     protected override void OnInitialized()
     {
         // Subscribe to property change notifications
-        Model.Profiel.PropertyChanged += Model_PropertyChanged;
+        //Model.PropertyChanged += Model_PropertyChanged;
+
     }
 
     private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(ParametrischeProfielen.ParametrischProfielContext.Vorm))
+        if (e.PropertyName == nameof(ParametrischProfielContext.Vorm))
         {
             //lastUpdated = $"Name changed to: {model.Name}";
 
-            UpdateControls(Model.Profiel.Vorm);
+            UpdateControls(Model.Vorm);
 
             // Trigger re-render
             InvokeAsync(StateHasChanged);
@@ -103,7 +107,7 @@
     public void Dispose()
     {
         // Unsubscribe to avoid memory leaks
-        Model.Profiel.PropertyChanged -= Model_PropertyChanged;
+        //Model.PropertyChanged -= Model_PropertyChanged;
     }
 
 
@@ -113,32 +117,32 @@
     private bool showH2 = false;
 
 
-    public void UpdateControls(ParametrischeProfielen.ParametrischeProfielVormEnum? vorm)
+    public void UpdateControls(ParametrischeProfielVormEnum? vorm)
     {
         if (vorm == null) return;
         switch (vorm)
         {
             default:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.Rechthoek:
+            case ParametrischeProfielVormEnum.Rechthoek:
                 showB1 = showH1 = showB2 = showH2 = false;
                 break;
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.L1:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.L2:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.L3:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.L4:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.U1:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.U2:
+            case ParametrischeProfielVormEnum.L1:
+            case ParametrischeProfielVormEnum.L2:
+            case ParametrischeProfielVormEnum.L3:
+            case ParametrischeProfielVormEnum.L4:
+            case ParametrischeProfielVormEnum.U1:
+            case ParametrischeProfielVormEnum.U2:
                 showB1 = showH1 = true;
                 showB2 = showH2 = false;
                 break;
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.T1:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.T2:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.T3:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.T4:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.I:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.H:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.Z1:
-            case ParametrischeProfielen.ParametrischeProfielVormEnum.Z2:
+            case ParametrischeProfielVormEnum.T1:
+            case ParametrischeProfielVormEnum.T2:
+            case ParametrischeProfielVormEnum.T3:
+            case ParametrischeProfielVormEnum.T4:
+            case ParametrischeProfielVormEnum.I:
+            case ParametrischeProfielVormEnum.H:
+            case ParametrischeProfielVormEnum.Z1:
+            case ParametrischeProfielVormEnum.Z2:
                 showB1 = showH1 = showB2 = showH2 = true;
             break;
 

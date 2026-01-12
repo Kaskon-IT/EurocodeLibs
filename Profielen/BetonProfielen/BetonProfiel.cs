@@ -1,9 +1,12 @@
 ﻿using CommonLibrary;
-using ParametrischeProfielen;
+using Profielen.Parametrisch;
 using System.ComponentModel;
 
 namespace BetonProfielen
 {
+    
+
+
     public class BetonProfiel : BaseEurocodeContext, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -1,7 +1,7 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
 using ExportFactory.Shared;
-using ParametrischeProfielen;
+using Profielen.Parametrisch;
 using System.Text.Json.Serialization;
 using GREEK = ExportFactory.Services.GreekLetters;
 

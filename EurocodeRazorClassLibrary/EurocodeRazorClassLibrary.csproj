@@ -8,7 +8,7 @@
 		<!-- NuGet-package instellingen -->
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Kaskon.EurocodeComponenten</PackageId>
-		<Version>1.30.0</Version>
+		<Version>2.2.3</Version>
 		<Authors>Bart van der Linden</Authors>
 		<Company>Kaskon</Company>
 		<Description>Blazor component library voor berekeningen conform de Eurocode.</Description>
@@ -57,6 +57,7 @@
 
 	<ItemGroup>
 		<!-- Projectreferenties -->
+		<ProjectReference Include="..\..\Profielen\BetonProfielen\BetonProfielen.csproj" />
 		<ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
 		<ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
 		<ProjectReference Include="..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />
@@ -71,7 +72,6 @@
 		<!--<ProjectReference Include="..\Eurocode7.Geotechniek\Eurocode7.Geotechniek.csproj" />-->
 		<!--<ProjectReference Include="..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />-->
 		<ProjectReference Include="..\ExportFactory\ExportFactory.csproj" />
-		<ProjectReference Include="..\Profielen\BetonProfielen\BetonProfielen.csproj" />
 	</ItemGroup>
 
     <ItemGroup>

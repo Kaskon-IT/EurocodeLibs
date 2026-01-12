@@ -1,4 +1,6 @@
 ﻿using Eurocode.Belastingen;
+using Profielen.Parametrisch;
+using Profielen.Beton;
 
 namespace Eurocode.BetonConstructies
 {
@@ -14,7 +16,7 @@ namespace Eurocode.BetonConstructies
 
         public static DwarskrachtWapContext GetDwarskrachtWapContext(
             BetonContext beton,
-            ParametrischeProfielen.ParametrischProfielContext profiel,
+            BetonProfiel profiel,
             double theta,
             double d,
             SectionForces snedekrachten,

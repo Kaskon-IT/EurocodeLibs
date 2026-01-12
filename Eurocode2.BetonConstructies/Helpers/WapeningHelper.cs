@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
+using System.Globalization;
 
 namespace Eurocode.BetonConstructies
 {
@@ -50,6 +51,22 @@ namespace Eurocode.BetonConstructies
 
             // 
         }
+
+        public static double GetDsnOpp(string wapening, double breedte)
+        {
+            var wapgroepen = GetWapGroepen(wapening);
+            double dsnOpp = 0;
+            if (wapgroepen == null) return dsnOpp;
+            foreach (var wapgroep in wapgroepen)
+            {
+                if (wapening.Contains('-'))
+                    dsnOpp += GetWapDetails(wapgroep.Trim()).dsnOpp * (breedte / 1000.0);
+                else
+                    dsnOpp += GetWapDetails(wapgroep.Trim()).dsnOpp;
+            }
+            return dsnOpp;
+        }
+
 
         public static double GetGemiddeldeDiameter(string wapening)
         {

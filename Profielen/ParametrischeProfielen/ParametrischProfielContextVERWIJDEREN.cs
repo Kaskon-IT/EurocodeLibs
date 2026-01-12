@@ -1,31 +1,34 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Interfaces;
+using CommonLibrary.Materialen;
 using ExportFactory.Shared;
 using Kaskon_it.Algemeen;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using static Kaskon_it.Algemeen.Geometrie;
 
-namespace ParametrischeProfielen
+namespace Profielen.ParametrischBAK
 {
-    public class ParametrischProfielContext : BaseEurocodeContext, INotifyPropertyChanged
+    public class ParametrischProfielContextVERWIJDEREN : BaseEurocodeContext, INotifyPropertyChanged, IProfiel
     {
         public override string Heading { get; set; } = "Profiel";
 
-        public ParametrischProfielContext() { }
+        public ParametrischProfielContextVERWIJDEREN() { Naam = "Onbekend"; }
 
 
-        public ParametrischProfielContext(double breedte, double hoogte)
+        public ParametrischProfielContextVERWIJDEREN(double breedte, double hoogte)
         {
             Heading = "Profiel";
             Breedte = breedte;
             Hoogte = hoogte;
+            Naam = $"RH{Breedte}×{Hoogte}";
 
         }
 
-        private ParametrischeProfielVormEnum? _vorm = ParametrischeProfielVormEnum.Rechthoek;
+        private ParametrischeProfielVormEnumVERWIJDEREN? _vorm = ParametrischeProfielVormEnumVERWIJDEREN.Rechthoek;
 
         [TableColumn(Label = "vorm")]
-        public ParametrischeProfielVormEnum? Vorm
+        public ParametrischeProfielVormEnumVERWIJDEREN? Vorm
         {
             get
             {
@@ -156,7 +159,7 @@ namespace ParametrischeProfielen
                 switch (Vorm)
                 {
                     default:
-                    case ParametrischeProfielVormEnum.Rechthoek:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.Rechthoek:
                         return Breedte * Hoogte * Hoogte / 6.0;
                 }
             }
@@ -193,19 +196,19 @@ namespace ParametrischeProfielen
                 switch (Vorm.Value)
                 {
                     default: return $"{Breedte}×{Hoogte}";
-                    case ParametrischeProfielVormEnum.Rechthoek:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.Rechthoek:
                         return $"RH{Breedte}×{Hoogte}";
-                    case ParametrischeProfielVormEnum.Rond:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.Rond:
                         return $"D{Breedte}";
-                    case ParametrischeProfielVormEnum.T1:
-                    case ParametrischeProfielVormEnum.T2:
-                    case ParametrischeProfielVormEnum.T3:
-                    case ParametrischeProfielVormEnum.T4:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.T1:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.T2:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.T3:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.T4:
                         return $"T{Breedte}/{BreedteDwarskracht}×{Hoogte}";
-                    case ParametrischeProfielVormEnum.L1:
-                    case ParametrischeProfielVormEnum.L2:
-                    case ParametrischeProfielVormEnum.L3:
-                    case ParametrischeProfielVormEnum.L4:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.L1:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.L2:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.L3:
+                    case ParametrischeProfielVormEnumVERWIJDEREN.L4:
                         return $"L{Breedte}/{BreedteDwarskracht}×{Hoogte}";
 
 
@@ -227,6 +230,16 @@ namespace ParametrischeProfielen
             }
         }
 
+        string IProfiel.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Naam { get; set; }
+
+        public double Iz { get; set; }
+
+        public double KgPerM { get; set; }
+
+        public double A => Area;
+
+        public IMateriaal Materiaal { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -269,5 +282,28 @@ namespace ParametrischeProfielen
         }
     }
 
+
+    /// <summary>
+    /// Houtprofielen gebruikt parametrische profielcontext
+    /// </summary>
+    public class HoutProfiel : ParametrischProfielContextVERWIJDEREN, IHoutProfiel
+    {
+        public HoutProfiel()
+        {
+            Materiaal = DummyMateriaal.Instance;
+        }
+        public HoutProfiel(IMateriaal materiaal)
+        {
+            Materiaal = materiaal;
+            Breedte = 75;
+            Hoogte = 250;
+            Vorm = ParametrischeProfielVormEnumVERWIJDEREN.Rechthoek;
+
+        }
+
+        
+
+
+    }
 
 }

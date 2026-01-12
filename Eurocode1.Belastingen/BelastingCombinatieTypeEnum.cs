@@ -3,41 +3,42 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Eurocode.Belastingen
 {
+    [Flags]
     public enum BelastingCombinatieTypeEnum
     {
         [Display(Name = "fundamenteel (6.10a)", ShortName = "fundamenteel")]
         [Description("fundamenteel (6.10a)")]
-        Fundamenteel_A = 1001,
+        Fundamenteel_A = 1,
 
         [Display(Name = "fundamenteel (6.10b)", ShortName = "fundamenteel")]
         [Description("fundamenteel (6.10b)")]
-        Fundamenteel_B = 1002,
+        Fundamenteel_B = 2,
 
         [Display(Name = "brand (6.11b)", ShortName = "brand")]
         [Description("brand (6.11b)")]
-        Brand = 1101,
+        Brand = 4,
 
         [Display(Name = "aardbeving (6.12b)", ShortName = "aardbeving")]
         [Description("aardbeving (6.12b)")]
-        Aardbeving = 1201,
+        Aardbeving = 8,
 
 
         [Display(Name = "karakteristiek (6.14b)", ShortName = "karakteristiek")]
         [Description("karakteristiek (6.14b)")]
-        Karakteristiek = 1401,
+        Karakteristiek = 16,
 
         [Display(Name = "frequent (6.15b)", ShortName = "frequent")]
 
         [Description("frequent (6.15b)")]
-        Frequent = 1501,
+        Frequent = 32,
 
         [Display(Name = "quasi-blijvend (6.16b)", ShortName = "quasi-blijvend")]
         [Description("quasi-blijvend (6.16b)")]
-        QuasiBlijvend = 1601,
+        QuasiBlijvend = 64,
 
         [Display(Name = "blijvend", ShortName = "blijvend")]
         [Description("blijvend")]
-        Blijvend = 9999,
+        Blijvend = 128,
 
     }
 

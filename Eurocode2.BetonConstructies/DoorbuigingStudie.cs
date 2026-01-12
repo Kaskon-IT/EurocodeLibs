@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using Profielen.Parametrisch;
 using Eurocode.Belastingen;
 using ExportFactory.Shared;
 
@@ -35,7 +36,7 @@ namespace Eurocode.BetonConstructies
         public BetonContextKruipEnKrimpCalculator KruipKrimpBerekening { get; set; }
         public BetonDoorbuigingCalculator DoorbuigingBerekening { get; set; }
 
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new() { Breedte = 500, Hoogte = 700 };
+        public ParametrischProfielContext Profiel { get; set; } = new() { Breedte = 500, Hoogte = 700 };
         public WapeningContext Wapening { get; set; } = new() { Tekst = "6Ø25" };
         //public BendingResults BuigingBerekening { get; set; }
 
