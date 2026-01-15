@@ -16,7 +16,7 @@ namespace Eurocode.BetonConstructies
     /// </summary>
     public partial class BetonContext : BaseMateriaal
     {
-        public override MateriaalType MateriaalType => MateriaalType.Beton;
+        public override MateriaalType Type => MateriaalType.Beton;
         public override double SoortelijkGewicht => 2500; // kg/m³
         public override string UserFriendlyName => $"{BetonSterkteKlasseGebruiksvriendelijkeNaam}";
         public override string Naam => UserFriendlyName;

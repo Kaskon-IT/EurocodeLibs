@@ -63,7 +63,6 @@ namespace CommonLibrary
         [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public bool Visible { get; set; } = true;
 
-        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public double Width { get; set; } = 3.00;
 
         [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]

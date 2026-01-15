@@ -1,4 +1,5 @@
 ﻿using CommonLibrary.Interfaces;
+using CommonLibrary.Models;
 
 namespace CommonLibrary.Materialen;
 
@@ -9,11 +10,10 @@ public sealed class DummyMateriaal : IMateriaal
     private DummyMateriaal() { }
 
     public string Naam { get; set; } = "Geen Materiaal";
-  
+    public MateriaalType Type => MateriaalType.Dummy;
 
     public string Eurocode => "NVT";
 
-    public double Dichtheid => 1e-3;
     public double SoortelijkGewicht => 1.0; // 1 kg/m³
     public double E => 1;
 

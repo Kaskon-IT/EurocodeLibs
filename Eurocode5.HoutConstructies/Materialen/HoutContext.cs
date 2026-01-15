@@ -44,7 +44,7 @@ namespace Eurocode.HoutConstructies
        
 
 
-        public override MateriaalType MateriaalType => MateriaalType.Hout;
+        public override MateriaalType Type => MateriaalType.Hout;
         
         public override string UserFriendlyName => $"{Kwaliteit}";
         public override string Naam => UserFriendlyName;

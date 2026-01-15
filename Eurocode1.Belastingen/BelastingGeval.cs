@@ -44,7 +44,7 @@ namespace Eurocode.Belastingen
 
         private GebruiksklasseEnum? _gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen;
 
-        [TableColumn("gebruiksklasse", order: 20, width: 6.0)]
+        [TableColumn("gebruiksklasse", order: 20, width: 7.0)]
         public GebruiksklasseEnum? Gebruiksklasse
         {
             get => _gebruiksklasse;
@@ -67,7 +67,6 @@ namespace Eurocode.Belastingen
         }
 
 
-        [TableColumn("opm.", order: 9999, width: 4.0)]
         public string Opmerking { get; set; } = "";
 
 
@@ -106,7 +105,7 @@ namespace Eurocode.Belastingen
         }
 
 
-        [TableColumn("|psi|~0~", order: 40, width: 1.0)]
+        [TableColumn("|psi|~0~", order: 40, width: 2.0)]
         public string Mom0
         {
             get
@@ -116,7 +115,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("|psi|~1~", order: 41, width: 1.0)]
+        [TableColumn("|psi|~1~", order: 41, width: 2.0)]
         public string Mom1
         {
             get
@@ -126,7 +125,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("|psi|~2~", order: 42, width: 1.0)]
+        [TableColumn("|psi|~2~", order: 42, width: 2.0)]
         public string Mom2
         {
             get

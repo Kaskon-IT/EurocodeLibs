@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonLibrary.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace CommonLibrary.Interfaces
 {
     public interface IMateriaal
     {
+        MateriaalType Type { get; }
         string Naam { get; }
         string Eurocode { get; }
         double SoortelijkGewicht { get; }

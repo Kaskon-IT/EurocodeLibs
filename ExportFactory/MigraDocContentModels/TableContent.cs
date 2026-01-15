@@ -7,8 +7,18 @@
         public List<TableCellHeaderContent> Headers { get; set; } = new List<TableCellHeaderContent>();
         public List<double> ColumnWidths { get; set; } = new List<double>();
         public List<List<TableCellContent>> Rows { get; set; } = new List<List<TableCellContent>>();
+        
+        /// <summary>
+        /// Geeft de optie om de headers niet weer te geven.
+        /// </summary>
         public bool HideHeaders { get; set; } = false; // default false
 
+        /// <summary>
+        /// Bepaald of het een normale tabel is of een draaitabel (pivot table).
+        /// Bij een draaitabel krijgt de table de 'ec-table-pivot' CSS klasse.
+        /// Bij een normale table 'ec-table' CSS klasse.
+        /// </summary>
+        public bool IsPivotTable { get; set; } = false; 
 
         public TableContent Clone()
         {

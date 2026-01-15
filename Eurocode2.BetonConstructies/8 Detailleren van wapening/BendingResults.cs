@@ -475,7 +475,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             Symbol = "<i>A</i><sub>s,req</sub>",
             Unit = "mm²", Label = "benodigde wapening",
-            Width = 2.0,
+            Width = 1.5,
             Key = K.AsBen,
             StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsRequired
@@ -686,7 +686,10 @@ namespace Eurocode.BetonConstructies
 
         //private List<int> _meldingCodes = [];
 
-        [TableColumn(Label = "opm.", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        [TableColumn(
+            Label = "opm.", 
+            Width = 2.0,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public string MeldingNummers
         {
             get

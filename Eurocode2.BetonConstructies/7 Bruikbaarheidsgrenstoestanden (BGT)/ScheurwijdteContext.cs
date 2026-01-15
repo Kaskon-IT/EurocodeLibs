@@ -367,7 +367,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "<i>k</i><sub>x</sub>",
             Description = " voor de bepaling van de duurzaamheid, mogen de waarden in tabel 7.1N zijn vermenigvuldigd met een factor kx.",
             Key = K.ScheurwijdteKx,
-            Width = 2.0,
+            Width = 1.5,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double ScheurwijdteGrenswaardeFactorKx
         {

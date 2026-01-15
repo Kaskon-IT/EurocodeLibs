@@ -9,7 +9,7 @@ namespace CommonLibrary.Models
         public BaseMateriaal() { }
 
         // Wordt door conrecte materialen ingevuld
-        public abstract MateriaalType MateriaalType { get; }
+        public virtual MateriaalType Type { get; }
 
         // Gedeelde eigenschappen
         public virtual string Naam { get; set; } = string.Empty;
@@ -46,6 +46,13 @@ namespace CommonLibrary.Models
         public virtual double E { get; set; }
     }
 
-    public enum MateriaalType { Beton, Staal, Hout }
+    public enum MateriaalType { 
+        Dummy, 
+        Beton, 
+        Staal, 
+        Hout,
+        Aluminimium,
+        Steen,
+    }
 
 }

@@ -695,14 +695,15 @@ namespace ExportFactory.Services
 
             }
 
+            if (tableContent.IsPivotTable) table.Tag += " pivot"; // for HtmlCreator gebruiken we de Tag om aan te geven dat het een pivot tabel is.
 
             // Add header row
             if (tableContent.HideHeaders)
             {
-                // vroeg gebruikte we Tag om aan te geven dat de 1e rij niet getoond moet worden.
+                // vroeger gebruikte we Tag om aan te geven dat de 1e rij niet getoond moet worden.
                 // dit is niet meer nodig!
                 // omzetten naar !HideHeaders indien gecontroleerd is of alles nog werkt.
-                table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om aan te geven dat de 1e rij niet getoond moet worden.
+                table.Tag += " hideheader"; // for HtmlCreator gebruiken we de Tag om aan te geven dat de 1e rij niet getoond moet worden.
             }
             else
             {
@@ -1330,7 +1331,7 @@ namespace ExportFactory.Services
             table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
             table.Borders.Visible = false;
             table.AddColumn(Unit.FromCentimeter(4)); // left column
-            table.AddColumn(Unit.FromCentimeter(10)); // right column
+            table.AddColumn(Unit.FromCentimeter(14)); // right column
             foreach (var item in labels)
             {
                 var row = table.AddRow();
@@ -1447,13 +1448,13 @@ namespace ExportFactory.Services
             AddLabels(section, coverPage.ProjectLabels);
 
             // blank line
-            section.AddParagraph(); // Add a blank paragraph for spacing
+            section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
 
             // Document-labels
             //AddLabeledValues(section, coverPage.DocumentLabeledValues);
             AddLabels(section, coverPage.DocumentLabels);
 
-            section.AddParagraph(); // Add a blank paragraph for spacing
+            section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
 
             AddRevisionTable(section, coverPage.RevisionContent);
 

@@ -12,6 +12,7 @@ namespace Eurocode.StaalConstructies
 
     public class StaalContext : BaseMateriaal
     {
+        public override MateriaalType Type => MateriaalType.Staal;
         public override double SoortelijkGewicht => 7850; // kg/m³
         public override double E => 210e3;
         public override string Naam => StaalKwaliteit?.ToString() ?? "?";
@@ -35,7 +36,6 @@ namespace Eurocode.StaalConstructies
 
 
 
-        public override MateriaalType MateriaalType => MateriaalType.Staal;
 
         public override string UserFriendlyName => StaalKwaliteit?.ToString() ?? "Onbekend";
 

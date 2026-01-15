@@ -7,7 +7,7 @@
 
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageId>Kaskon.CommonLibrary</PackageId>
-	  <Version>2.2.29</Version>
+	  <Version>2.2.31</Version>
 	  <Authors>Bart van der Linden</Authors>
 	  <Company>Kaskon</Company>
 	  <Description>Library voor veelgebruikte extensions, helpers, interfaces en meer.</Description>
