@@ -60,7 +60,6 @@ namespace CommonLibrary
         //[Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         //public WeergaveEnum Weergave { get; set; } = WeergaveEnum.AlleTabellen;
 
-        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public bool Visible { get; set; } = true;
 
         public double Width { get; set; } = 3.00;

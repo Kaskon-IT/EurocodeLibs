@@ -1,8 +1,12 @@
 ﻿namespace ExportFactory.Services
 {
+    using CommonLibrary;
+    using CommonLibrary.Models;
+    using ExportFactory.Shared;
     using MigraDoc.DocumentObjectModel;
     using MigraDoc.DocumentObjectModel.Fields;
     using MigraDoc.DocumentObjectModel.Tables;
+    using System.Data;
     using System.Text;
     using System.Text.RegularExpressions;
 
@@ -290,6 +294,20 @@
                         if (isPivotTable)
                             cssTable += "-pivot";
 
+                        if (isPivotTable)
+                        {
+                            cssTable += " row-head";
+                        }
+                        else
+                        {
+                            cssTable += " col-head";
+                        }
+
+                        if (table.Borders.Visible == false)
+                        {
+                            cssTable += " borderless";
+                        }
+
 
 
                         // start <table>
@@ -316,6 +334,16 @@
                         foreach (Row row in table.Rows)
                         {
                             var cellIndex = 0;
+
+                            var sourceObj = row.Tag;
+                            if (sourceObj != null) 
+                            {
+                                if (sourceObj is BaseEurocodeContext ctx)
+                                {
+                                    var test = ctx; // even debuggen
+                                    //if (ctx is )
+                                }
+                            }
 
 
                             if (isPivotTable)
@@ -362,6 +390,14 @@
 
                                 var htmlClass = "ec-td";
 
+                                var title = "";
+                                if (cell.Tag is Formula formula)
+                                {
+                                    title = $"data-tex='{formula.GetValue()}' data-caption='{formula.Name}'";
+                                    htmlClass += " has-formula";
+                                }
+
+                                
 
 
                                 if (isPivotTable)
@@ -387,6 +423,7 @@
 
                                     if (cellPar != null)
                                     {
+                                        title = $"title='{cellPar}'";
 
                                         if (cellPar.Tag != null)
                                         {
@@ -432,8 +469,14 @@
                                     }
                                 }
 
+                                string cellText = "?";
                                 if (cellPar != null)
-                                    htmlBuilder.AppendLine($"<{htmlTag} {style} class='{htmlClass}' {colspan} {rowspan}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
+                                    cellText = ProcessParagraph(cellPar);
+
+                                htmlBuilder.AppendLine($"<{htmlTag} {title} {style} class='{htmlClass}' {colspan} {rowspan}>" + $"{cellText}" + $"</{htmlTag}>");
+
+
+
 
                                 cellIndex++;
                             }
@@ -462,20 +505,10 @@
                 {
                     htmlBuilder.Append("</div>");
                 }
-
-
             }
-
-            // Nog 1 div voor blanco deel onder laatste element voor leesbaarheid
-            //htmlBuilder.AppendLine("<div style='height:1cm;'></div>");
-
 
             // Close the container div
             htmlBuilder.Append("</div>");
-
-            // Nog een div voor blanco ruimte onder laatste element
-            //htmlBuilder.AppendLine("<div style='height:5cm;'></div>");
-
 
             // Einde van de HTML
             htmlBuilder.AppendLine("</body>");

@@ -1362,7 +1362,7 @@ namespace ExportFactory.Services
             table.Borders.Visible = false;
             table.AddColumn(Unit.FromCentimeter(4));
             table.AddColumn(Unit.FromCentimeter(4));
-            table.AddColumn(Unit.FromCentimeter(6));
+            table.AddColumn(Unit.FromCentimeter(10));
 
             var headerRow = table.AddRow();
             headerRow.Cells[0].AddParagraph("versie");
@@ -1456,6 +1456,7 @@ namespace ExportFactory.Services
 
             section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
 
+            section.AddParagraph("revisiebeheer", "Kop 3"); // Add a blank paragraph for spacing
             AddRevisionTable(section, coverPage.RevisionContent);
 
         }

@@ -54,24 +54,40 @@
             int aantalKarakters = DynamicValue?.Length ?? 0 + StaticValue.Length;
             int aantalKaraktersVoorLineBreak = 120;
 
+            var part1 = FormulaSanitizer.Sanitize(StaticValue);
             var part2 = "";
             if (DynamicValue != null)
             {
-                part2 = DynamicValue;
+                part2 = FormulaSanitizer.Sanitize(DynamicValue);
 
                 if (removeSymbol || aantalKarakters < aantalKaraktersVoorLineBreak) // kleiner dan dit aantal sowieso in 1 lijn
                 {
-                    var index = DynamicValue.IndexOf('=');
-                    string result = index >= 0 ? DynamicValue.Substring(index) : string.Empty;
+                    var index = part2.IndexOf('=');
+                    string result = index >= 0 ? part2.Substring(index) : string.Empty;
                     part2 = result;
                 }
             }
 
             if (aantalKarakters < aantalKaraktersVoorLineBreak)
-                return $"{StaticValue} {part2}";
+                return $"{part1} {part2}";
             else
-                return $"{StaticValue}\\\\{part2}";
+                return $"{part1}\\\\{part2}";
         }
+
+        public static class FormulaSanitizer
+        {
+            public static string Sanitize(string tex)
+            {
+                if (string.IsNullOrEmpty(tex))
+                    return tex;
+
+                return tex
+                    .Replace("‰", @"\text{\textperthousand}")
+                    .Replace("–", @"\text{--}")
+                    .Replace("Ø", @"\text{Ø}");
+            }
+        }
+
     }
 
 }
