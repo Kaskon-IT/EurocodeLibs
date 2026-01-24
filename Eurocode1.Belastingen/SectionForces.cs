@@ -99,7 +99,7 @@ namespace Eurocode.Belastingen
         private double _my, _mz, _vy, _vz, _nx, _tx;
 
 
-        [TableColumn(Label = "Moment (Y-as)", Symbol = "<i>M</i><sub>y</sub>", Unit = "kNm")]
+        [TableColumn(Label = "Moment (Y-as)", Symbol = "<i>M<sub>y</sub></i>", Unit = "kNm")]
         public double My
         {
             get => _my;

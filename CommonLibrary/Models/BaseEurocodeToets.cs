@@ -9,6 +9,7 @@ namespace CommonLibrary.Models
 {
     public abstract class BaseEurocodeToets
     {
+        public abstract string Positie { get; set; }
         public abstract string Titel { get; }
         public abstract string Norm { get; }
         public abstract string Artikel { get; set; }
@@ -28,8 +29,15 @@ namespace CommonLibrary.Models
     );
 
 
+    public class StaalToetsResultaat : EurocodeResultaat
+    {
+        
+    }
+
+
     public class EurocodeResultaat
     {
+        public string Positie { get; init; } = "...";
         public string Titel { get; init; } = "?";
         public string Norm { get; init; } = "?";
         public string Artikel { get; init; } = "";
@@ -37,6 +45,10 @@ namespace CommonLibrary.Models
        
 
         public double Waarde { get; init; }
+
+
+        public InternalForces Forces { get; init; } = new();
+
         public string Unit { get; init; } = "kN";
         public double Toelaatbaar { get; init; }
         public double Fy { get; init; }

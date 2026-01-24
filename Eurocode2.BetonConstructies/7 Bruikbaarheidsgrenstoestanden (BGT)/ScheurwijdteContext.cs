@@ -310,7 +310,7 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(
-            Symbol = "ε<sub>sm</sub>-ε<sub>cm</sub>",
+            Symbol = "<i>ε<sub>sm</sub>-ε<sub>cm</sub></i>",
             Label = "rekverschil",
             Article = "7.3.4 (2)",
             Description = "mag zijn berekend uit de vergelijking (7.9)",
@@ -336,7 +336,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             Article = "7.3.4 (1)",
             Label = "scheurwijdte",
-            Symbol = "<i>w</i><sub>k</sub>",
+            Symbol = "<i>w<sub>k</sub></i>",
             Unit = "mm",
             Description = "De scheurwijdte <i>w</i><sub>k</sub> mag zijn berekend met vergelijking (7.8):",
             StringFormat = "0.##",
@@ -351,7 +351,7 @@ namespace Eurocode.BetonConstructies
             {
                 return new()
                 {
-                    Name = "7.8",
+                    Name = "(7.8)",
                     StaticValue = @"w_k = s_{r,max} \cdot (\epsilon_{sm}-\epsilon_{cm})",
                     DynamicValue = $@"w_k = {SrMax.ToTeX()} \cdot {EpsSmMinusEpsCm.ToTeX()} = {Wk.ToTeX()} \;mm"
                 };
@@ -364,7 +364,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             Article = "7.3.1",
             Label = "factor",
-            Symbol = "<i>k</i><sub>x</sub>",
+            Symbol = "<i>k<sub>x</sub></i>",
             Description = " voor de bepaling van de duurzaamheid, mogen de waarden in tabel 7.1N zijn vermenigvuldigd met een factor kx.",
             Key = K.ScheurwijdteKx,
             Width = 1.5,
@@ -389,7 +389,7 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(
             Article = "7.3.1",
-            Symbol = "<i>w</i><sub>max</sub>",
+            Symbol = "<i>w<sub>max</sub></i>",
             Unit = "mm",
             Label = "grenswaarde scheurwijdte",
             Width = 2.0,
@@ -444,7 +444,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             Article = "7.3.2 (2)",
             Label = "minimale wapening scheurbeheersing",
-            Symbol = "<i>A</i><sub>s,min</sub>",
+            Symbol = "<i>A<sub>s,min</sub></i>",
             Unit = "mm²",
             StringFormat = "0",
             Width = 2.0,

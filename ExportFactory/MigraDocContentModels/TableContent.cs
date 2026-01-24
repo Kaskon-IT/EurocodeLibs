@@ -15,10 +15,17 @@
 
         /// <summary>
         /// Bepaald of het een normale tabel is of een draaitabel (pivot table).
-        /// Bij een draaitabel krijgt de table de 'ec-table-pivot' CSS klasse.
+        /// Bij een draaitabel krijgt de table de 'row-head' CSS klasse erbij.
         /// Bij een normale table 'ec-table' CSS klasse.
         /// </summary>
-        public bool IsPivotTable { get; set; } = false; 
+        public bool IsPivotTable { get; set; } = false;
+
+        /// <summary>
+        /// Bepaald of alleeen de layout van de tabel wordt aangehouden, dus zonder styling.
+        /// Er wordt wel een gestippelde cell-border getoond om de cellen aan te geven.
+        /// Maar deze wordt NIET geprint.
+        /// </summary>
+        public bool LayoutOnly { get; set; } = false;
 
         public TableContent Clone()
         {

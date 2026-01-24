@@ -1,5 +1,6 @@
 ﻿using CommonLibrary.Interfaces;
 using CommonLibrary.Models;
+using Microsoft.AspNetCore.Builder;
 using Profielen.Staal;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,7 @@ namespace Eurocode.StaalConstructies
 
     public class ShearVzCheck : BaseEurocodeToets
     {
+        public override string Positie { get; set; } = "";
         public override string Titel => "Dwarskracht (afschuiving)";
         public override string Norm => "EN 1993-1-1";
         public override string Artikel { get; set; } = "6.2.6";
@@ -77,10 +79,12 @@ namespace Eurocode.StaalConstructies
 
             return new EurocodeResultaat()
             {
+                Positie = Positie,
                 Titel = Titel,
                 Norm = Norm,
                 Fy = steel.Fy,
                 Waarde = Math.Abs(f.Vz),
+                Forces = f,
                 Unit = "kN",
                 Toelaatbaar = vRd,
                 Artikel = Artikel,
@@ -98,6 +102,7 @@ namespace Eurocode.StaalConstructies
 
     public class BendingMyToets : BaseEurocodeToets
     {
+
         private readonly int _sectionClass; // 1..4
 
         public BendingMyToets(int sectionClass)
@@ -105,6 +110,7 @@ namespace Eurocode.StaalConstructies
             _sectionClass = sectionClass;
         }
 
+        public override string Positie { get; set; } = "";
         public override string Titel => "Buiging om y-as";
         public override string Norm => "EN 1993-1-1";
         public override string Formule { get; set; } = "(6.12)";
@@ -138,12 +144,14 @@ namespace Eurocode.StaalConstructies
             // Resultaat object maken
             return new EurocodeResultaat
             {
+                Positie = Positie,
                 Titel = Titel,
                 Norm = Norm,
                 Artikel = Artikel,
                 Formule = Formule,
                 Fy = steel.Fy,
                 Waarde = Math.Abs(f.My),
+                Forces = f,
                 Unit = "kNm",
                 Toelaatbaar = MRd,
                 Toelichting = $"Zuivere buiging om y-as, SectionClass={_sectionClass}",

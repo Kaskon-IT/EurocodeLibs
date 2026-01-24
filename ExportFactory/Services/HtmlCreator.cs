@@ -288,38 +288,58 @@
 
                         bool isPivotTable = tableTag != null && tableTag.Contains("pivot");
                         bool hideHeader = tableTag != null && tableTag.Contains("hideheader");
+                        bool layoutOnly = tableTag != null && tableTag.Contains("layout-only");
 
-
+                        List<string> cssClasses = ["ec-table"];
                         string cssTable = "ec-table";
-                        if (isPivotTable)
-                            cssTable += "-pivot";
-
+                       
                         if (isPivotTable)
                         {
                             cssTable += " row-head";
+                            cssClasses.Add("row-head");
                         }
-                        else
+                        if (!hideHeader)
                         {
-                            cssTable += " col-head";
+                            cssClasses.Add("col-head");
+                        }
+                        if (layoutOnly)
+                        {
+                            cssClasses.Add("layout-only"); 
                         }
 
                         if (table.Borders.Visible == false)
                         {
-                            cssTable += " borderless";
+                            //cssTable += " layout-only"; // alleen 
                         }
 
 
 
                         // start <table>
-                        htmlBuilder.AppendLine($"<table class='{cssTable}'>");
-                        if (isPivotTable || hideHeader)
+                        htmlBuilder.AppendLine($"<div class='table-wrap {(layoutOnly? "layout-only": "")}'>");
+
+                        htmlBuilder.AppendLine($"<table class='{string.Join(" ", cssClasses)}'>");
+
+                        htmlBuilder.AppendLine("<colgroup>");
+                        foreach (var col in table.Columns)
                         {
-                            htmlBuilder.AppendLine("<tbody>");  // geen header bij pivot en als verborgen
+                            if (col is MigraDoc.DocumentObjectModel.Tables.Column mdc)
+                            {
+                                htmlBuilder.AppendLine($"<col style='width:{mdc.Width}'>");
+                            }
                         }
-                        else
-                        {
-                            htmlBuilder.AppendLine("<thead class='ec-table-head'>");
-                        }
+                        htmlBuilder.AppendLine("</colgroup>");
+
+                        htmlBuilder.AppendLine("<tbody>");  // NB. geen thead of tfoot (maar met CSS)
+
+                        //if (isPivotTable || hideHeader )
+                        //{
+                        //    htmlBuilder.AppendLine("<tbody>");  // geen header bij pivot en als verborgen
+                        //}
+                        //else
+                        //{
+                        //    //htmlBuilder.AppendLine("<thead class='ec-table-head'>");
+                        //    htmlBuilder.AppendLine("<tbody>"); // geen aparte thead meer
+                        //}
 
 
                         var rowIndex = 0;
@@ -348,11 +368,13 @@
 
                             if (isPivotTable)
                             {
-                                htmlBuilder.AppendLine("<tr class='ec-table-row ec-table-row-pivot'>");
+                                //htmlBuilder.AppendLine("<tr class='ec-table-row ec-table-row-pivot'>");
+                                htmlBuilder.AppendLine("<tr>");
+
                             }
                             else
                             {
-                                htmlBuilder.AppendLine("<tr class='ec-table-row'>");
+                                htmlBuilder.AppendLine("<tr>");
                             }
 
                             string rowspan = string.Empty;
@@ -473,7 +495,11 @@
                                 if (cellPar != null)
                                     cellText = ProcessParagraph(cellPar);
 
-                                htmlBuilder.AppendLine($"<{htmlTag} {title} {style} class='{htmlClass}' {colspan} {rowspan}>" + $"{cellText}" + $"</{htmlTag}>");
+                                // even lelijk, maar werkt
+                                var tagComplete = string.Join(" ", htmlTag, $"class='{htmlClass}'", title, colspan, rowspan);
+
+                                //htmlBuilder.AppendLine($"<{htmlTag} {title} {style} class='{htmlClass}' {colspan} {rowspan}>" + $"{cellText}" + $"</{htmlTag}>");
+                                htmlBuilder.AppendLine($"<{tagComplete}>" + $"{cellText}" + $"</{htmlTag}>");
 
 
 
@@ -485,7 +511,9 @@
 
                             if (rowIndex == 0 && !isPivotTable && !hideHeader)
                             {
-                                htmlBuilder.AppendLine("</thead>"); // niet bij pivottable of verbogen headers
+                                //htmlBuilder.AppendLine("</thead>"); // niet bij pivottable of verbogen headers
+                                //htmlBuilder.AppendLine("</thead>"); // niet bij pivottable of verbogen headers
+
                             }
 
                             rowIndex++;
@@ -496,7 +524,9 @@
                         {
                             htmlBuilder.AppendLine("</tbody>");
                         }
-                        htmlBuilder.AppendLine("</table>");
+                        htmlBuilder.AppendLine("</table>"); 
+                        htmlBuilder.AppendLine("</div>"); // close div wrapper
+
                     } // end if table
                 }
 

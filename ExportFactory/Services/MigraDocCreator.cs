@@ -342,6 +342,27 @@ namespace ExportFactory.Services
                         case ParagraphContent paragraphContent:
                             var par = section.AddParagraph("", paragraphContent.Style);
                             AddMarkdownToParagraph(par, paragraphContent.Markdown, cache);
+
+
+                            // split
+                            //var parts = Regex.Split(
+                            //    paragraphContent.Markdown,
+                            //    @"(?<=^#+.*$)|\r?\n\s*\r?\n",
+                            //    RegexOptions.Multiline
+                            //)
+                            //.Where(p => !string.IsNullOrWhiteSpace(p))
+                            //.ToList();
+
+
+
+                            //foreach (var part in parts)
+                            //{
+                            //    var par = section.AddParagraph();
+                            //    AddMarkdownToParagraph(par, part, cache);
+
+                            //}
+
+
                             break;
 
                         case TableContent tableContent:
@@ -697,6 +718,9 @@ namespace ExportFactory.Services
 
             if (tableContent.IsPivotTable) table.Tag += " pivot"; // for HtmlCreator gebruiken we de Tag om aan te geven dat het een pivot tabel is.
 
+            if (tableContent.LayoutOnly)
+                table.Tag += " layout-only"; // for HtmlCreator gebruiken we de Tag om aan te geven dat het een layout-only tabel is.
+
             // Add header row
             if (tableContent.HideHeaders)
             {
@@ -977,7 +1001,11 @@ namespace ExportFactory.Services
             kop4.ParagraphFormat.SpaceAfter = "1mm";
             kop4.Font.Color = Colors.Black;
 
-
+            // Code style (voor inline code tussen backticks)
+            var codeStyle = document.Styles.AddStyle("Code", "Normal");
+            codeStyle.Font.Name = "Courier New"; // Monospace font
+            codeStyle.Font.Size = 0.9 * content.Font.Size;
+            codeStyle.Font.Color = Colors.DarkRed;
 
             // table heading
             var tableHeading = document.Styles.AddStyle("TableHeading", "Normal");
@@ -1328,10 +1356,10 @@ namespace ExportFactory.Services
         {
             if (labels == null || labels.Count == 0) return;
             var table = section.AddTable();
-            table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
+            table.Tag = "hideheader layout-only"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
             table.Borders.Visible = false;
             table.AddColumn(Unit.FromCentimeter(4)); // left column
-            table.AddColumn(Unit.FromCentimeter(14)); // right column
+            table.AddColumn(Unit.FromCentimeter(14.2)); // right column
             foreach (var item in labels)
             {
                 var row = table.AddRow();
@@ -1472,22 +1500,15 @@ namespace ExportFactory.Services
             if (trim)
                 markdown = markdown.Trim();
 
-            // Determine if the markdown is a heading
-            if (markdown.StartsWith("# "))
-            {
-                // Heading1
-                paragraph.AddFormattedText(markdown.Substring(2).Trim(), "Kop 1");
+            
 
-            }
-            else if (markdown.StartsWith("## "))
+            // Determine if the markdown is a heading
+            if (markdown.StartsWith("#"))
             {
-                // Heading2
-                paragraph.AddFormattedText(markdown.Substring(3).Trim(), "Kop 2");
-            }
-            else if (markdown.StartsWith("### "))
-            {
-                // Heading3
-                paragraph.AddFormattedText(markdown.Substring(4).Trim(), "Kop 3");
+                var level = Math.Min(markdown.TakeWhile(c => c == '#').Count(), 9); // max 9 levels 
+                var textWithoutHashes = markdown.TrimStart('#').TrimStart();
+                var style = $"Kop {level}";
+                paragraph.AddFormattedText(textWithoutHashes, style);
             }
             else
             {
@@ -1507,7 +1528,10 @@ namespace ExportFactory.Services
             {
                 if (i % 2 == 1) // Odd indices are raw text (inside backticks)
                 {
-                    paragraph.AddText(rawSegments[i]); // Add raw text without further parsing
+                    var codeText = paragraph.AddFormattedText(rawSegments[i]);
+                    codeText.Font.Name = "Courier New";
+                    codeText.Font.Size = Unit.FromPoint(paragraph.Document.Styles["Normal"].Font.Size.Point * 0.9);
+                    codeText.Font.Color = Colors.DarkRed;
                 }
                 else
                 {
@@ -1650,14 +1674,14 @@ namespace ExportFactory.Services
                                .Replace("‰", "^0^/~00~");
 
             var regex = new Regex(
-                @"(?<svg>\<svg.*?\</svg\>)|" +  // <-- nieuwe groep voor SVG
-                @"(?<png>data:image\/png;base64,[A-Za-z0-9+/=]+)|" +   // <-- nieuwe groep voor PNG!
-                @"(?<bold>\*\*(.*?)\*\*|<b>(.*?)</b>)|" +
-                @"(?<italic>\*(.*?)\*|<i>(.*?)</i>)|" +
-                @"(?<underline>__(.*?)__|<u>(.*?)</u>)|" +
+               @"(?<svg>\<svg.*?\</svg\>)|" +
+                @"(?<png>data:image\/png;base64,[A-Za-z0-9+/=]+)|" +
+                @"(?<bold>\*\*(.*?)\*\*|<b\b[^>]*>(.*?)</b>)|" +
+                @"(?<italic>\*(.*?)\*|<i\b[^>]*>(.*?)</i>)|" +
+                @"(?<underline>__(.*?)__|<u\b[^>]*>(.*?)</u>)|" +
                 @"(?<strike>~~(.*?)~~)|" +
-                @"(?<sup>\^(.*?)\^|<sup>(.*?)</sup>)|" +
-                @"(?<sub>~(.*?)~|<sub>(.*?)</sub>)|" +
+                @"(?<sup>\^(.*?)\^|<sup\b[^>]*>(.*?)</sup>)|" +
+                @"(?<sub>~(.*?)~|<sub\b[^>]*>(.*?)</sub>)|" +
                 @"(?<color>\{(.*?):(.*?)\})|" +
                 @"(?<br>\n)|" +
                 @"(?<text>[^*^~_<>{}\n]+)",
@@ -1757,9 +1781,14 @@ namespace ExportFactory.Services
                 else if (match.Groups["color"].Success)
                 {
                     var parts = Regex.Match(match.Value, @"\{(.*?):(.*?)\}").Groups;
-                    var color = Color.Parse(parts[1].Value.Trim());
-                    var content = parts[2].Value.Trim();
-                    ApplyMarkdownStylesToParagraph(paragraph, content, cache, color, depth + 1);
+                    if (TryParseMigraDocColor(parts[1].Value.Trim(), out var color))
+                    {
+                        var content = parts[2].Value.Trim();
+                        ApplyMarkdownStylesToParagraph(paragraph, content, cache, color, depth + 1);
+                    }
+
+                        
+                    
                 }
                 else if (match.Groups["br"].Success)
                 {
@@ -1862,13 +1891,80 @@ namespace ExportFactory.Services
             }
         }
 
-        private static string StripTags(string input, string markdown = "", string htmlOpen = "", string htmlClose = "")
+        private static string StripTags(
+            string input,
+            string markdown = "",
+            string htmlOpen = "",
+            string htmlClose = "")
         {
-            return input.Replace(markdown, "")
-                        .Replace(htmlOpen, "", StringComparison.OrdinalIgnoreCase)
-                        .Replace(htmlClose, "", StringComparison.OrdinalIgnoreCase);
+            var result = input;
+
+            // 1️⃣ Markdown verwijderen (zoals *, **, __)
+            if (!string.IsNullOrEmpty(markdown))
+            {
+                result = result.Replace(markdown, "");
+            }
+
+            // 2️⃣ HTML open-tag met eventuele attributen
+            if (!string.IsNullOrEmpty(htmlOpen))
+            {
+                // htmlOpen = "<i>" → tagName = "i"
+                var tagName = htmlOpen.Trim('<', '>', '/');
+
+                result = Regex.Replace(
+                    result,
+                    $@"<\s*{tagName}\b[^>]*>",
+                    "",
+                    RegexOptions.IgnoreCase | RegexOptions.Singleline
+                );
+            }
+
+            // 3️⃣ HTML close-tag
+            if (!string.IsNullOrEmpty(htmlClose))
+            {
+                var tagName = htmlClose.Trim('<', '>', '/');
+
+                result = Regex.Replace(
+                    result,
+                    $@"</\s*{tagName}\s*>",
+                    "",
+                    RegexOptions.IgnoreCase | RegexOptions.Singleline
+                );
+            }
+
+            return result;
         }
 
+        //private static string StripTags(string input, string markdown = "", string htmlOpen = "", string htmlClose = "")
+        //{
+        //    return input.Replace(markdown, "")
+        //                .Replace(htmlOpen, "", StringComparison.OrdinalIgnoreCase)
+        //                .Replace(htmlClose, "", StringComparison.OrdinalIgnoreCase);
+        //}
+
+        private static bool TryParseMigraDocColor(string input, out Color color)
+        {
+            color = default;
+
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            input = input.Trim();
+
+            try
+            {
+                // Ondersteunt:
+                // - named colors (Red, Blue, Black, ...)
+                // - hex (#RRGGBB)
+                // - rgb(r,g,b)
+                color = Color.Parse(input);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         private static void AddFormattedTextWithEmojiFont(Paragraph paragraph, string content, Color? color = null)
         {

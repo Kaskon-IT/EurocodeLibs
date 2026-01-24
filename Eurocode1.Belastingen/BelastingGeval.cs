@@ -100,12 +100,12 @@ namespace Eurocode.Belastingen
             get
             {
                 if (Type == BelastingGevalTypeEnum.Permanent) return "";
-                else return $"|psi|~0~={MomentaanFactoren.Mom0} |psi|~1~={MomentaanFactoren.Mom1} |psi|~2~={MomentaanFactoren.Mom2}";
+                else return $"*|psi|~0~*={MomentaanFactoren.Mom0} *|psi|~1~*={MomentaanFactoren.Mom1} *|psi|~2~*={MomentaanFactoren.Mom2}";
             }
         }
 
 
-        [TableColumn("|psi|~0~", order: 40, width: 2.0)]
+        [TableColumn("*|psi|~0~*", order: 40, width: 2.0)]
         public string Mom0
         {
             get
@@ -115,7 +115,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("|psi|~1~", order: 41, width: 2.0)]
+        [TableColumn("*|psi|~1~*", order: 41, width: 2.0)]
         public string Mom1
         {
             get
@@ -125,7 +125,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("|psi|~2~", order: 42, width: 2.0)]
+        [TableColumn("*|psi|~2~*", order: 42, width: 2.0)]
         public string Mom2
         {
             get
@@ -143,11 +143,11 @@ namespace Eurocode.Belastingen
             {
                 if (Nr == 2)
                 {
-                    return "q~k~=" + OpgelegdeBelastingen.Vlaklast.ToString("0.## kN/m²");
+                    return "*q~k~*=" + OpgelegdeBelastingen.Vlaklast.ToString("0.## kN/m²");
                 }
                 if (Nr == 3)
                 {
-                    return "Q~k~=" + OpgelegdeBelastingen.Puntlast.ToString("0.## kN");
+                    return "*Q~k~*=" + OpgelegdeBelastingen.Puntlast.ToString("0.## kN");
                 }
                 else return "";
             }

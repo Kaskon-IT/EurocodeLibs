@@ -14,7 +14,7 @@ namespace CommonLibrary
 
 
 
-        [TableColumn(Label = "Moment (Y-as)", Symbol = "<i>M</i><sub>y</sub>", Unit = "kNm")]
+        [TableColumn(Label = "Moment (Y-as)", Symbol = "<i>M<sub>y</sub></i>", Unit = "kNm")]
         public double My
         {
             get => _my;
