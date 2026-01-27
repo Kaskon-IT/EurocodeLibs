@@ -26,7 +26,7 @@ namespace Eurocode.BetonConstructies
         private double _lengteOverspanning = 2000;
         private BendingResults? _bendingResults;
 
-        [TableColumn(Label = "Lengte", Symbol = "<i>l</i>", Unit = "mm", Key = K.Slankheid_LengteOverspanning)]
+        [TableColumn(Label = "Lengte", Symbol = "<i>l</i>", Unit = "mm")]
         public double LengteOverspanning
         {
             get => _lengteOverspanning;
@@ -41,7 +41,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "effectieve dikte", Symbol = "<i>d</i>", Unit = "mm", Key = K.Slankheid_EffectieveDikte)]
+        [TableColumn(Label = "effectieve dikte", Symbol = "<i>d</i>", Unit = "mm")]
         public double EffectieveDikte
         {
             get => BendingResults?.D ?? 100;

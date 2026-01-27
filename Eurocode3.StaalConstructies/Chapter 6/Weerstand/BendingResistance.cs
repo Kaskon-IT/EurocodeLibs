@@ -41,7 +41,7 @@ namespace Eurocode.StaalConstructies
     {
         public override string Positie { get; set; } = "";
         public override string Titel => "Dwarskracht (afschuiving)";
-        public override string Norm => "EN 1993-1-1";
+        public override string Norm => "EC3";
         public override string Artikel { get; set; } = "6.2.6";
         public override string Formule { get; set; } = "(6.17)";
 
@@ -112,7 +112,7 @@ namespace Eurocode.StaalConstructies
 
         public override string Positie { get; set; } = "";
         public override string Titel => "Buiging om y-as";
-        public override string Norm => "EN 1993-1-1";
+        public override string Norm => "EC3";
         public override string Formule { get; set; } = "(6.12)";
         public override string Artikel { get; set; } = "6.2.5";
 

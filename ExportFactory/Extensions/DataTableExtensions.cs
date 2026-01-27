@@ -168,24 +168,25 @@
                 // Add rows
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
                 {
+                    if (propertyWithAttribute == null) continue; // 27-01-2026
                     Row row = migraDocTable.AddRow();
-                    ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
-                    string headerText = propertyWithAttribute.Attribute.Description ?? propertyWithAttribute.Attribute.Label ?? propertyWithAttribute.Property.Name;
-
-                    string? format = null;
+                    ParagraphAlignment alignment = propertyWithAttribute.Attribute?.Alignment ?? ParagraphAlignment.Left;
+                    string headerText = propertyWithAttribute.Attribute?.Description ?? propertyWithAttribute.Attribute?.Label ?? propertyWithAttribute.Property.Name;
 
                     AttributesMapping? mapping = null;
 
+                    // 27-01-2026 KEY UITGEZET 
                     // als de property.attribute.key is gegeveven de mapping ophalen
-                    if (propertyWithAttribute.Attribute.Key != null)
-                    {
-                        _mappingDict.TryGetValue(propertyWithAttribute.Attribute.Key, out mapping);
-                    }
-                    else
-                    {
-                        // geen specifieke key opgegeven, controleer of de name in het woordenboek staat
-                        _mappingDict.TryGetValue(propertyWithAttribute.Property.Name, out mapping);
-                    }
+                    //if (propertyWithAttribute.Attribute?.Key != null)
+                    //{
+                    //    _mappingDict.TryGetValue(propertyWithAttribute.Attribute.Key, out mapping);
+                    //}
+                    //else
+                    //{
+                    //    // geen specifieke key opgegeven, controleer of de name in het woordenboek staat
+                    //    _mappingDict.TryGetValue(propertyWithAttribute.Property.Name, out mapping);
+                    //}
+
 
 
 

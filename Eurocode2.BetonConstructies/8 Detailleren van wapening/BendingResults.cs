@@ -93,7 +93,7 @@ namespace Eurocode.BetonConstructies
             {
                 BerekenEnValideer();
             }
-            if (e.PropertyName == nameof(WapeningContext.Dekking))
+            if (e.PropertyName == nameof(WapeningContext.ReferentieDekking))
             {
                 // ? 
 
@@ -339,7 +339,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                if (Wapening == null || Wapening.Dekking == null)
+                if (Wapening == null)
                     return ZRefZonderDekking;
 
                 return Wapening.ZRef;

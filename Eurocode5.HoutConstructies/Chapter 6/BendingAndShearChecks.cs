@@ -36,7 +36,7 @@ namespace Eurocode.HoutConstructies
 
         public override string Positie { get; set; } = "";
         public override string Titel => "Dwarskracht (afschuiving)";
-        public override string Norm => "EN 1995-1-1";
+        public override string Norm => "EC5";
         public override string Artikel { get; set; } = "6.1.7";
         public override string Formule { get; set; } = "(6.13)";
 
@@ -100,7 +100,7 @@ namespace Eurocode.HoutConstructies
 
         public override string Positie { get; set; } = "";
         public override string Titel => "Buiging om y-as";
-        public override string Norm => "EN 1995-1-1";
+        public override string Norm => "EC5";
         public override string Formule { get; set; } = "(6.11)";
         public override string Artikel { get; set; } = "6.1.6";
 
