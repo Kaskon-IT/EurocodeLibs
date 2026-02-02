@@ -115,10 +115,10 @@ namespace ExportFactory.Services
             { "NuttigeHoogte", new(sym: "d =", desc:"nuttige hoogte", format : "0.# mm") },
 
 
-            {"AsBen", new(sym: "A~s,req~ =", desc: "benodigde wapening", format : "0 mm²") },
-            {"AsToe", new(sym: "A~s,prov~ =", desc: "toegepaste wapening", format : "0 mm²") },
-            {"AsMin", new(sym: "A~s,min~ =", desc: "minimaal benodigde wapening", format : "0 mm²") },
-            {"Xu", new(sym: "x~u~ =", desc: "hoogte drukzone", format : "0.# mm") },
+            {"AsBen", new(sym: "*A~s,req~* =", desc: "benodigde wapening", format : "0 mm²") },
+            {"AsToe", new(sym: "*A~s,prov~* =", desc: "toegepaste wapening", format : "0 mm²") },
+            {"AsMin", new(sym: "*A~s,min~* =", desc: "minimaal benodigde wapening", format : "0 mm²") },
+            {"Xu", new(sym: "*x~u~* =", desc: "hoogte drukzone", format : "0.# mm") },
 
 
 
@@ -291,7 +291,7 @@ namespace ExportFactory.Services
             { K.ScheurwijdteSrMax, new(sym: "s~r,max~ =",desc: "maximale scheurafstand", norm:"EC2", art: "7.3.4", vgl: "(7.11)\r\n(7.14)\r\n(7.15)",format: "0.##" )},
 
             { K.MomentScheurmoment, new("M~cr~ =", "scheurmoment", "", _kNm, "") },
-            { K.MomentFrequent, new(sym: "M~E,freq~ =", desc : "moment frequente combinatie", norm: "", art : "", format: _kNm) },
+            { K.MomentFrequent, new(sym: "*M~E,freq~* =", desc : "moment frequente combinatie", norm: "", art : "", format: _kNm) },
             //{ K.MomentRekenwaarde, new(sym: "M~Ed~", desc : "moment rekenwaarde", norm: "", art : "", format: _kNm) },
 
             { K.ScheurwijdteEpsilonSmMinusEpsilonCm, new(sym:"|epsilon|~sm~-|epsilon|~cm~", desc:"gemiddelde rek wapening minus gemiddelde betonrek",norm:"EC2",art:"7.3.4 (2)",vgl: "(7.9)", format:"e2")  },

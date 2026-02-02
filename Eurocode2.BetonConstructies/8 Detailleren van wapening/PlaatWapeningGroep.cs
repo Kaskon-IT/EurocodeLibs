@@ -2,6 +2,8 @@
 
 namespace Eurocode.BetonConstructies
 {
+
+
     /// <summary>
     /// Een plaatwapening groep bestaat uit een collectie van waplagen op één zijde van de plaat.
     /// Bijvoorbeeld bovenwapening of onderwapening.
@@ -75,18 +77,50 @@ namespace Eurocode.BetonConstructies
 
         public double DiameterVerdeel
         {
-            get => _diameterVerdeel;
+            get 
+            {
+                if (_verdeelWapening == null)
+                    return _diameterVerdeel;
+                else
+                    return _verdeelWapening.GrootsteDiameter;
+            }
             set => SetProperty(ref _diameterVerdeel, value);
         }
         
         public int LaagHoofdwapening
         {
             get => _laagHoofdwapening;
-            set => SetProperty(ref _laagHoofdwapening, value);
+            set
+            {
+                if (SetProperty(ref _laagHoofdwapening, value))
+                {
+                    UpdateReferentieDekkingen();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Maakt een diepe kopie van deze PlaatWapeningGroep met alle nested properties.
+        /// </summary>
+        public PlaatWapeningGroep Clone()
+        {
+            return new PlaatWapeningGroep()
+            {
+                Heading = this.Heading,
+                DekkingBuitensteLaag = new BetonDekkingContext(this.DekkingBuitensteLaag),
+                BasisWapening = this.BasisWapening?.Clone() ?? new(),
+                VerdeelWapening = this.VerdeelWapening?.Clone(),
+                BijlegWapening = this.BijlegWapening?.Clone(),
+                LaagHoofdwapening = this.LaagHoofdwapening,
+                DiameterVerdeel = this.DiameterVerdeel
+            };
         }
 
 
 
+        
+        
+        
 
 
         protected override void Bereken()
@@ -97,6 +131,104 @@ namespace Eurocode.BetonConstructies
         {
             Meldingen.Clear();
             return true;
+        }
+
+        private void UpdateReferentieDekkingen()
+        {
+            // basis dekking from outer layer
+            double? baseDekking = null;
+            try
+            {
+                baseDekking = _dekking?.DekkingToe;
+            }
+            catch
+            {
+                baseDekking = null;
+            }
+
+            if (baseDekking == null) return;
+
+            // If hoofdwapening is laag 1 -> Basis = dekking, Verdeel = dekking + verdeel diameter
+            // If hoofdwapening is laag 2 -> Verdeel = dekking, Basis = dekking + basis diameter
+            if (LaagHoofdwapening == 1)
+            {
+                // set Basis
+                if (_basisWapening != null)
+                    TrySetReferentieDekking(_basisWapening, baseDekking.Value, 1);
+
+                if (_verdeelWapening != null)
+                {
+                    double add = _verdeelWapening.GemiddeldeDiameter;
+                    TrySetReferentieDekking(_verdeelWapening, baseDekking.Value + add, 2);
+                }
+            }
+            else
+            {
+                // laag 2
+                if (_verdeelWapening != null)
+                    TrySetReferentieDekking(_verdeelWapening, baseDekking.Value, 1);
+
+                if (_basisWapening != null)
+                {
+                    double add = _basisWapening.GemiddeldeDiameter;
+                    TrySetReferentieDekking(_basisWapening, baseDekking.Value + add, 2);
+                }
+            }
+        }
+
+        private static void TrySetReferentieDekking(object wapeningObj, double waarde, int? laagNummer = null)
+        {
+            if (wapeningObj == null) return;
+
+            var t = wapeningObj.GetType();
+
+            // Try direct property 'ReferentieDekking'
+            var p = t.GetProperty("ReferentieDekking");
+            if (p != null && p.CanWrite)
+            {
+                try { p.SetValue(wapeningObj, waarde); return; } catch { /* swallow */ }
+            }
+
+            // Try DekkingToegepast
+            p = t.GetProperty("DekkingToegepast");
+            if (p != null && p.CanWrite)
+            {
+                try { p.SetValue(wapeningObj, waarde); return; } catch { /* swallow */ }
+            }
+
+            // Try nested Dekking object with DekkingToe
+            p = t.GetProperty("Dekking");
+            if (p != null && p.CanWrite)
+            {
+                try
+                {
+                    var dekObj = p.GetValue(wapeningObj);
+                    if (dekObj != null)
+                    {
+                        var pd = dekObj.GetType().GetProperty("DekkingToe");
+                        if (pd != null && pd.CanWrite)
+                        {
+                            pd.SetValue(dekObj, waarde);
+                            return;
+                        }
+                    }
+                }
+                catch { }
+            }
+            
+            // Probeer LaagNummer property op WapeningContext te zetten (indien aanwezig)
+            if (laagNummer.HasValue)
+            {
+                try
+                {
+                    var propLaag = t.GetProperty("LaagNummer");
+                    if (propLaag != null && propLaag.CanWrite)
+                    {
+                        propLaag.SetValue(wapeningObj, laagNummer.Value);
+                    }
+                }
+                catch { }
+            }
         }
 
     }

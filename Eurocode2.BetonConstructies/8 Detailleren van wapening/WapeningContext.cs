@@ -21,13 +21,31 @@ namespace Eurocode.BetonConstructies
     }
 
 
+    public abstract class BaseWapeningContext : BaseEurocodeContext
+    {
+        // een basis voor wapening contexten, zoals plaatwapening, balkwapening, etc.
+        
 
+    }
 
-    public class PlaatWapening : BaseEurocodeContext
+    public class PlaatWapening : BaseWapeningContext
     {
         public override string Heading { get; set; } = "plaatwapening";
         public PlaatWapeningGroep? Boven { get; set; }
         public PlaatWapeningGroep? Onder { get; set; }
+
+        /// <summary>
+        /// Maakt een diepe kopie van deze PlaatWapening met alle nested properties.
+        /// </summary>
+        public PlaatWapening Clone()
+        {
+            return new PlaatWapening
+            {
+                Heading = this.Heading,
+                Boven = this.Boven?.Clone(),
+                Onder = this.Onder?.Clone()
+            };
+        }
 
         protected override void Bereken()
         {
@@ -61,12 +79,36 @@ namespace Eurocode.BetonConstructies
             ReferentieDekking = referentieDekking;
         }
 
+        public string SanitizedTekst()
+        {
+            return Tekst
+                .Replace("x", "Ø")
+                .Replace("*", "Ø")
+                .Replace("r", "Ø")
+                .Replace("R", "Ø")
+                .Replace("d", "Ø")
+                .Replace("D", "Ø");
+        }
+
         // OBSOLETE constructor voor backward compatibility
         [Obsolete("Gebruik WapeningContext(string tekst, double referentieDekking) i.p.v. BetonDekkingContext")]
         public WapeningContext(string tekst, BetonDekkingContext dekking)
         {
             Tekst = tekst;
             ReferentieDekking = dekking.DekkingToe;
+        }
+
+        private double _grootsteDiameter;
+        public double GrootsteDiameter
+        {
+            get
+            {
+                if (_grootsteDiameter == 0)
+                {
+                    _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
+                }
+                return _grootsteDiameter;
+            }
         }
 
         private double _gemiddeldeDiameter;
@@ -138,6 +180,7 @@ namespace Eurocode.BetonConstructies
         public void SetZRef()
         {
             this._gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
+            this._grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
             this._zRef = ReferentieAfstand; // Berekende afstand tot hart staaf
         }
 
@@ -289,6 +332,29 @@ namespace Eurocode.BetonConstructies
             }
 
             return returnString;
+        }
+
+        /// <summary>
+        /// Laagnummer toewijzing (1 of 2) — wordt door PlaatWapeningGroep gezet voor sorting/overzicht.
+        /// Nullable: kan null zijn wanneer niet ingesteld.
+        /// </summary>
+        public int? LaagNummer { get; set; }
+
+        /// <summary>
+        /// Maakt een diepe kopie van deze WapeningContext.
+        /// </summary>
+        public WapeningContext Clone()
+        {
+            return new WapeningContext()
+            {
+                Tekst = this.Tekst,
+                ReferentieVlak = this.ReferentieVlak,
+                ReferentieLengte = this.ReferentieLengte,
+                ReferentieDekking = this.ReferentieDekking,
+                LaagNummer = this.LaagNummer,
+                AantalBijlegStaven = this.AantalBijlegStaven,
+                DiameterBijlegStaven = this.DiameterBijlegStaven
+            };
         }
 
 

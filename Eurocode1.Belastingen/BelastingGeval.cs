@@ -105,7 +105,7 @@ namespace Eurocode.Belastingen
         }
 
 
-        [TableColumn("*|psi|~0~*", order: 40, width: 2.0)]
+        [TableColumn("*ψ~0~*", order: 40, width: 2.0)]
         public string Mom0
         {
             get
@@ -115,7 +115,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("*|psi|~1~*", order: 41, width: 2.0)]
+        [TableColumn("*ψ~1~*", order: 41, width: 2.0)]
         public string Mom1
         {
             get

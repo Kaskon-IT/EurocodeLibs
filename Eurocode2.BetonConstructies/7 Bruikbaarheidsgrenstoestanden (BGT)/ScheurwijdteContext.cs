@@ -94,17 +94,17 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Label = "pos", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.0)]
-        public string PosLabel { get; set; } = "";
+        public string PosLabel { get; set; } = "midden";
         public bool PosLabelVisible { get; set; } = true;
 
-        [TableColumn(Label = "b/o", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.0)]
+        [TableColumn(Label = "zijde", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.0)]
         public string PosWapBovenOnder
         {
             get
             {
                 if (MomentFrequent == 0) return "-";
-                else if (MomentFrequent > 0) return "boven";
-                else return "onder";
+                else if (MomentFrequent > 0) return "◠ boven";
+                else return "◡ onder";
             }
         }
 
@@ -114,7 +114,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             Label = "moment BGT",
             Description = "Moment in de bruikbaarheidsgrenstoestand (BGT)",
-            Symbol = "<i>M</i><sub>E,fr</sub>",
+            Symbol = "<i>M<sub>E,fr</sub></i>",
             Width = 1.5,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left,
             Unit = "kNm")]
@@ -129,7 +129,7 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(
             Label = "scheurmoment",
-            Symbol = "<i>M</i><sub>cr</sub>",
+            Symbol = "<i>M<sub>cr</sub></i>",
             Description = "scheurmoment",
             Width = 1.5,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left,
@@ -270,7 +270,7 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(
             Label = "maximale scheurafstand",
-            Symbol = "s<sub>r,max</sub>",
+            Symbol = "*s<sub>r,max</sub>*",
             Description = "maximale scheurafstand",
             Article = "7.3.4 (1)",
             Width = 1.5,

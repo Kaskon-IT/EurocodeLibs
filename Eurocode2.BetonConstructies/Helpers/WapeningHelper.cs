@@ -59,7 +59,7 @@ namespace Eurocode.BetonConstructies
             if (wapgroepen == null) return dsnOpp;
             foreach (var wapgroep in wapgroepen)
             {
-                if (wapening.Contains('-'))
+                if (wapgroep.Contains('-'))
                     dsnOpp += GetWapDetails(wapgroep.Trim()).dsnOpp * (breedte / 1000.0);
                 else
                     dsnOpp += GetWapDetails(wapgroep.Trim()).dsnOpp;
@@ -75,6 +75,22 @@ namespace Eurocode.BetonConstructies
             if (wapgroepen == null) return 0;
 
             return BerekenGemiddeldeDiameter(wapgroepen);
+        }
+
+        public static double GetGrootsteDiameter(string wapening)
+        {
+            var wapgroepen = GetWapGroepen(wapening);
+            if (wapgroepen == null) return 0;
+            double grootsteDiameter = 0.0;
+            foreach (var wapgroep in wapgroepen)
+            {
+                var details = GetWapDetails(wapgroep);
+                if (details.diam > grootsteDiameter)
+                {
+                    grootsteDiameter = details.diam;
+                }
+            }
+            return grootsteDiameter;
         }
 
         public static double BerekenGemiddeldeDiameter(List<string> wapgroepen)

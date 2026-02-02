@@ -69,6 +69,30 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        public string ConstructieklasseUserFriendlyNameComplete
+        {
+            get
+            {
+                var s = Constructieklasse;
+                var corrections = new List<string>();
+                
+                // Voeg correctie toe alleen als deze niet 0 is
+                if (s.CorrectieBeton != 0)
+                    corrections.Add($"|Delta|~b~{s.CorrectieBeton:+0;-0;0}");
+                
+                if (s.CorrectieKwaliteitsBeheersting != 0)
+                    corrections.Add($"|Delta|~q~{s.CorrectieKwaliteitsBeheersting:+0;-0;0}");
+                
+                if (s.CorrectieLevensduur != 0)
+                    corrections.Add($"|Delta|~l~{s.CorrectieLevensduur:+0;-0;0}");
+                
+                if (s.CorrectiePlaatGeometrie != 0)
+                    corrections.Add($"|Delta|~p~{s.CorrectiePlaatGeometrie:+0;-0;0}");
+                
+                var correctionsStr = corrections.Count > 0 ? $" ({string.Join(", ", corrections)})" : "";
+                return $"{s.UserFriendlyName}{correctionsStr}";
+            }
+        }
 
         /// <summary>
         /// Naam van de betondekking context, bijvoorbeeld 'bovenzijde' of 'onderzijde' 
