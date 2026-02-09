@@ -441,18 +441,18 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(
-            Article = "7.3.2 (2)",
-            Label = "minimale wapening scheurbeheersing",
-            Symbol = "<i>A<sub>s,min</sub></i>",
-            Unit = "mm²",
-            StringFormat = "0",
-            Width = 2.0,
-            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
-            )]
+        //[TableColumn(
+        //    Article = "7.3.2 (2)",
+        //    Label = "minimale wapening scheurbeheersing",
+        //    Symbol = "<i>A<sub>s,min</sub></i>",
+        //    Unit = "mm²",
+        //    StringFormat = "0",
+        //    Width = 2.0,
+        //    Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
+        //    )]
         public double ScheurwijdteAsMin { get; internal set; }
-
-
+        //public bool ScheurwijdteAsMinVisible { get; set; } = false;
+        public bool ControleerMinimaleWapeningScheurbeheersing { get; set; } = false;
 
         public WapeningContext Wapening { get; set; } = new() { Tekst = "8-100" };
 
@@ -513,7 +513,7 @@ namespace Eurocode.BetonConstructies
             }
 
 
-            if (AsToe < ScheurwijdteAsMin)
+            if (AsToe < ScheurwijdteAsMin && ControleerMinimaleWapeningScheurbeheersing)
             {
                 AddMeldingError("toegepaste wapening is kleiner dan minimale wapening scheurwijdte");
                 return false;

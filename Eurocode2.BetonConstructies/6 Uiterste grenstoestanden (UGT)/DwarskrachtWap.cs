@@ -295,7 +295,7 @@ namespace Eurocode.BetonConstructies
 
         public static double SetCrdc(this DwarskrachtWapContext context)
         {
-            return DwarskrachtHelpers.GetCrdC(context.Beton.GammaC);
+            return DwarskrachtHelpers.GetCrdC(context.Beton.PartieleFactor);
         }
 
         public static string SetBeugelAfstandMaxLangs(this DwarskrachtWapContext context)

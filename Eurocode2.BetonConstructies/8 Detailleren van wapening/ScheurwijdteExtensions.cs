@@ -110,7 +110,8 @@
             // (ε;sm - ε;cm) minimaal
             double minimum = 0.6 * (sw.StaalspanningOptredend / sw.Beton.BetonStaal.ElasticiteitsModulus);
 
-
+            if (double.IsNaN(returnVal))
+                returnVal = 0;
 
             // als kleiner dan minimum moeten we de minimum-waarde aanhouden
             if (returnVal < minimum)

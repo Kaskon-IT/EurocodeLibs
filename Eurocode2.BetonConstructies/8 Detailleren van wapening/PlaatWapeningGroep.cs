@@ -17,12 +17,30 @@ namespace Eurocode.BetonConstructies
     {
         public override string Heading { get; set; } = "plaatwapening";
         
+        private ReferentieVlakEnum _referentieVlak = ReferentieVlakEnum.Onder;
         private BetonDekkingContext _dekking = new BetonDekkingContext();
         private WapeningContext _basisWapening = new();
         private WapeningContext? _verdeelWapening;
         private WapeningContext? _bijlegWapening;
         private double _diameterVerdeel = 6;
         private int _laagHoofdwapening = 1;
+
+        /// <summary>
+        /// Het referentievlak van de wapening (Boven, Onder, Links, Rechts).
+        /// Wanneer dit wordt gewijzigd, wordt het ReferentieVlak van alle wapeningcontexts ook bijgewerkt.
+        /// </summary>
+        public ReferentieVlakEnum ReferentieVlak
+        {
+            get => _referentieVlak;
+            set
+            {
+                if (SetProperty(ref _referentieVlak, value))
+                {
+                    // Update alle nested wapening contexten
+                    UpdateReferentieVlakkenVanWapening();
+                }
+            }
+        }
 
 
 
@@ -54,7 +72,17 @@ namespace Eurocode.BetonConstructies
         public WapeningContext BasisWapening
         {
             get => _basisWapening;
-            set => SetNestedProperty(ref _basisWapening!, value);
+            set
+            {
+                if (SetNestedProperty(ref _basisWapening!, value))
+                {
+                    // Zorg dat nieuwe wapening hetzelfde ReferentieVlak krijgt
+                    if (_basisWapening != null)
+                    {
+                        _basisWapening.ReferentieVlak = this.ReferentieVlak;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -63,7 +91,17 @@ namespace Eurocode.BetonConstructies
         public WapeningContext? VerdeelWapening 
         {
             get => _verdeelWapening;
-            set => SetNestedProperty(ref _verdeelWapening, value);
+            set
+            {
+                if (SetNestedProperty(ref _verdeelWapening, value))
+                {
+                    // Zorg dat nieuwe wapening hetzelfde ReferentieVlak krijgt
+                    if (_verdeelWapening != null)
+                    {
+                        _verdeelWapening.ReferentieVlak = this.ReferentieVlak;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -72,7 +110,17 @@ namespace Eurocode.BetonConstructies
         public WapeningContext? BijlegWapening
         {
             get => _bijlegWapening;
-            set => SetNestedProperty(ref _bijlegWapening, value);
+            set
+            {
+                if (SetNestedProperty(ref _bijlegWapening, value))
+                {
+                    // Zorg dat nieuwe wapening hetzelfde ReferentieVlak krijgt
+                    if (_bijlegWapening != null)
+                    {
+                        _bijlegWapening.ReferentieVlak = this.ReferentieVlak;
+                    }
+                }
+            }
         }
 
         public double DiameterVerdeel
@@ -107,6 +155,7 @@ namespace Eurocode.BetonConstructies
             return new PlaatWapeningGroep()
             {
                 Heading = this.Heading,
+                ReferentieVlak = this.ReferentieVlak,
                 DekkingBuitensteLaag = new BetonDekkingContext(this.DekkingBuitensteLaag),
                 BasisWapening = this.BasisWapening?.Clone() ?? new(),
                 VerdeelWapening = this.VerdeelWapening?.Clone(),
@@ -133,6 +182,27 @@ namespace Eurocode.BetonConstructies
             return true;
         }
 
+        /// <summary>
+        /// Update het ReferentieVlak van alle wapeningcontexten naar het ReferentieVlak van deze groep.
+        /// </summary>
+        private void UpdateReferentieVlakkenVanWapening()
+        {
+            if (_basisWapening != null)
+            {
+                _basisWapening.ReferentieVlak = this.ReferentieVlak;
+            }
+            
+            if (_verdeelWapening != null)
+            {
+                _verdeelWapening.ReferentieVlak = this.ReferentieVlak;
+            }
+            
+            if (_bijlegWapening != null)
+            {
+                _bijlegWapening.ReferentieVlak = this.ReferentieVlak;
+            }
+        }
+
         private void UpdateReferentieDekkingen()
         {
             // basis dekking from outer layer
@@ -148,30 +218,42 @@ namespace Eurocode.BetonConstructies
 
             if (baseDekking == null) return;
 
-            // If hoofdwapening is laag 1 -> Basis = dekking, Verdeel = dekking + verdeel diameter
-            // If hoofdwapening is laag 2 -> Verdeel = dekking, Basis = dekking + basis diameter
+            // If hoofdwapening is laag 1 -> Basis = dekking en laag 1, Verdeel = dekking + verdeel diameter en laag 2
+            // If hoofdwapening is laag 2 -> Verdeel = dekking en laag 1, Basis = dekking + basis diameter en laag 2
             if (LaagHoofdwapening == 1)
             {
-                // set Basis
+                // BasisWapening in laag 1
+                // de dekking voor de tweede laag is dus dit plus de diameter van de hoofdwapening.
+                double add = 0;
                 if (_basisWapening != null)
+                {
                     TrySetReferentieDekking(_basisWapening, baseDekking.Value, 1);
+                    _basisWapening.LaagNummer = 1;
+                    add = _basisWapening.GrootsteDiameter;
+                }
 
                 if (_verdeelWapening != null)
                 {
-                    double add = _verdeelWapening.GemiddeldeDiameter;
                     TrySetReferentieDekking(_verdeelWapening, baseDekking.Value + add, 2);
+                    _verdeelWapening.LaagNummer = 2;
                 }
             }
             else
             {
-                // laag 2
+                // BasisWapening in laag 2
+                // de dekking voor de tweede laag is dus dit plus diameter van de verdeelwapening
+                double add = 0;
                 if (_verdeelWapening != null)
+                {
                     TrySetReferentieDekking(_verdeelWapening, baseDekking.Value, 1);
+                    _verdeelWapening.LaagNummer = 1;
+                    add = _verdeelWapening.GrootsteDiameter;
+                }
 
                 if (_basisWapening != null)
                 {
-                    double add = _basisWapening.GemiddeldeDiameter;
                     TrySetReferentieDekking(_basisWapening, baseDekking.Value + add, 2);
+                    _basisWapening.LaagNummer = 2;
                 }
             }
         }

@@ -177,18 +177,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        /// <summary>
-        /// Eigen opgave cilinder druksterkte
-        /// </summary>
-        [Obsolete("Gebruik alleen nog maar standaard uit de tabellen")]
-        public double FckEigenOpgave { get; set; }
-
-        /// <summary>
-        /// Eigen opgave kubus druksterkte 
-        /// </summary>
-        [Obsolete("Gebruik alleen nog maar standaard uit de tabellen")]
-        public double FckCubeEigenOpgave { get; set; }
-
+   
 
 
 
@@ -416,27 +405,27 @@ namespace Eurocode.BetonConstructies
             Article = "2.4.2.4"
             )]
 
-        [Obsolete("Gebruik BaseMateriaal.PartieleFactor")]
-        public double GammaC { get; private set; } = 1.5;
         
+
+        public override double PartieleFactor { get => base.PartieleFactor; set => base.PartieleFactor = value; }
 
 
 
         [TableColumn("druksterkte", Symbol = "<i>f</i><sub>cd</sub>",
             Description = "is de rekenwaarde van de druksterkte",
             Article = "3.1.6 (1)P", Unit = "N/mm²")]
-        public double Fcd { get { return AlphaCC * Fck / GammaC; } }
+        public double Fcd { get { return AlphaCC * Fck / PartieleFactor; } }
         public Formula FcdFormula => new("(3.15)",
             @"f_{cd}=\alpha_{cc}f_{ck} / \gamma_{c}",
-            @$"f_{{cd}}={AlphaCC} \cdot {Fck.ToEng()}/ {GammaC} = {Fcd.ToEng()}");
+            @$"f_{{cd}}={AlphaCC} \cdot {Fck.ToEng()}/ {PartieleFactor} = {Fcd.ToEng()}");
 
         [TableColumn("treksterkte", Symbol = "<i>f</i><sub>ctd</sub>",
             Description = "is de rekenwaarde van de treksterkte",
             Article = "3.1.6 (2)P", Unit = "N/mm²")]
-        public double Fctd { get { return AlphaCT * FctkVijfProcent / GammaC; } }
+        public double Fctd { get { return AlphaCT * FctkVijfProcent / PartieleFactor; } }
         public Formula FctdFormula => new("(3.16)",
             @"f_{ctd}=\alpha_{ct}f_{ctk,0.05} / \gamma_{c}",
-            @$"f_{{ctd}}={AlphaCT} \cdot {FctkVijfProcent.ToEng()}/ {GammaC} = {Fctd.ToEng()}");
+            @$"f_{{ctd}}={AlphaCT} \cdot {FctkVijfProcent.ToEng()}/ {PartieleFactor} = {Fctd.ToEng()}");
 
 
         public const double AlphaCT = 1; // 3.1.6 Dit is de coëfficiënt die rekening houdt met langeduureffecten op de treksterkte en met ongunstige effecten als gevolg van de manier waarop de belasting aangrijpt.

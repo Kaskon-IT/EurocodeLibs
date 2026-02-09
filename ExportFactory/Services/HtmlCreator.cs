@@ -91,7 +91,7 @@
                 markdown = Regex.Replace(markdown, @"\*\*(.*?)\*\*", "<strong>$1</strong>");
 
                 // Italic: *text* -> <em>text</em>
-                markdown = Regex.Replace(markdown, @"\*(.*?)\*", "<em>$1</em>");
+                markdown = Regex.Replace(markdown, @"\*(.*?)\*", "<i>$1</i>");
 
                 // Line breaks: dubbele nieuwe regel -> <br/>
                 markdown = Regex.Replace(markdown, @"\n\s*\n", "<br/>");
@@ -324,7 +324,8 @@
                         {
                             if (col is MigraDoc.DocumentObjectModel.Tables.Column mdc)
                             {
-                                htmlBuilder.AppendLine($"<col style='width:{mdc.Width}'>");
+                                var perc = mdc.Width.Millimeter / 182.0;
+                                htmlBuilder.AppendLine($"<col style='width:{(perc*100):0}%'>");
                             }
                         }
                         htmlBuilder.AppendLine("</colgroup>");

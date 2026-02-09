@@ -35,12 +35,12 @@ namespace CommonLibrary.Models
         /// Voor hout GammaM
         /// NB. voor staal wordt GammaMi (M0, M1 en M2) gebruikt.
         /// </summary>
-        public double PartieleFactor { get; set; } = 1.0; // Standaardwaard om delen door nul te voorkomen
+        public virtual double PartieleFactor { get; set; } = 1.0; // Standaardwaard om delen door nul te voorkomen
 
         public double GammaM => PartieleFactor; 
         public virtual double GammaM0 { get; set; } = 1.0; 
         public virtual double GammaM1 { get; set; } = 1.0; 
-        public virtual double GammaM2 { get; set; } = 1.25;
+        public virtual double GammaM2 { get;  set; } = 1.25;
 
 
         public virtual double E { get; set; }

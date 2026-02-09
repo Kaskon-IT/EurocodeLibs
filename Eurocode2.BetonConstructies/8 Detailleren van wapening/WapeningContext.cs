@@ -31,8 +31,41 @@ namespace Eurocode.BetonConstructies
     public class PlaatWapening : BaseWapeningContext
     {
         public override string Heading { get; set; } = "plaatwapening";
-        public PlaatWapeningGroep? Boven { get; set; }
-        public PlaatWapeningGroep? Onder { get; set; }
+        
+        private PlaatWapeningGroep? _boven;
+        private PlaatWapeningGroep? _onder;
+
+        /// <summary>
+        /// Bovenwapening groep. Wanneer deze wordt toegewezen, wordt automatisch ReferentieVlak = Boven ingesteld.
+        /// </summary>
+        public PlaatWapeningGroep? Boven
+        {
+            get => _boven;
+            set
+            {
+                _boven = value;
+                if (_boven != null)
+                {
+                    _boven.ReferentieVlak = ReferentieVlakEnum.Boven;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Onderwapening groep. Wanneer deze wordt toegewezen, wordt automatisch ReferentieVlak = Onder ingesteld.
+        /// </summary>
+        public PlaatWapeningGroep? Onder
+        {
+            get => _onder;
+            set
+            {
+                _onder = value;
+                if (_onder != null)
+                {
+                    _onder.ReferentieVlak = ReferentieVlakEnum.Onder;
+                }
+            }
+        }
 
         /// <summary>
         /// Maakt een diepe kopie van deze PlaatWapening met alle nested properties.
@@ -70,7 +103,7 @@ namespace Eurocode.BetonConstructies
 
         public WapeningContext()
         {
-
+            LaagNummer = 2; 
         }
 
         public WapeningContext(string tekst, double referentieDekking)
@@ -112,7 +145,6 @@ namespace Eurocode.BetonConstructies
         }
 
         private double _gemiddeldeDiameter;
-        private double _zRef;
         private BetonDekkingContext _dekking = new();
         
         // Nieuwe properties voor referentiesysteem
@@ -121,7 +153,12 @@ namespace Eurocode.BetonConstructies
         private double _referentieLengte = 1000.0; // Standaard 1000mm (1m)
 
         public double GemiddeldeDiameter => _gemiddeldeDiameter;
-        public double ZRef => _zRef;
+        
+        /// <summary>
+        /// Z-referentie: afstand van hart staaf tot referentievlak in mm.
+        /// Dit is gelijk aan ReferentieAfstand (dekking + halve diameter).
+        /// </summary>
+        public double ZRef => ReferentieAfstand;
 
         /// <summary>
         /// Het referentievlak waarop de wapening is gedefinieerd
@@ -133,7 +170,7 @@ namespace Eurocode.BetonConstructies
         }
 
         /// <summary>
-        /// Opgegeven betondekking tot buitenzijde staaf in mm (c_nom of c_prov)
+        /// Opgegeven betondekking tot buitenzijde staaf in mm 
         /// Bijvoorbeeld: 30mm dekking volgens Eurocode
         /// </summary>
         public double ReferentieDekking
@@ -145,6 +182,7 @@ namespace Eurocode.BetonConstructies
                 {
                     OnPropertyChanged(nameof(ReferentieAfstand));
                     OnPropertyChanged(nameof(ZRef));
+                    OnPropertyChanged(nameof(GemiddeldeDiameter)); // Voor complete update
                 }
             }
         }
@@ -177,11 +215,18 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        /// <summary>
+        /// Update de gemiddelde en grootste diameter op basis van de Tekst.
+        /// ZRef wordt nu automatisch berekend als computed property.
+        /// </summary>
         public void SetZRef()
         {
             this._gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
             this._grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
-            this._zRef = ReferentieAfstand; // Berekende afstand tot hart staaf
+            // ZRef is nu een computed property die ReferentieAfstand retourneert
+            // Trigger een property changed voor ZRef voor binding updates
+            OnPropertyChanged(nameof(ZRef));
+            OnPropertyChanged(nameof(ReferentieAfstand));
         }
 
 
@@ -218,7 +263,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        private string _tekst = "8-150";
+        private string _tekst = "r8-150";
         [TableColumn(Label = "opgave wapening")]
         public string Tekst
         {
@@ -268,7 +313,34 @@ namespace Eurocode.BetonConstructies
                 .Replace("r", "Ø")
                 .Replace("R", "Ø")
                 .Replace("d", "Ø")
-                .Replace("D", "Ø")}  ({As:0} mm²)";
+                .Replace("D", "Ø")}";
+        }
+
+        
+
+        public string ToStringWithLaag()
+        {
+            var tekst = "";
+            switch (LaagNummer, ReferentieVlak)
+            {
+                case (null, ReferentieVlakEnum.Boven):
+                case (1, ReferentieVlakEnum.Boven): 
+                    tekst += "▼";
+                    break;
+                case (2, ReferentieVlakEnum.Boven):
+                    tekst += "▼▼";
+                    break;
+
+                case (null, ReferentieVlakEnum.Onder):
+                case (1, ReferentieVlakEnum.Onder):
+                    tekst += "▲";
+                    break;
+                case (2, ReferentieVlakEnum.Onder):
+                    tekst += "▲▲";
+                    break;
+            }
+
+            return tekst; 
         }
 
         public string GetUserFriendlyText(string eenheid = "mm²", bool includeGroups = true)
@@ -338,7 +410,7 @@ namespace Eurocode.BetonConstructies
         /// Laagnummer toewijzing (1 of 2) — wordt door PlaatWapeningGroep gezet voor sorting/overzicht.
         /// Nullable: kan null zijn wanneer niet ingesteld.
         /// </summary>
-        public int? LaagNummer { get; set; }
+        public int? LaagNummer { get; set; } 
 
         /// <summary>
         /// Maakt een diepe kopie van deze WapeningContext.
@@ -475,7 +547,7 @@ namespace Eurocode.BetonConstructies
         protected override void Bereken()
         {
             _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
-            _zRef = ReferentieAfstand; // Direct de referentieafstand gebruiken
+            // ZRef wordt nu automatisch berekend via ReferentieAfstand
         }
 
 

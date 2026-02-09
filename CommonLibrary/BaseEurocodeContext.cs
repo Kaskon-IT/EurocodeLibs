@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace CommonLibrary
 {
@@ -19,7 +20,6 @@ namespace CommonLibrary
 
         public Guid Id { get; set; } = Guid.NewGuid();
         public virtual string Heading { get; set; } = "Onbekend";
-        public virtual bool ReadOnly { get; set; } = false; // mogelijkheid om de gebruiker alleen te laten lezen.
 
         public virtual void Init()
         {
@@ -37,11 +37,17 @@ namespace CommonLibrary
             OnUpdated?.Invoke();
         }
 
-        public DateTime AangemaaktOp { get; private set; } = DateTime.UtcNow;
+        [JsonIgnore]
+        public DateTime AangemaaktOp { get; internal set; } = DateTime.UtcNow;
+
+        [JsonIgnore]
         public DateTime GewijzigdOp { get; set; } = DateTime.UtcNow;
 
-        public ObservableCollection<Melding> Meldingen { get; private set; } = [];
-        public ObservableCollection<int> MeldingCodes { get; private set; } = [];
+        [JsonIgnore]
+        public ObservableCollection<Melding> Meldingen { get; } = [];
+
+        [JsonIgnore]
+        public ObservableCollection<int> MeldingCodes { get; } = [];
 
         public event Action? OnUpdated;
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -265,8 +271,7 @@ namespace CommonLibrary
             if (melding is null)
                 return;
 
-            // Zorg dat de collectie bestaat
-            Meldingen ??= new ObservableCollection<Melding>();
+                       
 
             // Verwijder per ongeluk toegevoegde null-items
             for (int i = Meldingen.Count - 1; i >= 0; i--)

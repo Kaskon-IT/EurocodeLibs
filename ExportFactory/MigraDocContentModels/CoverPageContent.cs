@@ -108,18 +108,7 @@ namespace ExportFactory.MigraDocContentModels
             }
         }
 
-        public string CheckedBy
-        {
-            get => _checkedBy;
-            set
-            {
-                if (_checkedBy != value)
-                {
-                    _checkedBy = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+       
 
 
 

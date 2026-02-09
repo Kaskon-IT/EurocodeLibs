@@ -273,20 +273,20 @@ namespace Eurocode.BetonConstructies
 
             Calculators.Add(calculator); // voor debug
 
-            Console.WriteLine($"--");
-            Console.WriteLine($"| Berekening doorbuiging : combinatie -> {ctx.CombinatieType}");
-            Console.WriteLine($"| Wc    : {calculator.Wc:0.00} mm");
-            Console.WriteLine($"| W1    : {calculator.W1:0.00} mm");
-            Console.WriteLine($"| Wbij  : {calculator.Wbijk:0.00} mm");
-            Console.WriteLine($"| Wmax  : {calculator.Wmax:0.00} mm");
-            Console.WriteLine($"| Wtot  : {calculator.Wtot:0.00} mm");
-            Console.WriteLine($"| Mcr   : {calculator.Mcr:0.00} kNm");
-            Console.WriteLine($"| M     : {calculator.Moment:0.00} kNm");
+            //Console.WriteLine($"--");
+            //Console.WriteLine($"| Berekening doorbuiging : combinatie -> {ctx.CombinatieType}");
+            //Console.WriteLine($"| Wc    : {calculator.Wc:0.00} mm");
+            //Console.WriteLine($"| W1    : {calculator.W1:0.00} mm");
+            //Console.WriteLine($"| Wbij  : {calculator.Wbijk:0.00} mm");
+            //Console.WriteLine($"| Wmax  : {calculator.Wmax:0.00} mm");
+            //Console.WriteLine($"| Wtot  : {calculator.Wtot:0.00} mm");
+            //Console.WriteLine($"| Mcr   : {calculator.Mcr:0.00} kNm");
+            //Console.WriteLine($"| M     : {calculator.Moment:0.00} kNm");
 
-            Console.WriteLine($"| Zeta0 : {calculator.Zeta0:0.00}");
-            Console.WriteLine($"| Zeta∞ : {calculator.Zeta:0.00}");
-            Console.WriteLine($"| As    : {calculator.Ctx.Wapening.As:0} mm²");
-            Console.WriteLine($"--");
+            //Console.WriteLine($"| Zeta0 : {calculator.Zeta0:0.00}");
+            //Console.WriteLine($"| Zeta∞ : {calculator.Zeta:0.00}");
+            //Console.WriteLine($"| As    : {calculator.Ctx.Wapening.As:0} mm²");
+            //Console.WriteLine($"--");
 
 
         }
