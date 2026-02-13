@@ -167,9 +167,7 @@ namespace ExportFactory.Services
 
 
 
-
-
-        private static readonly Dictionary<string, string> GreekLetters = new()
+        private static readonly Dictionary<string, string> _greekLetters = new()
         {
             { "alpha", "α" },
             { "beta", "β" },
@@ -222,7 +220,7 @@ namespace ExportFactory.Services
         };
 
 
-        private static readonly PageSetup CoverPageSetup = new PageSetup()
+        private static readonly PageSetup _coverPageSetup = new ()
         {
             DifferentFirstPageHeaderFooter = false,
             HorizontalPageBreak = true,
@@ -242,10 +240,8 @@ namespace ExportFactory.Services
 
         private static PageSetup GetPageSetupForDocument(DocumentContent content)
         {
-            PageSetup pageSetup = new PageSetup()
+            PageSetup pageSetup = new ()
             {
-
-
                 DifferentFirstPageHeaderFooter = false,
                 HorizontalPageBreak = true,   /// <summary>
                                               /// Gets or sets a value which defines whether a page should break horizontally.
@@ -291,11 +287,7 @@ namespace ExportFactory.Services
 
                 }
             }
-
-
-
             return pageSetup;
-
         }
 
 
@@ -342,38 +334,10 @@ namespace ExportFactory.Services
                         case ParagraphContent paragraphContent:
                             var par = section.AddParagraph("", paragraphContent.Style);
                             AddMarkdownToParagraph(par, paragraphContent.Markdown, cache);
-
-
-                            // split
-                            //var parts = Regex.Split(
-                            //    paragraphContent.Markdown,
-                            //    @"(?<=^#+.*$)|\r?\n\s*\r?\n",
-                            //    RegexOptions.Multiline
-                            //)
-                            //.Where(p => !string.IsNullOrWhiteSpace(p))
-                            //.ToList();
-
-
-
-                            //foreach (var part in parts)
-                            //{
-                            //    var par = section.AddParagraph();
-                            //    AddMarkdownToParagraph(par, part, cache);
-
-                            //}
-
-
                             break;
 
                         case TableContent tableContent:
-                            //section = document.AddSection(); // new section? needed for center
-                            //var target = section.AddTextFrame();
                             var target = document.LastSection;
-
-
-
-
-                            //frame.Left = "4cm"; // todo uitlijnen
                             AddTable(target, tableContent);
                             break;
 
@@ -441,30 +405,7 @@ namespace ExportFactory.Services
         }
 
 
-
-        private static bool IsTableModel(object element)
-        {
-            var type = element.GetType();
-            var isGeneric = type.IsGenericType;
-            var genericTypeDefinition = type.GetGenericTypeDefinition();
-            var isTableModelT = genericTypeDefinition == typeof(TableModel<>);
-
-
-
-            // Check if the element is of type TableModel<T> dynamically using reflection
-            return
-                element.GetType().IsGenericType &&
-                element.GetType().GetGenericTypeDefinition() == typeof(TableModel<>);
-        }
-
-
-        // Generic method to handle different TableModel<T>
-        private static void HandleTableModelBAK<T>(Section section, TableModel<T> tableModel)
-        {
-            // Your logic to process TableModel<T>
-            // Example:
-            AddTable(section, tableModel, $"{typeof(T).Name} Table");
-        }
+        
 
 
         // Generic method to handle any TableModel<T> where T is derived from BaseClass
@@ -1299,9 +1240,6 @@ namespace ExportFactory.Services
             par = f2r.Cells[colIndex22].AddParagraph(); AddMarkdownToParagraph(par, content.PageFooter.Text2); par.Format.Alignment = alignment22;
 
 
-
-
-
         }
 
 
@@ -1311,7 +1249,7 @@ namespace ExportFactory.Services
         // Helper function to replace Greek letters in Markdown
         public static string ReplaceGreekLetters(string markdown)
         {
-            foreach (var (key, value) in GreekLetters)
+            foreach (var (key, value) in _greekLetters)
             {
                 markdown = markdown.Replace($"|{key}|", value);
                 //markdown = markdown.Replace($"\\{key}\\", value);
@@ -1319,36 +1257,6 @@ namespace ExportFactory.Services
             return markdown;
         }
 
-
-        private static void AddRevisionPage(Document document, RevisionContent content)
-        {
-            var section = document.AddSection();
-            var table = section.AddTable();
-            //var row = table.AddRow();
-
-            //if (content.ColumnNames.TryGetValue("Name", out string? colNameHeaderTitle))
-            //{
-            //    table.AddColumn(Unit.FromMillimeter(15));
-            //    row.Cells[table.Columns.Count - 1].AddParagraph(colNameHeaderTitle);
-            //}
-            //if (content.ColumnNames.TryGetValue("Date", out string? colDateHeaderTitle))
-            //{
-            //    table.AddColumn(Unit.FromMillimeter(30));
-            //    row.Cells[table.Columns.Count - 1].AddParagraph(colDateHeaderTitle);
-            //}
-            //if (content.ColumnNames.TryGetValue("Description", out string? colDescriptionHeaderTitle))
-            //{
-            //    table.AddColumn(Unit.FromMillimeter(70));
-            //    row.Cells[table.Columns.Count - 1].AddParagraph(colDescriptionHeaderTitle);
-            //}
-
-
-
-
-
-
-
-        }
 
 
 
@@ -1368,21 +1276,6 @@ namespace ExportFactory.Services
             }
         }
 
-        private static void AddLabeledValues(Section section, List<LabeledValue> labeledValues)
-        {
-            if (labeledValues == null || labeledValues.Count == 0) return;
-            var table = section.AddTable();
-            table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
-            table.Borders.Visible = false;
-            table.AddColumn(Unit.FromCentimeter(4)); // left column
-            table.AddColumn(Unit.FromCentimeter(10)); // right column
-            foreach (var item in labeledValues)
-            {
-                var row = table.AddRow();
-                row.Cells[0].AddParagraph(item.Label);
-                row.Cells[1].AddParagraph(item.ValueAsString);
-            }
-        }
 
         private static void AddRevisionTable(Section section, RevisionContent content)
         {
@@ -1418,12 +1311,8 @@ namespace ExportFactory.Services
             var section = document.AddSection();
             section.Tag = "Voorblad";
 
-            //document.Styles.
-            //section.PageSetup.BackgroundColor = coverPage.BackgroundColor;
             // setup for page size and margin
-            section.PageSetup = CoverPageSetup.Clone();
-
-
+            section.PageSetup = _coverPageSetup.Clone();
 
 
             // Voeg een afbeelding toe via de CustomTempFileCollection
@@ -1472,14 +1361,12 @@ namespace ExportFactory.Services
             section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
 
             // Project-labels
-            //AddLabeledValues(section, coverPage.ProjectLabeledValues);
             AddLabels(section, coverPage.ProjectLabels);
 
             // blank line
             section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
 
             // Document-labels
-            //AddLabeledValues(section, coverPage.DocumentLabeledValues);
             AddLabels(section, coverPage.DocumentLabels);
 
             section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing

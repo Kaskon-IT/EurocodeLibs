@@ -18,7 +18,10 @@ namespace Eurocode.BetonConstructies
         public override string Heading { get; set; } = "plaatwapening";
         
         private ReferentieVlakEnum _referentieVlak = ReferentieVlakEnum.Onder;
-        private BetonDekkingContext _dekking = new BetonDekkingContext();
+        private BetonDekkingContext _dekking = new BetonDekkingContext() 
+        { 
+            DekkingToe = 30.0  // ✅ Default waarde
+        };
         private WapeningContext _basisWapening = new();
         private WapeningContext? _verdeelWapening;
         private WapeningContext? _bijlegWapening;
@@ -54,17 +57,21 @@ namespace Eurocode.BetonConstructies
             set => SetNestedProperty(ref _dekking!, value);
         }
 
-        /// <summary>
-        /// OBSOLETE: oude naam 'Dekking' behouden voor backward compatibility.
-        /// Verwijst naar de huidige 'DekkingBuitensteLaag'.
-        /// </summary>
-        [Obsolete("Gebruik DekkingBuitensteLaag i.p.v. Dekking. Deze property blijft voor backward compatibility.")]
-        public BetonDekkingContext Dekking
+        public double DekkingLaag1 => DekkingBuitensteLaag.DekkingToe;
+
+        public double DekkingLaag2
         {
-            get => _dekking;
-            set => SetNestedProperty(ref _dekking!, value);
+            get => DekkingLaag1 + DiameterLaag1;
         }
 
+        public double DiameterLaag1 
+        {
+            get
+            {
+                if (LaagHoofdwapening == 1) return BasisWapening.GrootsteDiameter;
+                else return VerdeelWapening?.GrootsteDiameter ?? 0;
+            }
+        }
 
         /// <summary>
         /// De hoofdwapening van de groep.
@@ -81,6 +88,8 @@ namespace Eurocode.BetonConstructies
                     {
                         _basisWapening.ReferentieVlak = this.ReferentieVlak;
                     }
+                    // Update dekkingen wanneer BasisWapening verandert
+                    UpdateReferentieDekkingen();
                 }
             }
         }
@@ -100,6 +109,8 @@ namespace Eurocode.BetonConstructies
                     {
                         _verdeelWapening.ReferentieVlak = this.ReferentieVlak;
                     }
+                    // Update dekkingen wanneer VerdeelWapening verandert
+                    UpdateReferentieDekkingen();
                 }
             }
         }
@@ -174,7 +185,8 @@ namespace Eurocode.BetonConstructies
 
         protected override void Bereken()
         {
-            
+            // Herbereken dekkingen bij elke update (via nested property changes)
+            UpdateReferentieDekkingen();
         }
         protected override bool Valideer()
         {
@@ -216,14 +228,18 @@ namespace Eurocode.BetonConstructies
                 baseDekking = null;
             }
 
-            if (baseDekking == null) return;
+            // ✅ Als geen dekking, gebruik default 30mm
+            if (baseDekking == null || baseDekking == 0)
+            {
+                Console.WriteLine($"⚠️ PlaatWapeningGroep: Geen dekking ingesteld, gebruik default 30mm");
+                baseDekking = 30.0;
+            }
 
             // If hoofdwapening is laag 1 -> Basis = dekking en laag 1, Verdeel = dekking + verdeel diameter en laag 2
             // If hoofdwapening is laag 2 -> Verdeel = dekking en laag 1, Basis = dekking + basis diameter en laag 2
             if (LaagHoofdwapening == 1)
             {
                 // BasisWapening in laag 1
-                // de dekking voor de tweede laag is dus dit plus de diameter van de hoofdwapening.
                 double add = 0;
                 if (_basisWapening != null)
                 {
@@ -241,7 +257,6 @@ namespace Eurocode.BetonConstructies
             else
             {
                 // BasisWapening in laag 2
-                // de dekking voor de tweede laag is dus dit plus diameter van de verdeelwapening
                 double add = 0;
                 if (_verdeelWapening != null)
                 {

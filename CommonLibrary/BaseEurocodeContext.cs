@@ -120,6 +120,17 @@ namespace CommonLibrary
             if (e.PropertyName is "Count" or "Item[]")
                 return;
 
+            // ✅ FIX 1: Filter computed properties (get-only zonder setter)
+            if (!string.IsNullOrEmpty(e.PropertyName) && sender != null)
+            {
+                var prop = sender.GetType().GetProperty(e.PropertyName);
+                if (prop != null && !prop.CanWrite)
+                {
+                    // Computed property - bubbel omhoog voor UI maar trigger geen recalc
+                    OnPropertyChanged(e.PropertyName);
+                    return;
+                }
+            }
 
             // Bubbel property change omhoog
             OnPropertyChanged(e.PropertyName);

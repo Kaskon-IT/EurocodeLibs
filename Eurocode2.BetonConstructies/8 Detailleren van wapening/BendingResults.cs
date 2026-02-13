@@ -95,15 +95,9 @@ namespace Eurocode.BetonConstructies
             }
             if (e.PropertyName == nameof(WapeningContext.ReferentieDekking))
             {
-                // ? 
-
                 BerekenEnValideer();
             }
-
-
-
-            Console.WriteLine($"Wapening (context) gewijzigd: {e.PropertyName}");
-            // Hier kun je aanvullende acties uitvoeren, zoals andere properties bijwerken.
+            // Console.WriteLine verwijderd - debug alleen als nodig
         }
 
 
@@ -232,7 +226,7 @@ namespace Eurocode.BetonConstructies
 
         //public double Positie { get; set; } = -1;
 
-        [TableColumn(Label = "pos", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.0)]
+        [TableColumn(Label = "pos", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 1.5)]
         public string PosLabel { get; set; } = "midden";
         public bool PosLabelVisible { get; set; } = true;
 
@@ -306,8 +300,8 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(Label = "*b* × *h*", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.5)]
-        public string Afmeting => $"{Breedte:0}×{Hoogte:0}";
+        [TableColumn(Label = "*b* × *h/d*", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.5)]
+        public string Afmeting => $"{Breedte:0} × {Hoogte:0}/{D:0.#}";
 
 
         
@@ -334,22 +328,21 @@ namespace Eurocode.BetonConstructies
                 if (Wapening == null)
                     return ZRefZonderDekking;
 
-                return Wapening.ZRef;
+                return Wapening.ReferentieAfstand;
 
             }
         }
 
-        [TableColumn(Symbol = "<i>d</i>", Label = "nuttige hoogte", Unit = "mm",
-            Width = 1.5,
-            Key = K.NuttigeHoogte,
-            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        //[TableColumn(Symbol = "<i>d</i>", Label = "nuttige hoogte", Unit = "mm",
+        //    Width = 1.5,
+        //    Key = K.NuttigeHoogte,
+        //    StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double D { get { return Hoogte - ZRef; } }
 
 
         [TableColumn(Symbol = "*x<sub>u</sub>*", Label = "hoogte drukzone", Unit = "mm",
-            Key = K.Xu,
             StringFormat = "0.#",
-            Width = 1.5,
+            Width = 1.0,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Xu
         {
@@ -468,8 +461,8 @@ namespace Eurocode.BetonConstructies
             Symbol = "*A<sub>s,req</sub>*",
             Unit = "mm²", Label = "benodigde wapening",
             Width = 1.5,
-            Key = K.AsBen,
-            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+            StringFormat = "0",
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsRequired
         {
             get
@@ -520,6 +513,22 @@ namespace Eurocode.BetonConstructies
 
         }
 
+        [TableColumn(Symbol = "wapening", Label = "wapening", Width = 2.0, Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left )]
+        public string AsProvidedText
+        {
+            get 
+            {
+                if (Wapening != null)
+                {
+                    return Wapening.SanitizedTekst();
+                }
+                else
+                {
+                    return "?";
+                }
+            }
+            
+        }
 
 
         public void VerwerkAsApplied()

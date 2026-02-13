@@ -177,7 +177,7 @@
         {
             if (sw.Wapening != null)
             {
-                sw.NuttigeHoogte = sw.Hoogte - sw.Wapening.ZRef;
+                sw.NuttigeHoogte = sw.Hoogte - sw.Wapening.ReferentieAfstand;
             }
         }
 

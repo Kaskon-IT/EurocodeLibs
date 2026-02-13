@@ -204,7 +204,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        private double D => Profiel.Hoogte - Wapening.ZRef;
+        private double D => Profiel.Hoogte - Wapening.ReferentieAfstand;
 
 
         // tijdelijk voor debug

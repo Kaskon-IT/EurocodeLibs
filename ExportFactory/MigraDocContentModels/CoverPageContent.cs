@@ -13,7 +13,6 @@ namespace ExportFactory.MigraDocContentModels
         private string _companyLogoPath = "";
         private string _documentNumber = "Document Number";
         private string _author = "Author Name";
-        private string _checkedBy = "Checked By";
 
 
         public string Title
@@ -107,19 +106,6 @@ namespace ExportFactory.MigraDocContentModels
                 }
             }
         }
-
-       
-
-
-
-        //public Color BackgroundColor { get; set; } = Colors.NavajoWhite;
-
-
-
-
-
-        public List<LabeledValue> ProjectLabeledValues { get; set; } = [];
-        public List<LabeledValue> DocumentLabeledValues { get; set; } = [];
 
 
         public List<LabelWithStringValue> ProjectLabels { get; set; } = [];

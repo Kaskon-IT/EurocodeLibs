@@ -131,20 +131,27 @@ namespace Eurocode.BetonConstructies
             ReferentieDekking = dekking.DekkingToe;
         }
 
-        private double _grootsteDiameter;
-        public double GrootsteDiameter
+        private double _gemiddeldeDiameter;
+        public double GemiddeldeDiameter
         {
             get
             {
-                if (_grootsteDiameter == 0)
+                if (_gemiddeldeDiameter == 0 && !string.IsNullOrEmpty(Tekst))
                 {
-                    _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
+                    _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
                 }
-                return _grootsteDiameter;
+                return _gemiddeldeDiameter;
             }
         }
 
-        private double _gemiddeldeDiameter;
+        private double _grootsteDiameter;
+        public double GrootsteDiameter => _grootsteDiameter;
+
+        private double _referentieAfstand;
+        public double ReferentieAfstand => _referentieAfstand;
+
+        public double ZRef => _referentieAfstand;
+
         private BetonDekkingContext _dekking = new();
         
         // Nieuwe properties voor referentiesysteem
@@ -152,14 +159,7 @@ namespace Eurocode.BetonConstructies
         private double _referentieDekking = 30.0; // Opgegeven dekking in mm
         private double _referentieLengte = 1000.0; // Standaard 1000mm (1m)
 
-        public double GemiddeldeDiameter => _gemiddeldeDiameter;
         
-        /// <summary>
-        /// Z-referentie: afstand van hart staaf tot referentievlak in mm.
-        /// Dit is gelijk aan ReferentieAfstand (dekking + halve diameter).
-        /// </summary>
-        public double ZRef => ReferentieAfstand;
-
         /// <summary>
         /// Het referentievlak waarop de wapening is gedefinieerd
         /// </summary>
@@ -180,9 +180,9 @@ namespace Eurocode.BetonConstructies
             {
                 if (SetProperty(ref _referentieDekking, value))
                 {
-                    OnPropertyChanged(nameof(ReferentieAfstand));
-                    OnPropertyChanged(nameof(ZRef));
-                    OnPropertyChanged(nameof(GemiddeldeDiameter)); // Voor complete update
+                    // ✅ Update backing field STIL (geen event voor ReferentieAfstand)
+                    _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
+                    // NIET: OnPropertyChanged(nameof(ReferentieAfstand))
                 }
             }
         }
@@ -192,10 +192,7 @@ namespace Eurocode.BetonConstructies
         /// Berekend als: ReferentieDekking + (GemiddeldeDiameter / 2)
         /// Bijvoorbeeld: bij dekking 30mm en Ø8: ReferentieAfstand = 30 + 8/2 = 34mm
         /// </summary>
-        public double ReferentieAfstand
-        {
-            get => ReferentieDekking + (_gemiddeldeDiameter / 2.0);
-        }
+        //public double ReferentieAfstand => ReferentieDekking + (_gemiddeldeDiameter / 2.0);
 
         /// <summary>
         /// Lengte over welke de wapening is aangebracht in mm
@@ -217,40 +214,18 @@ namespace Eurocode.BetonConstructies
 
         /// <summary>
         /// Update de gemiddelde en grootste diameter op basis van de Tekst.
-        /// ZRef wordt nu automatisch berekend als computed property.
+        /// Interne methode - triggert GEEN events (om loops te voorkomen).
         /// </summary>
         public void SetZRef()
         {
-            this._gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
-            this._grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
-            // ZRef is nu een computed property die ReferentieAfstand retourneert
-            // Trigger een property changed voor ZRef voor binding updates
-            OnPropertyChanged(nameof(ZRef));
-            OnPropertyChanged(nameof(ReferentieAfstand));
+            _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
+            _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
+            _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
+            // GEEN OnPropertyChanged calls - dit voorkomt loops!
         }
 
 
-        /// <summary>
-        /// OBSOLETE: Gebruik ReferentieAfstand i.p.v. BetonDekkingContext
-        /// Deze property wordt in toekomstige versie verwijderd
-        /// </summary>
-        [Obsolete("Gebruik ReferentieAfstand i.p.v. Dekking. Deze property wordt verwijderd in toekomstige versie.")]
-        public BetonDekkingContext Dekking
-        {
-            get => _dekking;
-            set
-            {
-                if (_dekking != value)
-                {
-                    _dekking = value;
-                    // Update ReferentieAfstand voor backward compatibility
-                    if (_dekking != null)
-                    {
-                        _referentieAfstand = _dekking.DekkingToe + (_gemiddeldeDiameter / 2.0);
-                    }
-                }
-            }
-        }
+        
 
         /// <summary>
         /// Toegepaste betondekking in mm (voor backward compatibility)
@@ -264,6 +239,7 @@ namespace Eurocode.BetonConstructies
 
 
         private string _tekst = "r8-150";
+
         [TableColumn(Label = "opgave wapening")]
         public string Tekst
         {
@@ -273,21 +249,19 @@ namespace Eurocode.BetonConstructies
                 if (_tekst != value)
                 {
                     _tekst = value;
-
                     _wapgroepen = WapeningHelper.GetWapGroepen(_tekst);
                     
+                    // ✅ Update backing fields STIL (geen events)
+                    _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(_tekst);
+                    _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(_tekst);
+                    _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
+                    
+                    // ✅ Trigger alleen events voor properties met setters
                     OnPropertyChanged(nameof(Tekst));
                     OnPropertyChanged(nameof(As));
                     OnPropertyChanged(nameof(AsBasis));
                     OnPropertyChanged(nameof(HohMaat));
-                    
-                    // Update diameter en ReferentieAfstand bij wijziging van Tekst
-                    _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(_tekst);
-                    OnPropertyChanged(nameof(GemiddeldeDiameter));
-                    OnPropertyChanged(nameof(ReferentieAfstand));
-                    OnPropertyChanged(nameof(ZRef));
-                    
-                    Bereken();
+                    // NIET: GemiddeldeDiameter, GrootsteDiameter, ReferentieAfstand (zijn read-only!)
                 }
             }
         }
@@ -546,15 +520,17 @@ namespace Eurocode.BetonConstructies
 
         protected override void Bereken()
         {
-            _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
-            // ZRef wordt nu automatisch berekend via ReferentieAfstand
+            if (!string.IsNullOrEmpty(Tekst))
+            {
+                _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
+                _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
+                _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
+            }
         }
 
 
 
         private List<double> _diameters = [5, 6, 8, 10, 12, 16, 20, 25, 32, 40];
-        private double _referentieAfstand;
-
         protected override bool Valideer()
         {
             Meldingen.Clear();
