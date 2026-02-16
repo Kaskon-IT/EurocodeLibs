@@ -224,7 +224,6 @@ namespace Eurocode.BetonConstructies
             //}
         } // als er geen snedekrachten opgegeven dan Moment opgave.
 
-        //public double Positie { get; set; } = -1;
 
         [TableColumn(Label = "pos", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 1.5)]
         public string PosLabel { get; set; } = "midden";
@@ -300,7 +299,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(Label = "*b* × *h/d*", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.5)]
+        [TableColumn(Symbol = "<i>b x h/d</i>",Label = "<i>b × h/d</i>", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.5)]
         public string Afmeting => $"{Breedte:0} × {Hoogte:0}/{D:0.#}";
 
 
@@ -375,9 +374,13 @@ namespace Eurocode.BetonConstructies
             get { return Xu / D; }
         }
 
-        [TableColumn(Symbol = "<i>z</i>", Unit = "mm", Label = "inwendige hefboomsarm",
+        [TableColumn(
+            Symbol = "<i>z</i>",
+            Unit = "mm", 
+            Label = "inwendige hefboomsarm",
             Width = 1.5,
-            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+            StringFormat = "0.#", 
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Z
         {
             get
@@ -459,7 +462,8 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(
             Symbol = "*A<sub>s,req</sub>*",
-            Unit = "mm²", Label = "benodigde wapening",
+            Unit = "mm²", 
+            Label = "benodigde wapening",
             Width = 1.5,
             StringFormat = "0",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
@@ -493,7 +497,6 @@ namespace Eurocode.BetonConstructies
             Unit = "mm²",
             Label = "toegepaste wapening",
             Width = 2.0,
-            Key = K.AsToe,
             StringFormat = "0",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
@@ -513,7 +516,11 @@ namespace Eurocode.BetonConstructies
 
         }
 
-        [TableColumn(Symbol = "wapening", Label = "wapening", Width = 2.0, Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left )]
+        [TableColumn(
+            Symbol = "wapening", 
+            Label = "wapening",
+            Width = 2.0, 
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left )]
         public string AsProvidedText
         {
             get 
@@ -607,7 +614,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        //[TableColumn(Label = "minimale wapening", Symbol = "<i>A</i><sub>s,min</sub>", Unit = "mm²", StringFormat = "0")]
+        [TableColumn(Label = "minimale wapening", Symbol = "<i>A</i><sub>s,min</sub>", Unit = "mm²", StringFormat = "0")]
         public double AsMin
         {
             get
@@ -691,21 +698,7 @@ namespace Eurocode.BetonConstructies
             Label = "opm.", 
             Width = 2.0,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
-        public string MeldingNummers
-        {
-            get
-            {
-                return string.Join(", ",
-                    Meldingen
-                        .Where(m => m.Code.HasValue)
-                        .Select(m => m.Code!.Value % 1000)
-                        .OrderBy(n => n)
-                        .Select(n => n.ToString())
-                );
-
-                //return string.Join(", ", MeldingCodes.Select(code => $"{code % 1000}"));
-            }
-        }
+        public override string MeldingNummers => base.MeldingNummers;
 
         //[TableColumn(Label = "moment opneembaar", Symbol = "<i>M</i><sub>Rd</sub>", Unit = "kNm" )]
         public double MRd

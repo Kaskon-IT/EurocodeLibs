@@ -56,7 +56,7 @@ namespace CommonLibrary
             {
                 if (Type == MeldingType.Waarschuwing)
                 {
-                    return $"<u>{Bericht}</u>";
+                    return $"{Bericht}";
                 }
                 else
                 {

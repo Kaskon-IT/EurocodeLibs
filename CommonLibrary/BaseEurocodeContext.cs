@@ -46,8 +46,8 @@ namespace CommonLibrary
         [JsonIgnore]
         public ObservableCollection<Melding> Meldingen { get; } = [];
 
-        [JsonIgnore]
-        public ObservableCollection<int> MeldingCodes { get; } = [];
+        //[JsonIgnore]
+        //public ObservableCollection<int> MeldingCodes { get; } = [];
 
         public event Action? OnUpdated;
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -307,10 +307,10 @@ namespace CommonLibrary
 
         public void AddMelding(int code)
         {
-            if (MeldingCodes.Contains(code))
+            var exists = Meldingen.Any(m => m.Code == code);
+            if (exists)
                 return;
 
-            MeldingCodes.Add(code);
             var melding = CommonLibrary.Helpers.MeldingenBetonHelper.GetMelding(code);
             AddMelding(melding);
 #if DEBUG
@@ -321,7 +321,6 @@ namespace CommonLibrary
         public void ClearMeldingen()
         {
             Meldingen.Clear();
-            MeldingCodes.Clear();
         }
 
         /// <summary>
@@ -353,6 +352,28 @@ namespace CommonLibrary
         /// </summary>
         /// <param name="hint"></param>
         public void AddMeldingHint(string hint) => Meldingen.Add(new(MeldingType.Hint, hint));
+
+        /// <summary>
+        /// Geeft een lijst van meldingnummers, met ! achter waarschuwingen
+        /// </summary>
+        public virtual string MeldingNummers
+        {
+            get
+            {
+                return string.Join(", ",
+                    Meldingen
+                        .Where(m => m.Code.HasValue)
+                        .Select(m =>
+                        {
+                            var nummer = m.Code!.Value % 1000;
+                            // Voeg ! toe voor waarschuwingen
+                            var suffix = (m.Type & MeldingType.Waarschuwing) == MeldingType.Waarschuwing ? "!" : "";
+                            return $"{nummer}{suffix}";
+                        })
+                        .OrderBy(s => s)
+                );
+            }
+        }
 
 
 

@@ -110,22 +110,22 @@
             { 1003, new Melding(MeldingType.Opmerking, "[3] Wapening op basis van gedrongen ligger conform artikel 6.1 (10)") },
             { 1004, new Melding(MeldingType.Opmerking, "[4] Het opneembare moment M<sub>Rd</sub> conform gedrongen ligger artikel 6.1(10) is groter dan M<sub>Rd</sub> volgens 6.1(P). Het maatgevende artikel 6.1(P) is toegepast.")},
 
-            { 1051, new Melding(MeldingType.Waarschuwing, "[51] <u>Overschrijding maximale drukzone</u>") },
-            { 1052, new Melding(MeldingType.Waarschuwing, "[52] <u>Overschrijding maximale wapening</u>") },
-            { 1053, new Melding(MeldingType.Waarschuwing, "[53] <u>Wapening voldoet niet (uiterste grenstoestand)</u>") },
+            { 1051, new Melding(MeldingType.Waarschuwing, "[51] Overschrijding maximale drukzone") },
+            { 1052, new Melding(MeldingType.Waarschuwing, "[52] Overschrijding maximale wapening") },
+            { 1053, new Melding(MeldingType.Waarschuwing, "[53] Wapening voldoet niet (uiterste grenstoestand)") },
 
 
             // meldingen serie 2001 
             { 2004, new Melding(MeldingType.Opmerking, "[4] Voor de berekening van V<sub>Rd,max</sub> is meer dwarskrachtwapening toegepast zodat spanning kleiner is dan 80% van f<sub>yk</sub> , |nu|~1~ is bepaald met (vgl. 6.10N)" ) },
-            { 2051, new Melding(MeldingType.Waarschuwing, "[51] <u>Overschrijding V<sub>Rd,max</sub> conform artikel 6.2.3 (3).</u> Pas de drukdiagonaal aan.")},
+            { 2051, new Melding(MeldingType.Waarschuwing, "[51] Overschrijding V<sub>Rd,max</sub> conform artikel 6.2.3 (3). Pas de drukdiagonaal aan.")},
 
             // meldingen serie 3001 zijn voor dekking
 
-            { 3051, new Melding(MeldingType.Waarschuwing, "[51] <u>Toegepaste dekking is kleiner dan nominale dekking</u>") },
+            { 3051, new Melding(MeldingType.Waarschuwing, "[51] Toegepaste dekking is kleiner dan nominale dekking") },
             
             // meldingen serie 4001 zijn voor scheurwijdte
             
-            { 4051, new Melding(MeldingType.Waarschuwing, "[51] <u>Berekende scheurwijdte w<sub>k</sub> (art. 7.3.4) groter dan toelaatbaar w<sub>max</sub> (art. 7.3.1) </u>")},
+            { 4051, new Melding(MeldingType.Waarschuwing, "[51] Berekende scheurwijdte w<sub>k</sub> (art. 7.3.4) groter dan toelaatbaar w<sub>max</sub> (art. 7.3.1) ")},
 
         };
 
