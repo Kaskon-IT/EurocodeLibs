@@ -496,7 +496,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "*A<sub>s,prov</sub>*",
             Unit = "mm²",
             Label = "toegepaste wapening",
-            Width = 2.0,
+            Width = 1.5,
             StringFormat = "0",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
@@ -519,7 +519,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             Symbol = "wapening", 
             Label = "wapening",
-            Width = 2.0, 
+            Width = 3.0, 
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left )]
         public string AsProvidedText
         {

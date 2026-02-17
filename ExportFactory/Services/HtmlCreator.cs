@@ -155,28 +155,6 @@
                     var guid = Guid.NewGuid();
                     htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{section.Tag}</button>");
                     htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
-                    //htmlBuilder.AppendLine(@"<div class='page-header'>");
-
-                    //var header = section.Headers.Primary;
-                    //string hdr1 = "";
-                    //string hdr2 = "";
-                    //string hdr3 = "";
-
-                    //if (header?.Elements != null && header?.Elements.Count > 0)
-                    //{
-                    //    var hdrFod = header?.Elements[0];
-                    //    if (hdrFod is Table table)
-                    //    {
-                    //        //if (table.Rows[0].Cells[0].Elements.First is string str)
-                    //        //hdr1 = cell0?.ToString();
-                    //    }
-                    //}
-
-                    //htmlBuilder.AppendLine(@$"<span class='left'>LINKS{hdr1}</span>");
-                    //htmlBuilder.AppendLine(@$"<span class='middle'>MIDDEN</span>");
-                    //htmlBuilder.AppendLine(@$"<span class='right'>RECHTS</span>");
-                    //htmlBuilder.AppendLine("@</div>");
-
                 }
 
                 foreach (var element in section.Elements)
@@ -416,8 +394,10 @@
                                 var title = "";
                                 if (cell.Tag is Formula formula)
                                 {
-                                    title = $"data-tex='{formula.GetValue()}' data-caption='{formula.Name}'";
-                                    htmlClass += " has-formula";
+                                    //title = $"data-tex='{formula.GetValue()}' data-caption='{formula.Name}'";
+                                    //htmlClass += " has-formula";
+
+                                    // HIERBOVEN KAN AANGEZET WORDEN VOOR DEBUG. Dan ontstaat er een Tooltip in de tabellen voor het uitleze van de formules.
                                 }
 
                                 
