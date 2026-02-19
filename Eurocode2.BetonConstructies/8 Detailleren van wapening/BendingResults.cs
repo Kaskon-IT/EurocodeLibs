@@ -22,7 +22,7 @@ namespace Eurocode.BetonConstructies
         private Schematisering.ConstructiefModelEnum? _constructiefModel = Schematisering.ConstructiefModelEnum.Balk;
         private double _breedte = 300;
         private double _hoogte = 400;
-        private double _moment = 80.80;
+        private double _moment = 0;
         private SectionForces? _snedekrachten;
         private VerankeringLangswapeningContext? _verankeringsLengte;
 
@@ -299,7 +299,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(Symbol = "<i>b x h/d</i>",Label = "<i>b × h/d</i>", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.5)]
+        //[TableColumn(Symbol = "<i>b x h/d</i>",Label = "<i>b × h/d</i>", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.5)]
         public string Afmeting => $"{Breedte:0} × {Hoogte:0}/{D:0.#}";
 
 
@@ -336,6 +336,7 @@ namespace Eurocode.BetonConstructies
         //    Width = 1.5,
         //    Key = K.NuttigeHoogte,
         //    StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        [TableColumn(Symbol = "<i>d</i>", Label = "nuttige hoogte", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 1.5)]
         public double D { get { return Hoogte - ZRef; } }
 
 

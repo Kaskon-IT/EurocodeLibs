@@ -9,39 +9,39 @@
 
         public static readonly Melding MinimaleWapening = new(
             MeldingType.Neutraal,
-            "Eisen met betrekking tot minimale wapening toegepast volgens artikel 9.2.1.1 (1)",
+            "eisen met betrekking tot minimale wapening toegepast volgens artikel 9.2.1.1 (1)",
             1001);
 
         public static readonly Melding MinimaleWapeningScheurwijdte = new(
             MeldingType.Neutraal,
-            "Eisen met betrekking tot minimale wapening scheurwijdte toegepast volgns artikel 7.3.2", 1002);
+            "eisen met betrekking tot minimale wapening scheurwijdte toegepast volgns artikel 7.3.2", 1002);
 
         public static readonly Melding GedrongenLigger = new(
             MeldingType.Neutraal,
-            "Beschouwd als gedrongen ligger volgens artikel 6.1 (10)", 1003);
+            "beschouwd als gedrongen ligger volgens artikel 6.1 (10)", 1003);
 
         public static readonly Melding GedrongenLiggerNietMaatgevend = new(
            MeldingType.Neutraal,
-           "Voor de berekening van M~Rd~ is artikel 6.1 (1)P maatgevend ten opzichte van artikel 6.1 (10).", 1004);
+           "voor de berekening van M~Rd~ is artikel 6.1 (1)P maatgevend ten opzichte van artikel 6.1 (10).", 1004);
 
 
         public static readonly Melding OverschrijdingDrukzone = new(
             MeldingType.Waarschuwing,
-            "Overschrijding maximale drukzone", 1051);
+            "overschrijding maximale drukzone", 1051);
 
         public static readonly Melding OverschrijdingMaximaleWapening = new(
             MeldingType.Waarschuwing,
-            "Overschrijding maximale wapening", 1052);
+            "overschrijding maximale wapening", 1052);
 
         public static readonly Melding OnvoldoendeLangsWapening = new(
             MeldingType.Waarschuwing,
-            "Onvoldoende langswapening", 1053);
+            "onvoldoende langswapening", 1053);
 
 
 
         public static readonly Melding DwarskrachtOverschrijdingDrukdiagonaal = new(
             MeldingType.Waarschuwing,
-            "Overschrijding drukdiagonaal", 2061);
+            "overschrijding drukdiagonaal", 2061);
 
 
 

@@ -143,14 +143,13 @@
             bool accordionIsOpen = false;
             foreach (Section section in document.Sections)
             {
-                // onderzoek: maak section inklapbaar (accordion)
-                // <button class="accordion">Hoofdstuk 1</button>
-                // <div class="panel">
-                // <p>Dit is de inhoud van hoofdstuk 1. Hier kun je tekst plaatsen die je wilt inklappen.</p>
-                //</div>
                 accordionIsOpen = false;
                 if (section.Tag != null)
                 {
+                    if (accordionIsOpen)
+                    {
+                        //htmlBuilder.AppendLine("</div>");
+                    }
                     accordionIsOpen = true;
                     var guid = Guid.NewGuid();
                     htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{section.Tag}</button>");
@@ -204,11 +203,11 @@
                                 {
                                     if (accordionIsOpen)
                                     {
-                                        // sluit
+                                        // sluit vorige panel (BELANGRIJK: voorkomt geneste panels!)
                                         htmlBuilder.AppendLine("</div>");
                                     }
 
-                                    // start nieuwe
+                                    // start nieuwe panel (altijd, ook als er geen section.Tag was)
                                     accordionIsOpen = true;
                                     var guid = Guid.NewGuid();
                                     htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{ProcessParagraph(paragraph)}</button>");

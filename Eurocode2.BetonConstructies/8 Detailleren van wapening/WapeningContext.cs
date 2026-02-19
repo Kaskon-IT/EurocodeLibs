@@ -237,6 +237,33 @@ namespace Eurocode.BetonConstructies
             set => ReferentieDekking = value;
         }
 
+        /// <summary>
+        /// OBSOLETE: Dekking property voor backward compatibility met oude EurocodeRazorClassLibrary
+        /// Gebruik in plaats daarvan ReferentieDekking of DekkingToegepast
+        /// </summary>
+        [Obsolete("Gebruik ReferentieDekking in plaats van Dekking")]
+        public BetonDekkingContext Dekking
+        {
+            get
+            {
+                // Lazy initialize en synchroniseer met ReferentieDekking
+                if (_dekking == null)
+                {
+                    _dekking = new BetonDekkingContext();
+                }
+                _dekking.DekkingToe = ReferentieDekking;
+                return _dekking;
+            }
+            set
+            {
+                _dekking = value;
+                if (_dekking != null)
+                {
+                    ReferentieDekking = _dekking.DekkingToe;
+                }
+            }
+        }
+
 
         private string _tekst = "r8-150";
 
