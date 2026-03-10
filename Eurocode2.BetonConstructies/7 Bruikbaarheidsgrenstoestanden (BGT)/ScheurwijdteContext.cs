@@ -113,7 +113,7 @@ namespace Eurocode.BetonConstructies
         // input
         [TableColumn(
             Label = "moment BGT",
-            Description = "Moment in de bruikbaarheidsgrenstoestand (BGT)",
+            Description = "moment in de bruikbaarheidsgrenstoestand (BGT)",
             Symbol = "<i>M<sub>E,fr</sub></i>",
             Width = 1.5,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left,
@@ -313,7 +313,7 @@ namespace Eurocode.BetonConstructies
             Symbol = "<i>ε<sub>sm</sub>-ε<sub>cm</sub></i>",
             Label = "rekverschil",
             Article = "7.3.4 (2)",
-            Description = "mag zijn berekend uit de vergelijking (7.9)",
+            Description = "rekverschil mag zijn berekend uit de vergelijking (7.9)",
             StringFormat = "0.0000",
             Width = 2.0,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
@@ -327,7 +327,7 @@ namespace Eurocode.BetonConstructies
                 {
                     Name = "(7.9)",
                     StaticValue = @"\epsilon_{sm} - \epsilon_{cm} = \frac { \sigma_s - k_t \frac { f_{ct,eff} } { \rho_{p,eff} } \left( 1 + \alpha_e \cdot \rho_{p,eff}  \right)  } {E_s} \geq 0.6 \frac {\sigma_s} {E_s}",
-                    DynamicValue = $@"\epsilon_{{sm}} - \epsilon_{{cm}} = {EpsSmMinusEpsCm:0.##} ‰"
+                    DynamicValue = $@"\epsilon_{{sm}} - \epsilon_{{cm}} = {EpsSmMinusEpsCm:0.#####}"
                 };
             }
         }
@@ -338,7 +338,7 @@ namespace Eurocode.BetonConstructies
             Label = "scheurwijdte",
             Symbol = "<i>w<sub>k</sub></i>",
             Unit = "mm",
-            Description = "De scheurwijdte <i>w</i><sub>k</sub> mag zijn berekend met vergelijking (7.8):",
+            Description = "de scheurwijdte <i>w</i><sub>k</sub> mag zijn berekend met vergelijking (7.8):",
             StringFormat = "0.##",
             Width = 2.0,
             Key = K.ScheurwijdteBerekend,
@@ -365,7 +365,7 @@ namespace Eurocode.BetonConstructies
             Article = "7.3.1",
             Label = "factor",
             Symbol = "<i>k<sub>x</sub></i>",
-            Description = " voor de bepaling van de duurzaamheid, mogen de waarden in tabel 7.1N zijn vermenigvuldigd met een factor kx.",
+            Description = " voor de bepaling van de duurzaamheid, mogen de waarden in tabel 7.1N zijn vermenigvuldigd met een factor k~x~.",
             Key = K.ScheurwijdteKx,
             Width = 1.5,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
@@ -508,14 +508,14 @@ namespace Eurocode.BetonConstructies
             // foutmeldingen
             if (Wk > ScheurwijdteGrenswaarde.Wmax)
             {
-                AddMeldingError("overschrijding maximale scheurwijdte");
+                AddMeldingWaarschuwing("overschrijding maximale scheurwijdte");
                 return false;
             }
 
 
             if (AsToe < ScheurwijdteAsMin && ControleerMinimaleWapeningScheurbeheersing)
             {
-                AddMeldingError("toegepaste wapening is kleiner dan minimale wapening scheurwijdte");
+                AddMeldingWaarschuwing("toegepaste wapening is kleiner dan minimale wapening scheurwijdte");
                 return false;
             }
 

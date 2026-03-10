@@ -52,7 +52,7 @@ namespace CommonLibrary
         public event Action? OnUpdated;
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private readonly HashSet<object> _visited = new();
+        private readonly HashSet<object> _visited = [];
 
         protected bool SetAndRecalculate<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
@@ -292,7 +292,8 @@ namespace CommonLibrary
             }
 
             // Controleer of er al een melding met dezelfde code of bericht bestaat
-            bool bestaatAl = Meldingen.Any(m =>
+            // ToList() om collection modified exception te voorkomen tijdens iteratie
+            bool bestaatAl = Meldingen.ToList().Any(m =>
                 m is not null &&
                 ((m.Code.HasValue && melding.Code.HasValue && m.Code == melding.Code) ||
                  (!string.IsNullOrEmpty(m.Bericht) &&
@@ -329,7 +330,7 @@ namespace CommonLibrary
         /// ❌⚠️
         /// </summary>
         /// <param name="tekst"></param>
-        public void AddMeldingError(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing | MeldingType.Error, tekst));
+        public void AddMeldingError(string tekst) => Meldingen.Add(new(MeldingType.Error, tekst));
 
         /// <summary>
         /// Geeft een opmerking.
@@ -337,7 +338,7 @@ namespace CommonLibrary
         /// ℹ️
         /// </summary>
         /// <param name="tekst"></param>
-        public void AddMeldingOpmerking(string tekst) => Meldingen.Add(new(MeldingType.Opmerking | MeldingType.Neutraal, tekst));
+        public void AddMeldingOpmerking(string tekst) => Meldingen.Add(new(MeldingType.Opmerking, tekst));
 
         /// <summary>
         /// Geeft een waarschuwing => let op! zus en zo, maar geen fout foutmelding
@@ -345,7 +346,7 @@ namespace CommonLibrary
         /// ⚠️👈
         /// </summary>
         /// <param name="tekst"></param>
-        public void AddMeldingWaarschuwing(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing | MeldingType.Opmerking, tekst));
+        public void AddMeldingWaarschuwing(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing, tekst));
 
         /// <summary>
         /// Geeft de gebruiker een HINT 💡
@@ -368,7 +369,7 @@ namespace CommonLibrary
                             var nummer = m.Code!.Value % 1000;
                             // Voeg ! toe voor waarschuwingen
                             var suffix = (m.Type & MeldingType.Waarschuwing) == MeldingType.Waarschuwing ? "!" : "";
-                            return $"{nummer}{suffix}";
+                            return $"[{nummer}]{suffix}";
                         })
                         .OrderBy(s => s)
                 );

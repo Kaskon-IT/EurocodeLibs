@@ -5,8 +5,8 @@ namespace Eurocode.Belastingen
 {
     public enum GebruiksklasseEnum
     {
-        [Description("A : gemeenschappelijke trappen")]
-        [Display(Name = "A : gemeenschappelijke trappen", ShortName = "A")]
+        [Description("A : gemeenschappelijke trappen en bordessen")]
+        [Display(Name = "A : gemeenschappelijke trappen en bordessen", ShortName = "A")]
         A_gemeenschappelijke_trappen = 11,
 
         [Description("B : kantoorgebouwen")]

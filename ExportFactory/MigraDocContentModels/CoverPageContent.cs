@@ -1,6 +1,7 @@
 ﻿using CommonLibrary.Models;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace ExportFactory.MigraDocContentModels
 {
@@ -107,7 +108,7 @@ namespace ExportFactory.MigraDocContentModels
             }
         }
 
-
+        [JsonIgnore]
         public List<LabelWithStringValue> ProjectLabels { get; set; } = [];
         public List<LabelWithStringValue> DocumentLabels { get; set; } = [];
 

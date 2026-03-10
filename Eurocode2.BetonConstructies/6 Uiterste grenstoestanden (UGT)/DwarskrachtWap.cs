@@ -27,7 +27,7 @@ namespace Eurocode.BetonConstructies
 
             // tijdelijk test => verwijderen na afronding
 
-            List<string> artikelen = new List<string>();
+            List<string> artikelen = [];
 
             DwarskrachtWapContext context = new(beton, profiel, snedekrachten)
             {

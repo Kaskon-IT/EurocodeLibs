@@ -69,7 +69,7 @@
 
     public class MeldingCatalogus
     {
-        private readonly Dictionary<int, Melding> _meldingen = new();
+        private readonly Dictionary<int, Melding> _meldingen = [];
 
         public void Registreer(int code, Melding melding)
         {

@@ -153,13 +153,13 @@ namespace ExportFactory.Extensions
 
             if (obj.Meldingen.Count == 1)
             {
-                prefix = "Opmerking\n";
-                markdownText = prefix + obj.Meldingen.First().ToMarkDownString();
+                
+                markdownText = obj.Meldingen.First().ToMarkDownString();
             }
             else
             {
-                prefix = "Opmerkingen\n";
-                markdownText = prefix + string.Join("\n", obj.Meldingen
+               
+                markdownText = string.Join("\n", obj.Meldingen
                     .OrderBy(m => m.Code)
                     .Select(m => $"> {m.ToMarkDownString()}"));
             }

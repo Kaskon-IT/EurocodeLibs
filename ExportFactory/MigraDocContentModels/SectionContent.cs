@@ -5,7 +5,7 @@
         public int Order { get; set; } = 0; // Default order
         public string? Title { get; set; } // Optional section title
         public string? TitleStyle { get; set; } //
-        public List<SectionElement> Elements { get; set; } = new List<SectionElement>();
+        public List<SectionElement> Elements { get; set; } = [];
 
         public SectionContent() { }
 

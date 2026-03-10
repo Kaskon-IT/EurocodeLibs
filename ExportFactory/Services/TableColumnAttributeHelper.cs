@@ -31,7 +31,7 @@ namespace ExportFactory.Services
                 yield break;
 
             // Initialiseer visited-set bij eerste call
-            visited ??= new HashSet<object>();
+            visited ??= [];
 
             // Stop als we te diep gaan
             if (depth > maxDepth)

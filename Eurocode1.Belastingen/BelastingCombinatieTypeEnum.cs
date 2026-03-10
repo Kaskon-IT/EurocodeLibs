@@ -182,7 +182,7 @@ namespace Eurocode.Belastingen
     public class EenhedenGroothedenDemoModel
     {
         // Waarden worden altijd in basis opgeslagen (N, mm)
-        public Dictionary<Grootheid, double> BasisWaarden { get; set; } = new();
+        public Dictionary<Grootheid, double> BasisWaarden { get; set; } = [];
 
         public EenhedenGroothedenDemoModel()
         {

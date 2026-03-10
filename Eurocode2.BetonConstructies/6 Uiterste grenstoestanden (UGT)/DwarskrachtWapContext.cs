@@ -28,7 +28,7 @@ namespace Eurocode.BetonConstructies
             Beton = new();
             Profiel = new();
             Snedekrachten = new();
-            LijstBeugelWap = new List<BeugelWap>();
+            LijstBeugelWap = [];
         }
 
         public override string Heading { get; set; } = "Dwarskracht";
@@ -744,13 +744,13 @@ namespace Eurocode.BetonConstructies
 
             if (Ved > DwarskrachtWeerstand)
             {
-                AddMeldingError($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd</sub>) {(Ved / DwarskrachtWeerstand):0.##}");
+                AddMeldingWaarschuwing($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd</sub>) {(Ved / DwarskrachtWeerstand):0.##}");
                 return false;
             }
 
             if (Ved > DwarskrachtWeerstandMax)
             {
-                AddMeldingError($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd,max</sub>) {(Ved / DwarskrachtWeerstandMax):0.##}");
+                AddMeldingWaarschuwing($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd,max</sub>) {(Ved / DwarskrachtWeerstandMax):0.##}");
                 return false;
             }
             return true;

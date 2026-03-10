@@ -454,6 +454,8 @@ namespace Eurocode.BetonConstructies
             return this.Beta;
         }
 
+
+
         public double GetAlpha()
         {
             SetAlphaBeta(this.EpsilonCu);

@@ -10,7 +10,7 @@ namespace ExportFactory.Services
     public class DataTableMappingService
     {
 
-        public Dictionary<string, AttributesMapping> Data { get; } = new();
+        public Dictionary<string, AttributesMapping> Data { get; } = [];
 
 
         public DataTableMappingService()
@@ -145,10 +145,7 @@ namespace ExportFactory.Services
 
 
         // EC1
-        private readonly Dictionary<string, AttributesMapping> _ec1 = new()
-        {
-
-        };
+        private readonly Dictionary<string, AttributesMapping> _ec1 = [];
 
         // EC2
         private readonly Dictionary<string, AttributesMapping> _ec2 = new Dictionary<string, AttributesMapping>

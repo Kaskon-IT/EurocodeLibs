@@ -51,11 +51,11 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public BetonConstructies.BuigingBasic BuigingTand { get; set; }
+        public BetonConstructies.BuigingBasic? BuigingTand { get; set; } 
 
-        public BendingResults Buiging1 { get; set; }
+        public BendingResults? Buiging1 { get; set; }
 
-        public DwarskrachtWapContext TandShear { get; set; }
+        public DwarskrachtWapContext? TandShear { get; set; }
         public SectionForces Snedekrachten { get; set; } = new();
 
 

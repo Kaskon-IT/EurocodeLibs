@@ -124,7 +124,7 @@ namespace CommonLibrary
             // code?
             if (Code.HasValue)
             {
-                parts.Add($"{Code % 1000}."); // bijvoorbeeld 1. 
+                parts.Add($"[{Code % 1000}]"); // bijvoorbeeld 1. 
             }
 
             // bericht

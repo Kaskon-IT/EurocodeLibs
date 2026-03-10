@@ -4,7 +4,7 @@ namespace ExportFactory.MigraDocContentModels
 {
     public class RevisionContent : INotifyPropertyChanged
     {
-        private List<Revision> _revisions = new List<Revision>();
+        private List<Revision> _revisions = [];
 
 
         public List<Revision> Revisions

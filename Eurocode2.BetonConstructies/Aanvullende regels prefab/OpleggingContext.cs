@@ -1,6 +1,7 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
 using CommonLibrary.Helpers;
+using ExportFactory.Shared;
 using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
@@ -53,7 +54,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// F~Ed~
         /// </summary>
-        [TableColumn("F~Ed~", "rekenwaarde oplegreactie")]
+        [TableColumn(Symbol ="*F~Ed~*", Description ="rekenwaarde oplegreactie", Unit = "kN")]
         public double OplegReactieRekenwaarde => BerekenOplegReactieRekenwaarde?.Invoke() ?? 100;
 
 
@@ -70,13 +71,25 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// a of a~nom~
         /// </summary>
-        [TableColumn("<i>a</i>~nom~", "nominale opleglengte")]
+        [TableColumn(Symbol = "*a~nom~*", Unit = "mm", Description = "nominale opleglengte", Article = "10.9.5.2")]
         public double OplegLengteNominaal { get { return this.SetOplegLengteNominaal(); } }
+        public Formula OplegLengteNominaalFormula
+        {
+            get
+            {
+                return new Formula()
+                {
+                    Name = "(10.6)",
+                    StaticValue = "a = a_1 + a_2 + a_3 + \\sqrt{{Δa_2}^2 + Δ{a_3}^2}" + $"+{AfstandDeltaElementType}"
+                };
+            }
+        }
+
 
         /// <summary>
         /// a~1~
         /// </summary>
-        [TableColumn("<i>a</i>~1~", "netto opleglengte")]
+        [TableColumn(Symbol = "*a~1~*", Description = "netto opleglengte", Unit ="mm", Article = "tabel 10.2")]
         public double OplegLengteNetto
         {
             get
@@ -99,36 +112,43 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// b~1~
         /// </summary>
-        [TableColumn("<i>b</i>~1~", "oplegbreedte netto")]
+        [TableColumn(Symbol = "*b~1~*", Description = "oplegbreedte netto", Unit = "mm")]
         public double OplegBreedteNetto { get; set; } = 1000;
 
         /// <summary>
         /// f~Rd~
         /// </summary>
-        [TableColumn("f~Rd~", "rekenwaarde oplegsterkte")]
+        [TableColumn(Symbol = "*f~Rd~*",Description = "rekenwaarde oplegsterkte", Unit ="N/mm²")]
         public double OplegSterkteRekenwaarde { get { return this.SetOplegSterkteRekenwaarde(); } }
+        public Formula OplegSterkteRekenwaardeFormula { get
+            {
+                return new()
+                {
+                    StaticValue = DrogeVerbinding ? "f_{Rd} = 0.4 \\cdot f_{cd}" : "f_{Rd} = f_{bed} \\leq 0.85 \\cdot f_{cd}"
+                };
+            } }
 
 
 
         /// <summary>
         /// randafstand dragende element
         /// </summary>
-        [TableColumn("a~2~", "randafstand dragende element")]
+        [TableColumn(Symbol ="*a~2~*", Description = "randafstand dragende element", Unit = "mm", Article = "tabel 10.3")]
         public double AfstandA2 { get { return this.SetAfstandA2(); } }
 
 
         /// <summary>
         /// randafstand ondersteunde element
         /// </summary>
-        [TableColumn("a~3~", "randafstand ondersteunde element")]
+        [TableColumn(Symbol ="*a~3~*", Description ="randafstand ondersteunde element", Unit= "mm", Article = "tabel 10.4")]
 
         public double AfstandA3 { get { return this.SetAfstandA3(); } }
 
-        [TableColumn("|Delta|a~2~", "tolerantie afstand tussen dragende elementen")]
+        [TableColumn(Symbol ="*Δa~2~*", Description ="tolerantie afstand tussen dragende elementen", Unit ="mm", Article = "tabel 10.5")]
 
         public double AfstandDeltaA2 { get { return this.SetAfstandDeltaA2(); } }
 
-        [TableColumn("|Delta|a~3~", "tolerantie lengteafwijkingen ondersteunde element")]
+        [TableColumn(Symbol ="*Δa~3~*", Description ="tolerantie lengteafwijkingen ondersteunde element", Unit = "mm")]
 
         public double AfstandDeltaA3
         {
@@ -136,7 +156,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("|Delta|~e~")]
+        [TableColumn(Symbol = "*Δ~e~*", Description = "toeslag afzonderlijk element", Unit = "mm", Article = "10.9.5.3")]
         public double AfstandDeltaElementType
         {
             get
@@ -146,7 +166,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn("l~n~", "lengte ondersteunde element")]
+        [TableColumn(Symbol = "*l~n~*",Description = "lengte ondersteunde element", Unit = "mm")]
         public double LengteOndersteundeElement => BerekenLengteOndersteundeElement?.Invoke() ?? 8000;
 
 
@@ -158,7 +178,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// f~cd~
         /// </summary>
-        [TableColumn("f~cd~", "laagste rekenwaarde van de sterktes van het ondersteunde en het ondersteunende element")]
+        [TableColumn(Symbol ="*f~cd~*",Description = "laagste rekenwaarde van de sterktes van het ondersteunde en het ondersteunende element", Unit = "N/mm²")]
         public double LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement
         {
             get
@@ -191,13 +211,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// f~bed~
         /// </summary>
-        [TableColumn("f~bed~", "rekenwaarde van de sterkte van het oplegmateriaal")]
+        [TableColumn(Symbol = "*f~bed~*", Description ="rekenwaarde van de sterkte van het oplegmateriaal", Unit = "N/mm²")]
         public double RekenwaardeOplegmateriaal { get; set; } = 5.0;
 
 
 
 
-        [TableColumn("droge verbinding?")]
+        [TableColumn(Description ="droge verbinding?")]
         public bool DrogeVerbinding { get; set; } = false;
 
 
@@ -225,7 +245,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn("|sigma|~Ed~", "oplegspanning")]
+        [TableColumn(Symbol ="*σ~Ed~*",Description = "oplegspanning", Unit ="N/mm²")]
         public double OplegSpanningRekenwaarde
         {
             get { return OplegReactieRekenwaarde * 1000 / (OplegBreedteNetto * OplegLengteNettoAanwezig); }
@@ -234,7 +254,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn("|sigma|~Ed~ / f~cd~", "relatieve oplegspanning")]
+        [TableColumn(Symbol ="*σ~Ed~ / f~cd~*", Description ="relatieve oplegspanning", Unit = "-")]
         public double RelatieveOplegspanning
         {
             get { return OplegSpanningRekenwaarde / LaagsteRekenwaardeVanOndersteundeEnHetOndersteunendeElement; }

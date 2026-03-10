@@ -10,8 +10,8 @@ namespace ExportFactory.Shared
         private readonly static Norm _nen1991 = new("EN1991", "Eurocode 1: Belastingen op constructies");
         private readonly static Norm _nen1992 = new("EN 1992", "Eurocode 2: Betonconstructies");
 
-        public static List<EurocodeParagraaf> Paragraven = new()
-        {
+        public static List<EurocodeParagraaf> Paragraven =
+        [
             // Hoofdstuk 1 - Algemeen
             new(_nen1992, "1", "Algemeen"),
             new(_nen1992, "1.1", "Onderwerp en toepassingsgebied"),
@@ -218,7 +218,7 @@ namespace ExportFactory.Shared
             new(_nen1992, "9.10", "Trekbanden"),
 
 
-        };
+        ];
 
 
 

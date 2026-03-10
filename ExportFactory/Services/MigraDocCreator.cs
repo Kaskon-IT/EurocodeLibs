@@ -817,9 +817,6 @@ namespace ExportFactory.Services
                 var bookmarkName = Guid.NewGuid().ToString();
                 paragraph.AddBookmark(bookmarkName);
 
-                // Determine level from the heading style
-                //int level = heading.Style == "Heading1" ? 1 : 2;
-
                 bookmarks.Add(new() { Title = heading.Text, BookmarkName = bookmarkName, Level = heading.Level });
             }
         }
@@ -1353,7 +1350,7 @@ namespace ExportFactory.Services
 
 
 
-            section.AddParagraph(coverPage.Title ?? "", "Title");
+            section.AddParagraph(coverPage.Title ?? "", "Title").AddBookmark("titelpagina");
             section.AddParagraph(coverPage.Subtitle ?? "", "Subtitle");
 
 
@@ -1561,8 +1558,12 @@ namespace ExportFactory.Services
                                .Replace("‰", "^0^/~00~");
 
             var regex = new Regex(
+               @"(?<div>\<div[^>]*>.*?\</div\>)|" +
+               @"(?<table>\<table[^>]*>.*?\</table\>)|" +
                @"(?<svg>\<svg.*?\</svg\>)|" +
                 @"(?<png>data:image\/png;base64,[A-Za-z0-9+/=]+)|" +
+                @"(?<link><a\s+href=['""]#([^'""]+)['""][^>]*>(.*?)</a>)|" +
+                @"(?<bookmark><span\s+id=['""]([^'""]+)['""][^>]*>(.*?)</span>)|" +
                 @"(?<bold>\*\*(.*?)\*\*|<b\b[^>]*>(.*?)</b>)|" +
                 @"(?<italic>\*(.*?)\*|<i\b[^>]*>(.*?)</i>)|" +
                 @"(?<underline>__(.*?)__|<u\b[^>]*>(.*?)</u>)|" +
@@ -1577,6 +1578,43 @@ namespace ExportFactory.Services
 
             foreach (Match match in regex.Matches(markdown))
             {
+                if (match.Groups["div"].Success)
+                {
+                    string divHtml = match.Value;
+                    
+                    // Voor RTF: strip alle HTML tags
+                    if (_isRtfContent)
+                    {
+                        var cleanText = Regex.Replace(divHtml, @"<[^>]+>", " ");
+                        paragraph.AddText(cleanText.Trim());
+                    }
+                    else
+                    {
+                        // Voor HTML/preview: bewaar div HTML in de Tag
+                        paragraph.Tag = divHtml;
+                    }
+                    continue;
+                }
+                
+                if (match.Groups["table"].Success)
+                {
+                    string tableHtml = match.Value;
+                    
+                    // Voor RTF: strip alle HTML tags (komt later)
+                    if (_isRtfContent)
+                    {
+                        // Strip HTML maar behoud de text content
+                        var cleanText = Regex.Replace(tableHtml, @"<[^>]+>", "");
+                        paragraph.AddText(cleanText);
+                    }
+                    else
+                    {
+                        // Voor HTML/preview: bewaar de table HTML in de Tag
+                        paragraph.Tag = tableHtml;
+                    }
+                    continue; // Skip verdere verwerking van deze match
+                }
+                
                 if (match.Groups["svg"].Success)
                 {
                     string svgString = match.Value;
@@ -1604,7 +1642,43 @@ namespace ExportFactory.Services
                     cache?.AddPngBytesToSection(paragraph.Section, pngBytes, widthCm: 10, maxHeightCm: 15);
                 }
 
-                if (match.Groups["bold"].Success)
+                if (match.Groups["link"].Success)
+                {
+                    // <a href='#assemblage-123'>T-1 - Steektrap</a>
+                    var bookmarkName = match.Groups[1].Value; // eerste capture group = bookmark name (zonder #)
+                    var linkText = match.Groups[2].Value;     // tweede capture group = inner text
+                    
+                    var hyperlink = paragraph.AddHyperlink(bookmarkName, HyperlinkType.Bookmark);
+                    
+                    // Parse de inner text recursief voor styling (kan bold/italic bevatten)
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, linkText, cache, currentColor, depth + 1);
+                    
+                    // Voeg alle formatted text toe aan de hyperlink
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        hyperlink.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["bookmark"].Success)
+                {
+                    // <span id='assemblage-123'>T-1</span>
+                    var bookmarkName = match.Groups[1].Value; // eerste capture group = bookmark id
+                    var innerText = match.Groups[2].Value;     // tweede capture group = inner text
+                    
+                    // Voeg bookmark toe
+                    paragraph.AddBookmark(bookmarkName);
+                    
+                    // Voeg de tekst toe met eventuele styling
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, innerText, cache, currentColor, depth + 1);
+                    
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["bold"].Success)
                 {
                     var inner = StripTags(match.Value, "**", "<b>", "</b>");
                     var tempPara = new Paragraph();

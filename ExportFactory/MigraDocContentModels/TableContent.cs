@@ -4,9 +4,9 @@
     {
         public string Title { get; set; } = "";
         public TableAlignment Alignment { get; set; } = TableAlignment.Left;
-        public List<TableCellHeaderContent> Headers { get; set; } = new List<TableCellHeaderContent>();
-        public List<double> ColumnWidths { get; set; } = new List<double>();
-        public List<List<TableCellContent>> Rows { get; set; } = new List<List<TableCellContent>>();
+        public List<TableCellHeaderContent> Headers { get; set; } = [];
+        public List<double> ColumnWidths { get; set; } = [];
+        public List<List<TableCellContent>> Rows { get; set; } = [];
         
         /// <summary>
         /// Geeft de optie om de headers niet weer te geven.
@@ -34,7 +34,7 @@
                 Title = this.Title,
                 Alignment = this.Alignment,
                 HideHeaders = this.HideHeaders,
-                ColumnWidths = new List<double>(this.ColumnWidths),
+                ColumnWidths = [.. this.ColumnWidths],
                 Headers = this.Headers.Select(h => h.Clone()).ToList(),
                 Rows = this.Rows.Select(row => row.Select(cell => cell.Clone()).ToList()).ToList()
             };

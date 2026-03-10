@@ -142,8 +142,8 @@ namespace ExportFactory.MigraDocContentModels
                 [
                     new SectionContent
                     {
-                        Elements = new List<SectionElement>
-                        {
+                        Elements =
+                        [
                             new HeadingContent("Hoofdstuk 1", 1),
                             new ParagraphContent(_par1),
                             new HeadingContent("Hoofdstuk 1.1", 2),
@@ -251,7 +251,7 @@ namespace ExportFactory.MigraDocContentModels
 
 
 
-                        }
+                        ]
                     }
                 ]
             };

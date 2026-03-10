@@ -265,7 +265,7 @@ namespace Eurocode.BetonConstructies
         {
             if (lijstHohAfstanden == null) return null;
             if (lijstBeugelSneden == null) return null;
-            List<BeugelWap> returnList = new List<BeugelWap>();
+            List<BeugelWap> returnList = [];
             foreach (double bglDiam in lijstBeugelDiameters)
             {
                 foreach (double hohAfstand in lijstHohAfstanden)

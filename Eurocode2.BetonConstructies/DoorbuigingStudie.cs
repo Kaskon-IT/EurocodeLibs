@@ -32,7 +32,7 @@ namespace Eurocode.BetonConstructies
 
         public BetonContext Beton { get; set; } = new("C30/37");
         //public Snedekrachten Krachten { get; set; } = new();
-        public List<SectionForces> SectionForces { get; set; } = new();
+        public List<SectionForces> SectionForces { get; set; } = [];
         public BetonContextKruipEnKrimpCalculator KruipKrimpBerekening { get; set; }
         public BetonDoorbuigingCalculator DoorbuigingBerekening { get; set; }
 

@@ -2,7 +2,7 @@
 {
     public sealed class CustomTempFileCollection
     {
-        private readonly List<string> _files = new();
+        private readonly List<string> _files = [];
 
         public string? AddFile(string? sourcePath)
         {

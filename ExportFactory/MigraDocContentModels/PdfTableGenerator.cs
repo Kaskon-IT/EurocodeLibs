@@ -47,8 +47,8 @@ namespace ExportFactory.MigraDocContentModels
 
         public TableModel()
         {
-            Columns = new List<TableColumn>();
-            Data = new List<T>();
+            Columns = [];
+            Data = [];
         }
     }
 

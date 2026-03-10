@@ -120,7 +120,8 @@ namespace Eurocode.BetonConstructies
                 .Replace("r", "Ø")
                 .Replace("R", "Ø")
                 .Replace("d", "Ø")
-                .Replace("D", "Ø");
+                .Replace("D", "Ø")
+                .Replace("+", " + ");
         }
 
         // OBSOLETE constructor voor backward compatibility
@@ -293,10 +294,32 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        private string? _tekstOndergrens;
+
+        /// <summary>
+        /// Minimale wapening die altijd aangehouden moet worden (bijv. "r8-100").
+        /// Bij (her)berekening wordt de Tekst bijgewerkt met inachtneming van deze ondergrens.
+        /// - Diameter: neem maximum van (berekend vs ondergrens)
+        /// - Hart-op-hart: neem minimum van (berekend vs ondergrens)
+        /// </summary>
+        [TableColumn(Label = "minimale wapening")]
+        public string? TekstOndergrens
+        {
+            get => _tekstOndergrens;
+            set
+            {
+                if (_tekstOndergrens != value)
+                {
+                    _tekstOndergrens = value;
+                    OnPropertyChanged(nameof(TekstOndergrens));
+                }
+            }
+        }
+
 
         public List<WapeningContext> GetSupGroepen()
         {
-            List<WapeningContext> subgroepen = new();
+            List<WapeningContext> subgroepen = [];
             if (_wapgroepen != null)
             {
                 foreach (var groep in _wapgroepen)
@@ -525,7 +548,7 @@ namespace Eurocode.BetonConstructies
         }
 
         private List<string>? _wapgroepen;
-        public List<WapeningContext> _subgroepen { get; set; } = new();
+        public List<WapeningContext> _subgroepen { get; set; } = [];
 
 
         public double HohMaat

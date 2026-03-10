@@ -166,6 +166,10 @@ namespace Eurocode.BetonConstructies
 
 
 
+        // laat even zien waarmee gerekend is
+        [TableColumn (Symbol = "*I~y~*", Unit = "mm^4^")]
+        private double Iy => Profiel.Iy;
+
 
 
 
@@ -332,14 +336,14 @@ namespace Eurocode.BetonConstructies
 
             if (this.Wbijk > this.GrenswaardeBijkomend)
             {
-                AddMeldingError($"overschrijding bijkomende doorbuiging");
+                AddMeldingWaarschuwing($"overschrijding bijkomende doorbuiging");
                 returnVal = false;
                 AddMeldingHint($"pas de hoogte van het element aan, of gebruik meer wapening");
             }
 
             if (this.Wmax > this.GrenswaardeEind)
             {
-                AddMeldingError("overschrijding maximale doorbuiging");
+                AddMeldingWaarschuwing("overschrijding maximale doorbuiging");
                 returnVal = false;
                 if (this.FactorZeeg < 0.004)
                 {

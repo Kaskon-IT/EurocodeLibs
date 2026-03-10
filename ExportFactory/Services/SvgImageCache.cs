@@ -10,7 +10,7 @@ namespace ExportFactory.Services
 
     public class SvgImageCache
     {
-        private readonly List<string> _tempFiles = new();
+        private readonly List<string> _tempFiles = [];
         //private readonly SvgExportInterop _svgInterop;
 
         //public SvgImageCache(IJSRuntime jsRuntime)

@@ -51,6 +51,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.10" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.1" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.1" />
+		<PackageReference Include="MudBlazor" Version="9.0.0" />
 		<PackageReference Include="Plotly.Blazor" Version="6.0.2" />
 		<PackageReference Include="Z.Blazor.Diagrams.Core" Version="3.0.3" />
 	</ItemGroup>

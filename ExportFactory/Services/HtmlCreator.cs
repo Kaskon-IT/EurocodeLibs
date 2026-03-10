@@ -122,8 +122,8 @@
             // Voeg een stijl toe aan de pagina (CSS)
             //htmlBuilder.AppendLine("<style>");
             //htmlBuilder.AppendLine("</style>");
+            
             htmlBuilder.AppendLine("</head>");
-            htmlBuilder.AppendLine("<script>function scrollToToc() { document.getElementById('toc-embvg01f').scrollIntoView({ behavior: 'smooth' });  }</script>");
 
             //htmlBuilder.AppendLine("<script>\r\n    // Selecteer alle knoppen met de klasse \"accordion\"\r\n    var acc = document.getElementsByClassName(\"ec-accordion\");\r\n\r\n    // Voeg een klik-gebeurtenis toe aan elke knop\r\n    for (var i = 0; i < acc.length; i++) {\r\n        acc[i].addEventListener(\"click\", function() {\r\n            // Toon of verberg de inhoud\r\n            this.classList.toggle(\"active\");\r\n            var panel = this.nextElementSibling;\r\n            if (panel.style.display === \"block\") {\r\n                panel.style.display = \"none\";\r\n            } else {\r\n                panel.style.display = \"block\";\r\n            }\r\n        });\r\n    }\r\n</script>");
 
@@ -163,7 +163,8 @@
                     // Als het een paragraaf is
                     if (element is Paragraph paragraph)
                     {
-                        if (paragraph.Elements.LastObject is BookmarkField bookmarkField)
+                        // Check voor bookmark aan het BEGIN van de paragraph (voor ID attribute op heading)
+                        if (paragraph.Elements.Count > 0 && paragraph.Elements.First is BookmarkField bookmarkField)
                         {
                             bookmarkId = $"id='{bookmarkField.Name}'";
                         }
@@ -210,7 +211,15 @@
                                     // start nieuwe panel (altijd, ook als er geen section.Tag was)
                                     accordionIsOpen = true;
                                     var guid = Guid.NewGuid();
-                                    htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{ProcessParagraph(paragraph)}</button>");
+                                    
+                                    // ✅ Voor de button: gebruik plain text (strip HTML tags)
+                                    var buttonText = System.Text.RegularExpressions.Regex.Replace(
+                                        ProcessParagraph(paragraph), 
+                                        @"<[^>]+>", 
+                                        ""  // Verwijder alle HTML tags
+                                    );
+                                    
+                                    htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{buttonText}</button>");
                                     htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
                                     htmlBuilder.AppendLine($"<h1 {bookmarkId} class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
                                 }
@@ -250,7 +259,18 @@
                                 break;
 
                             default:
-                                htmlBuilder.AppendLine("<p class='ec-par'>" + ProcessParagraph(paragraph) + "</p>");
+                                // ✅ Check of de paragraph.Tag HTML bevat (bijv. div, table)
+                                if (paragraph.Tag is string tagHtml && 
+                                    (tagHtml.Contains("<div") || tagHtml.Contains("<table")))
+                                {
+                                    // Gebruik de HTML uit de Tag direct (voor TOC met flexbox/table layout)
+                                    htmlBuilder.AppendLine(tagHtml);
+                                }
+                                else
+                                {
+                                    // Normale paragraph processing
+                                    htmlBuilder.AppendLine("<p class='ec-par'>" + ProcessParagraph(paragraph) + "</p>");
+                                }
                                 break;
                         }
 
@@ -646,6 +666,38 @@
             {
                 switch (inline)
                 {
+                    case BookmarkField bookmark:
+                        // Bookmark wordt een HTML anchor: <a name='bookmark-id'></a>
+                        FlushCurrentText();
+                        sb.Append($"<a name='{bookmark.Name}'></a>");
+                        break;
+
+                    case Hyperlink hyperlink when hyperlink.Type == HyperlinkType.Bookmark:
+                        // Hyperlink naar bookmark wordt <a href='#bookmark'>text</a>
+                        // Gebruik onclick voor scroll omdat normale # links niet werken in Blazor routing
+                        FlushCurrentText();
+                        
+                        var linkTextBuilder = new StringBuilder();
+                        foreach (var hyperlinkElement in hyperlink.Elements)
+                        {
+                            if (hyperlinkElement is FormattedText hyperlinkFt)
+                            {
+                                foreach (var ftEl in hyperlinkFt.Elements)
+                                {
+                                    if (ftEl is Text hyperlinkText)
+                                        linkTextBuilder.Append(hyperlinkText.Content);
+                                }
+                            }
+                            else if (hyperlinkElement is Text hyperlinkText)
+                            {
+                                linkTextBuilder.Append(hyperlinkText.Content);
+                            }
+                        }
+                        
+                        // Gebruik onclick voor scroll i.p.v. href (werkt beter in Blazor)
+                        sb.Append($"<a href='#{hyperlink.Name}' onclick=\"scrollToBookmark('{hyperlink.Name}'); return false;\" class='bookmark-link'>{linkTextBuilder}</a>");
+                        break;
+
                     case Character ch when ch.SymbolName == SymbolName.Tab:
                         FlushCurrentText();
                         sb.Append("<span class=\"tab-simulated\"></span>");

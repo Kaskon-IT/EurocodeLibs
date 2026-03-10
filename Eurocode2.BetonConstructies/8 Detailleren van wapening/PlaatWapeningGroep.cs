@@ -163,17 +163,22 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public PlaatWapeningGroep Clone()
         {
-            return new PlaatWapeningGroep()
+            var clone = new PlaatWapeningGroep()
             {
                 Heading = this.Heading,
                 ReferentieVlak = this.ReferentieVlak,
                 DekkingBuitensteLaag = new BetonDekkingContext(this.DekkingBuitensteLaag),
-                BasisWapening = this.BasisWapening?.Clone() ?? new(),
+                LaagHoofdwapening = this.LaagHoofdwapening,  // ✅ ZET DIT EERST (voor BasisWapening)
+                DiameterVerdeel = this.DiameterVerdeel,
+                BasisWapening = this.BasisWapening?.Clone() ?? new(),  
                 VerdeelWapening = this.VerdeelWapening?.Clone(),
-                BijlegWapening = this.BijlegWapening?.Clone(),
-                LaagHoofdwapening = this.LaagHoofdwapening,
-                DiameterVerdeel = this.DiameterVerdeel
+                BijlegWapening = this.BijlegWapening?.Clone()
             };
+            
+            // ✅ Herbereken dekkingen na clonen (anders blijven oude waarden staan!)
+            clone.UpdateReferentieDekkingen();
+            
+            return clone;
         }
 
 
@@ -235,6 +240,10 @@ namespace Eurocode.BetonConstructies
                 baseDekking = 30.0;
             }
 
+            // ✅ Zorg dat diameter backing fields up-to-date zijn
+            _basisWapening?.SetZRef();
+            _verdeelWapening?.SetZRef();
+
             // If hoofdwapening is laag 1 -> Basis = dekking en laag 1, Verdeel = dekking + verdeel diameter en laag 2
             // If hoofdwapening is laag 2 -> Verdeel = dekking en laag 1, Basis = dekking + basis diameter en laag 2
             if (LaagHoofdwapening == 1)
@@ -263,12 +272,14 @@ namespace Eurocode.BetonConstructies
                     TrySetReferentieDekking(_verdeelWapening, baseDekking.Value, 1);
                     _verdeelWapening.LaagNummer = 1;
                     add = _verdeelWapening.GrootsteDiameter;
+                    Console.WriteLine($"[DEBUG UpdateReferentieDekkingen] VerdeelWapening.GrootsteDiameter = {add}mm");
                 }
 
                 if (_basisWapening != null)
                 {
                     TrySetReferentieDekking(_basisWapening, baseDekking.Value + add, 2);
                     _basisWapening.LaagNummer = 2;
+                    Console.WriteLine($"[DEBUG UpdateReferentieDekkingen] BasisWapening.ReferentieDekking = {baseDekking.Value} + {add} = {baseDekking.Value + add}mm");
                 }
             }
         }
