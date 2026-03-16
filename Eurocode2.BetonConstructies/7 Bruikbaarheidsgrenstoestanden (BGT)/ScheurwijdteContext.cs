@@ -28,6 +28,7 @@ namespace Eurocode.BetonConstructies
             SetDekking(dekking);
             SetBeton(beton);
 
+            
 
             ScheurwijdteGrenswaarde = new(dekking, nationaleBijlage);
             ScheurwijdteMinimumWapening = new() { Beton = beton };
@@ -376,6 +377,12 @@ namespace Eurocode.BetonConstructies
                 return ScheurwijdteGrenswaarde.FactorKx;
             }
         }
+        public Formula ScheurwijdteGrenswaardeFactorKxFormula => new()
+        {
+            Name = "7.3.1 (5)",
+            StaticValue = "k_x = c_{prov} / c_{nom} \\leq 2",
+            DynamicValue = $"= {ScheurwijdteGrenswaarde.DekkingEnDuurzaamheid.DekkingToe:0} / {ScheurwijdteGrenswaarde.DekkingEnDuurzaamheid.DekkingNom:0}"
+        };
 
 
         public double Ec
@@ -399,6 +406,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
+                ScheurwijdteGrenswaarde.DekkingEnDuurzaamheid.BerekenEnValideer();
                 return ScheurwijdteGrenswaarde.Wmax;
             }
         }

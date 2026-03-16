@@ -22,6 +22,7 @@ namespace Eurocode.BetonConstructies
             Grondslagen = new();
             Beton = new();
             Constructieklasse = new(this, Beton);
+            BerekenEnValideer();
         }
 
         public BetonDekkingContext(GrondslagenContext grondslagen, BetonContext beton)
@@ -45,6 +46,7 @@ namespace Eurocode.BetonConstructies
             SelectedMilieuklassen = context.Milieuklassen;
             GrootsteKorrelDiameter = context.GrootsteKorrelDiameter;
             Constructieklasse = new(this, Beton);
+            BerekenEnValideer();
 
         }
 
