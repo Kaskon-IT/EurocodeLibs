@@ -173,7 +173,7 @@ namespace ExportFactory.MigraDocContentModels
                                 [
                                     new TableCellHeaderContent()
                                     {
-                                        Width = Unit.FromCentimeter(4),
+                                        //Width = Unit.FromCentimeter(4),
                                         CellContent = new TableCellContent()
                                         {
                                             Markdown = "Markdown pattern",
@@ -186,17 +186,17 @@ namespace ExportFactory.MigraDocContentModels
                                     },
                                     new TableCellHeaderContent()
                                     {
-                                        Width = Unit.FromCentimeter(10),
+                                        //Width = Unit.FromCentimeter(10),
                                         CellContent = new TableCellContent() { Markdown = "Translates to", Width = "4cm" },
                                     },
                                     new TableCellHeaderContent()
                                     {
-                                        Width = Unit.FromCentimeter(10),
+                                        //Width = Unit.FromCentimeter(10),
                                         CellContent = new TableCellContent() { Markdown = "Demo", Width = "4cm" },
                                     },
                                     new TableCellHeaderContent()
                                     {
-                                        Width = Unit.FromCentimeter(10),
+                                        //Width = Unit.FromCentimeter(10),
                                         CellContent = new TableCellContent() { Markdown = "Demo", Width = "4cm" },
                                     },
 

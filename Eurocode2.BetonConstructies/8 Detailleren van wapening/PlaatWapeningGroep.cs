@@ -272,14 +272,12 @@ namespace Eurocode.BetonConstructies
                     TrySetReferentieDekking(_verdeelWapening, baseDekking.Value, 1);
                     _verdeelWapening.LaagNummer = 1;
                     add = _verdeelWapening.GrootsteDiameter;
-                    Console.WriteLine($"[DEBUG UpdateReferentieDekkingen] VerdeelWapening.GrootsteDiameter = {add}mm");
                 }
 
                 if (_basisWapening != null)
                 {
                     TrySetReferentieDekking(_basisWapening, baseDekking.Value + add, 2);
                     _basisWapening.LaagNummer = 2;
-                    Console.WriteLine($"[DEBUG UpdateReferentieDekkingen] BasisWapening.ReferentieDekking = {baseDekking.Value} + {add} = {baseDekking.Value + add}mm");
                 }
             }
         }

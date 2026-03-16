@@ -141,6 +141,9 @@
             // Loop door de secties en paragrafen in het document
             bool inhoudsopgaveIsVerwerkt = false;
             bool accordionIsOpen = false;
+            int panelCount = 0; // ✅ Tellen hoeveel panels we hebben
+            bool inBoekjeWrapper = false; // ✅ Track of we in een boekje-wrapper zitten
+            
             foreach (Section section in document.Sections)
             {
                 accordionIsOpen = false;
@@ -153,7 +156,28 @@
                     accordionIsOpen = true;
                     var guid = Guid.NewGuid();
                     htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{section.Tag}</button>");
-                    htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                    
+                    // ✅ BOEKJE WRAPPER LOGICA
+                    if (panelCount == 0)
+                    {
+                        // Eerste pagina (voorblad) - geen wrapper
+                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                        panelCount++;
+                    }
+                    else if (panelCount % 2 == 1)
+                    {
+                        // Oneven panel (na het voorblad) - start nieuwe boekje-wrapper
+                        htmlBuilder.AppendLine("<div class='boekje-wrapper'>");
+                        inBoekjeWrapper = true;
+                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                        panelCount++;
+                    }
+                    else
+                    {
+                        // Even panel - tweede pagina van boekje, sluit wrapper daarna
+                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                        panelCount++;
+                    }
                 }
 
                 foreach (var element in section.Elements)
@@ -202,10 +226,17 @@
                                 }
                                 else
                                 {
+                                    // ✅ Sluit vorige panel EN eventueel boekje-wrapper
                                     if (accordionIsOpen)
                                     {
-                                        // sluit vorige panel (BELANGRIJK: voorkomt geneste panels!)
-                                        htmlBuilder.AppendLine("</div>");
+                                        htmlBuilder.AppendLine("</div>"); // Sluit panel
+                                        
+                                        // Als we even aantal panels hadden (2, 4, 6...), sluit dan ook de boekje-wrapper
+                                        if (panelCount > 0 && panelCount % 2 == 0 && inBoekjeWrapper)
+                                        {
+                                            htmlBuilder.AppendLine("</div>"); // Sluit boekje-wrapper
+                                            inBoekjeWrapper = false;
+                                        }
                                     }
 
                                     // start nieuwe panel (altijd, ook als er geen section.Tag was)
@@ -220,7 +251,29 @@
                                     );
                                     
                                     htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{buttonText}</button>");
-                                    htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                                    
+                                    // ✅ BOEKJE WRAPPER LOGICA (zelfde als bij section.Tag)
+                                    if (panelCount == 0)
+                                    {
+                                        // Eerste pagina (voorblad) - geen wrapper
+                                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                                        panelCount++;
+                                    }
+                                    else if (panelCount % 2 == 1)
+                                    {
+                                        // Oneven panel (na het voorblad) - start nieuwe boekje-wrapper
+                                        htmlBuilder.AppendLine("<div class='boekje-wrapper'>");
+                                        inBoekjeWrapper = true;
+                                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                                        panelCount++;
+                                    }
+                                    else
+                                    {
+                                        // Even panel - tweede pagina van boekje
+                                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                                        panelCount++;
+                                    }
+                                    
                                     htmlBuilder.AppendLine($"<h1 {bookmarkId} class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
                                 }
 
@@ -533,8 +586,21 @@
                 // Close the accordion div
                 if (accordionIsOpen)
                 {
-                    htmlBuilder.Append("</div>");
+                    htmlBuilder.Append("</div>"); // Sluit panel
+                    
+                    // ✅ Als we een oneven aantal panels hebben EN de laatste wrapper is nog open, sluit deze
+                    if (panelCount > 0 && panelCount % 2 == 0 && inBoekjeWrapper)
+                    {
+                        htmlBuilder.Append("</div>"); // Sluit laatste boekje-wrapper
+                        inBoekjeWrapper = false;
+                    }
                 }
+            }
+
+            // ✅ Sluit eventuele nog openstaande boekje-wrapper (voor laatste panel als oneven aantal)
+            if (inBoekjeWrapper)
+            {
+                htmlBuilder.Append("</div>");
             }
 
             // Close the container div

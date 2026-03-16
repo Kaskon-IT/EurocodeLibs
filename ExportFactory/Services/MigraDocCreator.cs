@@ -536,10 +536,14 @@ namespace ExportFactory.Services
                     Row dataRow = table.AddRow();
                     var properties = dataItem.GetType().GetProperties();
 
+                    if (properties == null || properties.Length == 0)
+                    {
+                        continue; // Skip if there are no properties
+                    }
 
                     foreach (var column in tableModel.Columns)
                     {
-                        PropertyInfo property = properties.FirstOrDefault(p => string.Equals(p.Name, column.Name, StringComparison.OrdinalIgnoreCase));
+                        PropertyInfo? property = properties.FirstOrDefault(p => string.Equals(p.Name, column.Name, StringComparison.OrdinalIgnoreCase));
 
                         if (property != null)
                         {
@@ -729,19 +733,8 @@ namespace ExportFactory.Services
                         {
                             var svgContent = rowCells[i].SvgImage;
 
-                            var imgStream = SvgService.ConvertSvgToPngStream(svgContent, out double width, out double height);
+                            // TODO: caching van de gegenereerde afbeeldingen op basis van de SVG content (hash) om performance te verbeteren.
 
-                            if (imgStream != null)
-                            {
-                                Console.WriteLine($"SVG converted successfully. Width: {width}, Height: {height}");
-                                var parWithSvgImage = cell.AddParagraph();
-                                parWithSvgImage.Tag = rowCells[i].SvgImage; // write svg to Tag for HtmlCreator.
-                                AddImageFromStream(parWithSvgImage, imgStream);
-                            }
-                            else
-                            {
-                                Console.WriteLine("Failed to convert SVG.");
-                            }
 
                         }
                         catch (Exception ex)
@@ -1054,7 +1047,6 @@ namespace ExportFactory.Services
 
             headerRow.Shading.Color = content.HeaderBackgroundColor;
             headerRow.Style = "Header";
-            //headerRow.Cells[0].Shading.Color = content.HeaderBackgroundColor;
             headerRow.Borders.Visible = false;
             headerRow.Borders.Bottom.Visible = true;
             headerRow.Borders.Bottom.Color = content.HeaderLineColor;
@@ -1062,27 +1054,9 @@ namespace ExportFactory.Services
             // Add company logo as SVG in header
             if (!string.IsNullOrEmpty(content.PageHeader.SvgLogo))
             {
-                var stream = SvgService.ConvertSvgToPngStream(content.PageHeader.SvgLogo, out _, out _);
-                if (stream != null)
-                {
-
-                    var cell = headerRow.Cells[1];
-                    try
-                    {
-                        AddImageFromStream(cell, stream);
-                    }
-                    catch (Exception ex)
-                    {
-                        cell.AddParagraph(ex.Message);
-                    }
-
-
-                    //logo.LockAspectRatio = true;
-                    //logo. = Unit.FromCentimeter(2);
-                    // todo wellicht hoogte breedte op kunnen geven in AddImageFromStream of in ConvertSvgToPngStream... uitzoeken
-                }
+                // TODO AI: implement SVG logo in header, currently only supports image path.
+                // Mogelijk kunnen we de SVG renderen naar een PNG stream en deze toevoegen als afbeelding.
             }
-            //headerRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
 
             // even same settings, so clone
             section.Headers.EvenPage = header.Clone();

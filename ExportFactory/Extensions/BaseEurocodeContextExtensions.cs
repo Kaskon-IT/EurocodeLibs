@@ -148,7 +148,6 @@ namespace ExportFactory.Extensions
             if (!obj.Meldingen.Any())
                 return null;
 
-            string prefix;
             string markdownText;
 
             if (obj.Meldingen.Count == 1)

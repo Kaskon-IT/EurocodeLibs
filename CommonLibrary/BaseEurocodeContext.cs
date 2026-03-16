@@ -284,11 +284,35 @@ namespace CommonLibrary
 
                        
 
-            // Verwijder per ongeluk toegevoegde null-items
+            // Verwijder per ongeluk toegevoegde null-items (safe removal)
+            var nullIndices = new List<int>();
             for (int i = Meldingen.Count - 1; i >= 0; i--)
             {
-                if (Meldingen[i] is null)
-                    Meldingen.RemoveAt(i);
+                try
+                {
+                    if (i < Meldingen.Count && Meldingen[i] is null)
+                        nullIndices.Add(i);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    // Collectie is gewijzigd tijdens iteratie, skip deze index
+                    continue;
+                }
+            }
+
+            // Verwijder null items (van hoog naar laag om index problemen te voorkomen)
+            foreach (var index in nullIndices.OrderByDescending(x => x))
+            {
+                try
+                {
+                    if (index < Meldingen.Count)
+                        Meldingen.RemoveAt(index);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    // Index is ondertussen invalide geworden, skip
+                    continue;
+                }
             }
 
             // Controleer of er al een melding met dezelfde code of bericht bestaat
