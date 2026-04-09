@@ -334,14 +334,14 @@ namespace Eurocode.BetonConstructies
             Meldingen.Clear();
             bool returnVal = true;
 
-            if (this.Wbijk > this.GrenswaardeBijkomend)
+            if (Math.Abs(this.Wbijk) > this.GrenswaardeBijkomend)
             {
                 AddMeldingWaarschuwing($"overschrijding bijkomende doorbuiging");
                 returnVal = false;
                 AddMeldingHint($"pas de hoogte van het element aan, of gebruik meer wapening");
             }
 
-            if (this.Wmax > this.GrenswaardeEind)
+            if (Math.Abs(this.Wmax) > this.GrenswaardeEind)
             {
                 AddMeldingWaarschuwing("overschrijding maximale doorbuiging");
                 returnVal = false;

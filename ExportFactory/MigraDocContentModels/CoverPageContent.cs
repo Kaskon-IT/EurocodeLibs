@@ -14,6 +14,7 @@ namespace ExportFactory.MigraDocContentModels
         private string _companyLogoPath = "";
         private string _documentNumber = "Document Number";
         private string _author = "Author Name";
+        private string _svgLogoXml = "";
 
 
         public string Title
@@ -76,6 +77,19 @@ namespace ExportFactory.MigraDocContentModels
                 if (_companyLogoPath != value)
                 {
                     _companyLogoPath = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string SvgLogoXml
+        {
+            get => _svgLogoXml;
+            set
+            {
+                if (_svgLogoXml != value)
+                {
+                    _svgLogoXml = value;
                     NotifyPropertyChanged();
                 }
             }

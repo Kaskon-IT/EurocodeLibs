@@ -34,7 +34,7 @@ namespace Eurocode.HoutConstructies
             {
                 if (_kwaliteit != value)
                 {
-                    StelEigenschappenInOpBasisVanKwaliteit(_kwaliteit);
+                    StelEigenschappenInOpBasisVanKwaliteit(value);
                     SetProperty(ref _kwaliteit, value);
                 }
             }
@@ -54,6 +54,9 @@ namespace Eurocode.HoutConstructies
 
         public FabricageType Fabricage { get; set; } = FabricageType.Gezaagd;
         public KlimaatKlasse KlimaatKlasse { get; set; } = KlimaatKlasse.Klasse2;
+
+        // EC5 tabel 2.3: γM = 1.30 voor gezaagd en loofhout (GL: 1.25, ingesteld via StelEigenschappenInOpBasisVanKwaliteit)
+        public override double PartieleFactor { get; set; } = 1.3;
 
         /// <summary>
         /// fm,k (buigsterkte)

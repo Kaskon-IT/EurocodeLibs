@@ -91,10 +91,10 @@ namespace ExportFactory.Extensions
             {
                 section.AddParagraph(title, style);
             }
-            else if (list.First()?.Heading != null)
-            {
-                section.AddParagraph(list.First()?.Heading ?? "NO HEADING", style);
-            }
+            //else if (list.First()?.Heading != null)
+            //{
+            //    section.AddParagraph(list.First()?.Heading ?? "NO HEADING", style);
+            //}
 
             // maak een migraDocTable
             var mdt = list.ToMigraDocTable(type, isDraaiTabel);

@@ -7,6 +7,7 @@ namespace Eurocode.BetonConstructies
 {
     public class VerankeringLangswapeningContext : BaseEurocodeContext, INotifyPropertyChanged
     {
+        public override string Heading { get; set; } = "Verankering van langswapening";
 
         //8.4.1 Algemeen
         //8.4.1 (1)P Wapeningstaven, draden en gepuntlaste wapeningsnetten moeten zo zijn verankerd dat de

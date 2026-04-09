@@ -1267,7 +1267,7 @@ namespace ExportFactory.Services
             {
                 var row = table.AddRow();
                 row.Cells[0].AddParagraph(revision.Name);
-                row.Cells[1].AddParagraph($"{revision.Date?.ToShortDateString()}");
+                row.Cells[1].AddParagraph($"{revision.Date?.ToString("d", new System.Globalization.CultureInfo("nl-NL"))}");
                 row.Cells[2].AddParagraph(revision.Description);
             }
         }
@@ -1323,6 +1323,14 @@ namespace ExportFactory.Services
             }
 
 
+
+            if (!string.IsNullOrEmpty(coverPage.SvgLogoXml))
+            {
+                var svgPar = section.AddParagraph();
+                svgPar.Tag = coverPage.SvgLogoXml;
+                svgPar.Format.SpaceAfter = Unit.FromMillimeter(8);
+                svgPar.Format.Alignment = ParagraphAlignment.Center;
+            }
 
             section.AddParagraph(coverPage.Title ?? "", "Title").AddBookmark("titelpagina");
             section.AddParagraph(coverPage.Subtitle ?? "", "Subtitle");

@@ -82,7 +82,9 @@
                     return tex;
 
                 return tex
-                    .Replace("‰", @"\text{\textperthousand}")
+                    //.Replace("‰", @"\text{\textperthousand}")
+                    .Replace("‰", @"\text{ ‰}")
+
                     .Replace("–", @"\text{--}")
                     .Replace("Ø", @"\text{Ø}");
             }

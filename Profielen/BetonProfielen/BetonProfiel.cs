@@ -57,6 +57,26 @@ namespace BetonProfielen
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public override string Heading { get; set; } = "Doorsnede (profiel)";
+
+        [TableColumn(Label = "naam")]
+        public string Naam => Profiel?.UserFriendlyName ?? "";
+
+        [TableColumn(Label = "breedte", Symbol = "<i>b</i>", Unit = "mm")]
+        public double Breedte => Profiel?.Breedte ?? 0;
+
+        [TableColumn(Label = "hoogte", Symbol = "<i>h</i>", Unit = "mm")]
+        public double Hoogte => Profiel?.Hoogte ?? 0;
+
+        [TableColumn(Label = "oppervlak", Symbol = "<i>A</i>", Unit = "mm²")]
+        public double Area => Profiel?.Area ?? 0;
+
+        [TableColumn(Label = "traagheidsmoment", Symbol = "<i>I</i><sub>y</sub>", Unit = "mm⁴")]
+        public double Iy => Profiel?.Iy ?? 0;
+
+        [TableColumn(Label = "weerstandsmoment", Symbol = "<i>W</i><sub>y</sub>", Unit = "mm³")]
+        public double Wy => Profiel?.Wy ?? 0;
+
         protected override void Bereken()
         {
             // aanvullende berekeningen hier

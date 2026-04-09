@@ -769,6 +769,14 @@ namespace Eurocode.BetonConstructies
 
         protected override void Bereken()
         {
+            // als er geen wapening is dan 
+            if (string.IsNullOrWhiteSpace(Wapening.Tekst))
+            {
+                // neem eerst de ondergrens (indien aanwezig) anders waarde r8-150
+                Wapening.Tekst = Wapening.TekstOndergrens ?? "8-150";
+
+            }
+
             Wapening.SetZRef();
             VerwerkAsApplied();
 

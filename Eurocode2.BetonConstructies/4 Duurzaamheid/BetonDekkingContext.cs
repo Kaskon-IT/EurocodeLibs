@@ -151,8 +151,7 @@ namespace Eurocode.BetonConstructies
         public bool IsPlaatGeometrie
         {
             get => _isPlaatGeometrie;
-            set => SetProperty(ref _isPlaatGeometrie, value);
-            //set { _isPlaatGeometrie = value; BerekenEnValideer(); } // deze code is vervangen door hierboven
+            set { if (SetProperty(ref _isPlaatGeometrie, value)) BerekenEnValideer(); }
         }
 
         /// <summary>
@@ -163,8 +162,7 @@ namespace Eurocode.BetonConstructies
         public bool IsKwaliteitsBeheersing
         {
             get => _isKwaliteitsBeheersing;
-            set => SetProperty(ref _isKwaliteitsBeheersing, value);
-
+            set { if (SetProperty(ref _isKwaliteitsBeheersing, value)) BerekenEnValideer(); }
         }
 
         /// <summary>

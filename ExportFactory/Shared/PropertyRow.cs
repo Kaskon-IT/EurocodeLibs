@@ -42,7 +42,7 @@ namespace ExportFactory.Shared
             this.Symbol = symbol;
             this.Unit = unit;
             this.RawValue = rawValue;
-            this.DisplayValue = displayValue.Replace("True", "✔️").Replace("False", "❌");
+            this.DisplayValue = displayValue.Replace("True", "ja").Replace("False", "nee");
             this.Description = description;
             this.Article = article;
             this.Formula = formula;

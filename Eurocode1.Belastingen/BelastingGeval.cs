@@ -1,8 +1,10 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
 using CommonLibrary.Interfaces;
+using Eurocode.Grondslagen;
 using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Eurocode.Belastingen
 {
@@ -32,7 +34,7 @@ namespace Eurocode.Belastingen
 
         public int Nr { get; set; }
 
-        [TableColumn("naam", order: 0, width: 2.0)]
+        [TableColumn("belastinggeval", order: 0, width: 3.0)]
         public string Naam { get { return "BG" + Nr.ToString("D1"); } }
         public string Omschrijving { get; set; } = "G";
 
@@ -70,7 +72,27 @@ namespace Eurocode.Belastingen
         public string Opmerking { get; set; } = "";
 
 
-        public OpgelegdeBelastingen OpgelegdeBelastingen { get { return Gebruiksklasse.HasValue ? Gebruiksklasse.Value.GetOpgelegdeBelastingen() : new(); } }
+        /// <summary>
+        /// Grondslagen van het project. Wordt gezet via BelastingenContext.
+        /// Gebruikt voor de ontwerplevensduur-factor op de opgelegde belastingen.
+        /// </summary>
+        [JsonIgnore]
+        public GrondslagenContext? Grondslagen { get; set; }
+
+        public OpgelegdeBelastingen OpgelegdeBelastingen
+        {
+            get
+            {
+                if (!Gebruiksklasse.HasValue) return new();
+                var basis = Gebruiksklasse.Value.GetOpgelegdeBelastingen();
+                if (Grondslagen?.OntwerpLevensduur == OntwerpLevensduurEnum.Honderd)
+                    return new OpgelegdeBelastingen(basis.Vlaklast * 1.04, basis.Puntlast * 1.04)
+                    {
+                        LijnlastRand = basis.LijnlastRand * 1.04
+                    };
+                return basis;
+            }
+        }
 
 
         public MomentaanFactoren MomentaanFactoren { get { return Gebruiksklasse.HasValue ? Gebruiksklasse.Value.GetMomentaanFactoren() : new(); } }
@@ -105,7 +127,7 @@ namespace Eurocode.Belastingen
         }
 
 
-        [TableColumn("*ψ~0~*", order: 40, width: 2.0)]
+        [TableColumn("*ψ~0~*", order: 40, width: 1.0)]
         public string Mom0
         {
             get
@@ -115,7 +137,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("*ψ~1~*", order: 41, width: 2.0)]
+        [TableColumn("*ψ~1~*", order: 41, width: 1.0)]
         public string Mom1
         {
             get
@@ -125,7 +147,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("*|psi|~2~*", order: 42, width: 2.0)]
+        [TableColumn("*|psi|~2~*", order: 42, width: 1.0)]
         public string Mom2
         {
             get

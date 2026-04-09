@@ -181,7 +181,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        private BetonsterkteklasseEnum? _betonsterkteklasse = BetonsterkteklasseEnum.C40_50;
+        private BetonsterkteklasseEnum? _betonsterkteklasse = BetonsterkteklasseEnum.C20_25;
         private SpanningRekDiagramType? _spanningRekDiagram = SpanningRekDiagramType.Parabolisch;
 
         [TableColumn("betonsterkteklasse",
@@ -404,9 +404,6 @@ namespace Eurocode.BetonConstructies
             Description = "is de partiële factor voor beton",
             Article = "2.4.2.4"
             )]
-
-        
-
         public override double PartieleFactor { get => base.PartieleFactor; set => base.PartieleFactor = value; }
 
 

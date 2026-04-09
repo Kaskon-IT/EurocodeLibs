@@ -193,6 +193,7 @@ namespace Eurocode.BetonConstructies
                 if (Slankheid > GrenswaardeSlankheid)
                 {
                     AddMeldingWaarschuwing($"De slankheid (l/d) van het element ({Slankheid:0.#}) is groter dan de grenswaarde ({GrenswaardeSlankheid:0.#}). Toetsing doorbuiging noodzakelijk.");
+                    return false;
                 }
 
                 if (Slankheid < GrenswaardeSlankheid)

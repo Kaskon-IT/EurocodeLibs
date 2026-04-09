@@ -32,7 +32,18 @@ namespace Eurocode.Belastingen
             GenereerBelastingCombinaties(this, this.BelastingGevallen, this.CombinatiesTypes);
         }
 
-        public GrondslagenContext Grondslagen { get; set; }
+        private GrondslagenContext _grondslagen = new();
+
+        public GrondslagenContext Grondslagen
+        {
+            get => _grondslagen;
+            set
+            {
+                _grondslagen = value;
+                foreach (var bg in BelastingGevallen)
+                    bg.Grondslagen = value;
+            }
+        }
 
 
 
