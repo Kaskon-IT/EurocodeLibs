@@ -385,7 +385,7 @@ namespace CommonLibrary
         {
             get
             {
-                return string.Join(", ",
+                return string.Join(" ",
                     Meldingen
                         .Where(m => m.Code.HasValue)
                         .Select(m =>
