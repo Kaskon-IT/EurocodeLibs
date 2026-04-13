@@ -32,7 +32,18 @@ namespace Eurocode.Belastingen
             GenereerBelastingCombinaties(this, this.BelastingGevallen, this.CombinatiesTypes);
         }
 
-        public GrondslagenContext Grondslagen { get; set; }
+        private GrondslagenContext _grondslagen = new();
+
+        public GrondslagenContext Grondslagen
+        {
+            get => _grondslagen;
+            set
+            {
+                _grondslagen = value;
+                foreach (var bg in BelastingGevallen)
+                    bg.Grondslagen = value;
+            }
+        }
 
 
 
@@ -54,19 +65,20 @@ namespace Eurocode.Belastingen
                     Opmerking = "vlaklast"
                 },
 
-                new BelastingGeval(){
-                    Nr = 3,
-                    Omschrijving = "Q",
-                    Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
-                    Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen,
-                    Opmerking = "puntlast"
-                },
+                //new BelastingGeval(){
+                //    Nr = 3,
+                //    Omschrijving = "Q",
+                //    Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
+                //    Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen,
+                //    Opmerking = "puntlast"
+                //},
             ];
 
 
         public List<BelastingCombinatieTypeEnum> CombinatiesTypes { get; set; } = [
             BelastingCombinatieTypeEnum.Fundamenteel_A,
             BelastingCombinatieTypeEnum.Fundamenteel_B,
+            BelastingCombinatieTypeEnum.Karakteristiek,
             BelastingCombinatieTypeEnum.Frequent,
             BelastingCombinatieTypeEnum.QuasiBlijvend,
             //BelastingCombinatieTypeEnum.Karakteristiek
@@ -86,7 +98,8 @@ namespace Eurocode.Belastingen
             BelastingenContext context,
             List<BelastingGeval> gevallen,
             List<BelastingCombinatieTypeEnum> combinatieTypes,
-            bool permanentOokGunstig = false
+            bool permanentOokGunstig = false,
+            bool ookAlleenPermanenteBelasting = false
 
 
             )
@@ -113,7 +126,9 @@ namespace Eurocode.Belastingen
                     {
                         case BelastingCombinatieTypeEnum.Fundamenteel_A:
                         case BelastingCombinatieTypeEnum.Fundamenteel_B:
-                            if (bg1 != null && type != BelastingCombinatieTypeEnum.Fundamenteel_B)
+                            if (bg1 != null && 
+                                ookAlleenPermanenteBelasting && 
+                                type != BelastingCombinatieTypeEnum.Fundamenteel_B)
                             {
                                 BelastingCombinaties.Add(new(BelastingCombinaties.Count + 1, type: type));
                                 BelastingCombinaties.Last().Items.Add(new(context, BelastingCombinaties.Last(), bg1, false));
@@ -169,7 +184,7 @@ namespace Eurocode.Belastingen
                         case BelastingCombinatieTypeEnum.Brand:
 
                             // zonder veranderlijk (niet karateristiek);
-                            if (type != BelastingCombinatieTypeEnum.Karakteristiek)
+                            if (ookAlleenPermanenteBelasting)
                             {
                                 BelastingCombinatie combi1 = new(BelastingCombinaties.Count + 1, type);
                                 if (bg1 != null)
@@ -180,20 +195,28 @@ namespace Eurocode.Belastingen
 
 
                             // met veranderlijk q (BG2)
-                            BelastingCombinatie combi12 = new(BelastingCombinaties.Count + 1, type);
-                            if (bg1 != null)
-                                combi12.Items.Add(new BelastingCombinatieItem(context, combi12, bg1));
                             if (bg2 != null)
-                                combi12.Items.Add(new BelastingCombinatieItem(context, combi12, bg2));
-                            BelastingCombinaties.Add(combi12);
+                            {
+                                BelastingCombinatie combi12 = new(BelastingCombinaties.Count + 1, type);
+                                if (bg1 != null)
+                                    combi12.Items.Add(new BelastingCombinatieItem(context, combi12, bg1));
+                                if (bg2 != null)
+                                    combi12.Items.Add(new BelastingCombinatieItem(context, combi12, bg2));
+                                BelastingCombinaties.Add(combi12);
+                            }
+                           
 
                             // met veranderlijk Q (BG3)
-                            BelastingCombinatie combi13 = new(BelastingCombinaties.Count + 1, type);
-                            if (bg1 != null)
-                                combi13.Items.Add(new BelastingCombinatieItem(context, combi13, bg1));
                             if (bg3 != null)
-                                combi13.Items.Add(new BelastingCombinatieItem(context, combi13, bg3));
-                            BelastingCombinaties.Add(combi13);
+                            {
+                                BelastingCombinatie combi13 = new(BelastingCombinaties.Count + 1, type);
+                                if (bg1 != null)
+                                    combi13.Items.Add(new BelastingCombinatieItem(context, combi13, bg1));
+                                if (bg3 != null)
+                                    combi13.Items.Add(new BelastingCombinatieItem(context, combi13, bg3));
+                                BelastingCombinaties.Add(combi13);
+                            }
+                            
 
 
 

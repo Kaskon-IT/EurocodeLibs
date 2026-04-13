@@ -9,39 +9,39 @@
 
         public static readonly Melding MinimaleWapening = new(
             MeldingType.Neutraal,
-            "Eisen met betrekking tot minimale wapening toegepast volgens artikel 9.2.1.1 (1)",
+            "eisen met betrekking tot minimale wapening toegepast volgens artikel 9.2.1.1 (1)",
             1001);
 
         public static readonly Melding MinimaleWapeningScheurwijdte = new(
             MeldingType.Neutraal,
-            "Eisen met betrekking tot minimale wapening scheurwijdte toegepast volgns artikel 7.3.2", 1002);
+            "eisen met betrekking tot minimale wapening scheurwijdte toegepast volgns artikel 7.3.2", 1002);
 
         public static readonly Melding GedrongenLigger = new(
             MeldingType.Neutraal,
-            "Beschouwd als gedrongen ligger volgens artikel 6.1 (10)", 1003);
+            "beschouwd als gedrongen ligger volgens artikel 6.1 (10)", 1003);
 
         public static readonly Melding GedrongenLiggerNietMaatgevend = new(
            MeldingType.Neutraal,
-           "Voor de berekening van M~Rd~ is artikel 6.1 (1)P maatgevend ten opzichte van artikel 6.1 (10).", 1004);
+           "voor de berekening van M~Rd~ is artikel 6.1 (1)P maatgevend ten opzichte van artikel 6.1 (10).", 1004);
 
 
         public static readonly Melding OverschrijdingDrukzone = new(
             MeldingType.Waarschuwing,
-            "Overschrijding maximale drukzone", 1051);
+            "overschrijding maximale drukzone", 1051);
 
         public static readonly Melding OverschrijdingMaximaleWapening = new(
             MeldingType.Waarschuwing,
-            "Overschrijding maximale wapening", 1052);
+            "overschrijding maximale wapening", 1052);
 
         public static readonly Melding OnvoldoendeLangsWapening = new(
             MeldingType.Waarschuwing,
-            "Onvoldoende langswapening", 1053);
+            "onvoldoende langswapening", 1053);
 
 
 
         public static readonly Melding DwarskrachtOverschrijdingDrukdiagonaal = new(
             MeldingType.Waarschuwing,
-            "Overschrijding drukdiagonaal", 2061);
+            "overschrijding drukdiagonaal", 2061);
 
 
 
@@ -69,7 +69,7 @@
 
     public class MeldingCatalogus
     {
-        private readonly Dictionary<int, Melding> _meldingen = new();
+        private readonly Dictionary<int, Melding> _meldingen = [];
 
         public void Registreer(int code, Melding melding)
         {
@@ -110,22 +110,22 @@
             { 1003, new Melding(MeldingType.Opmerking, "[3] Wapening op basis van gedrongen ligger conform artikel 6.1 (10)") },
             { 1004, new Melding(MeldingType.Opmerking, "[4] Het opneembare moment M<sub>Rd</sub> conform gedrongen ligger artikel 6.1(10) is groter dan M<sub>Rd</sub> volgens 6.1(P). Het maatgevende artikel 6.1(P) is toegepast.")},
 
-            { 1051, new Melding(MeldingType.Waarschuwing, "[51] <u>Overschrijding maximale drukzone</u>") },
-            { 1052, new Melding(MeldingType.Waarschuwing, "[52] <u>Overschrijding maximale wapening</u>") },
-            { 1053, new Melding(MeldingType.Waarschuwing, "[53] <u>Wapening voldoet niet (uiterste grenstoestand)</u>") },
+            { 1051, new Melding(MeldingType.Waarschuwing, "[51] Overschrijding maximale drukzone") },
+            { 1052, new Melding(MeldingType.Waarschuwing, "[52] Overschrijding maximale wapening") },
+            { 1053, new Melding(MeldingType.Waarschuwing, "[53] Wapening voldoet niet (uiterste grenstoestand)") },
 
 
             // meldingen serie 2001 
             { 2004, new Melding(MeldingType.Opmerking, "[4] Voor de berekening van V<sub>Rd,max</sub> is meer dwarskrachtwapening toegepast zodat spanning kleiner is dan 80% van f<sub>yk</sub> , |nu|~1~ is bepaald met (vgl. 6.10N)" ) },
-            { 2051, new Melding(MeldingType.Waarschuwing, "[51] <u>Overschrijding V<sub>Rd,max</sub> conform artikel 6.2.3 (3).</u> Pas de drukdiagonaal aan.")},
+            { 2051, new Melding(MeldingType.Waarschuwing, "[51] Overschrijding V<sub>Rd,max</sub> conform artikel 6.2.3 (3). Pas de drukdiagonaal aan.")},
 
             // meldingen serie 3001 zijn voor dekking
 
-            { 3051, new Melding(MeldingType.Waarschuwing, "[51] <u>Toegepaste dekking is kleiner dan nominale dekking</u>") },
+            { 3051, new Melding(MeldingType.Waarschuwing, "[51] Toegepaste dekking is kleiner dan nominale dekking") },
             
             // meldingen serie 4001 zijn voor scheurwijdte
             
-            { 4051, new Melding(MeldingType.Waarschuwing, "[51] <u>Berekende scheurwijdte w<sub>k</sub> (art. 7.3.4) groter dan toelaatbaar w<sub>max</sub> (art. 7.3.1) </u>")},
+            { 4051, new Melding(MeldingType.Waarschuwing, "[51] Berekende scheurwijdte w<sub>k</sub> (art. 7.3.4) groter dan toelaatbaar w<sub>max</sub> (art. 7.3.1) ")},
 
         };
 

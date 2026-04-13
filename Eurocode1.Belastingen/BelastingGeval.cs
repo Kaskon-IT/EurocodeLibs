@@ -1,8 +1,10 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
 using CommonLibrary.Interfaces;
+using Eurocode.Grondslagen;
 using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Eurocode.Belastingen
 {
@@ -32,7 +34,7 @@ namespace Eurocode.Belastingen
 
         public int Nr { get; set; }
 
-        [TableColumn("naam", order: 0, width: 2.0)]
+        [TableColumn("belastinggeval", order: 0, width: 3.0)]
         public string Naam { get { return "BG" + Nr.ToString("D1"); } }
         public string Omschrijving { get; set; } = "G";
 
@@ -44,7 +46,7 @@ namespace Eurocode.Belastingen
 
         private GebruiksklasseEnum? _gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen;
 
-        [TableColumn("gebruiksklasse", order: 20, width: 6.0)]
+        [TableColumn("gebruiksklasse", order: 20, width: 7.0)]
         public GebruiksklasseEnum? Gebruiksklasse
         {
             get => _gebruiksklasse;
@@ -67,11 +69,30 @@ namespace Eurocode.Belastingen
         }
 
 
-        [TableColumn("opm.", order: 9999, width: 4.0)]
         public string Opmerking { get; set; } = "";
 
 
-        public OpgelegdeBelastingen OpgelegdeBelastingen { get { return Gebruiksklasse.HasValue ? Gebruiksklasse.Value.GetOpgelegdeBelastingen() : new(); } }
+        /// <summary>
+        /// Grondslagen van het project. Wordt gezet via BelastingenContext.
+        /// Gebruikt voor de ontwerplevensduur-factor op de opgelegde belastingen.
+        /// </summary>
+        [JsonIgnore]
+        public GrondslagenContext? Grondslagen { get; set; }
+
+        public OpgelegdeBelastingen OpgelegdeBelastingen
+        {
+            get
+            {
+                if (!Gebruiksklasse.HasValue) return new();
+                var basis = Gebruiksklasse.Value.GetOpgelegdeBelastingen();
+                if (Grondslagen?.OntwerpLevensduur == OntwerpLevensduurEnum.Honderd)
+                    return new OpgelegdeBelastingen(basis.Vlaklast * 1.04, basis.Puntlast * 1.04)
+                    {
+                        LijnlastRand = basis.LijnlastRand * 1.04
+                    };
+                return basis;
+            }
+        }
 
 
         public MomentaanFactoren MomentaanFactoren { get { return Gebruiksklasse.HasValue ? Gebruiksklasse.Value.GetMomentaanFactoren() : new(); } }
@@ -101,12 +122,12 @@ namespace Eurocode.Belastingen
             get
             {
                 if (Type == BelastingGevalTypeEnum.Permanent) return "";
-                else return $"|psi|~0~={MomentaanFactoren.Mom0} |psi|~1~={MomentaanFactoren.Mom1} |psi|~2~={MomentaanFactoren.Mom2}";
+                else return $"*|psi|~0~*={MomentaanFactoren.Mom0} *|psi|~1~*={MomentaanFactoren.Mom1} *|psi|~2~*={MomentaanFactoren.Mom2}";
             }
         }
 
 
-        [TableColumn("|psi|~0~", order: 40, width: 1.0)]
+        [TableColumn("*ψ~0~*", order: 40, width: 1.0)]
         public string Mom0
         {
             get
@@ -116,7 +137,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("|psi|~1~", order: 41, width: 1.0)]
+        [TableColumn("*ψ~1~*", order: 41, width: 1.0)]
         public string Mom1
         {
             get
@@ -126,7 +147,7 @@ namespace Eurocode.Belastingen
             }
         }
 
-        [TableColumn("|psi|~2~", order: 42, width: 1.0)]
+        [TableColumn("*|psi|~2~*", order: 42, width: 1.0)]
         public string Mom2
         {
             get
@@ -144,11 +165,11 @@ namespace Eurocode.Belastingen
             {
                 if (Nr == 2)
                 {
-                    return "q~k~=" + OpgelegdeBelastingen.Vlaklast.ToString("0.## kN/m²");
+                    return "*q~k~*=" + OpgelegdeBelastingen.Vlaklast.ToString("0.## kN/m²");
                 }
                 if (Nr == 3)
                 {
-                    return "Q~k~=" + OpgelegdeBelastingen.Puntlast.ToString("0.## kN");
+                    return "*Q~k~*=" + OpgelegdeBelastingen.Puntlast.ToString("0.## kN");
                 }
                 else return "";
             }

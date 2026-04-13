@@ -1,5 +1,6 @@
 ﻿@page "/lab/live-test"
 @using CommonLibrary
+@using Profielen.Parametrisch
 
 
 <h3>LiveTest</h3>
@@ -20,7 +21,7 @@
 
 @code {
     public BetonContext Beton { get; set; } = new();
-    public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
+    public ParametrischProfielContext Profiel { get; set; } = new();
     public WapeningContext Wapening { get; set; } = new();
     public BetonDekkingContext Dekking { get; set; } = new();
 

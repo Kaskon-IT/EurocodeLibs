@@ -1,6 +1,6 @@
-﻿namespace ParametrischeProfielen
+﻿namespace Profielen.ParametrischBAK
 {
-    public enum ParametrischeProfielVormEnum
+    public enum ParametrischeProfielVormEnumVERWIJDEREN
     {
         // massief
         Rechthoek = 1,

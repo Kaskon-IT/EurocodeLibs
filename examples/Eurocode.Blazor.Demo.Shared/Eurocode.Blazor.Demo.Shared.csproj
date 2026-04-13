@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Profielen\BetonProfielen\BetonProfielen.csproj" />
     <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj" />
     <ProjectReference Include="..\..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
     <ProjectReference Include="..\..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />
@@ -51,8 +52,6 @@
     <ProjectReference Include="..\..\Eurocode8.Aardbevingen\Eurocode8.Aardbevingen.csproj" />
     <ProjectReference Include="..\..\EurocodeRazorClassLibrary\EurocodeRazorClassLibrary.csproj" />
     <ProjectReference Include="..\..\ExportFactory\ExportFactory.csproj" />
-    <ProjectReference Include="..\..\Profielen\BetonProfielen\BetonProfielen.csproj" />
-    <ProjectReference Include="..\..\Profielen\ParametrischeProfielen\ParametrischeProfielen.csproj" />
     <ProjectReference Include="..\Eurocode.Blazor.Demo.Generators\Generators\Generators.csproj" />
   </ItemGroup>
 </Project>
