@@ -1,8 +1,12 @@
 ﻿namespace ExportFactory.Services
 {
+    using CommonLibrary;
+    using CommonLibrary.Models;
+    using ExportFactory.Shared;
     using MigraDoc.DocumentObjectModel;
     using MigraDoc.DocumentObjectModel.Fields;
     using MigraDoc.DocumentObjectModel.Tables;
+    using System.Data;
     using System.Text;
     using System.Text.RegularExpressions;
 
@@ -87,7 +91,7 @@
                 markdown = Regex.Replace(markdown, @"\*\*(.*?)\*\*", "<strong>$1</strong>");
 
                 // Italic: *text* -> <em>text</em>
-                markdown = Regex.Replace(markdown, @"\*(.*?)\*", "<em>$1</em>");
+                markdown = Regex.Replace(markdown, @"\*(.*?)\*", "<i>$1</i>");
 
                 // Line breaks: dubbele nieuwe regel -> <br/>
                 markdown = Regex.Replace(markdown, @"\n\s*\n", "<br/>");
@@ -118,8 +122,8 @@
             // Voeg een stijl toe aan de pagina (CSS)
             //htmlBuilder.AppendLine("<style>");
             //htmlBuilder.AppendLine("</style>");
+            
             htmlBuilder.AppendLine("</head>");
-            htmlBuilder.AppendLine("<script>function scrollToToc() { document.getElementById('toc-embvg01f').scrollIntoView({ behavior: 'smooth' });  }</script>");
 
             //htmlBuilder.AppendLine("<script>\r\n    // Selecteer alle knoppen met de klasse \"accordion\"\r\n    var acc = document.getElementsByClassName(\"ec-accordion\");\r\n\r\n    // Voeg een klik-gebeurtenis toe aan elke knop\r\n    for (var i = 0; i < acc.length; i++) {\r\n        acc[i].addEventListener(\"click\", function() {\r\n            // Toon of verberg de inhoud\r\n            this.classList.toggle(\"active\");\r\n            var panel = this.nextElementSibling;\r\n            if (panel.style.display === \"block\") {\r\n                panel.style.display = \"none\";\r\n            } else {\r\n                panel.style.display = \"block\";\r\n            }\r\n        });\r\n    }\r\n</script>");
 
@@ -137,42 +141,43 @@
             // Loop door de secties en paragrafen in het document
             bool inhoudsopgaveIsVerwerkt = false;
             bool accordionIsOpen = false;
+            int panelCount = 0; // ✅ Tellen hoeveel panels we hebben
+            bool inBoekjeWrapper = false; // ✅ Track of we in een boekje-wrapper zitten
+            
             foreach (Section section in document.Sections)
             {
-                // onderzoek: maak section inklapbaar (accordion)
-                // <button class="accordion">Hoofdstuk 1</button>
-                // <div class="panel">
-                // <p>Dit is de inhoud van hoofdstuk 1. Hier kun je tekst plaatsen die je wilt inklappen.</p>
-                //</div>
                 accordionIsOpen = false;
                 if (section.Tag != null)
                 {
+                    if (accordionIsOpen)
+                    {
+                        //htmlBuilder.AppendLine("</div>");
+                    }
                     accordionIsOpen = true;
                     var guid = Guid.NewGuid();
                     htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{section.Tag}</button>");
-                    htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
-                    //htmlBuilder.AppendLine(@"<div class='page-header'>");
-
-                    //var header = section.Headers.Primary;
-                    //string hdr1 = "";
-                    //string hdr2 = "";
-                    //string hdr3 = "";
-
-                    //if (header?.Elements != null && header?.Elements.Count > 0)
-                    //{
-                    //    var hdrFod = header?.Elements[0];
-                    //    if (hdrFod is Table table)
-                    //    {
-                    //        //if (table.Rows[0].Cells[0].Elements.First is string str)
-                    //        //hdr1 = cell0?.ToString();
-                    //    }
-                    //}
-
-                    //htmlBuilder.AppendLine(@$"<span class='left'>LINKS{hdr1}</span>");
-                    //htmlBuilder.AppendLine(@$"<span class='middle'>MIDDEN</span>");
-                    //htmlBuilder.AppendLine(@$"<span class='right'>RECHTS</span>");
-                    //htmlBuilder.AppendLine("@</div>");
-
+                    
+                    // ✅ BOEKJE WRAPPER LOGICA
+                    if (panelCount == 0)
+                    {
+                        // Eerste pagina (voorblad) - geen wrapper
+                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                        panelCount++;
+                    }
+                    else if (panelCount % 2 == 1)
+                    {
+                        // Oneven panel (na het voorblad) - start nieuwe boekje-wrapper
+                        htmlBuilder.AppendLine("<div class='boekje-wrapper'>");
+                        inBoekjeWrapper = true;
+                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                        panelCount++;
+                    }
+                    else
+                    {
+                        // Even panel - tweede pagina van boekje, sluit wrapper daarna
+                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                        panelCount++;
+                    }
                 }
 
                 foreach (var element in section.Elements)
@@ -182,7 +187,8 @@
                     // Als het een paragraaf is
                     if (element is Paragraph paragraph)
                     {
-                        if (paragraph.Elements.LastObject is BookmarkField bookmarkField)
+                        // Check voor bookmark aan het BEGIN van de paragraph (voor ID attribute op heading)
+                        if (paragraph.Elements.Count > 0 && paragraph.Elements.First is BookmarkField bookmarkField)
                         {
                             bookmarkId = $"id='{bookmarkField.Name}'";
                         }
@@ -220,17 +226,54 @@
                                 }
                                 else
                                 {
+                                    // ✅ Sluit vorige panel EN eventueel boekje-wrapper
                                     if (accordionIsOpen)
                                     {
-                                        // sluit
-                                        htmlBuilder.AppendLine("</div>");
+                                        htmlBuilder.AppendLine("</div>"); // Sluit panel
+                                        
+                                        // Als we even aantal panels hadden (2, 4, 6...), sluit dan ook de boekje-wrapper
+                                        if (panelCount > 0 && panelCount % 2 == 0 && inBoekjeWrapper)
+                                        {
+                                            htmlBuilder.AppendLine("</div>"); // Sluit boekje-wrapper
+                                            inBoekjeWrapper = false;
+                                        }
                                     }
 
-                                    // start nieuwe
+                                    // start nieuwe panel (altijd, ook als er geen section.Tag was)
                                     accordionIsOpen = true;
                                     var guid = Guid.NewGuid();
-                                    htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{ProcessParagraph(paragraph)}</button>");
-                                    htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                                    
+                                    // ✅ Voor de button: gebruik plain text (strip HTML tags)
+                                    var buttonText = System.Text.RegularExpressions.Regex.Replace(
+                                        ProcessParagraph(paragraph), 
+                                        @"<[^>]+>", 
+                                        ""  // Verwijder alle HTML tags
+                                    );
+                                    
+                                    htmlBuilder.AppendLine($"<button class='ec-accordion' id='{guid}' onclick='toggleAccordion(\"{guid}\")'>{buttonText}</button>");
+                                    
+                                    // ✅ BOEKJE WRAPPER LOGICA (zelfde als bij section.Tag)
+                                    if (panelCount == 0)
+                                    {
+                                        // Eerste pagina (voorblad) - geen wrapper
+                                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                                        panelCount++;
+                                    }
+                                    else if (panelCount % 2 == 1)
+                                    {
+                                        // Oneven panel (na het voorblad) - start nieuwe boekje-wrapper
+                                        htmlBuilder.AppendLine("<div class='boekje-wrapper'>");
+                                        inBoekjeWrapper = true;
+                                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                                        panelCount++;
+                                    }
+                                    else
+                                    {
+                                        // Even panel - tweede pagina van boekje
+                                        htmlBuilder.AppendLine($"<div class='ec-panel' id='pnl{guid}'>");
+                                        panelCount++;
+                                    }
+                                    
                                     htmlBuilder.AppendLine($"<h1 {bookmarkId} class='kop1'>" + ProcessParagraph(paragraph) + "</h1>");
                                 }
 
@@ -269,7 +312,18 @@
                                 break;
 
                             default:
-                                htmlBuilder.AppendLine("<p class='ec-par'>" + ProcessParagraph(paragraph) + "</p>");
+                                // ✅ Check of de paragraph.Tag HTML bevat (bijv. div, table)
+                                if (paragraph.Tag is string tagHtml && 
+                                    (tagHtml.Contains("<div") || tagHtml.Contains("<table")))
+                                {
+                                    // Gebruik de HTML uit de Tag direct (voor TOC met flexbox/table layout)
+                                    htmlBuilder.AppendLine(tagHtml);
+                                }
+                                else
+                                {
+                                    // Normale paragraph processing
+                                    htmlBuilder.AppendLine("<p class='ec-par'>" + ProcessParagraph(paragraph) + "</p>");
+                                }
                                 break;
                         }
 
@@ -284,24 +338,59 @@
 
                         bool isPivotTable = tableTag != null && tableTag.Contains("pivot");
                         bool hideHeader = tableTag != null && tableTag.Contains("hideheader");
+                        bool layoutOnly = tableTag != null && tableTag.Contains("layout-only");
 
-
+                        List<string> cssClasses = ["ec-table"];
                         string cssTable = "ec-table";
+                       
                         if (isPivotTable)
-                            cssTable += "-pivot";
+                        {
+                            cssTable += " row-head";
+                            cssClasses.Add("row-head");
+                        }
+                        if (!hideHeader)
+                        {
+                            cssClasses.Add("col-head");
+                        }
+                        if (layoutOnly)
+                        {
+                            cssClasses.Add("layout-only"); 
+                        }
+
+                        if (table.Borders.Visible == false)
+                        {
+                            //cssTable += " layout-only"; // alleen 
+                        }
 
 
 
                         // start <table>
-                        htmlBuilder.AppendLine($"<table class='{cssTable}'>");
-                        if (isPivotTable || hideHeader)
+                        htmlBuilder.AppendLine($"<div class='table-wrap {(layoutOnly? "layout-only": "")}'>");
+
+                        htmlBuilder.AppendLine($"<table class='{string.Join(" ", cssClasses)}'>");
+
+                        htmlBuilder.AppendLine("<colgroup>");
+                        foreach (var col in table.Columns)
                         {
-                            htmlBuilder.AppendLine("<tbody>");  // geen header bij pivot en als verborgen
+                            if (col is MigraDoc.DocumentObjectModel.Tables.Column mdc)
+                            {
+                                var perc = mdc.Width.Millimeter / 182.0;
+                                htmlBuilder.AppendLine($"<col style='width:{(perc*100):0}%'>");
+                            }
                         }
-                        else
-                        {
-                            htmlBuilder.AppendLine("<thead class='ec-table-head'>");
-                        }
+                        htmlBuilder.AppendLine("</colgroup>");
+
+                        htmlBuilder.AppendLine("<tbody>");  // NB. geen thead of tfoot (maar met CSS)
+
+                        //if (isPivotTable || hideHeader )
+                        //{
+                        //    htmlBuilder.AppendLine("<tbody>");  // geen header bij pivot en als verborgen
+                        //}
+                        //else
+                        //{
+                        //    //htmlBuilder.AppendLine("<thead class='ec-table-head'>");
+                        //    htmlBuilder.AppendLine("<tbody>"); // geen aparte thead meer
+                        //}
 
 
                         var rowIndex = 0;
@@ -317,18 +406,31 @@
                         {
                             var cellIndex = 0;
 
+                            var sourceObj = row.Tag;
+                            if (sourceObj != null) 
+                            {
+                                if (sourceObj is BaseEurocodeContext ctx)
+                                {
+                                    var test = ctx; // even debuggen
+                                    //if (ctx is )
+                                }
+                            }
+
 
                             if (isPivotTable)
                             {
-                                htmlBuilder.AppendLine("<tr class='ec-table-row ec-table-row-pivot'>");
+                                //htmlBuilder.AppendLine("<tr class='ec-table-row ec-table-row-pivot'>");
+                                htmlBuilder.AppendLine("<tr>");
+
                             }
                             else
                             {
-                                htmlBuilder.AppendLine("<tr class='ec-table-row'>");
+                                htmlBuilder.AppendLine("<tr>");
                             }
 
                             string rowspan = string.Empty;
                             string colspan = string.Empty;
+                            string style = string.Empty;
 
                             foreach (Cell cell in row.Cells)
                             {
@@ -361,6 +463,16 @@
 
                                 var htmlClass = "ec-td";
 
+                                var title = "";
+                                if (cell.Tag is Formula formula)
+                                {
+                                    //title = $"data-tex='{formula.GetValue()}' data-caption='{formula.Name}'";
+                                    //htmlClass += " has-formula";
+
+                                    // HIERBOVEN KAN AANGEZET WORDEN VOOR DEBUG. Dan ontstaat er een Tooltip in de tabellen voor het uitleze van de formules.
+                                }
+
+                                
 
 
                                 if (isPivotTable)
@@ -386,6 +498,7 @@
 
                                     if (cellPar != null)
                                     {
+                                        title = $"title='{cellPar}'";
 
                                         if (cellPar.Tag != null)
                                         {
@@ -426,13 +539,23 @@
                                     if (thisColumn != null && !thisColumn.Width.IsNull)
                                     {
                                         //
-                                        var width = thisColumn.Width.Centimeter.ToString("0"); // alleen hele cm ondersteund!
-                                        htmlClass += $" ec-width-{width}";
+                                        var width = thisColumn.Width.Millimeter.ToString("0mm"); // let op geen spatie
+                                        style = $"style = 'min-width: {width};'";
                                     }
                                 }
 
+                                string cellText = "?";
                                 if (cellPar != null)
-                                    htmlBuilder.AppendLine($"<{htmlTag} class='{htmlClass}' {colspan} {rowspan}>" + ProcessParagraph(cellPar) + $"</{htmlTag}>");
+                                    cellText = ProcessParagraph(cellPar);
+
+                                // even lelijk, maar werkt
+                                var tagComplete = string.Join(" ", htmlTag, $"class='{htmlClass}'", title, colspan, rowspan);
+
+                                //htmlBuilder.AppendLine($"<{htmlTag} {title} {style} class='{htmlClass}' {colspan} {rowspan}>" + $"{cellText}" + $"</{htmlTag}>");
+                                htmlBuilder.AppendLine($"<{tagComplete}>" + $"{cellText}" + $"</{htmlTag}>");
+
+
+
 
                                 cellIndex++;
                             }
@@ -441,7 +564,9 @@
 
                             if (rowIndex == 0 && !isPivotTable && !hideHeader)
                             {
-                                htmlBuilder.AppendLine("</thead>"); // niet bij pivottable of verbogen headers
+                                //htmlBuilder.AppendLine("</thead>"); // niet bij pivottable of verbogen headers
+                                //htmlBuilder.AppendLine("</thead>"); // niet bij pivottable of verbogen headers
+
                             }
 
                             rowIndex++;
@@ -452,29 +577,34 @@
                         {
                             htmlBuilder.AppendLine("</tbody>");
                         }
-                        htmlBuilder.AppendLine("</table>");
+                        htmlBuilder.AppendLine("</table>"); 
+                        htmlBuilder.AppendLine("</div>"); // close div wrapper
+
                     } // end if table
                 }
 
                 // Close the accordion div
                 if (accordionIsOpen)
                 {
-                    htmlBuilder.Append("</div>");
+                    htmlBuilder.Append("</div>"); // Sluit panel
+                    
+                    // ✅ Als we een oneven aantal panels hebben EN de laatste wrapper is nog open, sluit deze
+                    if (panelCount > 0 && panelCount % 2 == 0 && inBoekjeWrapper)
+                    {
+                        htmlBuilder.Append("</div>"); // Sluit laatste boekje-wrapper
+                        inBoekjeWrapper = false;
+                    }
                 }
-
-
             }
 
-            // Nog 1 div voor blanco deel onder laatste element voor leesbaarheid
-            //htmlBuilder.AppendLine("<div style='height:1cm;'></div>");
-
+            // ✅ Sluit eventuele nog openstaande boekje-wrapper (voor laatste panel als oneven aantal)
+            if (inBoekjeWrapper)
+            {
+                htmlBuilder.Append("</div>");
+            }
 
             // Close the container div
             htmlBuilder.Append("</div>");
-
-            // Nog een div voor blanco ruimte onder laatste element
-            //htmlBuilder.AppendLine("<div style='height:5cm;'></div>");
-
 
             // Einde van de HTML
             htmlBuilder.AppendLine("</body>");
@@ -602,6 +732,38 @@
             {
                 switch (inline)
                 {
+                    case BookmarkField bookmark:
+                        // Bookmark wordt een HTML anchor: <a name='bookmark-id'></a>
+                        FlushCurrentText();
+                        sb.Append($"<a name='{bookmark.Name}'></a>");
+                        break;
+
+                    case Hyperlink hyperlink when hyperlink.Type == HyperlinkType.Bookmark:
+                        // Hyperlink naar bookmark wordt <a href='#bookmark'>text</a>
+                        // Gebruik onclick voor scroll omdat normale # links niet werken in Blazor routing
+                        FlushCurrentText();
+                        
+                        var linkTextBuilder = new StringBuilder();
+                        foreach (var hyperlinkElement in hyperlink.Elements)
+                        {
+                            if (hyperlinkElement is FormattedText hyperlinkFt)
+                            {
+                                foreach (var ftEl in hyperlinkFt.Elements)
+                                {
+                                    if (ftEl is Text hyperlinkText)
+                                        linkTextBuilder.Append(hyperlinkText.Content);
+                                }
+                            }
+                            else if (hyperlinkElement is Text hyperlinkText)
+                            {
+                                linkTextBuilder.Append(hyperlinkText.Content);
+                            }
+                        }
+                        
+                        // Gebruik onclick voor scroll i.p.v. href (werkt beter in Blazor)
+                        sb.Append($"<a href='#{hyperlink.Name}' onclick=\"scrollToBookmark('{hyperlink.Name}'); return false;\" class='bookmark-link'>{linkTextBuilder}</a>");
+                        break;
+
                     case Character ch when ch.SymbolName == SymbolName.Tab:
                         FlushCurrentText();
                         sb.Append("<span class=\"tab-simulated\"></span>");

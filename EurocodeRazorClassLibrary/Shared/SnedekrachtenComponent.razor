@@ -5,89 +5,6 @@
 
 
 
-@* <p>@Model.ToMarkupString()</p> *@
-
-<!--Momenten-->
-@if (ToonMy)
-{
-    @if (ToonWaardeBruiksbaarheidsGrensToestand)
-    {
-        <EurocodeInputNumber Key="@K.MyBGT" @bind-Value="@Model.My.Kar" StringFormat="0.##" Unit="kNm"  />
-    }
-    else
-    {
-        <EurocodeInputNumber Key="@K.MyEd" @bind-Value="@Model.My.Ed" StringFormat="0.##" Unit="kNm"  />
-    }
-}
-
-@if (ToonMz)
-{
-    @if (ToonWaardeBruiksbaarheidsGrensToestand)
-    {
-        <EurocodeInputNumber Key="@K.MzBGT" @bind-Value="@Model.Mz.Kar" StringFormat="0.##" Unit="kNm"  />
-    }
-    else
-    {
-        <EurocodeInputNumber Key="@K.MzEd" @bind-Value="@Model.Mz.Ed" StringFormat="0.##" Unit="kNm" />
-    }
-}
-
-
-<!--Dwarskrachten-->
-@if (ToonVz)
-{
-    @if (ToonWaardeBruiksbaarheidsGrensToestand)
-    {
-        <EurocodeInputNumber Key="@K.VzEd" @bind-Value="@Model.Vz.Kar" StringFormat="0.##" Unit="kN"  />
-    }
-    else
-    {
-        <EurocodeInputNumber Key="@K.VzEd" @bind-Value="@Model.Vz.Ed" StringFormat="0.##" Unit="kN"  />
-    }
-}
-@if (ToonVy)
-{
-    @if (ToonWaardeBruiksbaarheidsGrensToestand)
-    {
-        <EurocodeInputNumber Key="@K.VyEd" @bind-Value="@Model.Vy.Kar" StringFormat="0.##" Unit="kN"  />
-    }
-    else
-    {
-        <EurocodeInputNumber Key="@K.VyEd" @bind-Value="@Model.Vy.Ed" StringFormat="0.##" Unit="kN"  />
-    }
-}
-
-
-
-
-<!--Normaalkracht-->
-@if (ToonNormaalkracht)
-{
-    @if (ToonWaardeBruiksbaarheidsGrensToestand)
-    {
-        <EurocodeInputNumber Key="@K.NxEd" @bind-Value="@Model.Nx.Kar" StringFormat="0.##" Unit="kN"  />
-    }
-    else
-    {
-        <EurocodeInputNumber Key="@K.NxEd" @bind-Value="@Model.Nx.Ed" StringFormat="0.##" Unit="kN"  />
-
-    }
-}
-
-<!--Torsie-->
-@if (ToonTorsie)
-{
-    @if (ToonWaardeBruiksbaarheidsGrensToestand)
-    {
-        <EurocodeInputNumber Key="@K.TxEd" @bind-Value="@Model.Tx.Kar" StringFormat="0.##" Unit="kNm"  />
-    }
-    else
-    {
-        <EurocodeInputNumber Key="@K.TxEd" @bind-Value="@Model.Tx.Ed" StringFormat="0.##" Unit="kNm"  />
-    }
-}
-
-
 
 
 
@@ -95,10 +12,10 @@
 
 @code {
     [Parameter, EditorRequired]
-    public CommonLibrary.Snedekrachten Model { get; set; } = new();
+    public Eurocode.Belastingen.SectionForces Model { get; set; } = new();
 
     [Parameter]
-    public EventCallback<Snedekrachten> ModelChanged{ get; set; }
+    public EventCallback<Eurocode.Belastingen.SectionForces> ModelChanged{ get; set; }
 
     private bool toonHoofdRichting = true;
 

@@ -1,7 +1,7 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
 using ExportFactory.Shared;
-using ParametrischeProfielen;
+using Profielen.Parametrisch;
 using System.Text.Json.Serialization;
 using GREEK = ExportFactory.Services.GreekLetters;
 
@@ -82,7 +82,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         /// 
         [TableColumn(Label = "kruipcoëfficiënt",
-            Symbol = $"{GREEK.phi}<sub>(t,t<sub>0</sub>)</sub>",
+            Symbol = $"*{GREEK.phi}<sub>(t,t<sub>0</sub>)</sub>*",
             Article = "Bijlage B",
             Description = "is de kruipcoëfficiënt die mag worden berekend uit vergelijking (B.1)"
             )]
@@ -105,7 +105,7 @@ namespace Eurocode.BetonConstructies
         /// (B.2)
         /// </summary>
         [TableColumn(Label = "theoretische kruipcoëfficiënt",
-            Symbol = $"{GREEK.phi}<sub>0</sub>",
+            Symbol = $"*{GREEK.phi}<sub>0</sub>*",
             Article = "Bijlage B",
             Description = "is de theoretische kruipcoëfficiënt die mag worden berekend uit vergelijking (B.2)"
             )]
@@ -269,7 +269,7 @@ namespace Eurocode.BetonConstructies
         /// (B.5)
         /// een factor die rekening houdt met het effect van de ouderdom van het beton op het tijdstip van belasten op de theoretische kruipcoefficient.
         /// </summary>
-        [TableColumn(Label = "factor ouderdom", Symbol = $"<i>{GREEK.beta}</i>(t<sub>0</sub>)", Article = "Bijlage B", Unit = "",
+        [TableColumn(Label = "factor ouderdom", Symbol = $"*{GREEK.beta}(t<sub>0</sub>)*", Article = "Bijlage B", Unit = "",
             Description = "is een factor die rekening houdt met het effect van de ouderdom van het beton op het tijdstip van belasten op de theoretische kruipcoëfficiënt")]
         public double BetaOuderdom
         {
@@ -309,7 +309,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn("ouderdom beton op het beschouwde tijdstip", Symbol = "<i>t</i>", Unit = "dagen", Article = "Bijlage B")]
         public int OuderdomBeton_t { get; private set; } = 18250;
 
-        [TableColumn(Label = "ouderdom beton bij belasten", Symbol = $"<i>t</i><sub>0</sub>", Unit = "dagen", Article = "Bijlage B")]
+        [TableColumn(Label = "ouderdom beton bij belasten", Symbol = $"*t<sub>0</sub>*", Unit = "dagen", Article = "Bijlage B")]
         public int OuderdomBetonOpMomentVanBelasten_t0
         {
             get => _ouderdomBetonOpMomentVanBelasten_t0;
@@ -331,7 +331,7 @@ namespace Eurocode.BetonConstructies
         /// (B.6)
         /// </summary>
         /// 
-        [TableColumn(Label = "theoretische dikte", Symbol = "<i>h</i><sub>0</sub>", Unit = "mm", Article = "Bijlage B")]
+        [TableColumn(Label = "theoretische dikte", Symbol = "*h<sub>0</sub>*", Unit = "mm", Article = "Bijlage B")]
         public double TheoretischeDikteBeton_h0
         {
             get
@@ -347,7 +347,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "coefficient", Symbol = "<i>β</i><sub>c</sub>(t,t<sub>0</sub>)", Article = "Bijlage B",
+        [TableColumn(Label = "coefficient", Symbol = "*β<sub>c</sub>(t,t<sub>0</sub>)*", Article = "Bijlage B",
             Description = "is een coëfficiënt waarmee de ontwikkeling van de kruip in de tijd na belasten wordt beschreven")]
         public double BetaC
         {
@@ -376,7 +376,7 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(Label = "coefficient", Symbol = "<i>β</i><sub>H</sub>", Article = "Bijlage B",
-            Description = "is een coëfficiënt die afhangt van de relatieve vochtigheid (<i>RH</i> in %) en de theoretische dikte van het element (<i>h</i><sub>0</sub> in mm).")]
+            Description = "is een coëfficiënt die afhangt van de relatieve vochtigheid (<i>RH</i> in %) en de theoretische dikte van het element (<i>h<sub>0</sub></i> in mm).")]
         public double BetaH
         {
             get
@@ -468,7 +468,7 @@ namespace Eurocode.BetonConstructies
         /// (B.9)
         /// </summary>
         /// 
-        [TableColumn(Label = "belastingduur (effect cementsoort)", Symbol = $"<i>t</i><sub>0</sub>", Article = "Bijlage B", Unit = "dagen")]
+        [TableColumn(Label = "belastingduur (effect cementsoort)", Symbol = $"*t<sub>0</sub>*", Article = "Bijlage B", Unit = "dagen")]
         public double OuderdomInclusiefCement
         {
             get

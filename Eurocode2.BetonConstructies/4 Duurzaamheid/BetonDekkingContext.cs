@@ -2,6 +2,7 @@
 using Eurocode.Grondslagen;
 using ExportFactory.Shared;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Eurocode.BetonConstructies
 {
@@ -21,6 +22,7 @@ namespace Eurocode.BetonConstructies
             Grondslagen = new();
             Beton = new();
             Constructieklasse = new(this, Beton);
+            BerekenEnValideer();
         }
 
         public BetonDekkingContext(GrondslagenContext grondslagen, BetonContext beton)
@@ -44,6 +46,7 @@ namespace Eurocode.BetonConstructies
             SelectedMilieuklassen = context.Milieuklassen;
             GrootsteKorrelDiameter = context.GrootsteKorrelDiameter;
             Constructieklasse = new(this, Beton);
+            BerekenEnValideer();
 
         }
 
@@ -69,6 +72,30 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        public string ConstructieklasseUserFriendlyNameComplete
+        {
+            get
+            {
+                var s = Constructieklasse;
+                var corrections = new List<string>();
+                
+                // Voeg correctie toe alleen als deze niet 0 is
+                if (s.CorrectieBeton != 0)
+                    corrections.Add($"|Delta|~b~{s.CorrectieBeton:+0;-0;0}");
+                
+                if (s.CorrectieKwaliteitsBeheersting != 0)
+                    corrections.Add($"|Delta|~q~{s.CorrectieKwaliteitsBeheersting:+0;-0;0}");
+                
+                if (s.CorrectieLevensduur != 0)
+                    corrections.Add($"|Delta|~l~{s.CorrectieLevensduur:+0;-0;0}");
+                
+                if (s.CorrectiePlaatGeometrie != 0)
+                    corrections.Add($"|Delta|~p~{s.CorrectiePlaatGeometrie:+0;-0;0}");
+                
+                var correctionsStr = corrections.Count > 0 ? $" ({string.Join(", ", corrections)})" : "";
+                return $"{s.UserFriendlyName}{correctionsStr}";
+            }
+        }
 
         /// <summary>
         /// Naam van de betondekking context, bijvoorbeeld 'bovenzijde' of 'onderzijde' 
@@ -84,7 +111,7 @@ namespace Eurocode.BetonConstructies
 
         private double _dekkingToe = 20;
 
-        [TableColumn(Label = "toegepaste dekking", Symbol = "<i>c</i><sub>prov</sub>", Unit = "mm", StringFormat = "0")]
+        [TableColumn(Label = "toegepaste dekking", Symbol = "*c<sub>prov</sub>*", Unit = "mm", StringFormat = "0")]
         public double DekkingToe
         {
             get => _dekkingToe;
@@ -119,13 +146,12 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Indien plaatgeometrie van toepassing dan een vermindering van 1 op de constructieklasse.
         /// </summary>
-        [TableColumn("plaatgeometrie?", description: "-", Order = 2
+        [TableColumn("plaatgeometrie?", Order = 2
             )]
         public bool IsPlaatGeometrie
         {
             get => _isPlaatGeometrie;
-            set => SetProperty(ref _isPlaatGeometrie, value);
-            //set { _isPlaatGeometrie = value; BerekenEnValideer(); } // deze code is vervangen door hierboven
+            set { if (SetProperty(ref _isPlaatGeometrie, value)) BerekenEnValideer(); }
         }
 
         /// <summary>
@@ -136,8 +162,7 @@ namespace Eurocode.BetonConstructies
         public bool IsKwaliteitsBeheersing
         {
             get => _isKwaliteitsBeheersing;
-            set => SetProperty(ref _isKwaliteitsBeheersing, value);
-
+            set { if (SetProperty(ref _isKwaliteitsBeheersing, value)) BerekenEnValideer(); }
         }
 
         /// <summary>
@@ -146,7 +171,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         //public IEnumerable<MilieuklasseEnum> Milieuklassen { get; set; } = [MilieuklasseEnum.XC3];
 
-
+        [JsonIgnore]
         public IEnumerable<MilieuklasseEnum> Milieuklassen =>
             SelectedMilieuklassen.Any() ? SelectedMilieuklassen : [MilieuklasseEnum.X0];
 
@@ -189,7 +214,7 @@ namespace Eurocode.BetonConstructies
         /// De nominale betondekking (c,nom) is de minimale betondekking inclusief uitvoeringstoleranties (Δc,dev)
         /// </summary>
         [TableColumn(Label = "nominale dekking",
-            Symbol = "<i>c</i><sub>nom</sub>",
+            Symbol = "<i>c<sub>nom</sub></i>",
             Description = "nominale dekking",
             Article = "4.4.1.1",
             Unit = "mm"
@@ -215,7 +240,7 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Is de minimumdekking op basis van de milieu-omstandigheden, zie 4.4.1.2 (5)
         /// </summary>
-        [TableColumn(Label = "dekking duurzaamheid", Symbol = "<i>c</i><sub>min,dur</sub>", Unit = "mm", Article = "4.4.1.2 (5)")]
+        [TableColumn(Label = "dekking duurzaamheid", Symbol = "<i>c<sub>min,dur</sub></i>", Unit = "mm", Article = "4.4.1.2 (5)")]
         public double DekkingMinDuurzaamheid
         {
             get { return this.GetCminDur(); }
@@ -230,9 +255,9 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         [TableColumn(
             Label = "minimale dekking",
-            Symbol = "<i>c</i><sub>min</sub>",
+            Symbol = "<i>c<sub>min</sub></i>",
             Unit = "mm",
-            Description = "minimale dekking art.4.4.1.2",
+            Description = "minimale dekking",
             Article = "4.4.1.2"
             )]
         public double DekkingMin
@@ -261,7 +286,7 @@ namespace Eurocode.BetonConstructies
         /// Minimale dekking tbv aanhechting betonstaal
         /// </summary>
         [TableColumn(Label = "dekking aanhechting",
-            Symbol = "<i>c</i><sub>min,b</sub>",
+            Symbol = "*c<sub>min,b</sub>*",
             Unit = "mm",
             Description = "minimumdekking aanhechting op basis van aanhechtingseisen",
             Article = "4.4.1.2 (3)"
@@ -281,9 +306,9 @@ namespace Eurocode.BetonConstructies
         /// Verhoging van de dekking tbv uitvoeringstoleranties (Δc,dev) volgens 4.4.1.3 (1)
         /// </summary>
         [TableColumn(Label = "toeslag tolerantie",
-            Symbol = "Δc<sub>dev</sub>",
+            Symbol = "*Δc<sub>dev</sub>*",
             Unit = "mm",
-            Description = "Voor het berekenen van de nominale dekking, <i>c</i><sub>nom</sub>, moet de minimumdekking bij het ontwerp zijn vermeerderd om rekening te houden met uitvoeringstoleranties (Δc<sub>dev</sub>).",
+            Description = "Voor het berekenen van de nominale dekking, <i>c</i><sub>nom</sub> moet de minimumdekking bij het ontwerp zijn vermeerderd om rekening te houden met uitvoeringstoleranties (Δc<sub>dev</sub>).",
             Article = "4.4.1.3 (1)P"
 
             )]
@@ -333,7 +358,7 @@ namespace Eurocode.BetonConstructies
         /// De diameter van de staaf of gelijkwaardige diameter van de staafbundel.
         /// </summary>
         [TableColumn(Label = "staafdiameter",
-            Symbol = "Ø<sub>eq</sub>",
+            Symbol = "<i>Ø<sub>eq</sub></i>",
             Description = "gelijkwaardige diameter, gebruikt voor bepalen van de minimumdekking met betrekking tot aanhechting",
             Article = "4.4.1.2 (3)",
             Unit = "mm",
@@ -357,7 +382,7 @@ namespace Eurocode.BetonConstructies
         [TableColumn(
             Label = "korrelafmeting",
             Description = "de nominale maximale korrelafmeting",
-            Symbol = "<i>d</i><sub>g</sub>",
+            Symbol = "*d<sub>g</sub>*",
             Unit = "mm",
             StringFormat = "0.0",
             Order = 5,
@@ -500,14 +525,14 @@ namespace Eurocode.BetonConstructies
             // Waarschuwingen (niet akkoord, aktie vereist)
             if (DekkingNom > DekkingToe)
             {
-                AddMeldingError("<b>nominale dekking c<sub>nom</sub> is groter dan toegepaste dekking c<sub>toe</sub></b>");
+                AddMeldingWaarschuwing("⚠️ nominale dekking <i>c<sub>nom</sub></i> is groter dan toegepaste dekking <i>c<sub>toe</sub></i>");
                 return false;
             }
 
             // Neutrale opmerkingen
             if (WapeningDiameterGelijkwaardig == 0)
             {
-                AddMeldingOpmerking("voor de nominale dekking c<sub>nom</sub> tenmiste Ø<sub>k</sub> + 5mm aanhouden");
+                AddMeldingOpmerking("ℹ️ voor de nominale dekking c<sub>nom</sub> tenmiste Ø<sub>k</sub> + 5mm aanhouden");
             }
 
             return true;

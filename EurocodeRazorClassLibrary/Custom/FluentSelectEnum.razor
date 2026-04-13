@@ -69,7 +69,7 @@ else if(LabelPosition == LabelPosition.Top)
 
 
 @code {
-    [Parameter] public LabelPosition LabelPosition { get; set; } = LabelPosition.Left;
+    [Parameter] public LabelPosition LabelPosition { get; set; } = LabelPosition.Top; // gewijzigd naar top by default
     [Parameter] public TEnum? EnumSelectedValue { get; set; }
     [Parameter] public EventCallback<TEnum?> EnumSelectedValueChanged { get; set; }
     [Parameter] public EventCallback OnStateChanged { get; set; }

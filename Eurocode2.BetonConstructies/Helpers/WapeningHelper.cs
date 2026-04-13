@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
+using System.Globalization;
 
 namespace Eurocode.BetonConstructies
 {
@@ -51,6 +52,22 @@ namespace Eurocode.BetonConstructies
             // 
         }
 
+        public static double GetDsnOpp(string wapening, double breedte)
+        {
+            var wapgroepen = GetWapGroepen(wapening);
+            double dsnOpp = 0;
+            if (wapgroepen == null) return dsnOpp;
+            foreach (var wapgroep in wapgroepen)
+            {
+                if (wapgroep.Contains('-'))
+                    dsnOpp += GetWapDetails(wapgroep.Trim()).dsnOpp * (breedte / 1000.0);
+                else
+                    dsnOpp += GetWapDetails(wapgroep.Trim()).dsnOpp;
+            }
+            return dsnOpp;
+        }
+
+
         public static double GetGemiddeldeDiameter(string wapening)
         {
 
@@ -58,6 +75,22 @@ namespace Eurocode.BetonConstructies
             if (wapgroepen == null) return 0;
 
             return BerekenGemiddeldeDiameter(wapgroepen);
+        }
+
+        public static double GetGrootsteDiameter(string wapening)
+        {
+            var wapgroepen = GetWapGroepen(wapening);
+            if (wapgroepen == null) return 0;
+            double grootsteDiameter = 0.0;
+            foreach (var wapgroep in wapgroepen)
+            {
+                var details = GetWapDetails(wapgroep);
+                if (details.diam > grootsteDiameter)
+                {
+                    grootsteDiameter = details.diam;
+                }
+            }
+            return grootsteDiameter;
         }
 
         public static double BerekenGemiddeldeDiameter(List<string> wapgroepen)
@@ -232,7 +265,7 @@ namespace Eurocode.BetonConstructies
         {
             if (lijstHohAfstanden == null) return null;
             if (lijstBeugelSneden == null) return null;
-            List<BeugelWap> returnList = new List<BeugelWap>();
+            List<BeugelWap> returnList = [];
             foreach (double bglDiam in lijstBeugelDiameters)
             {
                 foreach (double hohAfstand in lijstHohAfstanden)

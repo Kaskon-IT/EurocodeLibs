@@ -110,7 +110,8 @@
             // (ε;sm - ε;cm) minimaal
             double minimum = 0.6 * (sw.StaalspanningOptredend / sw.Beton.BetonStaal.ElasticiteitsModulus);
 
-
+            if (double.IsNaN(returnVal))
+                returnVal = 0;
 
             // als kleiner dan minimum moeten we de minimum-waarde aanhouden
             if (returnVal < minimum)
@@ -176,7 +177,7 @@
         {
             if (sw.Wapening != null)
             {
-                sw.NuttigeHoogte = sw.Hoogte - sw.Wapening.ZRef;
+                sw.NuttigeHoogte = sw.Hoogte - sw.Wapening.ReferentieAfstand;
             }
         }
 
@@ -222,7 +223,7 @@
         public static double GetStaalspanningOptredendVerbeterd(this ScheurwijdteContext sw)
         {
             // σ_s =  M_frequent/(A_s  ( d-x/3)) 
-            return sw.MomentFrequent * 1e6 / (sw.AsToe * (sw.NuttigeHoogte - sw.HoogteBetonDrukZoneBGT / 3));
+            return Math.Abs(sw.MomentFrequent) * 1e6 / (sw.AsToe * (sw.NuttigeHoogte - sw.HoogteBetonDrukZoneBGT / 3));
             //betonElement.ScheurwijdteSpanningTrekwapening = betonElement.Moment_Mf * 1000000 / (betonElement.gScheurwijdteWapeningToegepast * (betonElement.NutHoogte - betonElement.HoogteBetondrukzoneBGT / 3));
 
         }

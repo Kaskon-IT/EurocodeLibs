@@ -167,9 +167,7 @@ namespace ExportFactory.Services
 
 
 
-
-
-        private static readonly Dictionary<string, string> GreekLetters = new()
+        private static readonly Dictionary<string, string> _greekLetters = new()
         {
             { "alpha", "α" },
             { "beta", "β" },
@@ -222,7 +220,7 @@ namespace ExportFactory.Services
         };
 
 
-        private static readonly PageSetup CoverPageSetup = new PageSetup()
+        private static readonly PageSetup _coverPageSetup = new ()
         {
             DifferentFirstPageHeaderFooter = false,
             HorizontalPageBreak = true,
@@ -242,10 +240,8 @@ namespace ExportFactory.Services
 
         private static PageSetup GetPageSetupForDocument(DocumentContent content)
         {
-            PageSetup pageSetup = new PageSetup()
+            PageSetup pageSetup = new ()
             {
-
-
                 DifferentFirstPageHeaderFooter = false,
                 HorizontalPageBreak = true,   /// <summary>
                                               /// Gets or sets a value which defines whether a page should break horizontally.
@@ -291,11 +287,7 @@ namespace ExportFactory.Services
 
                 }
             }
-
-
-
             return pageSetup;
-
         }
 
 
@@ -345,14 +337,7 @@ namespace ExportFactory.Services
                             break;
 
                         case TableContent tableContent:
-                            //section = document.AddSection(); // new section? needed for center
-                            //var target = section.AddTextFrame();
                             var target = document.LastSection;
-
-
-
-
-                            //frame.Left = "4cm"; // todo uitlijnen
                             AddTable(target, tableContent);
                             break;
 
@@ -420,30 +405,7 @@ namespace ExportFactory.Services
         }
 
 
-
-        private static bool IsTableModel(object element)
-        {
-            var type = element.GetType();
-            var isGeneric = type.IsGenericType;
-            var genericTypeDefinition = type.GetGenericTypeDefinition();
-            var isTableModelT = genericTypeDefinition == typeof(TableModel<>);
-
-
-
-            // Check if the element is of type TableModel<T> dynamically using reflection
-            return
-                element.GetType().IsGenericType &&
-                element.GetType().GetGenericTypeDefinition() == typeof(TableModel<>);
-        }
-
-
-        // Generic method to handle different TableModel<T>
-        private static void HandleTableModelBAK<T>(Section section, TableModel<T> tableModel)
-        {
-            // Your logic to process TableModel<T>
-            // Example:
-            AddTable(section, tableModel, $"{typeof(T).Name} Table");
-        }
+        
 
 
         // Generic method to handle any TableModel<T> where T is derived from BaseClass
@@ -574,10 +536,14 @@ namespace ExportFactory.Services
                     Row dataRow = table.AddRow();
                     var properties = dataItem.GetType().GetProperties();
 
+                    if (properties == null || properties.Length == 0)
+                    {
+                        continue; // Skip if there are no properties
+                    }
 
                     foreach (var column in tableModel.Columns)
                     {
-                        PropertyInfo property = properties.FirstOrDefault(p => string.Equals(p.Name, column.Name, StringComparison.OrdinalIgnoreCase));
+                        PropertyInfo? property = properties.FirstOrDefault(p => string.Equals(p.Name, column.Name, StringComparison.OrdinalIgnoreCase));
 
                         if (property != null)
                         {
@@ -695,14 +661,18 @@ namespace ExportFactory.Services
 
             }
 
+            if (tableContent.IsPivotTable) table.Tag += " pivot"; // for HtmlCreator gebruiken we de Tag om aan te geven dat het een pivot tabel is.
+
+            if (tableContent.LayoutOnly)
+                table.Tag += " layout-only"; // for HtmlCreator gebruiken we de Tag om aan te geven dat het een layout-only tabel is.
 
             // Add header row
             if (tableContent.HideHeaders)
             {
-                // vroeg gebruikte we Tag om aan te geven dat de 1e rij niet getoond moet worden.
+                // vroeger gebruikte we Tag om aan te geven dat de 1e rij niet getoond moet worden.
                 // dit is niet meer nodig!
                 // omzetten naar !HideHeaders indien gecontroleerd is of alles nog werkt.
-                table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om aan te geven dat de 1e rij niet getoond moet worden.
+                table.Tag += " hideheader"; // for HtmlCreator gebruiken we de Tag om aan te geven dat de 1e rij niet getoond moet worden.
             }
             else
             {
@@ -763,19 +733,8 @@ namespace ExportFactory.Services
                         {
                             var svgContent = rowCells[i].SvgImage;
 
-                            var imgStream = SvgService.ConvertSvgToPngStream(svgContent, out double width, out double height);
+                            // TODO: caching van de gegenereerde afbeeldingen op basis van de SVG content (hash) om performance te verbeteren.
 
-                            if (imgStream != null)
-                            {
-                                Console.WriteLine($"SVG converted successfully. Width: {width}, Height: {height}");
-                                var parWithSvgImage = cell.AddParagraph();
-                                parWithSvgImage.Tag = rowCells[i].SvgImage; // write svg to Tag for HtmlCreator.
-                                AddImageFromStream(parWithSvgImage, imgStream);
-                            }
-                            else
-                            {
-                                Console.WriteLine("Failed to convert SVG.");
-                            }
 
                         }
                         catch (Exception ex)
@@ -850,9 +809,6 @@ namespace ExportFactory.Services
             {
                 var bookmarkName = Guid.NewGuid().ToString();
                 paragraph.AddBookmark(bookmarkName);
-
-                // Determine level from the heading style
-                //int level = heading.Style == "Heading1" ? 1 : 2;
 
                 bookmarks.Add(new() { Title = heading.Text, BookmarkName = bookmarkName, Level = heading.Level });
             }
@@ -976,7 +932,11 @@ namespace ExportFactory.Services
             kop4.ParagraphFormat.SpaceAfter = "1mm";
             kop4.Font.Color = Colors.Black;
 
-
+            // Code style (voor inline code tussen backticks)
+            var codeStyle = document.Styles.AddStyle("Code", "Normal");
+            codeStyle.Font.Name = "Courier New"; // Monospace font
+            codeStyle.Font.Size = 0.9 * content.Font.Size;
+            codeStyle.Font.Color = Colors.DarkRed;
 
             // table heading
             var tableHeading = document.Styles.AddStyle("TableHeading", "Normal");
@@ -1087,7 +1047,6 @@ namespace ExportFactory.Services
 
             headerRow.Shading.Color = content.HeaderBackgroundColor;
             headerRow.Style = "Header";
-            //headerRow.Cells[0].Shading.Color = content.HeaderBackgroundColor;
             headerRow.Borders.Visible = false;
             headerRow.Borders.Bottom.Visible = true;
             headerRow.Borders.Bottom.Color = content.HeaderLineColor;
@@ -1095,27 +1054,9 @@ namespace ExportFactory.Services
             // Add company logo as SVG in header
             if (!string.IsNullOrEmpty(content.PageHeader.SvgLogo))
             {
-                var stream = SvgService.ConvertSvgToPngStream(content.PageHeader.SvgLogo, out _, out _);
-                if (stream != null)
-                {
-
-                    var cell = headerRow.Cells[1];
-                    try
-                    {
-                        AddImageFromStream(cell, stream);
-                    }
-                    catch (Exception ex)
-                    {
-                        cell.AddParagraph(ex.Message);
-                    }
-
-
-                    //logo.LockAspectRatio = true;
-                    //logo. = Unit.FromCentimeter(2);
-                    // todo wellicht hoogte breedte op kunnen geven in AddImageFromStream of in ConvertSvgToPngStream... uitzoeken
-                }
+                // TODO AI: implement SVG logo in header, currently only supports image path.
+                // Mogelijk kunnen we de SVG renderen naar een PNG stream en deze toevoegen als afbeelding.
             }
-            //headerRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
 
             // even same settings, so clone
             section.Headers.EvenPage = header.Clone();
@@ -1270,9 +1211,6 @@ namespace ExportFactory.Services
             par = f2r.Cells[colIndex22].AddParagraph(); AddMarkdownToParagraph(par, content.PageFooter.Text2); par.Format.Alignment = alignment22;
 
 
-
-
-
         }
 
 
@@ -1282,7 +1220,7 @@ namespace ExportFactory.Services
         // Helper function to replace Greek letters in Markdown
         public static string ReplaceGreekLetters(string markdown)
         {
-            foreach (var (key, value) in GreekLetters)
+            foreach (var (key, value) in _greekLetters)
             {
                 markdown = markdown.Replace($"|{key}|", value);
                 //markdown = markdown.Replace($"\\{key}\\", value);
@@ -1291,46 +1229,16 @@ namespace ExportFactory.Services
         }
 
 
-        private static void AddRevisionPage(Document document, RevisionContent content)
-        {
-            var section = document.AddSection();
-            var table = section.AddTable();
-            //var row = table.AddRow();
-
-            //if (content.ColumnNames.TryGetValue("Name", out string? colNameHeaderTitle))
-            //{
-            //    table.AddColumn(Unit.FromMillimeter(15));
-            //    row.Cells[table.Columns.Count - 1].AddParagraph(colNameHeaderTitle);
-            //}
-            //if (content.ColumnNames.TryGetValue("Date", out string? colDateHeaderTitle))
-            //{
-            //    table.AddColumn(Unit.FromMillimeter(30));
-            //    row.Cells[table.Columns.Count - 1].AddParagraph(colDateHeaderTitle);
-            //}
-            //if (content.ColumnNames.TryGetValue("Description", out string? colDescriptionHeaderTitle))
-            //{
-            //    table.AddColumn(Unit.FromMillimeter(70));
-            //    row.Cells[table.Columns.Count - 1].AddParagraph(colDescriptionHeaderTitle);
-            //}
-
-
-
-
-
-
-
-        }
-
 
 
         private static void AddLabels(Section section, List<LabelWithStringValue> labels)
         {
             if (labels == null || labels.Count == 0) return;
             var table = section.AddTable();
-            table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
+            table.Tag = "hideheader layout-only"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
             table.Borders.Visible = false;
             table.AddColumn(Unit.FromCentimeter(4)); // left column
-            table.AddColumn(Unit.FromCentimeter(10)); // right column
+            table.AddColumn(Unit.FromCentimeter(14.2)); // right column
             foreach (var item in labels)
             {
                 var row = table.AddRow();
@@ -1339,21 +1247,6 @@ namespace ExportFactory.Services
             }
         }
 
-        private static void AddLabeledValues(Section section, List<LabeledValue> labeledValues)
-        {
-            if (labeledValues == null || labeledValues.Count == 0) return;
-            var table = section.AddTable();
-            table.Tag = "hideheader"; // for HtmlCreator gebruiken we de Tag om styling van header te voorkomen.
-            table.Borders.Visible = false;
-            table.AddColumn(Unit.FromCentimeter(4)); // left column
-            table.AddColumn(Unit.FromCentimeter(10)); // right column
-            foreach (var item in labeledValues)
-            {
-                var row = table.AddRow();
-                row.Cells[0].AddParagraph(item.Label);
-                row.Cells[1].AddParagraph(item.ValueAsString);
-            }
-        }
 
         private static void AddRevisionTable(Section section, RevisionContent content)
         {
@@ -1361,7 +1254,7 @@ namespace ExportFactory.Services
             table.Borders.Visible = false;
             table.AddColumn(Unit.FromCentimeter(4));
             table.AddColumn(Unit.FromCentimeter(4));
-            table.AddColumn(Unit.FromCentimeter(6));
+            table.AddColumn(Unit.FromCentimeter(10));
 
             var headerRow = table.AddRow();
             headerRow.Cells[0].AddParagraph("versie");
@@ -1374,7 +1267,7 @@ namespace ExportFactory.Services
             {
                 var row = table.AddRow();
                 row.Cells[0].AddParagraph(revision.Name);
-                row.Cells[1].AddParagraph($"{revision.Date?.ToShortDateString()}");
+                row.Cells[1].AddParagraph($"{revision.Date?.ToString("d", new System.Globalization.CultureInfo("nl-NL"))}");
                 row.Cells[2].AddParagraph(revision.Description);
             }
         }
@@ -1389,12 +1282,8 @@ namespace ExportFactory.Services
             var section = document.AddSection();
             section.Tag = "Voorblad";
 
-            //document.Styles.
-            //section.PageSetup.BackgroundColor = coverPage.BackgroundColor;
             // setup for page size and margin
-            section.PageSetup = CoverPageSetup.Clone();
-
-
+            section.PageSetup = _coverPageSetup.Clone();
 
 
             // Voeg een afbeelding toe via de CustomTempFileCollection
@@ -1435,7 +1324,15 @@ namespace ExportFactory.Services
 
 
 
-            section.AddParagraph(coverPage.Title ?? "", "Title");
+            if (!string.IsNullOrEmpty(coverPage.SvgLogoXml))
+            {
+                var svgPar = section.AddParagraph();
+                svgPar.Tag = coverPage.SvgLogoXml;
+                svgPar.Format.SpaceAfter = Unit.FromMillimeter(8);
+                svgPar.Format.Alignment = ParagraphAlignment.Center;
+            }
+
+            section.AddParagraph(coverPage.Title ?? "", "Title").AddBookmark("titelpagina");
             section.AddParagraph(coverPage.Subtitle ?? "", "Subtitle");
 
 
@@ -1443,18 +1340,17 @@ namespace ExportFactory.Services
             section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
 
             // Project-labels
-            //AddLabeledValues(section, coverPage.ProjectLabeledValues);
             AddLabels(section, coverPage.ProjectLabels);
 
             // blank line
-            section.AddParagraph(); // Add a blank paragraph for spacing
+            section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
 
             // Document-labels
-            //AddLabeledValues(section, coverPage.DocumentLabeledValues);
             AddLabels(section, coverPage.DocumentLabels);
 
-            section.AddParagraph(); // Add a blank paragraph for spacing
+            section.AddParagraph("\r\n\r\n\r\n"); // Add a blank paragraph for spacing
 
+            section.AddParagraph("revisiebeheer", "Kop 3"); // Add a blank paragraph for spacing
             AddRevisionTable(section, coverPage.RevisionContent);
 
         }
@@ -1470,22 +1366,15 @@ namespace ExportFactory.Services
             if (trim)
                 markdown = markdown.Trim();
 
-            // Determine if the markdown is a heading
-            if (markdown.StartsWith("# "))
-            {
-                // Heading1
-                paragraph.AddFormattedText(markdown.Substring(2).Trim(), "Kop 1");
+            
 
-            }
-            else if (markdown.StartsWith("## "))
+            // Determine if the markdown is a heading
+            if (markdown.StartsWith("#"))
             {
-                // Heading2
-                paragraph.AddFormattedText(markdown.Substring(3).Trim(), "Kop 2");
-            }
-            else if (markdown.StartsWith("### "))
-            {
-                // Heading3
-                paragraph.AddFormattedText(markdown.Substring(4).Trim(), "Kop 3");
+                var level = Math.Min(markdown.TakeWhile(c => c == '#').Count(), 9); // max 9 levels 
+                var textWithoutHashes = markdown.TrimStart('#').TrimStart();
+                var style = $"Kop {level}";
+                paragraph.AddFormattedText(textWithoutHashes, style);
             }
             else
             {
@@ -1505,7 +1394,10 @@ namespace ExportFactory.Services
             {
                 if (i % 2 == 1) // Odd indices are raw text (inside backticks)
                 {
-                    paragraph.AddText(rawSegments[i]); // Add raw text without further parsing
+                    var codeText = paragraph.AddFormattedText(rawSegments[i]);
+                    codeText.Font.Name = "Courier New";
+                    codeText.Font.Size = Unit.FromPoint(paragraph.Document.Styles["Normal"].Font.Size.Point * 0.9);
+                    codeText.Font.Color = Colors.DarkRed;
                 }
                 else
                 {
@@ -1648,14 +1540,18 @@ namespace ExportFactory.Services
                                .Replace("‰", "^0^/~00~");
 
             var regex = new Regex(
-                @"(?<svg>\<svg.*?\</svg\>)|" +  // <-- nieuwe groep voor SVG
-                @"(?<png>data:image\/png;base64,[A-Za-z0-9+/=]+)|" +   // <-- nieuwe groep voor PNG!
-                @"(?<bold>\*\*(.*?)\*\*|<b>(.*?)</b>)|" +
-                @"(?<italic>\*(.*?)\*|<i>(.*?)</i>)|" +
-                @"(?<underline>__(.*?)__|<u>(.*?)</u>)|" +
+               @"(?<div>\<div[^>]*>.*?\</div\>)|" +
+               @"(?<table>\<table[^>]*>.*?\</table\>)|" +
+               @"(?<svg>\<svg.*?\</svg\>)|" +
+                @"(?<png>data:image\/png;base64,[A-Za-z0-9+/=]+)|" +
+                @"(?<link><a\s+href=['""]#([^'""]+)['""][^>]*>(.*?)</a>)|" +
+                @"(?<bookmark><span\s+id=['""]([^'""]+)['""][^>]*>(.*?)</span>)|" +
+                @"(?<bold>\*\*(.*?)\*\*|<b\b[^>]*>(.*?)</b>)|" +
+                @"(?<italic>\*(.*?)\*|<i\b[^>]*>(.*?)</i>)|" +
+                @"(?<underline>__(.*?)__|<u\b[^>]*>(.*?)</u>)|" +
                 @"(?<strike>~~(.*?)~~)|" +
-                @"(?<sup>\^(.*?)\^|<sup>(.*?)</sup>)|" +
-                @"(?<sub>~(.*?)~|<sub>(.*?)</sub>)|" +
+                @"(?<sup>\^(.*?)\^|<sup\b[^>]*>(.*?)</sup>)|" +
+                @"(?<sub>~(.*?)~|<sub\b[^>]*>(.*?)</sub>)|" +
                 @"(?<color>\{(.*?):(.*?)\})|" +
                 @"(?<br>\n)|" +
                 @"(?<text>[^*^~_<>{}\n]+)",
@@ -1664,6 +1560,43 @@ namespace ExportFactory.Services
 
             foreach (Match match in regex.Matches(markdown))
             {
+                if (match.Groups["div"].Success)
+                {
+                    string divHtml = match.Value;
+                    
+                    // Voor RTF: strip alle HTML tags
+                    if (_isRtfContent)
+                    {
+                        var cleanText = Regex.Replace(divHtml, @"<[^>]+>", " ");
+                        paragraph.AddText(cleanText.Trim());
+                    }
+                    else
+                    {
+                        // Voor HTML/preview: bewaar div HTML in de Tag
+                        paragraph.Tag = divHtml;
+                    }
+                    continue;
+                }
+                
+                if (match.Groups["table"].Success)
+                {
+                    string tableHtml = match.Value;
+                    
+                    // Voor RTF: strip alle HTML tags (komt later)
+                    if (_isRtfContent)
+                    {
+                        // Strip HTML maar behoud de text content
+                        var cleanText = Regex.Replace(tableHtml, @"<[^>]+>", "");
+                        paragraph.AddText(cleanText);
+                    }
+                    else
+                    {
+                        // Voor HTML/preview: bewaar de table HTML in de Tag
+                        paragraph.Tag = tableHtml;
+                    }
+                    continue; // Skip verdere verwerking van deze match
+                }
+                
                 if (match.Groups["svg"].Success)
                 {
                     string svgString = match.Value;
@@ -1691,7 +1624,43 @@ namespace ExportFactory.Services
                     cache?.AddPngBytesToSection(paragraph.Section, pngBytes, widthCm: 10, maxHeightCm: 15);
                 }
 
-                if (match.Groups["bold"].Success)
+                if (match.Groups["link"].Success)
+                {
+                    // <a href='#assemblage-123'>T-1 - Steektrap</a>
+                    var bookmarkName = match.Groups[1].Value; // eerste capture group = bookmark name (zonder #)
+                    var linkText = match.Groups[2].Value;     // tweede capture group = inner text
+                    
+                    var hyperlink = paragraph.AddHyperlink(bookmarkName, HyperlinkType.Bookmark);
+                    
+                    // Parse de inner text recursief voor styling (kan bold/italic bevatten)
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, linkText, cache, currentColor, depth + 1);
+                    
+                    // Voeg alle formatted text toe aan de hyperlink
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        hyperlink.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["bookmark"].Success)
+                {
+                    // <span id='assemblage-123'>T-1</span>
+                    var bookmarkName = match.Groups[1].Value; // eerste capture group = bookmark id
+                    var innerText = match.Groups[2].Value;     // tweede capture group = inner text
+                    
+                    // Voeg bookmark toe
+                    paragraph.AddBookmark(bookmarkName);
+                    
+                    // Voeg de tekst toe met eventuele styling
+                    var tempPara = new Paragraph();
+                    ApplyMarkdownStylesToParagraph(tempPara, innerText, cache, currentColor, depth + 1);
+                    
+                    foreach (var el in tempPara.Elements.OfType<FormattedText>())
+                    {
+                        paragraph.Elements.Add(el.Clone());
+                    }
+                }
+                else if (match.Groups["bold"].Success)
                 {
                     var inner = StripTags(match.Value, "**", "<b>", "</b>");
                     var tempPara = new Paragraph();
@@ -1755,9 +1724,14 @@ namespace ExportFactory.Services
                 else if (match.Groups["color"].Success)
                 {
                     var parts = Regex.Match(match.Value, @"\{(.*?):(.*?)\}").Groups;
-                    var color = Color.Parse(parts[1].Value.Trim());
-                    var content = parts[2].Value.Trim();
-                    ApplyMarkdownStylesToParagraph(paragraph, content, cache, color, depth + 1);
+                    if (TryParseMigraDocColor(parts[1].Value.Trim(), out var color))
+                    {
+                        var content = parts[2].Value.Trim();
+                        ApplyMarkdownStylesToParagraph(paragraph, content, cache, color, depth + 1);
+                    }
+
+                        
+                    
                 }
                 else if (match.Groups["br"].Success)
                 {
@@ -1860,13 +1834,80 @@ namespace ExportFactory.Services
             }
         }
 
-        private static string StripTags(string input, string markdown = "", string htmlOpen = "", string htmlClose = "")
+        private static string StripTags(
+            string input,
+            string markdown = "",
+            string htmlOpen = "",
+            string htmlClose = "")
         {
-            return input.Replace(markdown, "")
-                        .Replace(htmlOpen, "", StringComparison.OrdinalIgnoreCase)
-                        .Replace(htmlClose, "", StringComparison.OrdinalIgnoreCase);
+            var result = input;
+
+            // 1️⃣ Markdown verwijderen (zoals *, **, __)
+            if (!string.IsNullOrEmpty(markdown))
+            {
+                result = result.Replace(markdown, "");
+            }
+
+            // 2️⃣ HTML open-tag met eventuele attributen
+            if (!string.IsNullOrEmpty(htmlOpen))
+            {
+                // htmlOpen = "<i>" → tagName = "i"
+                var tagName = htmlOpen.Trim('<', '>', '/');
+
+                result = Regex.Replace(
+                    result,
+                    $@"<\s*{tagName}\b[^>]*>",
+                    "",
+                    RegexOptions.IgnoreCase | RegexOptions.Singleline
+                );
+            }
+
+            // 3️⃣ HTML close-tag
+            if (!string.IsNullOrEmpty(htmlClose))
+            {
+                var tagName = htmlClose.Trim('<', '>', '/');
+
+                result = Regex.Replace(
+                    result,
+                    $@"</\s*{tagName}\s*>",
+                    "",
+                    RegexOptions.IgnoreCase | RegexOptions.Singleline
+                );
+            }
+
+            return result;
         }
 
+        //private static string StripTags(string input, string markdown = "", string htmlOpen = "", string htmlClose = "")
+        //{
+        //    return input.Replace(markdown, "")
+        //                .Replace(htmlOpen, "", StringComparison.OrdinalIgnoreCase)
+        //                .Replace(htmlClose, "", StringComparison.OrdinalIgnoreCase);
+        //}
+
+        private static bool TryParseMigraDocColor(string input, out Color color)
+        {
+            color = default;
+
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            input = input.Trim();
+
+            try
+            {
+                // Ondersteunt:
+                // - named colors (Red, Blue, Black, ...)
+                // - hex (#RRGGBB)
+                // - rgb(r,g,b)
+                color = Color.Parse(input);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         private static void AddFormattedTextWithEmojiFont(Paragraph paragraph, string content, Color? color = null)
         {

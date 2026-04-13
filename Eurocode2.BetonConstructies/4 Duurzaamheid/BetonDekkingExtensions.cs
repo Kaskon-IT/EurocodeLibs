@@ -199,7 +199,7 @@ namespace Eurocode.BetonConstructies
 
         public static string ToUserFriendlyString(this BetonDekkingContext dekking)
         {
-            List<string> values = new List<string>() { dekking.Constructieklasse.UserFriendlyName };
+            List<string> values = [dekking.Constructieklasse.UserFriendlyName];
 
             if (dekking.IsPlaatGeometrie)
                 values.Add("Plaatgeometrie");

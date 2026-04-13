@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Profielen.Parametrisch;
 
 namespace Eurocode.BetonConstructies.SpecifiekeRegels
 {
@@ -38,7 +39,7 @@ namespace Eurocode.BetonConstructies.SpecifiekeRegels
     public class Balken
     {
 
-        public static double GetAsMax(ParametrischeProfielen.ParametrischProfielContext parametrischProfiel)
+        public static double GetAsMax(ParametrischProfielContext parametrischProfiel)
         {
             return GetAsMax(parametrischProfiel.Area);
         }

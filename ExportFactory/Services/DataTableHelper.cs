@@ -8,7 +8,7 @@ namespace ExportFactory.Services
     {
         public static DataTable CreateDataTable<T>(List<T> data)
         {
-            DataTable table = new DataTable();
+            DataTable table = new();
 
             // Get the properties of the data model
             var properties = typeof(T).GetProperties()
@@ -20,7 +20,8 @@ namespace ExportFactory.Services
             {
                 var attribute = property.GetCustomAttribute<CustomColumnAttribute>();
 
-                if (attribute.Visible)
+
+                if (attribute != null && attribute.Visible)
                 {
                     // Create the column with the name from the attribute
                     table.Columns.Add(attribute.HeaderName, property.PropertyType);
@@ -38,7 +39,7 @@ namespace ExportFactory.Services
                 foreach (var property in properties)
                 {
                     var attribute = property.GetCustomAttribute<CustomColumnAttribute>();
-                    if (attribute.Visible)
+                    if (attribute != null && attribute.Visible)
                     {
                         // Get the value from the property and apply string format if necessary
                         var value = property.GetValue(item);

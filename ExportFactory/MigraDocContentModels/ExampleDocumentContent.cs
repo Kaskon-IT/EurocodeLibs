@@ -142,8 +142,8 @@ namespace ExportFactory.MigraDocContentModels
                 [
                     new SectionContent
                     {
-                        Elements = new List<SectionElement>
-                        {
+                        Elements =
+                        [
                             new HeadingContent("Hoofdstuk 1", 1),
                             new ParagraphContent(_par1),
                             new HeadingContent("Hoofdstuk 1.1", 2),
@@ -173,7 +173,7 @@ namespace ExportFactory.MigraDocContentModels
                                 [
                                     new TableCellHeaderContent()
                                     {
-                                        Width = Unit.FromCentimeter(4),
+                                        //Width = Unit.FromCentimeter(4),
                                         CellContent = new TableCellContent()
                                         {
                                             Markdown = "Markdown pattern",
@@ -186,17 +186,17 @@ namespace ExportFactory.MigraDocContentModels
                                     },
                                     new TableCellHeaderContent()
                                     {
-                                        Width = Unit.FromCentimeter(10),
+                                        //Width = Unit.FromCentimeter(10),
                                         CellContent = new TableCellContent() { Markdown = "Translates to", Width = "4cm" },
                                     },
                                     new TableCellHeaderContent()
                                     {
-                                        Width = Unit.FromCentimeter(10),
+                                        //Width = Unit.FromCentimeter(10),
                                         CellContent = new TableCellContent() { Markdown = "Demo", Width = "4cm" },
                                     },
                                     new TableCellHeaderContent()
                                     {
-                                        Width = Unit.FromCentimeter(10),
+                                        //Width = Unit.FromCentimeter(10),
                                         CellContent = new TableCellContent() { Markdown = "Demo", Width = "4cm" },
                                     },
 
@@ -251,7 +251,7 @@ namespace ExportFactory.MigraDocContentModels
 
 
 
-                        }
+                        ]
                     }
                 ]
             };

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace CommonLibrary
 {
@@ -19,7 +20,6 @@ namespace CommonLibrary
 
         public Guid Id { get; set; } = Guid.NewGuid();
         public virtual string Heading { get; set; } = "Onbekend";
-        public virtual bool ReadOnly { get; set; } = false; // mogelijkheid om de gebruiker alleen te laten lezen.
 
         public virtual void Init()
         {
@@ -37,16 +37,22 @@ namespace CommonLibrary
             OnUpdated?.Invoke();
         }
 
-        public DateTime AangemaaktOp { get; private set; } = DateTime.UtcNow;
+        [JsonIgnore]
+        public DateTime AangemaaktOp { get; internal set; } = DateTime.UtcNow;
+
+        [JsonIgnore]
         public DateTime GewijzigdOp { get; set; } = DateTime.UtcNow;
 
-        public ObservableCollection<Melding> Meldingen { get; private set; } = [];
-        public ObservableCollection<int> MeldingCodes { get; private set; } = [];
+        [JsonIgnore]
+        public ObservableCollection<Melding> Meldingen { get; } = [];
+
+        //[JsonIgnore]
+        //public ObservableCollection<int> MeldingCodes { get; } = [];
 
         public event Action? OnUpdated;
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private readonly HashSet<object> _visited = new();
+        private readonly HashSet<object> _visited = [];
 
         protected bool SetAndRecalculate<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
@@ -114,6 +120,17 @@ namespace CommonLibrary
             if (e.PropertyName is "Count" or "Item[]")
                 return;
 
+            // ✅ FIX 1: Filter computed properties (get-only zonder setter)
+            if (!string.IsNullOrEmpty(e.PropertyName) && sender != null)
+            {
+                var prop = sender.GetType().GetProperty(e.PropertyName);
+                if (prop != null && !prop.CanWrite)
+                {
+                    // Computed property - bubbel omhoog voor UI maar trigger geen recalc
+                    OnPropertyChanged(e.PropertyName);
+                    return;
+                }
+            }
 
             // Bubbel property change omhoog
             OnPropertyChanged(e.PropertyName);
@@ -247,7 +264,7 @@ namespace CommonLibrary
 
         public bool HeeftWaarschuwing() => Meldingen.Any(m => m.Type == MeldingType.Waarschuwing);
 
-        public bool BerekenEnValideer()
+        public virtual bool BerekenEnValideer()
         {
             ClearMeldingen();
             Bereken();
@@ -265,18 +282,42 @@ namespace CommonLibrary
             if (melding is null)
                 return;
 
-            // Zorg dat de collectie bestaat
-            Meldingen ??= new ObservableCollection<Melding>();
+                       
 
-            // Verwijder per ongeluk toegevoegde null-items
+            // Verwijder per ongeluk toegevoegde null-items (safe removal)
+            var nullIndices = new List<int>();
             for (int i = Meldingen.Count - 1; i >= 0; i--)
             {
-                if (Meldingen[i] is null)
-                    Meldingen.RemoveAt(i);
+                try
+                {
+                    if (i < Meldingen.Count && Meldingen[i] is null)
+                        nullIndices.Add(i);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    // Collectie is gewijzigd tijdens iteratie, skip deze index
+                    continue;
+                }
+            }
+
+            // Verwijder null items (van hoog naar laag om index problemen te voorkomen)
+            foreach (var index in nullIndices.OrderByDescending(x => x))
+            {
+                try
+                {
+                    if (index < Meldingen.Count)
+                        Meldingen.RemoveAt(index);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    // Index is ondertussen invalide geworden, skip
+                    continue;
+                }
             }
 
             // Controleer of er al een melding met dezelfde code of bericht bestaat
-            bool bestaatAl = Meldingen.Any(m =>
+            // ToList() om collection modified exception te voorkomen tijdens iteratie
+            bool bestaatAl = Meldingen.ToList().Any(m =>
                 m is not null &&
                 ((m.Code.HasValue && melding.Code.HasValue && m.Code == melding.Code) ||
                  (!string.IsNullOrEmpty(m.Bericht) &&
@@ -291,10 +332,10 @@ namespace CommonLibrary
 
         public void AddMelding(int code)
         {
-            if (MeldingCodes.Contains(code))
+            var exists = Meldingen.Any(m => m.Code == code);
+            if (exists)
                 return;
 
-            MeldingCodes.Add(code);
             var melding = CommonLibrary.Helpers.MeldingenBetonHelper.GetMelding(code);
             AddMelding(melding);
 #if DEBUG
@@ -305,7 +346,6 @@ namespace CommonLibrary
         public void ClearMeldingen()
         {
             Meldingen.Clear();
-            MeldingCodes.Clear();
         }
 
         /// <summary>
@@ -314,7 +354,7 @@ namespace CommonLibrary
         /// ❌⚠️
         /// </summary>
         /// <param name="tekst"></param>
-        public void AddMeldingError(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing | MeldingType.Error, tekst));
+        public void AddMeldingError(string tekst) => Meldingen.Add(new(MeldingType.Error, tekst));
 
         /// <summary>
         /// Geeft een opmerking.
@@ -322,7 +362,7 @@ namespace CommonLibrary
         /// ℹ️
         /// </summary>
         /// <param name="tekst"></param>
-        public void AddMeldingOpmerking(string tekst) => Meldingen.Add(new(MeldingType.Opmerking | MeldingType.Neutraal, tekst));
+        public void AddMeldingOpmerking(string tekst) => Meldingen.Add(new(MeldingType.Opmerking, tekst));
 
         /// <summary>
         /// Geeft een waarschuwing => let op! zus en zo, maar geen fout foutmelding
@@ -330,13 +370,35 @@ namespace CommonLibrary
         /// ⚠️👈
         /// </summary>
         /// <param name="tekst"></param>
-        public void AddMeldingWaarschuwing(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing | MeldingType.Opmerking, tekst));
+        public void AddMeldingWaarschuwing(string tekst) => Meldingen.Add(new(MeldingType.Waarschuwing, tekst));
 
         /// <summary>
         /// Geeft de gebruiker een HINT 💡
         /// </summary>
         /// <param name="hint"></param>
         public void AddMeldingHint(string hint) => Meldingen.Add(new(MeldingType.Hint, hint));
+
+        /// <summary>
+        /// Geeft een lijst van meldingnummers, met ! achter waarschuwingen
+        /// </summary>
+        public virtual string MeldingNummers
+        {
+            get
+            {
+                return string.Join(" ",
+                    Meldingen
+                        .Where(m => m.Code.HasValue)
+                        .Select(m =>
+                        {
+                            var nummer = m.Code!.Value % 1000;
+                            // Voeg ! toe voor waarschuwingen
+                            var suffix = (m.Type & MeldingType.Waarschuwing) == MeldingType.Waarschuwing ? "!" : "";
+                            return $"[{nummer}]{suffix}";
+                        })
+                        .OrderBy(s => s)
+                );
+            }
+        }
 
 
 

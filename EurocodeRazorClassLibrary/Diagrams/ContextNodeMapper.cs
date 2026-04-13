@@ -19,8 +19,8 @@ namespace EurocodeRazorClassLibrary.Diagrams
 
     public class ContextGraphBuilder
     {
-        public IEnumerable<NodeModel> Nodes { get; private set; } = new List<NodeModel>();
-        public IEnumerable<LinkModel> Links { get; private set; } = new List<LinkModel>();
+        public IEnumerable<NodeModel> Nodes { get; private set; } = [];
+        public IEnumerable<LinkModel> Links { get; private set; } = [];
 
 
 

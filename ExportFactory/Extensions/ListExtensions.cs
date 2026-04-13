@@ -108,9 +108,7 @@ namespace ExportFactory.Extensions
         {
             ArgumentNullException.ThrowIfNull(list);
             ArgumentNullException.ThrowIfNull(list.FirstOrDefault());
-
             var type = list.FirstOrDefault()?.GetType();
-
             ArgumentNullException.ThrowIfNull(type);
 
             var dataTable = new DataTable();
@@ -124,10 +122,7 @@ namespace ExportFactory.Extensions
 
             try
             {
-                // Verkrijg de eigenschappen van T (de kolommen)
-                //var myType = typeof(T);
                 var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
 
                 // Voeg kolommen toe aan de DataTable op basis van de eigenschappen van T
                 foreach (var prop in properties)
@@ -136,29 +131,18 @@ namespace ExportFactory.Extensions
                     var columnAttribute = prop.GetCustomAttribute<TableColumnAttribute>();
 
                     // zichtbaarheid per object (dynamisch) 
-                    //var visibleOverrideProp = type.GetProperty(prop.Name + "Visible");
-                    //if (visibleOverrideProp?.GetValue(fod) is bool visible)
-                    //{
-                    //    if (!visible)
-                    //        continue; // skip kolom, zorg ervoor dat deze niet wordt toegevoegd aan de datatable
-                    //}
-
-
-
-
+                    var visibleOverrideProp = type.GetProperty(prop.Name + "Visible");
+                    if (visibleOverrideProp?.GetValue(fod) is bool visible)
+                    {
+                        if (!visible)
+                            continue; // skip kolom, zorg ervoor dat deze niet wordt toegevoegd aan de datatable
+                    }
 
                     // Aanvulling dynamisch vullen mbv Dictionary 
                     if (columnAttribute != null)
                     {
                         string columnName = prop.Name;
-
-
-
-
                     }
-
-
-
 
 
                     //if (columnAttribute == null)
@@ -209,24 +193,15 @@ namespace ExportFactory.Extensions
                 // Add rows to the DataTable
                 foreach (var item in list)
                 {
-
-
-
                     // Create a new DataRow for each item
                     var row = dataTable.NewRow();
 
+                    // koppel de instance in ExtendedProperties van DataTable
+                    dataTable.ExtendedProperties[row] = item;
+
+                    // Populate the DataRow with property values
                     foreach (var prop in properties)
                     {
-
-                        // zichtbaarheid per object (dynamisch) 
-                        //var visibleOverrideProp = type.GetProperty(prop.Name + "Visible");
-                        //if (visibleOverrideProp?.GetValue(fod) is bool visible)
-                        //{
-                        //    if (!visible)
-                        //        continue;
-                        //}
-
-
                         // Assign the property value to the corresponding column in the DataRow
                         if (dataTable.Columns.Contains(prop.Name))
                         {
@@ -237,11 +212,7 @@ namespace ExportFactory.Extensions
                             {
                                 row[prop.Name] = description;
                             }
-
                         }
-
-
-
                     }
                     // Add the populated row to the DataTable
                     dataTable.Rows.Add(row);
@@ -251,7 +222,6 @@ namespace ExportFactory.Extensions
             {
                 Console.WriteLine($"Algemene fout: {ex.Message} \r\n{ex.InnerException?.Message}");
             }
-
             return dataTable;
         }
 

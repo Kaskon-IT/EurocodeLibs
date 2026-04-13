@@ -1,5 +1,7 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Helpers;
+using Profielen.Parametrisch;
+using Profielen.Beton;
 using Eurocode.Belastingen;
 using ExportFactory.Shared;
 using System.ComponentModel;
@@ -20,7 +22,7 @@ namespace Eurocode.BetonConstructies
         private Schematisering.ConstructiefModelEnum? _constructiefModel = Schematisering.ConstructiefModelEnum.Balk;
         private double _breedte = 300;
         private double _hoogte = 400;
-        private double _moment = 80.80;
+        private double _moment = 0;
         private SectionForces? _snedekrachten;
         private VerankeringLangswapeningContext? _verankeringsLengte;
 
@@ -65,7 +67,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public BendingResults(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, WapeningContext wapening, SectionForces snedekrachten)
+        public BendingResults(BetonContext beton, BetonProfiel profiel, WapeningContext wapening, SectionForces snedekrachten)
         {
             Beton = beton;
             Profiel = profiel;
@@ -91,18 +93,15 @@ namespace Eurocode.BetonConstructies
             {
                 BerekenEnValideer();
             }
-            if (e.PropertyName == nameof(WapeningContext.Dekking))
+            if (e.PropertyName == nameof(WapeningContext.ReferentieDekking))
             {
-                // ? 
-
                 BerekenEnValideer();
             }
-
-
-
-            Console.WriteLine($"Wapening (context) gewijzigd: {e.PropertyName}");
-            // Hier kun je aanvullende acties uitvoeren, zoals andere properties bijwerken.
+            // Console.WriteLine verwijderd - debug alleen als nodig
         }
+
+
+
 
         public VerankeringLangswapeningContext? VerankeringsLengte
         {
@@ -148,8 +147,8 @@ namespace Eurocode.BetonConstructies
         public BetonContext Beton { get; set; }
 
 
-        private ParametrischeProfielen.ParametrischProfielContext? _profiel;
-        public ParametrischeProfielen.ParametrischProfielContext? Profiel
+        private BetonProfiel? _profiel;
+        public BetonProfiel? Profiel
         {
             get => _profiel;
             set
@@ -226,17 +225,35 @@ namespace Eurocode.BetonConstructies
         } // als er geen snedekrachten opgegeven dan Moment opgave.
 
 
+        [TableColumn(Label = "pos", Unit ="m", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 1.5)]
+        public string PosLabel { get; set; } = "midden";
+        public bool PosLabelVisible { get; set; } = true;
+
+        [TableColumn(Label = "zijde", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.0)]
+        public string PosWapBovenOnder
+        {
+            get
+            {
+                if (Moment == 0) return "-";
+                else if (Moment > 0) return "◠ boven";
+                else return "◡ onder";
+            }
+        }
+
+
         public string Name { get; set; } = "-";
 
         //[TableColumn(Label = "DEBUG", Symbol = "Beta")]
+        [TableColumn(Symbol = "*β*", Description = "vormfactor" ,Visible = false, Unit = "-", StringFormat = "0.###" )]
         public double Beta => Beton.GetBeta();
 
+        [TableColumn(Symbol = "*α*", Description = "vormfactor", Visible = false, Unit = "-", StringFormat = "0.###")]
+        public double Alpha => Beton.GetAlpha();
 
 
-        [TableColumn(Symbol = "<i>M</i><sub>Ed</sub>", Label = "moment rekenwaarde", Unit = "kN",
-            Order = 1,
-            Width = 2.0,
-            Key = K.MomentRekenwaarde,
+
+        [TableColumn(Symbol = "<i>M<sub>y,Ed</sub></i>", Label = "moment rekenwaarde", Unit = "kNm",
+            Width = 1.5,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Moment
         {
@@ -275,10 +292,7 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        [TableColumn(Symbol = "<i>b</i>", Label = "breedte", Unit = "mm",
-            Width = 2.0,
-            Key = K.ProfielBreedte,
-            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        [TableColumn(Visible = false, Symbol = "*b*", Description = "breedte", Unit = "mm")]
         public double Breedte
         {
             get => Profiel != null ? Profiel.Breedte : _breedte;
@@ -289,10 +303,11 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(Symbol = "<i>h</i>", Label = "hoogte", Unit = "mm",
-            Width = 2.0,
-            Key = K.ProfielHoogte,
-            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        //[TableColumn(Visible = false, Symbol = "<i>b x h/d</i>",Label = "<i>b × h/d</i>", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, Width = 2.5)]
+        public string Afmeting => $"{Breedte:0} × {Hoogte:0}/{D:0.#}";
+
+
+        [TableColumn(Visible = false, Symbol = "*h*", Description = "hoogte", Unit = "mm")] 
         public double Hoogte
         {
             get => Profiel != null ? Profiel.Hoogte : _hoogte;
@@ -313,24 +328,31 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                if (Wapening == null || Wapening.Dekking == null)
+                if (Wapening == null)
                     return ZRefZonderDekking;
 
-                return Wapening.ZRef;
+                return Wapening.ReferentieAfstand;
 
             }
         }
-        [TableColumn(Symbol = "<i>d</i>", Label = "nuttige hoogte", Unit = "mm",
-            Width = 2.0,
-            Key = K.NuttigeHoogte,
-            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+
+        //[TableColumn(Symbol = "<i>d</i>", Label = "nuttige hoogte", Unit = "mm",
+        //    Width = 1.5,
+        //    Key = K.NuttigeHoogte,
+        //    StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        [TableColumn(
+            Symbol = "<i>d</i>", 
+            Label = "nuttige hoogte", 
+            Unit = "mm",
+            StringFormat = "0.#",
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, 
+            Width = 1.5)]
         public double D { get { return Hoogte - ZRef; } }
 
 
-        [TableColumn(Symbol = "<i>x</i><sub>u</sub>", Label = "hoogte drukzone", Unit = "mm",
-            Key = K.Xu,
+        [TableColumn(Symbol = "*x<sub>u</sub>*", Label = "hoogte drukzone", Unit = "mm",
             StringFormat = "0.#",
-            Width = 2.0,
+            Width = 1.0,
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Xu
         {
@@ -340,6 +362,13 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        [TableColumn(
+            Visible = false,
+            Symbol = "*x<sub>u,max</sub>*", 
+            Label = "maximale hoogte drukzone", Unit = "mm",
+           StringFormat = "0.#",
+           Width = 1.0,
+           Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double XuMax
         {
             get
@@ -349,6 +378,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+
         public double XuDMax
         {
             get
@@ -357,16 +387,40 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        [TableColumn(
+            Visible = false,
+            Symbol = "*U.C.*",
+            Label = "unity check", Unit = "-",
+           StringFormat = "0.00",
+           Width = 1.0,
+           Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        public double UnityCheck
+        {
+            get
+            {
+                return Math.Max(XuD / XuDMax, AsRequired / Wapening.As);
+            }
+        }
 
+        [TableColumn(
+            Visible = !false,
+            Symbol = "*x<sub>u</sub> / d*",
+            Label = "verhouding drukzone / nuttige hoogte", Unit = "-",
+           StringFormat = "0.##",
+           Width = 1.0,
+           Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double XuD
         {
             get { return Xu / D; }
         }
 
-        [TableColumn(Symbol = "<i>z</i>", Unit = "mm", Label = "inwendige hefboomsarm",
-            Width = 2.0,
-            // Key = K.InwendigeHefboom,
-            StringFormat = "0.#", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        [TableColumn(
+            Symbol = "<i>z</i>",
+            Unit = "mm", 
+            Label = "inwendige hefboomsarm",
+            Width = 1.5,
+            StringFormat = "0.#", 
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double Z
         {
             get
@@ -381,6 +435,7 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
+        public Formula ZFormula => new() { StaticValue = @"z = d - β \cdot x_{u}" };
 
         private bool _isGedrongenLigger;
 
@@ -447,12 +502,12 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(
-            Symbol = "<i>A</i><sub>s,req</sub>",
-            Unit = "mm²", Label = "benodigde wapening",
-            Width = 2.0,
-            Order = 40,
-            Key = K.AsBen,
-            StringFormat = "0", Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+            Symbol = "*A<sub>s,req</sub>*",
+            Unit = "mm²", 
+            Label = "benodigde wapening",
+            Width = 1.5,
+            StringFormat = "0",
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public double AsRequired
         {
             get
@@ -479,12 +534,10 @@ namespace Eurocode.BetonConstructies
         }
 
         [TableColumn(
-            Symbol = "<i>A</i><sub>s,toe</sub>",
+            Symbol = "*A<sub>s,prov</sub>*",
             Unit = "mm²",
             Label = "toegepaste wapening",
-            Width = 2.0,
-            Order = 41,
-            Key = K.AsToe,
+            Width = 1.5,
             StringFormat = "0",
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left
             )]
@@ -504,6 +557,26 @@ namespace Eurocode.BetonConstructies
 
         }
 
+        [TableColumn(
+            Symbol = "wapening", 
+            Label = "wapening",
+            Width = 3.0, 
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left )]
+        public string AsProvidedText
+        {
+            get 
+            {
+                if (Wapening != null)
+                {
+                    return Wapening.SanitizedTekst();
+                }
+                else
+                {
+                    return "?";
+                }
+            }
+            
+        }
 
 
         public void VerwerkAsApplied()
@@ -582,7 +655,12 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        //[TableColumn(Label = "minimale wapening", Symbol = "<i>A</i><sub>s,min</sub>", Unit = "mm²", StringFormat = "0")]
+        [TableColumn(
+            Visible = false,
+            Label = "minimale wapening", 
+            Symbol = "<i>A<sub>s,min</sub></i>", 
+            Unit = "mm²", 
+            StringFormat = "0")]
         public double AsMin
         {
             get
@@ -629,7 +707,7 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-
+        [TableColumn(Visible = false, Symbol = "*A~s,ber~*", Description = "berekende wapening", Unit = "mm²", StringFormat = "0")]
         public double AsBerekend
         {
             get
@@ -637,6 +715,8 @@ namespace Eurocode.BetonConstructies
                 return Beton.GetAlpha() * Breedte * Xu * Beton.Fcd / Beton.BetonStaal.Fyd;
             }
         }
+        public Formula AsBerekendFormula => new() { StaticValue = @"A_{s,ber} = α \cdot x_{u} \cdot f_{cd} / f_{yd}" };
+
 
         public double Iy
         {
@@ -662,21 +742,11 @@ namespace Eurocode.BetonConstructies
 
         //private List<int> _meldingCodes = [];
 
-        public string MeldingNummers
-        {
-            get
-            {
-                return string.Join(", ",
-                    Meldingen
-                        .Where(m => m.Code.HasValue)
-                        .Select(m => m.Code!.Value % 1000)
-                        .OrderBy(n => n)
-                        .Select(n => n.ToString())
-                );
-
-                //return string.Join(", ", MeldingCodes.Select(code => $"{code % 1000}"));
-            }
-        }
+        [TableColumn(
+            Label = "opm.", 
+            Width = 2.0,
+            Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
+        public override string MeldingNummers => base.MeldingNummers;
 
         //[TableColumn(Label = "moment opneembaar", Symbol = "<i>M</i><sub>Rd</sub>", Unit = "kNm" )]
         public double MRd
@@ -699,6 +769,14 @@ namespace Eurocode.BetonConstructies
 
         protected override void Bereken()
         {
+            // als er geen wapening is dan 
+            if (string.IsNullOrWhiteSpace(Wapening.Tekst))
+            {
+                // neem eerst de ondergrens (indien aanwezig) anders waarde r8-150
+                Wapening.Tekst = Wapening.TekstOndergrens ?? "8-150";
+
+            }
+
             Wapening.SetZRef();
             VerwerkAsApplied();
 
