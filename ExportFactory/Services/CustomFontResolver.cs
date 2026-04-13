@@ -100,32 +100,32 @@
             throw new InvalidOperationException($"Font '{faceName}' not registered.");
         }
 
-        public string? ResolveTypefaceREFERENTIE_VERWIJDREN(string familyName, bool isBold, bool isItalic)
-        {
-            var key = familyName.ToLowerInvariant();
-            if (isBold && isItalic)
-                key += "#bi";
-            else if (isBold)
-                key += "#b";
-            else if (isItalic)
-                key += "#i";
+        //public string? ResolveTypefaceREFERENTIE_VERWIJDREN(string familyName, bool isBold, bool isItalic)
+        //{
+        //    var key = familyName.ToLowerInvariant();
+        //    if (isBold && isItalic)
+        //        key += "#bi";
+        //    else if (isBold)
+        //        key += "#b";
+        //    else if (isItalic)
+        //        key += "#i";
 
-            Console.WriteLine($"Resolving typeface: {key}");
+        //    Console.WriteLine($"Resolving typeface: {key}");
 
-            return _faceNameToKey.TryGetValue(key, out var fontKey) ? fontKey : null;
-        }
+        //    return _faceNameToKey.TryGetValue(key, out var fontKey) ? fontKey : null;
+        //}
 
-        public FontResolverInfo ResolveTypefaceVERWIJDEREN(string familyName, bool isBold, bool isItalic)
-        {
-            if (_faceNameToKey.TryGetValue(familyName.ToLowerInvariant(), out var key))
-                return new FontResolverInfo(key);
-
-
+        //public FontResolverInfo ResolveTypefaceVERWIJDEREN(string familyName, bool isBold, bool isItalic)
+        //{
+        //    if (_faceNameToKey.TryGetValue(familyName.ToLowerInvariant(), out var key))
+        //        return new FontResolverInfo(key);
 
 
-            // Fallback op Arial
-            return new FontResolverInfo("arial");
-        }
+
+
+        //    // Fallback op Arial
+        //    return new FontResolverInfo("arial");
+        //}
 
         public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
         {

@@ -2,7 +2,7 @@
 {
     public class ReadOnlyService
     {
-        private Dictionary<string, bool> _readOnlyFields = new();
+        private Dictionary<string, bool> _readOnlyFields = [];
 
         public void SetReadOnly(string fieldName, bool isReadOnly)
         {

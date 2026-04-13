@@ -18,8 +18,8 @@
 
     //private List<ITrace> PlotData = new();
 
-    [Parameter, EditorRequired] public BetonProfielen.BetonProfiel BetonProfiel{ get; set; }
-    [Parameter] public EventCallback<BetonProfielen.BetonProfiel> BetonProfielChanged{ get; set; }
+    [Parameter, EditorRequired] public Profielen.Beton.BetonProfiel BetonProfiel{ get; set; }
+    [Parameter] public EventCallback<Profielen.Beton.BetonProfiel> BetonProfielChanged{ get; set; }
 
     [Parameter] public Eurocode.BetonConstructies.WapeningContext WapeningContext { get; set; } = new()
     {
@@ -30,8 +30,8 @@
 
 
 
-    private BetonProfielen.BetonProfiel? previousBetonProfiel;
-    private ParametrischeProfielen.ParametrischProfielContext? previousProfiel;
+    private Profielen.Beton.BetonProfiel? previousBetonProfiel;
+    private Profielen.Beton.BetonProfiel? previousProfiel;
 
     protected override void OnParametersSet()
     {
@@ -50,10 +50,10 @@
         {
             BetonProfiel.PropertyChanged += OnBetonProfielChanged;
 
-            if (BetonProfiel.Profiel != null)
+            if (BetonProfiel != null)
             {
-                BetonProfiel.Profiel.PropertyChanged += OnProfielChanged;
-                previousProfiel = BetonProfiel.Profiel;
+                BetonProfiel.PropertyChanged += OnProfielChanged;
+                previousProfiel = BetonProfiel;
             }
 
             previousBetonProfiel = BetonProfiel;
@@ -72,8 +72,8 @@
 
     private async void OnProfielChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(ParametrischeProfielen.ParametrischProfielContext.Breedte) ||
-            e.PropertyName == nameof(ParametrischeProfielen.ParametrischProfielContext.Hoogte))
+        if (e.PropertyName == nameof(Profielen.Parametrisch.ParametrischProfielContext.Breedte) ||
+            e.PropertyName == nameof(Profielen.Parametrisch.ParametrischProfielContext.Hoogte))
         {
             await Task.Yield(); // wacht tot nieuwe waarde is gezet
             await InvokeAsync(UpdatePlot);
@@ -91,11 +91,11 @@
 
     private void UpdatePlot()
     {
-        if (BetonProfiel?.Profiel == null)
+        if (BetonProfiel == null)
             return;
 
-        breedte = BetonProfiel.Profiel.Breedte;
-        hoogte = BetonProfiel.Profiel.Hoogte;
+        breedte = BetonProfiel.Breedte;
+        hoogte = BetonProfiel.Hoogte;
         dekking = WapeningContext.DekkingToegepast;
         referentieAfstandWapening = WapeningContext.DekkingToegepast + WapeningContext.GemiddeldeDiameter / 2.0;
         wapeningsDiameter = WapeningContext.GemiddeldeDiameter;
@@ -230,7 +230,7 @@
     {
         return new Layout
         {
-            Title = new Title { Text = $"profiel: {BetonProfiel.Profiel} \r\nwapening: {WapeningContext}" },
+            Title = new Title { Text = $"profiel: {BetonProfiel} \r\nwapening: {WapeningContext}" },
             ShowLegend = false,
             XAxis = new List<XAxis>
         {

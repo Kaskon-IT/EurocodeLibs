@@ -3,7 +3,9 @@
 
 
 
-<FluentDataGrid Items="@Model.BelastingGevallen.AsQueryable()"
+<FluentDataGrid 
+    Class="ec-table col-head"
+    Items="@Model.BelastingGevallen.AsQueryable()"
                 TGridItem="BelastingGeval">
 
     <PropertyColumn Property="@(c => c.Naam)" Title="naam" />

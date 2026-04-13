@@ -55,19 +55,15 @@ namespace CommonLibrary
         //public Formula? Vergelijking { get; set; } = null;
 
 
-        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public ParagraphAlignment Alignment { get; set; } = ParagraphAlignment.Center;
 
         //[Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         //public WeergaveEnum Weergave { get; set; } = WeergaveEnum.AlleTabellen;
 
-        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public bool Visible { get; set; } = true;
 
-        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public double Width { get; set; } = 3.00;
 
-        [Obsolete("Verplaatst, niet meer binnen TableColumnAttribute")]
         public int Order { get; set; } = -1;
 
 
@@ -82,7 +78,6 @@ namespace CommonLibrary
             string? stringFormat = null,
             ParagraphAlignment alignment = ParagraphAlignment.Left,
             bool visible = true,
-            //WeergaveEnum weergave = WeergaveEnum.AlleTabellen,
             double width = 2.00,
             int order = -1,
             string? key = null,
@@ -96,7 +91,6 @@ namespace CommonLibrary
             StringFormat = stringFormat;
             Alignment = alignment;
             Visible = visible;
-            //Weergave = weergave;
             Width = width;
             Order = order;
             Symbol = symbol;

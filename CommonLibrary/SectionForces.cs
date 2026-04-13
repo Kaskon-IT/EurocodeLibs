@@ -14,7 +14,7 @@ namespace CommonLibrary
 
 
 
-        [TableColumn(Label = "Moment (Y-as)", Symbol = "<i>M</i><sub>y</sub>", Unit = "kNm")]
+        [TableColumn(Label = "Moment (Y-as)", Symbol = "<i>M<sub>y</sub></i>", Unit = "kNm")]
         public double My
         {
             get => _my;
@@ -74,15 +74,7 @@ namespace CommonLibrary
             return $"My: {My.ToEng()}, Mz: {Mz.ToEng()}, Vy: {Vy.ToEng()}, Vz: {Vz.ToEng()}, Nx: {Nx.ToEng()}, Tx: {Tx.ToEng()}";
         }
 
-        public string ToMarkupString()
-        {
-            return $"<i>M</i><sub>y{Suffix}</sub>: {My.ToEng()}, " +
-                $"<i>M</i><sub>z{Suffix}</sub>: {Mz.ToEng()}, " +
-                $"<i>V</i><sub>y{Suffix}</sub>: {Vy.ToEng()}, " +
-                $"<i>V</i><sub>z{Suffix}</sub>: {Vz.ToEng()}, " +
-                $"<i>N</i><sub>x{Suffix}</sub>: {Nx.ToEng()}, " +
-                $"<i>T</i><sub>x{Suffix}</sub>: {Tx.ToEng()}";
-        }
+        
 
         protected override void Bereken()
         {
@@ -104,7 +96,7 @@ namespace CommonLibrary
             //throw new NotImplementedException();
         }
 
-        public bool OverschrijdingMax(object obj, double maxValue, string propertyName = null)
+        public bool OverschrijdingMax(object obj, double maxValue, string propertyName = "")
         {
             if (obj == null) return false;
 

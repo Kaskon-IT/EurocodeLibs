@@ -1,10 +1,56 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Eurocode.StaalConstructies</RootNamespace>
+
+	  <!-- NuGet-package instellingen -->
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <PackageId>Kaskon.Eurocode3.StaalConstructies</PackageId>
+	  <Version>2.2.40</Version>
+	  <Authors>Bart van der Linden</Authors>
+	  <Company>Kaskon</Company>
+	  <Description>Eurocode 3 Staalconstructies</Description>
+	  <PackageLicenseFile>license.md</PackageLicenseFile>
+	  <PackageReadmeFile>readme.md</PackageReadmeFile>
+	  <PackageIcon>kaskon.png</PackageIcon>
+	  <!-- Lokale map voor .nupkg -->
+	  <PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
+	  <Copyright>Copyright © 2025 Kaskon</Copyright>
+	  <PackageTags>Kaskon;Blazor;FluentUI;Eurocode;EC3;Staalconstructies;Staal</PackageTags>
+	  <IncludeSymbols>true</IncludeSymbols>
+	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Profielen\StaalProfielen\StaalProfielen.csproj" />
+    <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
+	  <None Include="Icons/kaskon.png" Pack="true" PackagePath="/" />
+	  <None Include="Docs/license.md" Pack="true" PackagePath="/" />
+	  <None Include="Docs/readme.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Docs\license.md">
+      <PackagePath>/</PackagePath>
+      <Pack>true</Pack>
+    </None>
+    <None Update="Docs\readme.md">
+      <PackagePath>/</PackagePath>
+      <Pack>true</Pack>
+    </None>
+    <None Update="Icons\kaskon.png">
+      <PackagePath>/</PackagePath>
+      <Pack>true</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Chapter 5\" />
+    <Folder Include="Chapter 6\Algemeen\" />
+  </ItemGroup>
 
 </Project>

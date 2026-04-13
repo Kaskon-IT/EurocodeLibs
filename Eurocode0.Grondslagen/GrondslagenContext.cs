@@ -9,6 +9,7 @@ using ExportFactory.MigraDocContentModels;
 using Microsoft.AspNetCore.Components;
 using MigraDoc.DocumentObjectModel;
 using System.ComponentModel;
+using System.Reflection.Metadata.Ecma335;
 
 
 namespace Eurocode.Grondslagen
@@ -152,6 +153,9 @@ namespace Eurocode.Grondslagen
             get { return this.Betrouwbaarheidsklasse.GetKfi(); }
         }
 
+
+
+
         /// <summary>
         /// ξ (xi) is een reductiefactor voor ongunstige, blijvende belastingen G
         /// Deze wordt gebruikt in de fundamentele combinatie (6.10b) en is afhankelijk van de nationale bijlage.
@@ -186,6 +190,12 @@ namespace Eurocode.Grondslagen
         {
             return CommonLibrary.Helpers.MarkupHelper.ToMarkupString(this.ToString(alleenFactoren));
         }
+
+
+        readonly double _gammaGsup = 1.35;
+        readonly double _gammaQ = 1.50;
+        public (double G, double Q) GetFactorFundamenteelA() => (Kfi * _gammaGsup, Kfi * _gammaQ);
+        public (double G, double Q) GetFactorenFundamenteelB(double mom1) => (Kfi * _gammaGsup * Xi, Kfi * _gammaQ * mom1);
 
 
 

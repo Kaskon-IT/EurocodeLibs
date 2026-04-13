@@ -1,4 +1,6 @@
 ﻿using Eurocode.Belastingen;
+using Profielen.Beton;
+
 
 namespace Eurocode.BetonConstructies
 {
@@ -6,7 +8,7 @@ namespace Eurocode.BetonConstructies
     {
         internal double AsBen;
 
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new(1000, 100);
+        public BetonProfiel Profiel { get; set; } = new(1000, 100);
 
         public BetonContext Beton { get; set; } = new();
 
@@ -49,11 +51,11 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public BetonConstructies.BuigingBasic BuigingTand { get; set; }
+        public BetonConstructies.BuigingBasic? BuigingTand { get; set; } 
 
-        public BendingResults Buiging1 { get; set; }
+        public BendingResults? Buiging1 { get; set; }
 
-        public DwarskrachtWapContext TandShear { get; set; }
+        public DwarskrachtWapContext? TandShear { get; set; }
         public SectionForces Snedekrachten { get; set; } = new();
 
 
@@ -68,7 +70,7 @@ namespace Eurocode.BetonConstructies
 
             //Buiging1 = new(Beton, TandBreedte, TandLengte, 24, Moment);
 
-            ParametrischeProfielen.ParametrischProfielContext profiel = new(TandBreedte, TandHoogte);
+            BetonProfiel profiel = new(TandBreedte, TandHoogte);
 
             TandShear = new(Beton, profiel, Snedekrachten) { NutHoogte = this.TandNuttigeHoogte };
 

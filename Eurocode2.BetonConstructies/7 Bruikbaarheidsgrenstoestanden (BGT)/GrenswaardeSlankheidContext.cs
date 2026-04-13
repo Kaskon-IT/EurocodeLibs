@@ -1,4 +1,5 @@
 ﻿using CommonLibrary;
+using Profielen.Parametrisch;
 using K = CommonLibrary.EurocodeKeys;
 
 namespace Eurocode.BetonConstructies
@@ -25,7 +26,7 @@ namespace Eurocode.BetonConstructies
         private double _lengteOverspanning = 2000;
         private BendingResults? _bendingResults;
 
-        [TableColumn(Label = "Lengte", Symbol = "<i>l</i>", Unit = "mm", Key = K.Slankheid_LengteOverspanning)]
+        [TableColumn(Label = "Lengte", Symbol = "<i>l</i>", Unit = "mm")]
         public double LengteOverspanning
         {
             get => _lengteOverspanning;
@@ -40,7 +41,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "effectieve dikte", Symbol = "<i>d</i>", Unit = "mm", Key = K.Slankheid_EffectieveDikte)]
+        [TableColumn(Label = "effectieve dikte", Symbol = "<i>d</i>", Unit = "mm")]
         public double EffectieveDikte
         {
             get => BendingResults?.D ?? 100;
@@ -49,7 +50,7 @@ namespace Eurocode.BetonConstructies
         } // Effectieve dikte van het element in mm
 
 
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new();
+        public ParametrischProfielContext Profiel { get; set; } = new();
 
         public required BendingResults BendingResults
         {
@@ -192,6 +193,7 @@ namespace Eurocode.BetonConstructies
                 if (Slankheid > GrenswaardeSlankheid)
                 {
                     AddMeldingWaarschuwing($"De slankheid (l/d) van het element ({Slankheid:0.#}) is groter dan de grenswaarde ({GrenswaardeSlankheid:0.#}). Toetsing doorbuiging noodzakelijk.");
+                    return false;
                 }
 
                 if (Slankheid < GrenswaardeSlankheid)

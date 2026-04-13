@@ -8,8 +8,6 @@ namespace ExportFactory.Extensions
 {
     public static class BaseEurocodeContextExtensions
     {
-        // Convert 
-
         public static DataTable ToDataTable<T>(this T obj) where T : BaseEurocodeContext
         {
             // maak een list (ook al zit er maar 1 item in)
@@ -18,33 +16,13 @@ namespace ExportFactory.Extensions
             return list.ToDataTable();
         }
 
-
-
         public static MarkupString ToHtmlTable<T>(this T obj, bool isDraaiTabel = true) where T : BaseEurocodeContext
         {
             var dt = obj.ToDataTable(); // datatable
-
-            // zijn er meldingen?
-            //if (obj.Meldingen.Any())
-
             var mdd = dt.ToMigraDocDocument(objectType: obj.GetType(), isPivotTable: isDraaiTabel, meldingen: [.. obj.Meldingen.OrderBy(m => m.Code)]); // migraDoc.Document
-
-            // onderaan alle opmerkingen (indien aanwezig)
-
-
-
-
-
             var html = ExportFactory.Services.HtmlCreator.GenerateHtmlFromDocument(mdd);
-
-
-
-
-
             return new MarkupString(html);
         }
-
-
 
         public static MigraDocTable ToMigraDocTable<T>(this T obj, bool isDraaiTabel = true) where T : BaseEurocodeContext
         {
@@ -75,20 +53,12 @@ namespace ExportFactory.Extensions
             {
                 Table = table ?? new Table()
             };
-
-
-
-
-
-
         }
-
 
         public static void AddToSection<T>(this IEnumerable<T> list, SectionContent section, bool isDraaiTabel = true, string? title = null, string style = "")
             where T : BaseEurocodeContext
         {
             ArgumentNullException.ThrowIfNull(list);
-
 
             // controleer of de lijst alleen unieke contexten zijn, of groepeer ze
             var groupedList = list
@@ -106,17 +76,10 @@ namespace ExportFactory.Extensions
                 if (type == null)
                     continue;
 
-
-
-
                 grouped.AddToSection(section, type, isDraaiTabel, title, style);
             }
 
-
-
         }
-
-
 
         public static void AddToSection(this IEnumerable<BaseEurocodeContext> list, SectionContent section, Type type, bool isDraaiTabel = true, string? title = null, string style = "")
         {
@@ -128,13 +91,10 @@ namespace ExportFactory.Extensions
             {
                 section.AddParagraph(title, style);
             }
-            else if (list.First()?.Heading != null)
-            {
-                section.AddParagraph(list.First()?.Heading ?? "NO HEADING", style);
-            }
-
-
-
+            //else if (list.First()?.Heading != null)
+            //{
+            //    section.AddParagraph(list.First()?.Heading ?? "NO HEADING", style);
+            //}
 
             // maak een migraDocTable
             var mdt = list.ToMigraDocTable(type, isDraaiTabel);
@@ -183,25 +143,22 @@ namespace ExportFactory.Extensions
             }
         }
 
-
-
         private static ParagraphContent? ToParagraphContent<T>(this T obj) where T : BaseEurocodeContext
         {
             if (!obj.Meldingen.Any())
                 return null;
 
-            string prefix;
             string markdownText;
 
             if (obj.Meldingen.Count == 1)
             {
-                prefix = "Opmerking\n";
-                markdownText = prefix + obj.Meldingen.First().ToMarkDownString();
+                
+                markdownText = obj.Meldingen.First().ToMarkDownString();
             }
             else
             {
-                prefix = "Opmerkingen\n";
-                markdownText = prefix + string.Join("\n", obj.Meldingen
+               
+                markdownText = string.Join("\n", obj.Meldingen
                     .OrderBy(m => m.Code)
                     .Select(m => $"> {m.ToMarkDownString()}"));
             }
@@ -210,10 +167,6 @@ namespace ExportFactory.Extensions
             {
                 Markdown = markdownText
             };
-
         }
-
     }
-
-
 }

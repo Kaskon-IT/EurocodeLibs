@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using Profielen.Parametrisch;
 using Eurocode.Belastingen;
 using ExportFactory.Shared;
 
@@ -56,7 +57,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } =
+        public ParametrischProfielContext Profiel { get; set; } =
             new() { Breedte = 1000, Hoogte = 150 };
 
         public WapeningContext Wapening { get; set; } = new() { Tekst = "8-150" };

@@ -3,9 +3,11 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<RootNamespace>Profielen.ParametrischDEL</RootNamespace>
 
-	  
-		<PackageId>Kaskon.ParametrischeProfielen</PackageId>
+
+
+	  <PackageId>Kaskon.ParametrischeProfielen</PackageId>
 		<!-- Kies een naam voor je NuGet-pakket -->
 
 

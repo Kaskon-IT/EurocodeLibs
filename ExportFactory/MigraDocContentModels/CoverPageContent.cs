@@ -1,6 +1,7 @@
 ﻿using CommonLibrary.Models;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace ExportFactory.MigraDocContentModels
 {
@@ -13,7 +14,7 @@ namespace ExportFactory.MigraDocContentModels
         private string _companyLogoPath = "";
         private string _documentNumber = "Document Number";
         private string _author = "Author Name";
-        private string _checkedBy = "Checked By";
+        private string _svgLogoXml = "";
 
 
         public string Title
@@ -81,6 +82,19 @@ namespace ExportFactory.MigraDocContentModels
             }
         }
 
+        public string SvgLogoXml
+        {
+            get => _svgLogoXml;
+            set
+            {
+                if (_svgLogoXml != value)
+                {
+                    _svgLogoXml = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
 
         public string DocumentNumber
         {
@@ -108,31 +122,7 @@ namespace ExportFactory.MigraDocContentModels
             }
         }
 
-        public string CheckedBy
-        {
-            get => _checkedBy;
-            set
-            {
-                if (_checkedBy != value)
-                {
-                    _checkedBy = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-
-        //public Color BackgroundColor { get; set; } = Colors.NavajoWhite;
-
-
-
-
-
-        public List<LabeledValue> ProjectLabeledValues { get; set; } = [];
-        public List<LabeledValue> DocumentLabeledValues { get; set; } = [];
-
-
+        [JsonIgnore]
         public List<LabelWithStringValue> ProjectLabels { get; set; } = [];
         public List<LabelWithStringValue> DocumentLabels { get; set; } = [];
 

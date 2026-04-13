@@ -59,8 +59,8 @@ namespace CommonLibrary
     public class EurocodeFormule
     {
         public required EurocodeParagraaf Paragraaf;
-        public string Nummer { get; set; }
-        public string Formule { get; set; }
+        public string Nummer { get; set; } = "";
+        public string Formule { get; set; } = "";
 
     }
 

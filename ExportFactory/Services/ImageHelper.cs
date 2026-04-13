@@ -13,7 +13,7 @@
     /// </summary>
     public sealed class CustomTempFileCollectionXX : IDisposable
     {
-        private readonly List<string> _files = new();
+        private readonly List<string> _files = [];
 
         /// <summary>
         /// Maakt een tijdelijke kopie van een bestaand bestand.

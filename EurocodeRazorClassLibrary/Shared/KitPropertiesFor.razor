@@ -1,0 +1,285 @@
+﻿@typeparam TModel where TModel : BaseEurocodeContext
+@using System.Globalization
+@using System.Reflection
+@using System.Linq
+@using CommonLibrary
+@using CommonLibrary.Extensions
+@using CommonLibrary.Models
+@using CommonLibrary.Helpers
+@using ExportFactory.Services
+@using ExportFactory.Shared
+@using Microsoft.FluentUI.AspNetCore.Components
+
+@inherits BaseEurocodeComponent
+
+<div class="kit-properties">
+<table class="ec-table" style="font-size:1.0em; line-height:1.5em;">
+    @if (ShowCaption)
+    {
+        <caption style="caption-side:top; padding-bottom:0px;">
+            @Model.Heading
+        </caption>
+    }
+
+    <colgroup>
+        <col style="width: auto;">       <!-- description kolom -->
+        <col style="width: 10%;">        <!-- symbol kolom -->
+        <col style="width: 80px;">       <!-- waarde kolom -->
+        <col style="width: 30%;">        <!-- unit kolom -->
+        <col style="width: 80px;">       <!-- article kolom -->
+    </colgroup>
+
+    <thead>
+        <tr>
+            <th @onclick="() => ToggleSort(SortColumn.Description)" style="cursor: pointer;">
+                Beschrijving @GetSortIcon(SortColumn.Description)
+            </th>
+            <th @onclick="() => ToggleSort(SortColumn.Symbol)" style="cursor: pointer; text-align: right;">
+                Symbool @GetSortIcon(SortColumn.Symbol)
+            </th>
+            <th></th>
+            <th></th>
+            <th @onclick="() => ToggleSort(SortColumn.Article)" style="cursor: pointer; text-align: right;">
+                Artikel @GetSortIcon(SortColumn.Article)
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+            @foreach (var iRow in _rows)
+            {
+                if (iRow is PropertyRow row)
+                {
+                    <tr @key="row.Key">
+                        @* 1e kolom: Description (met Markdown via MarkupHelper) *@
+                        <td>
+                            @if (row.Description != null && ShowDescription)
+                            {
+                                @MarkupHelper.ToMarkupString(row.Description)
+                            }
+                            else
+                            {
+                                @MarkupHelper.ToMarkupString(row.Label)
+                            }
+
+                            @if (row.Formula != null)
+                            {
+                                <div style="margin-top: 0.25rem;">
+                                    <KaTexFormula Value="@row.Formula?.GetValue()"
+                                                  Label="@row.Formula?.Name"
+                                                  Small="true"
+                                                  DisplayMode="false" />
+                                </div>
+                            }
+                        </td>
+
+                        @* 2e kolom: Symbol (rechts uitgelijnd, met Markdown) *@
+                        <td style="text-align: right;" class="katex-like">
+                            @if (!string.IsNullOrEmpty(row.Symbol))
+                            {
+                                @MarkupHelper.ToMarkupString(row.Symbol)
+                                <span> = </span>
+                            }
+                        </td>
+
+                        @* 3e kolom: Waarde *@
+                        @if (string.IsNullOrEmpty(row.Unit))
+                        {
+                            @* Als geen unit: span over beide kolommen *@
+                            <td colspan="2">
+                                @((MarkupString)row.DisplayValue)
+                            </td>
+                        }
+                        else
+                        {
+                            @* Met unit: normale kolom *@
+                            <td>
+                                @((MarkupString)row.DisplayValue)
+                            </td>
+
+                            @* 4e kolom: Unit *@
+                            <td style="text-align: left; font-size: 0.85em; color: var(--neutral-foreground-hint);">
+
+                                @MarkupHelper.ToMarkupString(row.Unit)
+                            </td>
+                        }
+
+                        @* 5e kolom: Article (rechts uitgelijnd) *@
+                        <td style="text-align: right; font-size: 0.85em; color: var(--neutral-foreground-hint);">
+                            @if (!string.IsNullOrEmpty(row.Article))
+                            {
+                                @row.Article
+                            }
+                        </td>
+                    </tr>
+                }
+                else if (iRow is SubPropertyRow subRow)
+                {
+                    <tr @key="subRow.Key">
+                        <td colspan="5">
+                            <strong>@subRow.Label</strong>
+                            <div style="margin-top: 0.25rem;">
+                                @MarkupHelper.ToMarkupString(subRow.Value)
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+[Parameter, EditorRequired] 
+public TModel Model { get; set; } = default!;
+
+[Parameter] 
+public bool ShowCaption { get; set; } = true;
+
+[Parameter] 
+public bool ShowDescription { get; set; } = false;
+
+[Parameter] 
+public bool ShowArticles { get; set; } = false;
+
+[Parameter] 
+public bool ShowNonEditables { get; set; } = true;
+
+// ✅ Vaste instellingen
+private const bool ReadOnly = true;
+private const bool ShowFormulas = true;
+
+// ✅ Sorteer state
+private enum SortColumn { None, Description, Symbol, Article }
+private SortColumn _currentSortColumn = SortColumn.None;
+private bool _sortAscending = true;
+
+private List<IPropertyRow> _rows = new();
+private List<IPropertyRow> _rawRows = new();
+
+/// <summary>
+/// Strip HTML tags en markdown voor sorteren
+/// </summary>
+private string StripMarkup(string? text)
+{
+    if (string.IsNullOrWhiteSpace(text))
+        return string.Empty;
+
+    // Verwijder HTML tags
+    var withoutHtml = System.Text.RegularExpressions.Regex.Replace(text, @"<[^>]+>", "");
+        
+    // Verwijder markdown syntax
+    withoutHtml = System.Text.RegularExpressions.Regex.Replace(withoutHtml, @"\*\*(.+?)\*\*", "$1"); // bold
+    withoutHtml = System.Text.RegularExpressions.Regex.Replace(withoutHtml, @"\*(.+?)\*", "$1");     // italic
+    withoutHtml = System.Text.RegularExpressions.Regex.Replace(withoutHtml, @"__(.+?)__", "$1");     // underline
+    withoutHtml = System.Text.RegularExpressions.Regex.Replace(withoutHtml, @"~~(.+?)~~", "$1");     // strikethrough
+    withoutHtml = System.Text.RegularExpressions.Regex.Replace(withoutHtml, @"~(.+?)~", "$1");       // subscript
+    withoutHtml = System.Text.RegularExpressions.Regex.Replace(withoutHtml, @"\^(.+?)\^", "$1");     // superscript
+    withoutHtml = System.Text.RegularExpressions.Regex.Replace(withoutHtml, @"\{(\w+):(.+?)\}", "$2"); // colors
+        
+    return withoutHtml.Trim();
+}
+
+/// <summary>
+/// Toggle sort voor een kolom
+/// </summary>
+private void ToggleSort(SortColumn column)
+{
+    if (_currentSortColumn == column)
+    {
+        _sortAscending = !_sortAscending;
+    }
+    else
+    {
+        _currentSortColumn = column;
+        _sortAscending = true;
+    }
+        
+    ResetRows();
+}
+
+/// <summary>
+/// Krijg sort icoon voor kolom
+/// </summary>
+private string GetSortIcon(SortColumn column)
+{
+    if (_currentSortColumn != column)
+        return "↕";
+        
+    return _sortAscending ? "↑" : "↓";
+}
+
+
+
+    private void ResetRows()
+    {
+        var filteredRows = _rawRows
+            .Where(r =>
+                (r as PropertyRow)?.Editable == true ||
+                (r as SubPropertyRow)?.Value != null ||
+                ShowNonEditables
+            );
+
+        // ✅ Sorteer indien actief
+        IOrderedEnumerable<IPropertyRow> sortedRows;
+        
+        if (_currentSortColumn == SortColumn.Description)
+        {
+            // Sorteer op Description/Label (zonder markup)
+            sortedRows = _sortAscending
+                ? filteredRows.OrderBy(r => StripMarkup((r as PropertyRow)?.Description ?? (r as PropertyRow)?.Label))
+                : filteredRows.OrderByDescending(r => StripMarkup((r as PropertyRow)?.Description ?? (r as PropertyRow)?.Label));
+        }
+        else if (_currentSortColumn == SortColumn.Symbol)
+        {
+            // Sorteer op Symbol (zonder markup)
+            sortedRows = _sortAscending
+                ? filteredRows.OrderBy(r => StripMarkup((r as PropertyRow)?.Symbol))
+                : filteredRows.OrderByDescending(r => StripMarkup((r as PropertyRow)?.Symbol));
+        }
+        else if (_currentSortColumn == SortColumn.Article)
+        {
+            // Sorteer op Article (artikelnummers)
+            sortedRows = _sortAscending
+                ? filteredRows.OrderBy(r => StripMarkup((r as PropertyRow)?.Article))
+                : filteredRows.OrderByDescending(r => StripMarkup((r as PropertyRow)?.Article));
+        }
+        else
+        {
+            // Standaard sortering
+            sortedRows = filteredRows
+                .OrderByDescending(r => (r as PropertyRow)?.Editable)
+                .ThenByNatural(r => (r as PropertyRow)?.Symbol)
+                .ThenByNatural(r => (r as PropertyRow)?.Article)
+                .ThenByNatural(r => (r as PropertyRow)?.Formula?.Name);
+        }
+
+        _rows = sortedRows.ToList();
+
+        // Geen info gevonden
+        if (_rows.Count == 0)
+        {
+            _rows.Add(new SubPropertyRow(
+                Guid.NewGuid().ToString(), 
+                "📭", 
+                "geen eigenschappen gevonden", 
+                ""
+            ));
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        // Eerste keer ophalen
+        _rawRows = TableColumnAttributeHelper.GetRows(Model, 0, 0).ToList();
+        ResetRows();
+
+        // Subscribe op OnUpdated voor automatische refresh
+        Model.OnUpdated += () =>
+        {
+            _rawRows = TableColumnAttributeHelper.GetRows(Model, 0, 0).ToList();
+            ResetRows();
+            InvokeAsync(StateHasChanged);
+        };
+    }
+}

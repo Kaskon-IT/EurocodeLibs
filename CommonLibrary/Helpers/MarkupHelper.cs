@@ -29,11 +29,12 @@ namespace CommonLibrary.Helpers
             // Omzetten van ^text^ naar <sup>text</sup>
             input = Regex.Replace(input, @"\^(.*?)\^", "<sup>$1</sup>");
 
+            // ✅ BELANGRIJK: Bold VOOR Italic verwerken, anders matcht ** ook op *
             // Bold: **text** -> <strong>text</strong>
-            input = Regex.Replace(input, @"\*\*(.*?)\*\*", "<strong>$1</strong>");
+            input = Regex.Replace(input, @"\*\*(.+?)\*\*", "<strong>$1</strong>");
 
-            // Italic: *text* -> <em>text</em>
-            input = Regex.Replace(input, @"\*(.*?)\*", "<em>$1</em>");
+            // Italic: *text* -> <em>text</em>  (nu alleen enkelvoudige * overgebleven)
+            input = Regex.Replace(input, @"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", "<em>$1</em>");
 
 
 

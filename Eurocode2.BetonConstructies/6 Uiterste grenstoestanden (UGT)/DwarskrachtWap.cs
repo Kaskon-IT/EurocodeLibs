@@ -1,4 +1,6 @@
 ﻿using Eurocode.Belastingen;
+using Profielen.Parametrisch;
+using Profielen.Beton;
 
 namespace Eurocode.BetonConstructies
 {
@@ -14,7 +16,7 @@ namespace Eurocode.BetonConstructies
 
         public static DwarskrachtWapContext GetDwarskrachtWapContext(
             BetonContext beton,
-            ParametrischeProfielen.ParametrischProfielContext profiel,
+            BetonProfiel profiel,
             double theta,
             double d,
             SectionForces snedekrachten,
@@ -25,7 +27,7 @@ namespace Eurocode.BetonConstructies
 
             // tijdelijk test => verwijderen na afronding
 
-            List<string> artikelen = new List<string>();
+            List<string> artikelen = [];
 
             DwarskrachtWapContext context = new(beton, profiel, snedekrachten)
             {
@@ -293,7 +295,7 @@ namespace Eurocode.BetonConstructies
 
         public static double SetCrdc(this DwarskrachtWapContext context)
         {
-            return DwarskrachtHelpers.GetCrdC(context.Beton.GammaC);
+            return DwarskrachtHelpers.GetCrdC(context.Beton.PartieleFactor);
         }
 
         public static string SetBeugelAfstandMaxLangs(this DwarskrachtWapContext context)

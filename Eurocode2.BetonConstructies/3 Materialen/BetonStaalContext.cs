@@ -148,10 +148,10 @@ namespace Eurocode.BetonConstructies
         public double Fywd { get { return Fywk / GammaS; } }	// conform art. 6.2
 
 
-        public double EpsilonS { get; set; }
+        public double EpsilonS { get; internal set; }
 
-        public double SigmaSd { get; set; }
-        public double SigmaSk { get; set; }
+        public double SigmaSd { get; internal set; }
+        public double SigmaSk { get; internal set; }
 
 
         /// <summary>

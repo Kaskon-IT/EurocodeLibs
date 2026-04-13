@@ -51,18 +51,27 @@
             return document;
         }
 
+        /// <summary>
+        /// Maakt een MigraDoc.Table vanuit een DataTable
+        /// </summary>
+        /// <param name="dataTable">De DataTable</param>
+        /// <param name="objectType">Het Type</param>
+        /// <param name="isPivotTable">Voor draaitabellen (titels 1e kolom ipv 1e rij)</param>
+        /// <param name="hideHeader">Wel/niet tonen van de titels</param>
+        /// <param name="vereenvoudigdeWeergave">Weet ik niet meer</param>
+        /// <returns>Een MigraDoc.Table</returns>
         public static Table? ToTable(this DataTable dataTable, Type objectType, bool isPivotTable = true, bool hideHeader = false, bool vereenvoudigdeWeergave = true)
         {
             Table migraDocTable = new();
 
             migraDocTable.Borders.Width = 0.25;
             migraDocTable.Borders.Color = Colors.Transparent; // Mogelijk aanpassen voor debug
-            migraDocTable.Borders.Visible = false;
+            migraDocTable.Borders.Visible = !hideHeader; // voor nu -> header is border, geen header is geen border
             migraDocTable.KeepTogether = true; // Zorgt ervoor dat de tabel niet wordt gesplitst over pagina's
 
             // Check if the TableColumnAttribute is applied to any of the properties
             bool hasTableColumnAttribute = objectType.GetProperties()
-                .Any(p => p.GetCustomAttributes(typeof(TableColumnAttribute), false).Any());
+                .Any(p => p.GetCustomAttributes(typeof(TableColumnAttribute), false).Length != 0);
 
             if (!hasTableColumnAttribute)
             {
@@ -71,11 +80,11 @@
             }
 
 
-            WeergaveEnum weergave = WeergaveEnum.StandaardTabel;
-            if (isPivotTable)
-            {
-                weergave = WeergaveEnum.DraaiTabel;
-            }
+            //WeergaveEnum weergave = WeergaveEnum.StandaardTabel;
+            //if (isPivotTable)
+            //{
+            //    weergave = WeergaveEnum.DraaiTabel;
+            //}
 
 
             // Get the properties of the object type and their associated ColumnAttribute
@@ -87,12 +96,9 @@
                 })
                 .Where(pa =>
                     pa.Attribute != null) // 2025-02-24
-                .OrderBy(pa => pa.Attribute.Order) // Sort by ColumnOrder
+                .OrderBy(pa => pa.Attribute?.Order) // Sort by ColumnOrder
+                .Where(pa => pa.Attribute?.Visible == true) // 2026-01-19
                 .ToList();
-
-            // i
-
-
 
 
             // Create a list of column names to use for matching
@@ -162,24 +168,25 @@
                 // Add rows
                 foreach (var propertyWithAttribute in propertiesWithAttributes)
                 {
+                    if (propertyWithAttribute == null) continue; // 27-01-2026
                     Row row = migraDocTable.AddRow();
-                    ParagraphAlignment alignment = propertyWithAttribute.Attribute.Alignment;
-                    string headerText = propertyWithAttribute.Attribute.Description ?? propertyWithAttribute.Attribute.Label ?? propertyWithAttribute.Property.Name;
-
-                    string? format = null;
+                    ParagraphAlignment alignment = propertyWithAttribute.Attribute?.Alignment ?? ParagraphAlignment.Left;
+                    string headerText = propertyWithAttribute.Attribute?.Description ?? propertyWithAttribute.Attribute?.Label ?? propertyWithAttribute.Property.Name;
 
                     AttributesMapping? mapping = null;
 
+                    // 27-01-2026 KEY UITGEZET 
                     // als de property.attribute.key is gegeveven de mapping ophalen
-                    if (propertyWithAttribute.Attribute.Key != null)
-                    {
-                        _mappingDict.TryGetValue(propertyWithAttribute.Attribute.Key, out mapping);
-                    }
-                    else
-                    {
-                        // geen specifieke key opgegeven, controleer of de name in het woordenboek staat
-                        _mappingDict.TryGetValue(propertyWithAttribute.Property.Name, out mapping);
-                    }
+                    //if (propertyWithAttribute.Attribute?.Key != null)
+                    //{
+                    //    _mappingDict.TryGetValue(propertyWithAttribute.Attribute.Key, out mapping);
+                    //}
+                    //else
+                    //{
+                    //    // geen specifieke key opgegeven, controleer of de name in het woordenboek staat
+                    //    _mappingDict.TryGetValue(propertyWithAttribute.Property.Name, out mapping);
+                    //}
+
 
 
 
@@ -275,7 +282,16 @@
                     foreach (var columnName in columnNames)
                     {
                         //var columnName = dataTable.Columns[i].ColumnName;
-                        var value = dataRow[columnName];
+                        object? value = null;
+                        if (dataRow.Table.Columns.Contains(columnName))
+                        {
+                            value = dataRow[columnName];
+                        }
+                        else
+                        {
+                            value = "?";
+                        }
+
                         AttributesMapping? mapping = null;
 
 
@@ -309,7 +325,7 @@
                         }
                         catch (Exception ex)
                         {
-
+                            Console.WriteLine(ex.Message); continue;
                         }
 
 
@@ -419,13 +435,13 @@
                 }
 
                 // Add columns to the MigraDoc table based on the property attributes
-                foreach (var propertyWithAttribute in propertiesWithAttributes)
+                foreach (var propertyWithAttribute in propertiesWithAttributes.Where(a=>a.Attribute?.Visible == true))
                 {
                     Column migraDocColumn = migraDocTable.AddColumn();
-                    migraDocColumn.Format.Alignment = propertyWithAttribute.Attribute.Alignment;
+                    migraDocColumn.Format.Alignment = propertyWithAttribute.Attribute?.Alignment ?? ParagraphAlignment.Left;
 
                     // Set column width if specified in ColumnAttribute
-                    if (propertyWithAttribute.Attribute.Width > 0)
+                    if (propertyWithAttribute.Attribute?.Width > 0)
                     {
                         migraDocColumn.Width = Unit.FromCentimeter(propertyWithAttribute.Attribute.Width);
                     }
@@ -436,6 +452,10 @@
                 Row headerRow = migraDocTable.AddRow();
                 headerRow.Style = "TableHeader";
 
+                // Tag het objectType mee in de headerRow
+                headerRow.Tag = objectType;
+
+                // Vul de headercellen in
                 foreach (var p in propertiesWithAttributes)
                 {
                     ParagraphAlignment alignment = p.Attribute.Alignment;
@@ -452,18 +472,20 @@
                     //headerRow.Cells[propertiesWithAttributes.IndexOf(propertyWithAttribute)].Format.Font.Italic = true;
                 }
 
-                // ROWS
-                // Add the data rows
+                // itterate through DataTable rows and add them to the MigraDoc table
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
                     Row row = migraDocTable.AddRow();
-                    //row.Format.Font.Italic = false;
+
+                    // Tag het bron object mee in de Row van de MigraDoc tabel
+                    row.Tag = dataTable.ExtendedProperties[dataRow];
 
                     foreach (var columnName in columnNames)
                     {
-                        //var columnName = dataTable.Columns[i].ColumnName;
-                        var value = dataRow[columnName];
+                        if (!dataTable.Columns.Contains(columnName))
+                            continue;
 
+                        var value = dataRow[columnName];
 
                         // Get the column's custom string format if applied
                         int i = columnNames.IndexOf(columnName);
@@ -500,13 +522,43 @@
                         // Apply value to the cell (with markdown support)
                         var cellPar = row.Cells[i].AddParagraph();
                         MigraDocCreator.AddMarkdownToParagraph(cellPar, value?.ToString() ?? string.Empty);
+
+                        // Tag Formula in cell (if any)
+                        var sourceObj = row.Tag;
+                        var propertyName = propertiesWithAttributes[i].Property.Name;
+
+                        Formula? formula = TryGetFormula(sourceObj, propertyName);
+
+                        if (formula is not null)
+                        {
+                            row.Cells[i].Tag = formula;
+                        }
+
+
                     }
                 }
             }
-
             return migraDocTable;
-
         }
+
+
+        private static Formula? TryGetFormula(object? sourceObj, string propertyName)
+        {
+            if (sourceObj == null) return null;
+            var type = sourceObj.GetType();
+
+            var formulaProp = type.GetProperty(propertyName + "Formula");
+            if (formulaProp == null)
+                return null;
+
+            if (formulaProp.PropertyType != typeof(Formula))
+                return null;
+
+            return formulaProp.GetValue(sourceObj) as Formula;
+        }
+
     }
+
+
 
 }

@@ -8,7 +8,7 @@
         public NestedContextInfo(BaseEurocodeContext child)
         {
             Child = child;
-            Parents = new List<(BaseEurocodeContext, string)>();
+            Parents = [];
         }
     }
 

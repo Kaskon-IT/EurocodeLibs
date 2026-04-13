@@ -1,10 +1,10 @@
 ﻿using static Kaskon_it.Algemeen.Geometrie;
 
-namespace ParametrischeProfielen
+namespace Profielen.ParametrischBAK
 {
-    public static class ParametrischProfielExtensions
+    public static class ParametrischProfielExtensionsVERWIJDEREN
     {
-        public static PuntD[] GetPolygon(this ParametrischProfielContext context)
+        public static PuntD[] GetPolygon(this ParametrischProfielContextVERWIJDEREN context)
         {
             List<PuntD> polygon = [];
 
@@ -12,14 +12,14 @@ namespace ParametrischeProfielen
             switch (context.Vorm)
             {
                 default:
-                case ParametrischeProfielVormEnum.Rechthoek:
+                case ParametrischeProfielVormEnumVERWIJDEREN.Rechthoek:
                     polygon.Add(new(x, y, z));
                     y += context.Hoogte; polygon.Add(new(x, y, z));
                     x += context.Breedte; polygon.Add(new PuntD(x, y, z));
                     y -= context.Hoogte; polygon.Add(new PuntD(x, y, z));
                     polygon.Add(new());
                     break;
-                case ParametrischeProfielVormEnum.L1:
+                case ParametrischeProfielVormEnumVERWIJDEREN.L1:
                     polygon.Add(new(x, y, z));
                     y += context.Hoogte; polygon.Add(new(x, y, z));
                     x += context.Breedte - context.B1; polygon.Add(new(x, y, z));
@@ -28,7 +28,7 @@ namespace ParametrischeProfielen
                     y -= (context.Hoogte - context.H1); polygon.Add(new(x, y, z));
                     polygon.Add(new());
                     break;
-                case ParametrischeProfielVormEnum.L2:
+                case ParametrischeProfielVormEnumVERWIJDEREN.L2:
                     polygon.Add(new());
                     y += (context.Hoogte - context.H1);
                     polygon.Add(new(x, y, z));
@@ -43,7 +43,7 @@ namespace ParametrischeProfielen
                     x = 0;
                     polygon.Add(new(x, y, z));
                     break;
-                case ParametrischeProfielVormEnum.L3:
+                case ParametrischeProfielVormEnumVERWIJDEREN.L3:
                     polygon.Add(new());
                     y = context.Hoogte;
                     polygon.Add(new(x, y, z));
@@ -58,7 +58,7 @@ namespace ParametrischeProfielen
                     x = 0;
                     polygon.Add(new(x, y, z));
                     break;
-                case ParametrischeProfielVormEnum.L4:
+                case ParametrischeProfielVormEnumVERWIJDEREN.L4:
                     y = context.H1;
                     polygon.Add(new(x, y, z));
                     y = context.Hoogte;
@@ -74,7 +74,7 @@ namespace ParametrischeProfielen
                     x = 0;
                     polygon.Add(new(x, y, z));
                     break;
-                case ParametrischeProfielVormEnum.T1:
+                case ParametrischeProfielVormEnumVERWIJDEREN.T1:
                     y = context.Hoogte;
                     polygon.Add(new(x, y, z));
                     x = context.Breedte;
@@ -94,7 +94,7 @@ namespace ParametrischeProfielen
                     y = context.Hoogte;
                     polygon.Add(new(x, y, z));
                     break;
-                case ParametrischeProfielVormEnum.T2:
+                case ParametrischeProfielVormEnumVERWIJDEREN.T2:
                     y = 0;
                     polygon.Add(new(x, y, z));
                     y = context.Hoogte - context.H1;
@@ -114,7 +114,7 @@ namespace ParametrischeProfielen
                     x = 0;
                     polygon.Add(new(x, y, z));
                     break;
-                case ParametrischeProfielVormEnum.T3:
+                case ParametrischeProfielVormEnumVERWIJDEREN.T3:
                     y = 0;
                     polygon.Add(new(x, y, z));
                     y = context.Hoogte;
@@ -144,7 +144,7 @@ namespace ParametrischeProfielen
 
 
                     break;
-                case ParametrischeProfielVormEnum.T4:
+                case ParametrischeProfielVormEnumVERWIJDEREN.T4:
                     y = context.H1;
                     polygon.Add(new(x, y, z));
 
@@ -181,7 +181,7 @@ namespace ParametrischeProfielen
                     break;
 
 
-                case ParametrischeProfielVormEnum.U1:
+                case ParametrischeProfielVormEnumVERWIJDEREN.U1:
                     polygon.Add(new(x, y, z));
                     y = context.Hoogte;
                     polygon.Add(new(x, y, z));
@@ -200,7 +200,7 @@ namespace ParametrischeProfielen
                     x = 0;
                     polygon.Add(new(x, y, z));
                     break;
-                case ParametrischeProfielVormEnum.U2:
+                case ParametrischeProfielVormEnumVERWIJDEREN.U2:
                     polygon.Add(new(x, y, z));
                     y = context.Hoogte;
                     polygon.Add(new(x, y, z));
@@ -220,7 +220,7 @@ namespace ParametrischeProfielen
                     polygon.Add(new(x, y, z));
                     break;
 
-                case ParametrischeProfielVormEnum.I:
+                case ParametrischeProfielVormEnumVERWIJDEREN.I:
                     y = 0;
                     polygon.Add(new(x, y, z));
                     y = (context.Hoogte - context.H1) / 2;
@@ -269,7 +269,7 @@ namespace ParametrischeProfielen
 
         }
 
-        public static PuntD[] GetPolygonRondomZwaartePunt(this ParametrischProfielContext context, PuntD zwaartepunt)
+        public static PuntD[] GetPolygonRondomZwaartePunt(this ParametrischProfielContextVERWIJDEREN context, PuntD zwaartepunt)
         {
             //PuntD puntD = ZoekZwaartePunt(polygon);
             PuntD[] array = new PuntD[context.Polygon.Length];

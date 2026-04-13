@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Extensions;
+using Profielen.Parametrisch;
 using Eurocode.Belastingen;
 using ExportFactory.Shared;
 
@@ -31,11 +32,11 @@ namespace Eurocode.BetonConstructies
 
         public BetonContext Beton { get; set; } = new("C30/37");
         //public Snedekrachten Krachten { get; set; } = new();
-        public List<SectionForces> SectionForces { get; set; } = new();
+        public List<SectionForces> SectionForces { get; set; } = [];
         public BetonContextKruipEnKrimpCalculator KruipKrimpBerekening { get; set; }
         public BetonDoorbuigingCalculator DoorbuigingBerekening { get; set; }
 
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get; set; } = new() { Breedte = 500, Hoogte = 700 };
+        public ParametrischProfielContext Profiel { get; set; } = new() { Breedte = 500, Hoogte = 700 };
         public WapeningContext Wapening { get; set; } = new() { Tekst = "6Ø25" };
         //public BendingResults BuigingBerekening { get; set; }
 

@@ -1,0 +1,70 @@
+﻿@using Eurocode.Belastingen
+@using Eurocode.Grondslagen
+
+<table class="ec-table col-head">
+    <colgroup>
+        <col style="width: 20%;" />
+        <col style="width: 15%;" />
+        <col style="width: 25%;" />
+        <col style="width: 13%;" />
+        <col style="width: 13%;" />
+        <col style="width: 14%;" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th>naam</th>
+            <th>type</th>
+            <th>gebruiksklasse</th>
+            <th><i>ψ<sub>0</sub></i></th>
+            <th><i>ψ<sub>1</sub></i></th>
+            <th><i>ψ<sub>2</sub></i></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.BelastingGevallen)
+        {
+            <tr>
+                <td>@item.Naam</td>
+                <td>@item.Type</td>
+                <td>
+                    @if (item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk)
+                    {
+                        @item.GebruiksklasseUserFriendly
+                    }
+                </td>
+                <td>
+                    @if (item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk)
+                    {
+                        @item.MomentaanFactoren.Mom0.ToString("0.0#")
+                    }
+                </td>
+                <td>
+                    @if (item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk)
+                    {
+                        @item.MomentaanFactoren.Mom1.ToString("0.0#")
+                    }
+                </td>
+                <td>
+                    @if (item.Type == BelastingGeval.BelastingGevalTypeEnum.Veranderlijk)
+                    {
+                        @item.MomentaanFactoren.Mom2.ToString("0.0#")
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public required Eurocode.Belastingen.BelastingenContext Model { get; set; } 
+
+    [Parameter]
+    public EventCallback<Eurocode.Belastingen.BelastingenContext> ModelChanged { get; set; }
+
+    async Task UpdateModel()
+    {
+        await ModelChanged.InvokeAsync(Model);
+    }
+}

@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using Eurocode.Grondslagen;
+using ExportFactory.Shared;
 using System.Text.Json.Serialization;
 
 namespace Eurocode.BetonConstructies
@@ -49,6 +50,12 @@ namespace Eurocode.BetonConstructies
             {
                 get { return _factorKx; }
             }
+            public Formula FactorKxFormula => new() { 
+                Name = "7.3.1 (5)", 
+                StaticValue = "k_x = c_{prov} / c_{nom} \\leq 2",
+                DynamicValue = $"= {DekkingEnDuurzaamheid.DekkingToe:0} / {DekkingEnDuurzaamheid.DekkingNom:0}"
+            };
+
 
 
             private double _wMax = 0.10;

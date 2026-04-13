@@ -4,6 +4,9 @@ using Eurocode.Belastingen;
 using ExportFactory.MigraDocContentModels;
 using ExportFactory.Services;
 using ExportFactory.Shared;
+using MigraDoc.DocumentObjectModel;
+using Profielen.Beton;
+using Profielen.Parametrisch;
 using System.ComponentModel;
 
 namespace Eurocode.BetonConstructies
@@ -16,48 +19,6 @@ namespace Eurocode.BetonConstructies
         ControleerWapening,
     }
 
-    [Obsolete("classes met korte weergave niet meer nodig, we kunnen de properties filteren, orderen etcetera.")]
-    public class DwarskrachtWapContextKort : DwarskrachtWapContext
-    {
-
-        // deze class heb ik aangemaakt om een korte weergave te hebben in de UI
-        // dit is een tijdelijke oplossing, want uiteindelijk wil ik dat we de properties kunnen filteren
-        // en ordenen op basis van de TableColumn attributes.
-        // Dit is een tussenstap, want ik wil de UI niet teveel aanpassen in één keer.
-        // in de vakantie van Martijn is dit toch gedaan, dus deze class is nu overbodig geworden.
-        // even samen doornemen met Martijn.
-
-        public DwarskrachtWapContextKort()
-        {
-            // lege constructor
-        }
-
-        public DwarskrachtWapContextKort(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, SectionForces snedekrachten)
-            : base(beton, profiel, snedekrachten)
-        {
-            BerekeningType = BerekeningTypeEnum.BepaalBenodigeWapening;
-            // Bereken(); // niet nodig, want we hebben geen meldingen
-        }
-
-        [TableColumn(Symbol = "<i>V</i><sub>Ed</sub>", Unit = "kN")]
-        public string Test
-        {
-            get
-            {
-                return this.Ved.ToString();
-            }
-        }
-
-        [TableColumn("V<sub>Rd,c</sub>")]
-        public string Test2
-        {
-            get
-            {
-                return this.DwarskrachtWeerstandBeton.ToString();
-            }
-        }
-
-    }
 
 
     public class DwarskrachtWapContext : BaseEurocodeContext
@@ -67,23 +28,16 @@ namespace Eurocode.BetonConstructies
             Beton = new();
             Profiel = new();
             Snedekrachten = new();
-            LijstBeugelWap = new List<BeugelWap>();
+            LijstBeugelWap = [];
         }
 
-        // context voor de dwarskrachtwapening volgens art. 6.2
-        // Uitgangspunten voor niet-voorgespannen constructies
-
-        //private List<int> _meldingen { get; set; } = [];
-        //private Dictionary<int, Melding> _betonMeldingen = new MeldingenBeton().Meldingen;
-
-        //public List<Melding> Meldingen { get; set; } = [];
         public override string Heading { get; set; } = "Dwarskracht";
 
         public override string ToString()
         {
             if (Ved <= DwarskrachtWeerstandBeton)
             {
-                return $"V<sub>Ed</sub> = {Ved:0.# kN}, V<sub>Rd,c</sub> = {DwarskrachtWeerstandBeton:0.# kN}";
+                return $"<i>V<sub>Ed</sub></i> = {Ved:0.# kN}, <i>V<sub>Rd,c</sub></i> = {DwarskrachtWeerstandBeton:0.# kN}";
             }
             else
             {
@@ -99,6 +53,14 @@ namespace Eurocode.BetonConstructies
 
         }
 
+        /// <summary>
+        /// Bepaalt of A~sw,min~ moet worden aangehouden
+        /// Standaard WAAR. Voor platen zou dit op ONWAAR kunnen worden gezet.
+        /// </summary>
+        public bool MinimaleDwarskrachtWapeningAanhouden
+        {
+            get; set; 
+        } = true;
 
         public bool IsDwarskrachtWapeningBenodigd()
         {
@@ -135,8 +97,10 @@ namespace Eurocode.BetonConstructies
             set => SetNestedProperty(ref _beton!, value);
         }
 
-        private ParametrischeProfielen.ParametrischProfielContext _profiel = new();
-        public ParametrischeProfielen.ParametrischProfielContext Profiel
+
+
+        private BetonProfiel _profiel = new();
+        public BetonProfiel Profiel
         {
             get => _profiel;
             set => SetNestedProperty(ref _profiel!, value);
@@ -152,6 +116,8 @@ namespace Eurocode.BetonConstructies
 
 
 
+        [TableColumn(Label = "pos", Alignment = ParagraphAlignment.Left, Width = 2.0)]
+        public string PosLabel { get; set; } = "";
 
 
         /// <summary>
@@ -159,16 +125,39 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         [TableColumn(
             Label = "dwarskracht (rekenwaarde)",
-            Symbol = "<i>V</i><sub>Ed</sub>",
+            Symbol = "<i>V<sub>Ed</sub></i>",
+            Alignment = ParagraphAlignment.Left,
+            Width = 2.0,
+            StringFormat = "0.#",
             Unit = "kN")]
         public double Ved { get { return Snedekrachten.Vz; } }
+
+
+        [TableColumn(
+           Visible = true,
+           Label = "dwarskrachtweerstand (rekenwaarde)",
+           Symbol = "<i>V<sub>Rd,c</sub></i>",
+           Width = 2.0,
+           Alignment = ParagraphAlignment.Left,
+           StringFormat = "0.#",
+           Unit = "kN",
+           Description = "is de rekenwaarde van de dwarskrachtweerstand")]
+        public double DwarskrachtWeerstandBeton { get { return SchuifspanningWeerstandBeton * Breedte * NutHoogte / 1000; } } // kN
+
+
+
+
 
         /// <summary>
         /// is de hoek in graden tussen de drukdiagonaal van beton en de as van de ligger loodrecht op de dwarskracht;
         /// </summary>
         [TableColumn(
+            Visible = false,
             Label = "hoek drukdiagonaal",
             Symbol = $"<i>{GreekLetters.theta}</i>",
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0.#",
             Unit = "°")]
 
         public double Theta
@@ -197,11 +186,6 @@ namespace Eurocode.BetonConstructies
         /// CoTangens van de hoek drukdiagonaal
         /// </summary>
         /// 
-        [TableColumn(
-            Symbol = "cot<i>θ</i>",
-            Label = "cotangens hoek drukdiagonaal",
-            StringFormat = "0.##")]
-
         public double CotTheta
         {
             get
@@ -216,8 +200,13 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// is de hoek tussen de dwarskrachtwapening en de as van de ligger loodrecht op de dwarskracht (positief gemeten zoals getoond in figuur 6.5) in graden;
         /// </summary>
-        [TableColumn(Label = "hoek dwarskrachtwapening",
+        [TableColumn(
+            Visible = false,
+            Label = "hoek dwarskrachtwapening",
             Symbol = $"<i>{GreekLetters.alpha}</i>",
+            Alignment = ParagraphAlignment.Left,
+            Width = 1.0,
+            StringFormat = "0.#",
             Unit = "°")]
         public double Alpha
         {
@@ -235,31 +224,28 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// Breedte van de doorsnede voor de dwarskracht in mm
         /// </summary>
-        [TableColumn(Label = "breedte dwarskracht", Symbol = "<i>b</i><sub>w</sub>", Unit = "mm")]
+        [TableColumn(
+            Label = "breedte dwarskracht",
+            Symbol = "<i>b<sub>w</sub></i>",
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat ="0.#",
+            Unit = "mm")]
         public double Breedte
         {
             get { return Profiel.BreedteDwarskracht; }
         }
 
         /// <summary>
-        /// is de minimale breedte tussen de trek- en drukrand in mm²
-        /// </summary>
-        [TableColumn(
-            Label = "langswapening",
-            Symbol = "<i>A</i><sub>sl</sub>", Unit = "mm²", StringFormat = "0")]
-        public double AsLangs
-        {
-            get => _asLangs;
-            set => SetProperty(ref _asLangs, value);
-        }
-        public bool AsLangsEditable { get; set; } = false;
-
-        private double _asLangs;
-
-        /// <summary>
         /// Nuttige hooge (d) van de dwarskrachtdoorsnede in mm
         /// </summary>
-        [TableColumn(Label = "nuttige hoogte", Symbol = "d", Unit = "mm")]
+        [TableColumn(
+            Label = "nuttige hoogte",
+            Symbol = "<i>d</i>",
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0.#",
+            Unit = "mm")]
         public double NutHoogte
         {
             get => _nutHoogte;
@@ -269,6 +255,60 @@ namespace Eurocode.BetonConstructies
         private double _nutHoogte = 90;
 
 
+        /// <summary>
+        /// is de inwendige hefboomsarm voor een element met constante hoogte, overeenkomend met het
+        /// buigend moment in het beschouwde element. In de dwarskrachtberekening van de gewapend beton
+        /// zonder normaalkracht mag in het algemeen de benaderende waarde z = 0,9d zijn gebruikt.
+        /// </summary>
+        [TableColumn(
+            Label = "inwendige hefboomsarm",
+            Symbol = "<i>z</i>",
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0.#",
+            Unit = "mm")]
+        public double Z
+        {
+            get
+            {
+                switch (MethodeVoorBerekenenZ)
+                {
+                    default:
+                    case MethodeVoorBerekenenInwendigeHefboomsArmEnum.ViaNuttigeHoogte:
+                        return 0.9 * NutHoogte;
+                    case MethodeVoorBerekenenInwendigeHefboomsArmEnum.ViaMomentRekenwaarde:
+                    case MethodeVoorBerekenenInwendigeHefboomsArmEnum.ViaMomentOpneembaar:
+                        throw new NotImplementedException("Deze methode is niet ondersteund");
+                }
+            }
+        }
+
+
+        /// --------
+        /// WAPENING
+        /// --------
+
+        /// <summary>
+        /// is de minimale breedte tussen de trek- en drukrand in mm²
+        /// </summary>
+        [TableColumn(
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            Label = "langswapening",
+            Symbol = "<i>A<sub>sl</sub></i>", 
+            Unit = "mm²", StringFormat = "0")]
+        public double AsLangs
+        {
+            get => _asLangs;
+            set => SetProperty(ref _asLangs, value);
+        }
+        public bool AsLangsEditable { get; set; } = false;
+
+        private double _asLangs;
+
+        
+
+
         // --- Toegepaste Wapening
         public double BeugelDiameter;
         public double BeugelHartOpHartAfstand;
@@ -276,7 +316,15 @@ namespace Eurocode.BetonConstructies
         public double BeugelAfstandDwarsToegepast;
         public double DekkingZijkantToegepast;
 
-        public DwarskrachtWapContext(BetonContext beton, ParametrischeProfielen.ParametrischProfielContext profiel, SectionForces snedekrachten)
+
+
+
+
+
+
+
+
+        public DwarskrachtWapContext(BetonContext beton, BetonProfiel profiel, SectionForces snedekrachten)
         {
             Beton = beton; // materiaal, staal, dekking, etcetera
             Profiel = profiel; // geometrie 
@@ -296,7 +344,10 @@ namespace Eurocode.BetonConstructies
 
         [TableColumn(
             Label = "toegepaste dwarskrachtwapening",
-            Symbol = "<i>A</i><sub>sw,prov</sub>",
+            Symbol = "<i>A<sub>sw,prov</sub></i>",
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0",
             Unit = "mm²/m")]
         public double AswToegepast
         {
@@ -313,6 +364,7 @@ namespace Eurocode.BetonConstructies
             set => SetProperty(ref _aswToegepast, value);
 
         }
+        public bool AswToegepastVisible { get; set; } = false;
 
         public string ToelichtingVRdc
         {
@@ -326,7 +378,7 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return $"<i>ν</i><sub>Rd,c</sub> = {SchuifspanningWeerstandStaal:0.##} N/mm² * {Breedte:0.##} mm * {NutHoogte:0.##} mm / 1000 = {DwarskrachtWeerstandStaal:0.##} kN";
+                return $"<i>ν<sub>Rd,c</sub></i> = {SchuifspanningWeerstandStaal:0.##} N/mm² * {Breedte:0.##} mm * {NutHoogte:0.##} mm / 1000 = {DwarskrachtWeerstandStaal:0.##} kN";
             }
         }
 
@@ -362,7 +414,6 @@ namespace Eurocode.BetonConstructies
 
         public double FactorK1DwarskrachtWeerstandBeton { get; } = 0.15;   // 6.2.2(1) De waarde van k1 moet gelijk aan 0,15 zijn genomen.
 
-        [TableColumn(Label = "factor", Symbol = "<i>k</i>", StringFormat = "0.##")]
         public double FactorK { get { return this.SetFactorK(); } }
         public Formula FactorKFormula => new()
         {
@@ -375,7 +426,12 @@ namespace Eurocode.BetonConstructies
         /// <summary>
         /// ρ~l~ verhouding aanwezige langswapening 
         /// </summary>
-        [TableColumn(Symbol = $"<i>ρ</i><sub>l</sub>", Label = "verhouding langswapening")]
+        [TableColumn(
+            Visible = false,
+            Symbol = $"<i>ρ<sub>l</sub></i>", 
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            Label = "verhouding langswapening")]
         public double RhoLangs { get { return this.SetRho1(); } }
         public Formula RhoLangsFormula => new()
         {
@@ -387,9 +443,20 @@ namespace Eurocode.BetonConstructies
 
         public double NEd { get { return Snedekrachten.Nx; } } // N<sub>Ed</sub>
 
-        [TableColumn(Label = "spanning uit normaalkracht", Symbol = "<i>σ</i><sub>cp</sub>", Unit = "N/mm²", Article = "6.2.2 (1)")]
+        [TableColumn(
+            Visible = false,
+            Label = "spanning uit normaalkracht", 
+            Symbol = "<i>σ<sub>cp</sub></i>",
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            Unit = "N/mm²",
+            Article = "6.2.2 (1)")]
         public double SigmaCp { get { return Math.Min(NEd * 1000 / Profiel.Area, 0.2 * this.Beton.Fcd); } }
-        public Formula SigmaCpFormula => new() { StaticValue = @"\sigma_{cp} = N_{Ed} / A_c < 0.2\;f_{cd}" };
+        public Formula SigmaCpFormula => new() { 
+            StaticValue = @"\sigma_{cp} = N_{Ed} / A_c < 0.2 \cdot f_{cd}",
+            DynamicValue = $"= {(NEd * 1000):0} / {Profiel.Area:0} <"
+        };
+        public bool SigmaCpVisible { get; set; } = false;
         // sigma~cp~ = N<sub>Ed</sub> / Ac < 0,2 fcd   volgens art. 6.2.2 (1) 
 
 
@@ -399,53 +466,70 @@ namespace Eurocode.BetonConstructies
         /// NB. Hieruit volgt A~sw,min~
         /// </summary>
         [TableColumn(
-            Symbol = "<i>ρ</i><sub>w,min</sub>",
+            Visible = false,
+            Symbol = "<i>ρ<sub>w,min</sub></i>",
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
             Label = "ondergrens dwarskrachtwapeningsverhouding")]
         public double RhoWMin { get { return this.SetRhoWMin(); } }
+        public bool RhoWMinVisible { get; set; } = false;
 
         [TableColumn(
+            Visible = false,
             Label = "factor",
-            Symbol = "C<sub>rdc</sub>",
+            Symbol = "<i>C<sub>rdc</sub></i>",
             StringFormat = "0.##")]
         public double Crdc { get { return this.SetCrdc(); } }               // conform art. 6.4.4 (1) PONS
+        public static bool CrdcVisible => false;
 
         [TableColumn(
+            Visible = false,
             Label = "sterktereductiefactor",
             Symbol = "<i>ν</i>")]
         public double Nu { get { return this.SetNu(); } }
 
+
         [TableColumn(
+            Visible = false,
             Label = "sterktereductiefactor",
-            Symbol = "<i>ν</i><sub>1</sub>")]
+            Symbol = "<i>ν<sub>1</sub></i>")]
         public double Nu1 { get { return this.SetNu1(); } }
 
         [TableColumn(
-            Symbol = "<i>ν</i><sub>Rd,max</sub>",
+            Visible = false,
+            Symbol = "<i>ν<sub>Rd,max</sub></i>",
             Label = "schuifspanningweerstand",
             Description = "is de maximale schuifspanningweerstand",
+            StringFormat = "0.###",
             Unit = "N/mm²"
             )]
         public double SchuifspanningWeerstandMax { get { return DwarskrachtWeerstandMax * 1000 / Breedte / NutHoogte; } }
 
         [TableColumn(
-            Symbol = "<i>ν</i><sub>Rd,c</sub>",
+            Visible = false,
+            Symbol = "<i>ν<sub>Rd,c</sub></i>",
             Label = "schuifspanningweerstand",
             Description = "is de schuifspanningweerstand zonder dwarskrachtwapening",
+            StringFormat = "0.###",
             Unit = "N/mm²")]
         public double SchuifspanningWeerstandBeton { get { return this.SetSchuifspanningWeerstandZonderDwarskrachtWapening(); } } // (6.2)
 
 
         [TableColumn(
-            Symbol = "<i>v</i><sub>min</sub>",
+            Visible = false,
+            Symbol = "<i>v<sub>min</sub></i>",
             Label = "schuifspanningweerstand",
             Description = "is de minimale schuifspanningweerstand",
+            StringFormat = "0.###",
             Unit = "N/mm²")] // (6.2b)
         public double SchuifspanningMin { get { return this.SetSchuifspanningWeerstandZonderWapeningMin(); } } // (6.2b) minimale schuifspanning
 
         [TableColumn(
-            Symbol = "<i>ν</i><sub>Rd,s</sub>",
+            Visible = false,
+            Symbol = "<i>ν<sub>Rd,s</sub></i>",
             Label = "schuifspanningweerstand",
             Description = "is de schuifspanningweerstand door dwarskrachtwapening",
+            StringFormat = "0.###",
             Unit = "N/mm²")]
         public double SchuifspanningWeerstandStaal
         {
@@ -459,14 +543,22 @@ namespace Eurocode.BetonConstructies
         /// vEd is de rekenwaarde van de schuifspanning in N/mm²
         /// </summary>
         [TableColumn(
-            Symbol = "<i>ν</i><sub>Ed</sub>",
+            Visible = false,
+            Symbol = "<i>ν<sub>Ed</sub></i>",
             Label = "schuifspanning (rekenwaarde)",
             Description = "is de rekenwaarde van de schuifspanning",
+            StringFormat = "0.###",
             Unit = "N/mm²")]
         public double SchuifspanningD { get { return Ved * 1000 / Breedte / NutHoogte; } }
 
-        [TableColumn(Label = "bovengrens dwarskrachtweerstand",
-            Symbol = "<i>V</i><sub>Rd,max</sub>", Unit = "kN")]
+        [TableColumn(
+
+            Label = "bovengrens dwarskrachtweerstand",
+            Symbol = "<i>V<sub>Rd,max</sub></i>", 
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0.#",
+            Unit = "kN")]
         public double DwarskrachtWeerstandMax { get { return this.SetVrdMax().value; } }
         public Formula DwarskrachtWeerstandMaxFormula
         {
@@ -478,7 +570,7 @@ namespace Eurocode.BetonConstructies
                     return new()
                     {
                         Name = "(6.9)",
-                        StaticValue = "V_{Rd,max} = α_{cw} b_w z v_1 f_{cd} / (cot θ + tan θ )",
+                        StaticValue = @"V_{Rd,max} = α_{cw} \cdot b_w  \cot z \cdot v_1 \cdot f_{cd} / (cot θ + tan θ )",
                         DynamicValue = $@"= {AlphaCw.ToTeX()} \cdot {Breedte.ToTeX()} \cdot {Z.ToTeX()} \cdot {Nu1.ToTeX()} \cdot {Beton.Fcd.ToTeX()} / ({CotTheta.ToTeX()}+{TanTheta.ToTeX()}) = {(DwarskrachtWeerstandMax * 1000).ToTeX(unit: "N", forcedExponent: 3)}"
                     };
                 }
@@ -496,12 +588,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "dwarskrachtweerstand (rekenwaarde)",
-            Symbol = "<i>V</i><sub>Rd,c</sub>",
-            Unit = "kN",
-            Description = "is de rekenwaarde van de dwarskrachtweerstand")]
-        public double DwarskrachtWeerstandBeton { get { return SchuifspanningWeerstandBeton * Breedte * NutHoogte / 1000; } } // kN
-
+       
 
 
         public Formula DwarskrachtWeerstandBetonFormula
@@ -514,8 +601,8 @@ namespace Eurocode.BetonConstructies
                     return new()
                     {
                         Name = "(6.2a)",
-                        StaticValue = @"V_{Rd,c} = \left[C_{Rd,c}k(100 ρ_l f_{ck})^{1/3} + k_1 σ_{cp} \right] b_wd ",
-                        DynamicValue = $@"= \left[ {Crdc.ToTeX()} {FactorK.ToTeX()} (100 \cdot {RhoLangs.ToTeX()} \cdot {Beton.Fck.ToTeX()})^{{1/3}} + {FactorK1DwarskrachtWeerstandBeton.ToTeX()} \cdot {SigmaCp.ToTeX()} \right] \cdot {Breedte.ToTeX()} \cdot{NutHoogte.ToTeX()} = {DwarskrachtWeerstandBeton.ToTeX()}"
+                        StaticValue = @"V_{Rd,c} = \left[ C_{Rd,c} \cdot k(100 \cdot ρ_l \cdot f_{ck})^{1/3} + k_1 \cdot σ_{cp} \right] b_wd ",
+                        DynamicValue = $@"= \left[ {Crdc.ToTeX()} \cdot {FactorK.ToTeX()} (100 \cdot {RhoLangs.ToTeX()} \cdot {Beton.Fck.ToTeX()})^{{1/3}} + {FactorK1DwarskrachtWeerstandBeton.ToTeX()} \cdot {SigmaCp.ToTeX()} \right] \cdot {Breedte.ToTeX()} \cdot{NutHoogte.ToTeX()} = {DwarskrachtWeerstandBeton.ToTeX()}"
                     };
                 }
                 else
@@ -535,8 +622,12 @@ namespace Eurocode.BetonConstructies
 
 
         [TableColumn(
+            Visible = true,
             Label = "dwarskrachtweerstand door dwarskrachtwapening",
-            Symbol = "V<sub>Rd,s</sub>",
+            Symbol = "<i>V<sub>Rd,s</sub></i>",
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0.#",
             Unit = "kN")]
         public double DwarskrachtWeerstandStaal
         {
@@ -551,7 +642,14 @@ namespace Eurocode.BetonConstructies
             }
         }
 
-        [TableColumn(Label = "dwarskrachtweerstand", Symbol = "<i>V</i><sub>Rd</sub>", Unit = "kN")]
+        [TableColumn(
+            Visible = true,
+            Label = "dwarskrachtweerstand", 
+            Symbol = "<i>V<sub>Rd</sub></i>",
+            Width = 1.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0.#",
+            Unit = "kN")]
         public double DwarskrachtWeerstand { get { return Math.Min(Math.Max(DwarskrachtWeerstandStaal, DwarskrachtWeerstandBeton), DwarskrachtWeerstandMax); } }
         public Formula DwarskrachtWeerstandFormula
         {
@@ -582,45 +680,25 @@ namespace Eurocode.BetonConstructies
 
         public bool BerekeningVrd { get; set; } = false;    // bool om aan te geven of we beugels berekenen, of de Vrd bepalen. 
 
-        /// <summary>
-        /// is de inwendige hefboomsarm voor een element met constante hoogte, overeenkomend met het
-        /// buigend moment in het beschouwde element. In de dwarskrachtberekening van de gewapend beton
-        /// zonder normaalkracht mag in het algemeen de benaderende waarde z = 0,9d zijn gebruikt.
-        /// </summary>
-        [TableColumn(
-            Label = "inwendige hefboomsarm",
-            Symbol = "<i>z</i>",
-            Unit = "mm")]
-        public double Z
-        {
-            get
-            {
-                switch (MethodeVoorBerekenenZ)
-                {
-                    default:
-                    case MethodeVoorBerekenenInwendigeHefboomsArmEnum.ViaNuttigeHoogte:
-                        return 0.9 * NutHoogte;
-                    case MethodeVoorBerekenenInwendigeHefboomsArmEnum.ViaMomentRekenwaarde:
-                    case MethodeVoorBerekenenInwendigeHefboomsArmEnum.ViaMomentOpneembaar:
-                        throw new NotImplementedException("Deze methode is niet ondersteund");
 
-
-
-
-                }
-            }
-        }
 
         public MethodeVoorBerekenenInwendigeHefboomsArmEnum MethodeVoorBerekenenZ { get; set; }
 
 
-        [TableColumn(Label = "minimale dwarskrachtwapening",
-            Symbol = "<i>A</i><sub>sw,min</sub>",
+        [TableColumn(
+            Label = "minimale dwarskrachtwapening",
+            Symbol = "<i>A<sub>sw,min</sub></i>",
+            Width = 2.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0",
             Unit = "mm²/m")]
         public double AswMin { get { return this.SetAswMin().value; } }
 
         [TableColumn(Label = "berekende dwarskrachtwapening",
-            Symbol = "<i>A</i><sub>sw,ber</sub>",
+            Symbol = "<i>A<sub>sw,ber</sub></i>",
+            Width = 2.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0",
             Unit = "mm²/m")]
         public double AswBerekend { get { return this.SetAswBerekend().value; } }
 
@@ -637,7 +715,13 @@ namespace Eurocode.BetonConstructies
 
 
 
-        [TableColumn(Label = "benodigde dwarskrachtwapening", Symbol = "<i>A</i><sub>sw,ben</sub>", Unit = "mm²/m")]
+        [TableColumn(
+            Label = "benodigde dwarskrachtwapening", 
+            Symbol = "<i>A<sub>sw,req</sub></i>", 
+            Width = 2.0,
+            Alignment = ParagraphAlignment.Left,
+            StringFormat = "0",
+            Unit = "mm²/m")]
         public double AswBenPerMeter
         {
             get { return Math.Max(AswMin, AswBerekend); }
@@ -660,13 +744,13 @@ namespace Eurocode.BetonConstructies
 
             if (Ved > DwarskrachtWeerstand)
             {
-                AddMeldingError($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd</sub>) {(Ved / DwarskrachtWeerstand):0.##}");
+                AddMeldingWaarschuwing($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd</sub>) {(Ved / DwarskrachtWeerstand):0.##}");
                 return false;
             }
 
             if (Ved > DwarskrachtWeerstandMax)
             {
-                AddMeldingError($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd,max</sub>) {(Ved / DwarskrachtWeerstandMax):0.##}");
+                AddMeldingWaarschuwing($"dwarskracht niet akkoord (V<sub>Ed</sub> > V<sub>Rd,max</sub>) {(Ved / DwarskrachtWeerstandMax):0.##}");
                 return false;
             }
             return true;

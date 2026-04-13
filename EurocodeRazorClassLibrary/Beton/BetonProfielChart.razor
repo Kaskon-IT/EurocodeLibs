@@ -3,6 +3,7 @@
 @using Plotly.Blazor.Traces
 @using Plotly.Blazor.Traces.ScatterLib
 @using Plotly.Blazor.LayoutLib.ShapeLib
+@using Profielen.Parametrisch
 
 <h3>BetonProfielChart</h3>
 
@@ -11,10 +12,10 @@
 
 @code {
     [Parameter, EditorRequired]
-    public ParametrischeProfielen.ParametrischProfielContext Model { get; set; } = new();
+    public ParametrischProfielContext Model { get; set; } = new();
 
     [Parameter]
-    public EventCallback<ParametrischeProfielen.ParametrischProfielContext> ModelChanged{ get; set; }
+    public EventCallback<ParametrischProfielContext> ModelChanged{ get; set; }
 
 
     [Parameter]

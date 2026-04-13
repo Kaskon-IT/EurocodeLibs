@@ -2,6 +2,100 @@
 
 namespace Eurocode.BetonConstructies
 {
+    /// <summary>
+    /// Geeft aan ten opzichte van welk vlak de wapening is gedefinieerd
+    /// </summary>
+    public enum ReferentieVlakEnum
+    {
+        /// <summary>Bovenzijde van het element (boven plaat, boven balk)</summary>
+        Boven,
+        
+        /// <summary>Onderzijde van het element (onder plaat, onder balk)</summary>
+        Onder,
+        
+        /// <summary>Linkerzijde van het element</summary>
+        Links,
+        
+        /// <summary>Rechterzijde van het element</summary>
+        Rechts
+    }
+
+
+    public abstract class BaseWapeningContext : BaseEurocodeContext
+    {
+        // een basis voor wapening contexten, zoals plaatwapening, balkwapening, etc.
+        
+
+    }
+
+    public class PlaatWapening : BaseWapeningContext
+    {
+        public override string Heading { get; set; } = "plaatwapening";
+        
+        private PlaatWapeningGroep? _boven;
+        private PlaatWapeningGroep? _onder;
+
+        /// <summary>
+        /// Bovenwapening groep. Wanneer deze wordt toegewezen, wordt automatisch ReferentieVlak = Boven ingesteld.
+        /// </summary>
+        public PlaatWapeningGroep? Boven
+        {
+            get => _boven;
+            set
+            {
+                _boven = value;
+                if (_boven != null)
+                {
+                    _boven.ReferentieVlak = ReferentieVlakEnum.Boven;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Onderwapening groep. Wanneer deze wordt toegewezen, wordt automatisch ReferentieVlak = Onder ingesteld.
+        /// </summary>
+        public PlaatWapeningGroep? Onder
+        {
+            get => _onder;
+            set
+            {
+                _onder = value;
+                if (_onder != null)
+                {
+                    _onder.ReferentieVlak = ReferentieVlakEnum.Onder;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Maakt een diepe kopie van deze PlaatWapening met alle nested properties.
+        /// </summary>
+        public PlaatWapening Clone()
+        {
+            return new PlaatWapening
+            {
+                Heading = this.Heading,
+                Boven = this.Boven?.Clone(),
+                Onder = this.Onder?.Clone()
+            };
+        }
+
+        protected override void Bereken()
+        {
+            //throw new NotImplementedException();
+        }
+        protected override bool Valideer()
+        {
+            Meldingen.Clear();
+            if (Boven == null && Onder == null)
+            {
+                AddMeldingError("Minstens één van de plaatwapening groepen (boven of onder) moet worden opgegeven.");
+                return false;
+            }
+            return true;
+        }
+    }
+
 
     public class WapeningContext : BaseEurocodeContext
     {
@@ -9,30 +103,171 @@ namespace Eurocode.BetonConstructies
 
         public WapeningContext()
         {
-
+            LaagNummer = 2; 
         }
 
+        public WapeningContext(string tekst, double referentieDekking)
+        {
+            Tekst = tekst;
+            ReferentieDekking = referentieDekking;
+        }
+
+        public string SanitizedTekst()
+        {
+            return Tekst
+                .Replace("x", "Ø")
+                .Replace("*", "Ø")
+                .Replace("r", "Ø")
+                .Replace("R", "Ø")
+                .Replace("d", "Ø")
+                .Replace("D", "Ø")
+                .Replace("+", " + ");
+        }
+
+        // OBSOLETE constructor voor backward compatibility
+        [Obsolete("Gebruik WapeningContext(string tekst, double referentieDekking) i.p.v. BetonDekkingContext")]
         public WapeningContext(string tekst, BetonDekkingContext dekking)
         {
             Tekst = tekst;
-            Dekking = dekking;
+            ReferentieDekking = dekking.DekkingToe;
         }
 
         private double _gemiddeldeDiameter;
-        private double _zRef;
-        private BetonDekkingContext _dekking;
-
-        public double GemiddeldeDiameter => _gemiddeldeDiameter;
-        public double ZRef => _zRef;
-
-
-        public void SetZRef()
+        public double GemiddeldeDiameter
         {
-            this._gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
-            this._zRef = DekkingToegepast + _gemiddeldeDiameter / 2.0;
+            get
+            {
+                if (_gemiddeldeDiameter == 0 && !string.IsNullOrEmpty(Tekst))
+                {
+                    _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
+                }
+                return _gemiddeldeDiameter;
+            }
         }
 
-        private string _tekst = "8-150";
+        private double _grootsteDiameter;
+        public double GrootsteDiameter => _grootsteDiameter;
+
+        private double _referentieAfstand;
+        public double ReferentieAfstand => _referentieAfstand;
+
+        public double ZRef => _referentieAfstand;
+
+        private BetonDekkingContext _dekking = new();
+        
+        // Nieuwe properties voor referentiesysteem
+        private ReferentieVlakEnum _referentieVlak = ReferentieVlakEnum.Onder;
+        private double _referentieDekking = 30.0; // Opgegeven dekking in mm
+        private double _referentieLengte = 1000.0; // Standaard 1000mm (1m)
+
+        
+        /// <summary>
+        /// Het referentievlak waarop de wapening is gedefinieerd
+        /// </summary>
+        public ReferentieVlakEnum ReferentieVlak
+        {
+            get => _referentieVlak;
+            set => SetProperty(ref _referentieVlak, value);
+        }
+
+        /// <summary>
+        /// Opgegeven betondekking tot buitenzijde staaf in mm 
+        /// Bijvoorbeeld: 30mm dekking volgens Eurocode
+        /// </summary>
+        public double ReferentieDekking
+        {
+            get => _referentieDekking;
+            set
+            {
+                if (SetProperty(ref _referentieDekking, value))
+                {
+                    // ✅ Update backing field STIL (geen event voor ReferentieAfstand)
+                    _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
+                    // NIET: OnPropertyChanged(nameof(ReferentieAfstand))
+                }
+            }
+        }
+
+        /// <summary>
+        /// Berekende afstand van hart staaf tot referentievlak in mm
+        /// Berekend als: ReferentieDekking + (GemiddeldeDiameter / 2)
+        /// Bijvoorbeeld: bij dekking 30mm en Ø8: ReferentieAfstand = 30 + 8/2 = 34mm
+        /// </summary>
+        //public double ReferentieAfstand => ReferentieDekking + (_gemiddeldeDiameter / 2.0);
+
+        /// <summary>
+        /// Lengte over welke de wapening is aangebracht in mm
+        /// Bijvoorbeeld: bij een balk van 500mm breed moet ReferentieLengte = 500mm zijn
+        /// Standaard 1000mm voor rekenkundige wapening per meter
+        /// </summary>
+        public double ReferentieLengte
+        {
+            get => _referentieLengte;
+            set
+            {
+                if (SetProperty(ref _referentieLengte, value))
+                {
+                    OnPropertyChanged(nameof(As));
+                    OnPropertyChanged(nameof(AsBasis));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Update de gemiddelde en grootste diameter op basis van de Tekst.
+        /// Interne methode - triggert GEEN events (om loops te voorkomen).
+        /// </summary>
+        public void SetZRef()
+        {
+            _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
+            _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
+            _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
+            // GEEN OnPropertyChanged calls - dit voorkomt loops!
+        }
+
+
+        
+
+        /// <summary>
+        /// Toegepaste betondekking in mm (voor backward compatibility)
+        /// Gebruik bij voorkeur ReferentieDekking
+        /// </summary>
+        public double DekkingToegepast
+        {
+            get => ReferentieDekking;
+            set => ReferentieDekking = value;
+        }
+
+        /// <summary>
+        /// OBSOLETE: Dekking property voor backward compatibility met oude EurocodeRazorClassLibrary
+        /// Gebruik in plaats daarvan ReferentieDekking of DekkingToegepast
+        /// </summary>
+        [Obsolete("Gebruik ReferentieDekking in plaats van Dekking")]
+        public BetonDekkingContext Dekking
+        {
+            get
+            {
+                // Lazy initialize en synchroniseer met ReferentieDekking
+                if (_dekking == null)
+                {
+                    _dekking = new BetonDekkingContext();
+                }
+                _dekking.DekkingToe = ReferentieDekking;
+                return _dekking;
+            }
+            set
+            {
+                _dekking = value;
+                if (_dekking != null)
+                {
+                    ReferentieDekking = _dekking.DekkingToe;
+                }
+            }
+        }
+
+
+        private string _tekst = "r8-150";
+
         [TableColumn(Label = "opgave wapening")]
         public string Tekst
         {
@@ -42,19 +277,41 @@ namespace Eurocode.BetonConstructies
                 if (_tekst != value)
                 {
                     _tekst = value;
-                    //OnPropertyChanged();
-
                     _wapgroepen = WapeningHelper.GetWapGroepen(_tekst);
-                    //_subgroepen.Clear();
-                    //foreach (var groep in _wapgroepen)
-                    //{
-                    //   _subgroepen.Add(new() { Tekst = groep });
-                    //}
+                    
+                    // ✅ Update backing fields STIL (geen events)
+                    _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(_tekst);
+                    _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(_tekst);
+                    _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
+                    
+                    // ✅ Trigger alleen events voor properties met setters
                     OnPropertyChanged(nameof(Tekst));
                     OnPropertyChanged(nameof(As));
+                    OnPropertyChanged(nameof(AsBasis));
                     OnPropertyChanged(nameof(HohMaat));
-                    OnPropertyChanged(nameof(Dekking.DekkingToe));
-                    Bereken();
+                    // NIET: GemiddeldeDiameter, GrootsteDiameter, ReferentieAfstand (zijn read-only!)
+                }
+            }
+        }
+
+        private string? _tekstOndergrens;
+
+        /// <summary>
+        /// Minimale wapening die altijd aangehouden moet worden (bijv. "r8-100").
+        /// Bij (her)berekening wordt de Tekst bijgewerkt met inachtneming van deze ondergrens.
+        /// - Diameter: neem maximum van (berekend vs ondergrens)
+        /// - Hart-op-hart: neem minimum van (berekend vs ondergrens)
+        /// </summary>
+        [TableColumn(Label = "minimale wapening")]
+        public string? TekstOndergrens
+        {
+            get => _tekstOndergrens;
+            set
+            {
+                if (_tekstOndergrens != value)
+                {
+                    _tekstOndergrens = value;
+                    OnPropertyChanged(nameof(TekstOndergrens));
                 }
             }
         }
@@ -62,7 +319,7 @@ namespace Eurocode.BetonConstructies
 
         public List<WapeningContext> GetSupGroepen()
         {
-            List<WapeningContext> subgroepen = new();
+            List<WapeningContext> subgroepen = [];
             if (_wapgroepen != null)
             {
                 foreach (var groep in _wapgroepen)
@@ -73,13 +330,41 @@ namespace Eurocode.BetonConstructies
 
             return subgroepen;
         }
+
         public override string ToString()
         {
             return $"{Tekst
                 .Replace("r", "Ø")
                 .Replace("R", "Ø")
                 .Replace("d", "Ø")
-                .Replace("D", "Ø")}  ({As:0} mm²)";
+                .Replace("D", "Ø")}";
+        }
+
+        
+
+        public string ToStringWithLaag()
+        {
+            var tekst = "";
+            switch (LaagNummer, ReferentieVlak)
+            {
+                case (null, ReferentieVlakEnum.Boven):
+                case (1, ReferentieVlakEnum.Boven): 
+                    tekst += "▼";
+                    break;
+                case (2, ReferentieVlakEnum.Boven):
+                    tekst += "▼▼";
+                    break;
+
+                case (null, ReferentieVlakEnum.Onder):
+                case (1, ReferentieVlakEnum.Onder):
+                    tekst += "▲";
+                    break;
+                case (2, ReferentieVlakEnum.Onder):
+                    tekst += "▲▲";
+                    break;
+            }
+
+            return tekst; 
         }
 
         public string GetUserFriendlyText(string eenheid = "mm²", bool includeGroups = true)
@@ -142,56 +427,128 @@ namespace Eurocode.BetonConstructies
 
             }
 
-
-
             return returnString;
-
         }
 
+        /// <summary>
+        /// Laagnummer toewijzing (1 of 2) — wordt door PlaatWapeningGroep gezet voor sorting/overzicht.
+        /// Nullable: kan null zijn wanneer niet ingesteld.
+        /// </summary>
+        public int? LaagNummer { get; set; } 
 
-
-        public BetonDekkingContext Dekking
+        /// <summary>
+        /// Maakt een diepe kopie van deze WapeningContext.
+        /// </summary>
+        public WapeningContext Clone()
         {
-            get => _dekking;
-            set
+            return new WapeningContext()
             {
-                if (_dekking != value)
-                {
-                    _dekking = value;
-                }
-            }
+                Tekst = this.Tekst,
+                ReferentieVlak = this.ReferentieVlak,
+                ReferentieLengte = this.ReferentieLengte,
+                ReferentieDekking = this.ReferentieDekking,
+                LaagNummer = this.LaagNummer,
+                AantalBijlegStaven = this.AantalBijlegStaven,
+                DiameterBijlegStaven = this.DiameterBijlegStaven
+            };
         }
 
-        public double DekkingToegepast
+
+        /// <summary>
+        /// OBSOLETE: Gebruik ReferentieDekking i.p.v. BetonDekkingContext
+        /// Deze property wordt in toekomstige versie verwijderd
+        /// </summary>
+        //[Obsolete("Gebruik ReferentieDekking i.p.v. Dekking. Deze property wordt verwijderd in toekomstige versie.")]
+        //public BetonDekkingContext Dekking
+        //{
+        //    get => _dekking;
+        //    set
+        //    {
+        //        if (_dekking != value)
+        //        {
+        //            _dekking = value;
+        //            // Update ReferentieDekking voor backward compatibility
+        //            if (_dekking != null)
+        //            {
+        //                ReferentieDekking = _dekking.DekkingToe;
+        //            }
+        //        }
+        //    }
+        //}
+
+        
+
+
+
+
+        private double _diameterBijlegStaven = 8;
+
+        private double _aantalBijlegStaven = 0;
+
+        /// <summary>
+        /// OBSOLETE: Gebruik ReferentieLengte i.p.v. Breedte
+        /// Werkende breedte van de wapening in mm. 
+        /// </summary>
+        [Obsolete("Gebruik ReferentieLengte i.p.v. Breedte. Deze property wordt verwijderd in toekomstige versie.")]
+        public double Breedte
+        {
+            get => _referentieLengte;
+            set => ReferentieLengte = value;
+        }
+
+        public double DiameterBijlegStaven { get => _diameterBijlegStaven; set => SetProperty(ref _diameterBijlegStaven, value); }
+        public double AantalBijlegStaven { get => _aantalBijlegStaven; set => SetProperty(ref _aantalBijlegStaven, value); }
+
+
+
+        [TableColumn(Label = "Doorsnedeeoppervlakte basis", Symbol = "<i>A</i><sub>s</sub>", Unit = "mm²", StringFormat = "0")]
+        public double AsBasis
+        {
+            get 
+            {
+                // Gebruik ReferentieLengte i.p.v. Breedte
+                return WapeningHelper.GetDsnOpp(Tekst, ReferentieLengte); 
+            }   
+        }
+
+
+        [TableColumn(Label = "Bijlegwapening", Symbol = "")]
+        public string BijlegWapening
         {
             get
             {
-                if (Dekking != null)
+                if (_aantalBijlegStaven > 0 && _diameterBijlegStaven > 0)
                 {
-                    //OnPropertyChanged(nameof(Dekking.DekkingToe));
-                    //Bereken(); // System.Overflow
-
-                    return Dekking.DekkingToe;
+                    return $"{_aantalBijlegStaven}Ø{_diameterBijlegStaven:0.#}";
                 }
+                else return "";
+            }
+        }
 
-                else
+        public double AsBijleg
+        {
+            get
+            {
+                if (_aantalBijlegStaven > 0 && _diameterBijlegStaven > 0)
                 {
-                    return 20;
+                    return WapeningHelper.GetDsnOpp(_aantalBijlegStaven, _diameterBijlegStaven);
                 }
+                else return 0;
             }
         }
 
 
-
-
-
-
-
         [TableColumn(Label = "Doorsnedeoppervlakte wapening", Symbol = "<i>A</i><sub>s</sub>", Unit = "mm²", StringFormat = "0")]
-        public double As { get { return WapeningHelper.GetDsnOpp(Tekst); } }
+        public double As 
+        { 
+            get 
+            {
+                return AsBasis + AsBijleg;
+            } 
+        }
 
         private List<string>? _wapgroepen;
-        public List<WapeningContext> _subgroepen { get; set; } = new();
+        public List<WapeningContext> _subgroepen { get; set; } = [];
 
 
         public double HohMaat
@@ -213,13 +570,17 @@ namespace Eurocode.BetonConstructies
 
         protected override void Bereken()
         {
-            _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
-            _zRef = DekkingToegepast + 0.5 * _gemiddeldeDiameter;
+            if (!string.IsNullOrEmpty(Tekst))
+            {
+                _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
+                _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
+                _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
+            }
         }
 
 
-        private List<double> _diameters = [5, 6, 8, 10, 12, 16, 20, 25, 32, 40];
 
+        private List<double> _diameters = [5, 6, 8, 10, 12, 16, 20, 25, 32, 40];
         protected override bool Valideer()
         {
             Meldingen.Clear();
@@ -240,3 +601,4 @@ namespace Eurocode.BetonConstructies
         //}
     }
 }
+

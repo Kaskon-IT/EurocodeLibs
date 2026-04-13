@@ -2,7 +2,7 @@
 using CommonLibrary.Extensions;
 using Eurocode.Belastingen;
 using ExportFactory.Shared;
-using ParametrischeProfielen;
+using Profielen.Parametrisch;
 
 namespace Eurocode.BetonConstructies
 {
@@ -159,12 +159,16 @@ namespace Eurocode.BetonConstructies
         private BetonContextKruipEnKrimpCalculator _kruipkrimp = new();
 
         // reference properties
-        public ParametrischeProfielen.ParametrischProfielContext Profiel { get => _profiel; set => SetNestedProperty(ref _profiel!, value); }
+        public ParametrischProfielContext Profiel { get => _profiel; set => SetNestedProperty(ref _profiel!, value); }
         public BetonContext Beton { get => _beton; set => SetNestedProperty(ref _beton!, value); }
         public WapeningContext Wapening { get => _wapening; set => SetNestedProperty(ref _wapening!, value); }
         public BetonContextKruipEnKrimpCalculator Kruipkrimp { get => _kruipkrimp; set => SetNestedProperty(ref _kruipkrimp!, value); }
 
 
+
+        // laat even zien waarmee gerekend is
+        [TableColumn (Symbol = "*I~y~*", Unit = "mm^4^")]
+        private double Iy => Profiel.Iy;
 
 
 
@@ -204,7 +208,7 @@ namespace Eurocode.BetonConstructies
 
 
 
-        private double D => Profiel.Hoogte - Wapening.ZRef;
+        private double D => Profiel.Hoogte - Wapening.ReferentieAfstand;
 
 
         // tijdelijk voor debug
@@ -273,20 +277,20 @@ namespace Eurocode.BetonConstructies
 
             Calculators.Add(calculator); // voor debug
 
-            Console.WriteLine($"--");
-            Console.WriteLine($"| Berekening doorbuiging : combinatie -> {ctx.CombinatieType}");
-            Console.WriteLine($"| Wc    : {calculator.Wc:0.00} mm");
-            Console.WriteLine($"| W1    : {calculator.W1:0.00} mm");
-            Console.WriteLine($"| Wbij  : {calculator.Wbijk:0.00} mm");
-            Console.WriteLine($"| Wmax  : {calculator.Wmax:0.00} mm");
-            Console.WriteLine($"| Wtot  : {calculator.Wtot:0.00} mm");
-            Console.WriteLine($"| Mcr   : {calculator.Mcr:0.00} kNm");
-            Console.WriteLine($"| M     : {calculator.Moment:0.00} kNm");
+            //Console.WriteLine($"--");
+            //Console.WriteLine($"| Berekening doorbuiging : combinatie -> {ctx.CombinatieType}");
+            //Console.WriteLine($"| Wc    : {calculator.Wc:0.00} mm");
+            //Console.WriteLine($"| W1    : {calculator.W1:0.00} mm");
+            //Console.WriteLine($"| Wbij  : {calculator.Wbijk:0.00} mm");
+            //Console.WriteLine($"| Wmax  : {calculator.Wmax:0.00} mm");
+            //Console.WriteLine($"| Wtot  : {calculator.Wtot:0.00} mm");
+            //Console.WriteLine($"| Mcr   : {calculator.Mcr:0.00} kNm");
+            //Console.WriteLine($"| M     : {calculator.Moment:0.00} kNm");
 
-            Console.WriteLine($"| Zeta0 : {calculator.Zeta0:0.00}");
-            Console.WriteLine($"| Zeta∞ : {calculator.Zeta:0.00}");
-            Console.WriteLine($"| As    : {calculator.Ctx.Wapening.As:0} mm²");
-            Console.WriteLine($"--");
+            //Console.WriteLine($"| Zeta0 : {calculator.Zeta0:0.00}");
+            //Console.WriteLine($"| Zeta∞ : {calculator.Zeta:0.00}");
+            //Console.WriteLine($"| As    : {calculator.Ctx.Wapening.As:0} mm²");
+            //Console.WriteLine($"--");
 
 
         }
@@ -330,16 +334,16 @@ namespace Eurocode.BetonConstructies
             Meldingen.Clear();
             bool returnVal = true;
 
-            if (this.Wbijk > this.GrenswaardeBijkomend)
+            if (Math.Abs(this.Wbijk) > this.GrenswaardeBijkomend)
             {
-                AddMeldingError($"overschrijding bijkomende doorbuiging");
+                AddMeldingWaarschuwing($"overschrijding bijkomende doorbuiging");
                 returnVal = false;
                 AddMeldingHint($"pas de hoogte van het element aan, of gebruik meer wapening");
             }
 
-            if (this.Wmax > this.GrenswaardeEind)
+            if (Math.Abs(this.Wmax) > this.GrenswaardeEind)
             {
-                AddMeldingError("overschrijding maximale doorbuiging");
+                AddMeldingWaarschuwing("overschrijding maximale doorbuiging");
                 returnVal = false;
                 if (this.FactorZeeg < 0.004)
                 {

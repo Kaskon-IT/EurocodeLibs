@@ -148,7 +148,7 @@ namespace CommonLibrary.Extensions
 
     public class ScientificFormatter : IFormatProvider, ICustomFormatter
     {
-        public object? GetFormat(Type formatType)
+        public object? GetFormat(Type? formatType)
         {
             return formatType == typeof(ICustomFormatter) ? this : null;
         }

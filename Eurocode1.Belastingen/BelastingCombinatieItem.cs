@@ -111,7 +111,7 @@ namespace Eurocode.Belastingen
                         case BelastingCombinatieTypeEnum.Fundamenteel_A:
 
                             this.MomentFactor = Geval.MomentaanFactoren.Mom0;
-                            this.MomentaanTekst = "|psi|~0~";
+                            this.MomentaanTekst = "*|psi|~0~*";
                             this.FactorQ = _basisFactorVeranderlijkFundamenteel * Context.Grondslagen.Kfi;
                             factorNetto = this.FactorQ * this.MomentFactor.Value;
                             break;
@@ -122,7 +122,7 @@ namespace Eurocode.Belastingen
                         // Combinaties met mom1
                         case BelastingCombinatieTypeEnum.Frequent:
                             this.MomentFactor = Geval.MomentaanFactoren.Mom1;
-                            this.MomentaanTekst = "|psi|~1~";
+                            this.MomentaanTekst = "*|psi|~1~*";
                             this.FactorQ = 1.00;
                             factorNetto *= Geval.MomentaanFactoren.Mom1;
                             break;
@@ -132,7 +132,7 @@ namespace Eurocode.Belastingen
                         case BelastingCombinatieTypeEnum.Aardbeving:
                         case BelastingCombinatieTypeEnum.QuasiBlijvend:
                             this.MomentFactor = Geval.MomentaanFactoren.Mom2;
-                            this.MomentaanTekst = "|psi|~2~";
+                            this.MomentaanTekst = "*|psi|~2~*";
                             this.FactorQ = 1.00;
                             factorNetto *= Geval.MomentaanFactoren.Mom2;
                             break;
