@@ -50,12 +50,12 @@
 
     private async Task OnFontChange(ChangeEventArgs e)
     {
-        selectedFont = e.Value.ToString();
+        selectedFont = e.Value?.ToString() ?? selectedFont;
         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "selectedFont", selectedFont);
         ApplyFont(selectedFont);
     }
 
-    private async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         var savedFont = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedFont");
         if (!string.IsNullOrEmpty(savedFont))

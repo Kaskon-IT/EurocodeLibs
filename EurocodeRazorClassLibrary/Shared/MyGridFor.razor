@@ -227,9 +227,11 @@
     }
 
 
-    private FluentMenu? ContextMenuRef;
+    #pragma warning disable CS0649
+        private FluentMenu? ContextMenuRef;
+    #pragma warning restore CS0649
 
-    private void HandleMouseDown(MouseEventArgs e)
+        private void HandleMouseDown(MouseEventArgs e)
     {
         if (e.Button == 2) // rechter muisklik
         {
@@ -355,7 +357,6 @@
     }
 
 
-    private TModel? _previousModel;
     private List<IPropertyRow> _rows = new();
     private List<IPropertyRow> _rawRows = new();
 
@@ -442,90 +443,7 @@
     }
 
 
-
-
-    private void OnModelPropertyChangedBAK(object? sender, PropertyChangedEventArgs e)
-    {
-        // deze methode wordt afgevuurd als een property van het model wordt aangepast
-        // bijvoorbeeld Beton.Fck
-        // we moeten volgens mij de _rawRow aanpassen
-        // dan kunnen we gewoon doorgaan zonder opnieuw de _rawRows binnen te halen
-
-        var senderProp = "";
-        // hier even debuggen
-        //
-        // de sender is het model (TModel)
-        // in e zit alleen de PropertyName
-
-        // we weten dat dit werkt
-        _rawRows = TableColumnAttributeHelper.GetRows(Model).ToList();
-        // maar dat wil ik eigenlijk niet doen.
-
-        // dus ZONDER _rawRows = ...
-        // wordt bijvoorbeeld de Wy niet bijgewerkt van een profiel
-
-
-
-        var row = _rawRows.OfType<PropertyRow>().FirstOrDefault(r => r.Property.Name == e.PropertyName);
-        if (row != null)
-        {
-
-            var value = row.Property.GetValue(Model);
-            //row.Property = "debug";
-            row.RawValue = value;
-
-            // even de waarde opvragen?
-            var ctx = (BaseEurocodeContext)sender!;
-            ctx.BerekenEnValideer();
-            // dit werkt hierboven, maar dan worden de berekende waarde nog steeds niet bijgewerkt!
-            // volgens mij zitten we vast aan _rawRows = ...
-
-
-            row.DisplayValue = value?.ToString() ?? "";
-        }
-
-        // dit wil ik ook niet doen hier
-        ResetRows();
-
-        // dit wel
-        InvokeAsync(StateHasChanged);
-    }
-
-    protected void OnParametersSetVERWIJDER_NA_SUCCES()
-    {
-        VisibleColumns ??= new HashSet<string>(new[] { "Label", "Symbol", "Value", "Unit", "Article", "Formula" });
-
-        // info
-        if (Model is BaseEurocodeContext bec)
-        {
-            Heading = bec.Heading;
-        }
-
-        ResetRows();
-
-
-
-    }
-
-
-    private async void OnValueChangedVERWIJDEREN_NA_SUCCES(PropertyInfo property, string? newValue)
-    {
-        if (newValue is null) return;
-
-        var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-        if (TryConvertStringToType(newValue, targetType, out var converted))
-        {
-            property.SetValue(Model, converted);
-
-            // update _rows, maar open rijen blijven correct
-            _rows = TableColumnAttributeHelper.GetRows(Model!).ToList();
-
-            if (ModelChanged.HasDelegate)
-                await ModelChanged.InvokeAsync(Model);
-
-            StateHasChanged();
-        }
-    }
+   
 
     private async void OnValueChanged(PropertyInfo property, string? newValue)
     {
@@ -552,27 +470,7 @@
 
 
 
-
-    private async void OnValueChangedBakBeforeIssueWithDichtklappenExtraInfo(PropertyInfo property, string? newValue)
-    {
-        if (newValue is null) return;
-
-        var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-        if (TryConvertStringToType(newValue, targetType, out var converted))
-        {
-            property.SetValue(Model, converted);
-            // refresh rows cache to reflect the new value
-            _rows = TableColumnAttributeHelper.GetRows(Model!).ToList();
-
-            if (ModelChanged.HasDelegate)
-                await ModelChanged.InvokeAsync(Model);
-            StateHasChanged();
-        }
-        else
-        {
-            // fallback / validation: nu doen we niets; je kan hier een foutmelding tonen
-        }
-    }
+     
 
     private bool TryConvertStringToType(string s, Type targetType, out object? result)
     {

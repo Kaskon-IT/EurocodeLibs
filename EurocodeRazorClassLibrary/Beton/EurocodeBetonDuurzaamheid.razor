@@ -154,22 +154,12 @@
     }
 
 
-    private MilieuklasseEnum _standaardMilieuklasse = MilieuklasseEnum.X0; // er moet altijd een milieuklasse zijn.
-
-    private MilieuklasseEnum[] _milieuklasseEnumItems = Enum
-    .GetValues(typeof(MilieuklasseEnum))
-    .Cast<MilieuklasseEnum>()
-    .ToArray();
+    private MilieuklasseEnum[] _milieuklasseEnumItems = Enum.GetValues(typeof(MilieuklasseEnum)).Cast<MilieuklasseEnum>().ToArray();
 
 
 
 
-    FluentAutocomplete<Eurocode.BetonConstructies.MilieuklasseEnum> MkList = default!;
-
-    IEnumerable<MilieuklasseEnum> SelectedItems = Array.Empty<MilieuklasseEnum>();
-
-
-    private void OnSearchEnum(OptionsSearchEventArgs<Eurocode.BetonConstructies.MilieuklasseEnum> e)
+    private void OnSearchEnum(OptionsSearchEventArgs<MilieuklasseEnum> e)
     {
         // de keuzelijst bijwerken
         var allItems = Enum

@@ -7,30 +7,6 @@
 
 @inherits Custom.EurocodeComponentBase
 
-@* <BaseEurocodeContextComponent Model="Model"></BaseEurocodeContextComponent> *@
-
-
-@if(Model.Snedekrachten != null)
-{
-    @* <p>moment : @Model.Snedekrachten.My.ToString("0.##") kNm</p> *@
-}
-
-@* <EurocodeMeldingenComponent Meldingen="Model.Meldingen"></EurocodeMeldingenComponent> *@
-
-@* <p>@Model.ToMarkupString()</p> *@
-
-@if (Model.Wapening != null)
-{
-    @if (Model.Wapening.Dekking != null)
-    {
-        @* <p>@Model.Wapening.Dekking.ToMarkupString()</p> *@
-    }
-}
-
-
-
-
-
 
 @if(Model.Snedekrachten == null)
 {
@@ -198,7 +174,6 @@ else
     }
 
 
-    private int indexWapeningVoorstel = 0;
     public void GebruikWapeningsVoorstel()
     {
        var voorstellen = WapeningHelper.GetWapeningVoorstellen(Model.AsRequired, 150);

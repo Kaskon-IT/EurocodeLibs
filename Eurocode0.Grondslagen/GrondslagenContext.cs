@@ -55,15 +55,13 @@ namespace Eurocode.Grondslagen
                     return "";
                 else
                 {
-                    switch (NationaleBijlage)
+                    return NationaleBijlage switch
                     {
-                        default:
-                        case NationaleBijlageEnum.EU: return Flags.EU;
-                        case NationaleBijlageEnum.NL: return Flags.NL;
-                        case NationaleBijlageEnum.BE: return Flags.BE;
-                        case NationaleBijlageEnum.DE: return Flags.DE;
-
-                    }
+                        NationaleBijlageEnum.NL => Flags.NL,
+                        NationaleBijlageEnum.BE => Flags.BE,
+                        NationaleBijlageEnum.DE => Flags.DE,
+                        _ => Flags.EU,
+                    };
                 }
             }
         }
@@ -73,14 +71,13 @@ namespace Eurocode.Grondslagen
         {
             get
             {
-                switch (NationaleBijlage)
+                return NationaleBijlage switch
                 {
-                    default:
-                    case NationaleBijlageEnum.NL: return "🇳🇱";
-                    case NationaleBijlageEnum.EU: return "🇪🇺";
-                    case NationaleBijlageEnum.BE: return "🇧🇪";
-                    case NationaleBijlageEnum.DE: return "🇩🇪";
-                }
+                    NationaleBijlageEnum.EU => "🇪🇺",
+                    NationaleBijlageEnum.BE => "🇧🇪",
+                    NationaleBijlageEnum.DE => "🇩🇪",
+                    _ => "🇳🇱",
+                };
             }
         }
 
@@ -89,14 +86,13 @@ namespace Eurocode.Grondslagen
         {
             get
             {
-                switch (NationaleBijlage)
+                return NationaleBijlage switch
                 {
-                    default:
-                    case NationaleBijlageEnum.EU: return "CEN";
-                    case NationaleBijlageEnum.NL: return "NEN";
-                    case NationaleBijlageEnum.BE: return "NBN";
-                    case NationaleBijlageEnum.DE: return "DIN";
-                }
+                    NationaleBijlageEnum.NL => "NEN",
+                    NationaleBijlageEnum.BE => "NBN",
+                    NationaleBijlageEnum.DE => "DIN",
+                    _ => "CEN",
+                };
             }
         }
         public string NormTitel => $"{NormPrefix}-EN 1990 Grondslagen voor het ontwerp van constructies";

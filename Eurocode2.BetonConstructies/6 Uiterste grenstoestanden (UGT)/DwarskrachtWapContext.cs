@@ -31,7 +31,7 @@ namespace Eurocode.BetonConstructies
             LijstBeugelWap = [];
         }
 
-        public override string Heading { get; set; } = "Dwarskracht";
+        public override string Heading { get; set; } = "Dwarskrachtwapening";
 
         public override string ToString()
         {

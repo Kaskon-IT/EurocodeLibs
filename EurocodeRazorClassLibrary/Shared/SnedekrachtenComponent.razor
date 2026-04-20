@@ -17,9 +17,7 @@
     [Parameter]
     public EventCallback<Eurocode.Belastingen.SectionForces> ModelChanged{ get; set; }
 
-    private bool toonHoofdRichting = true;
-
-    [Parameter] public bool ToonMy { get; set; } = true; // primaire richting (meestal verticaal)
+    [Parameter] public bool ToonMy { get; set; } = !true;
     [Parameter] public bool ToonVz { get; set; } = true; // primaire richting (meestal verticaal)
 
     [Parameter] public bool ToonMz { get; set; } = !true; // secundaire richting (meestal horizontaal)

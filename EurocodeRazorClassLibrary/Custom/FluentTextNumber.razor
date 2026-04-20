@@ -86,6 +86,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+
         InputValue = FormatValue(Value);
     }
 
@@ -173,7 +174,7 @@
         return false;
     }
 
-    private string FormatValue(T value) => $"{value}";
+    private string FormatValue(T? value) => $"{value}";
 
     private string DisplayValue
     {
