@@ -5,9 +5,38 @@ namespace Eurocode.Belastingen
 {
     public enum GebruiksklasseEnum
     {
-        [Description("A : gemeenschappelijke trappen en bordessen")]
-        [Display(Name = "A : gemeenschappelijke trappen en bordessen", ShortName = "A")]
-        A_gemeenschappelijke_trappen = 11,
+        [Description("A : gemeenschappelijke vloeren, trappenhuizen en balkons")]
+        [Display(Name = "A : gemeenschappelijke vloeren, trappenhuizen en balkons", ShortName = "A")]
+        A_gemeenschappelijke_vloeren = 11,
+
+        [Description("A : woongebouwen - vloeren")]
+        [Display(Name = "A : woongebouwen - vloeren", ShortName = "A")]
+        A_woongebouwen_vloeren = 12,
+
+        [Description("A : woongebouwen - trappen")]
+        [Display(Name = "A : woongebouwen - trappen", ShortName = "A")]
+        A_woongebouwen_trappen = 13,
+
+        [Description("A : woongebouwen - ontsluitingswegen")]
+        [Display(Name = "A : woongebouwen - ontsluitingswegen", ShortName = "A")]
+        A_woongebouwen_ontsluitingswegen = 14,
+
+        [Description("A : woongebouwen - balkons")]
+        [Display(Name = "A : woongebouwen - balkons", ShortName = "A")]
+        A_woongebouwen_balkons = 15,
+
+        [Description("A : niet-gemeenschappelijke vloeren")]
+        [Display(Name = "A : niet-gemeenschappelijke vloeren", ShortName = "A")]
+        A_niet_gemeenschappelijk_vloeren = 16,
+
+        [Description("A : niet-gemeenschappelijke trappen")]
+        [Display(Name = "A : niet-gemeenschappelijke trappen", ShortName = "A")]
+        A_niet_gemeenschappelijk_trappen = 17,
+
+        [Description("A : niet-gemeenschappelijke balkons")]
+        [Display(Name = "A : niet-gemeenschappelijke balkons", ShortName = "A")]
+        A_niet_gemeenschappelijk_balkons = 18,
+
 
         [Description("B : kantoorgebouwen")]
         [Display(Name = "B : kantoorgebouwen", ShortName = "B")]

@@ -11,10 +11,22 @@
         {
             return gebruiksklasse switch
             {
-                GebruiksklasseEnum.A_gemeenschappelijke_trappen or
+                GebruiksklasseEnum.A_woongebouwen_vloeren or
+                GebruiksklasseEnum.A_niet_gemeenschappelijk_vloeren => new OpgelegdeBelastingen(1.75, 3.0),
+                
+                GebruiksklasseEnum.A_woongebouwen_trappen or
+                GebruiksklasseEnum.A_niet_gemeenschappelijk_trappen or
+                GebruiksklasseEnum.A_woongebouwen_ontsluitingswegen => new OpgelegdeBelastingen(2.0, 3.0),
+
+                GebruiksklasseEnum.A_woongebouwen_balkons or
+                GebruiksklasseEnum.A_niet_gemeenschappelijk_balkons => new OpgelegdeBelastingen(2.5, 3.0),
+
+                GebruiksklasseEnum.A_gemeenschappelijke_vloeren or
                 GebruiksklasseEnum.B_kantoorgebouwen => new OpgelegdeBelastingen(3.0, 3.0),
+
                 GebruiksklasseEnum.C1_bijeenkomstgebouwen_tafels or
                 GebruiksklasseEnum.C2_bijeenkomstgebouwen_vaste_stoelen => new OpgelegdeBelastingen(4.0, 7.0),
+
                 GebruiksklasseEnum.C3_bijeenkomstgebouwen_zonder_obstakels or
                 GebruiksklasseEnum.C4_bijeenkomstgebouwen_fysieke_activiteiten or
                 GebruiksklasseEnum.C5_bijeenkomst_grote_menigtes => new OpgelegdeBelastingen(5.0, 7.0),
@@ -37,7 +49,14 @@
         {
             return gebruiksklasse switch
             {
-                GebruiksklasseEnum.A_gemeenschappelijke_trappen => new MomentaanFactoren(mom0: 0.4, mom1: 0.5, mom2: 0.3),
+                GebruiksklasseEnum.A_gemeenschappelijke_vloeren or
+                GebruiksklasseEnum.A_woongebouwen_vloeren or
+                GebruiksklasseEnum.A_woongebouwen_trappen or
+                GebruiksklasseEnum.A_woongebouwen_ontsluitingswegen or
+                GebruiksklasseEnum.A_woongebouwen_balkons or
+                GebruiksklasseEnum.A_niet_gemeenschappelijk_vloeren or
+                GebruiksklasseEnum.A_niet_gemeenschappelijk_trappen or
+                GebruiksklasseEnum.A_niet_gemeenschappelijk_balkons => new MomentaanFactoren(mom0: 0.4, mom1: 0.5, mom2: 0.3),
                 GebruiksklasseEnum.B_kantoorgebouwen => new MomentaanFactoren(mom0: 0.5, mom1: 0.5, mom2: 0.3),
                 GebruiksklasseEnum.C1_bijeenkomstgebouwen_tafels or
                 GebruiksklasseEnum.C2_bijeenkomstgebouwen_vaste_stoelen or

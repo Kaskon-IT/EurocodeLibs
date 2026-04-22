@@ -61,7 +61,7 @@ namespace Eurocode.Belastingen
                     Nr = 2,
                     Omschrijving = "q",
                     Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
-                    Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen,
+                    Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_vloeren,
                     Opmerking = "vlaklast"
                 },
 
