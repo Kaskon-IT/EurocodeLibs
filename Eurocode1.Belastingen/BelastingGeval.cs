@@ -53,6 +53,25 @@ namespace Eurocode.Belastingen
             set => SetProperty(ref _gebruiksklasse, value);
         }
 
+        /// <summary>
+        /// Opgelegde belastingen bij <see cref="GebruiksklasseEnum.EigenOpgave"/>.
+        /// Wordt geserialiseerd; bij andere gebruiksklassen genegeerd.
+        /// </summary>
+        public OpgelegdeBelastingen EigenOpgaveOpgelegdeBelastingen { get; set; } = new OpgelegdeBelastingen(3.0, 3.0);
+
+        /// <summary>
+        /// Momentaanfactoren bij <see cref="GebruiksklasseEnum.EigenOpgave"/>.
+        /// Wordt geserialiseerd; bij andere gebruiksklassen genegeerd.
+        /// </summary>
+        public MomentaanFactoren EigenOpgaveMomentaanFactoren { get; set; } = new MomentaanFactoren(0.4, 0.5, 0.3);
+
+        // Platte bindbare properties voor de eigen-opgave waarden (structs zijn niet direct bindbaar)
+        [JsonIgnore] public double EigenOpgaveVlaklast  { get => EigenOpgaveOpgelegdeBelastingen.Vlaklast;  set { var v = EigenOpgaveOpgelegdeBelastingen; v.Vlaklast  = value; EigenOpgaveOpgelegdeBelastingen = v; } }
+        [JsonIgnore] public double EigenOpgavePuntlast  { get => EigenOpgaveOpgelegdeBelastingen.Puntlast;  set { var v = EigenOpgaveOpgelegdeBelastingen; v.Puntlast  = value; EigenOpgaveOpgelegdeBelastingen = v; } }
+        [JsonIgnore] public double EigenOpgaveMom0      { get => EigenOpgaveMomentaanFactoren.Mom0;         set { var v = EigenOpgaveMomentaanFactoren;      v.Mom0      = value; EigenOpgaveMomentaanFactoren     = v; } }
+        [JsonIgnore] public double EigenOpgaveMom1      { get => EigenOpgaveMomentaanFactoren.Mom1;         set { var v = EigenOpgaveMomentaanFactoren;      v.Mom1      = value; EigenOpgaveMomentaanFactoren     = v; } }
+        [JsonIgnore] public double EigenOpgaveMom2      { get => EigenOpgaveMomentaanFactoren.Mom2;         set { var v = EigenOpgaveMomentaanFactoren;      v.Mom2      = value; EigenOpgaveMomentaanFactoren     = v; } }
+
         public string GebruiksklasseUserFriendly
         {
             get
@@ -84,6 +103,7 @@ namespace Eurocode.Belastingen
             get
             {
                 if (!Gebruiksklasse.HasValue) return new();
+                if (Gebruiksklasse == GebruiksklasseEnum.EigenOpgave) return EigenOpgaveOpgelegdeBelastingen;
                 var basis = Gebruiksklasse.Value.GetOpgelegdeBelastingen();
                 if (Grondslagen?.OntwerpLevensduur == OntwerpLevensduurEnum.Honderd)
                     return new OpgelegdeBelastingen(basis.Vlaklast * 1.04, basis.Puntlast * 1.04)
@@ -95,7 +115,14 @@ namespace Eurocode.Belastingen
         }
 
 
-        public MomentaanFactoren MomentaanFactoren { get { return Gebruiksklasse.HasValue ? Gebruiksklasse.Value.GetMomentaanFactoren() : new(); } }
+        public MomentaanFactoren MomentaanFactoren
+        {
+            get
+            {
+                if (Gebruiksklasse == GebruiksklasseEnum.EigenOpgave) return EigenOpgaveMomentaanFactoren;
+                return Gebruiksklasse.HasValue ? Gebruiksklasse.Value.GetMomentaanFactoren() : new();
+            }
+        }
 
 
 

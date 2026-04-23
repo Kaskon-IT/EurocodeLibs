@@ -36,6 +36,12 @@
                 GebruiksklasseEnum.E1_opslag_bibliotheken => new OpgelegdeBelastingen(2.5, 3.0),
                 GebruiksklasseEnum.E1_opslag_overige => new OpgelegdeBelastingen(5.0, 10.0),
                 GebruiksklasseEnum.E2_industrieel_gebruik => new OpgelegdeBelastingen(3.0, 7.0),
+                GebruiksklasseEnum.F_garages_tot_25kN => new OpgelegdeBelastingen(2.5, 10.0),
+                GebruiksklasseEnum.F_garages_25_tot_120kN => new OpgelegdeBelastingen(5.0, 40.0),
+                GebruiksklasseEnum.H_daken_alleen_toegankelijk_voor_onderhoud_0_tot_20_graden => new OpgelegdeBelastingen(1.0, 1.5),
+                GebruiksklasseEnum.H_daken_alleen_toegankelijk_voor_onderhoud_meer_dan_20_graden => new OpgelegdeBelastingen(0, 1.5),
+                GebruiksklasseEnum.H_daken_van_ruimten_onder_maaiveld_geen_verkeersbelasting => new OpgelegdeBelastingen(4, 7.0),
+                GebruiksklasseEnum.EigenOpgave => new OpgelegdeBelastingen(0.0, 0.0),
                 _ => new OpgelegdeBelastingen(3.0, 3.0),
             };
         }
@@ -69,6 +75,12 @@
                 GebruiksklasseEnum.E1_opslag_bibliotheken or
                 GebruiksklasseEnum.E1_opslag_overige or
                 GebruiksklasseEnum.E2_industrieel_gebruik => new MomentaanFactoren(mom0: 1.0, mom1: 0.9, mom2: 0.8),
+                GebruiksklasseEnum.F_garages_tot_25kN => new MomentaanFactoren(mom0: 0.7, mom1: 0.7, mom2: 0.6),
+                GebruiksklasseEnum.F_garages_25_tot_120kN => new MomentaanFactoren(mom0: 0.7, mom1: 0.5, mom2: 0.3),
+                GebruiksklasseEnum.H_daken_alleen_toegankelijk_voor_onderhoud_0_tot_20_graden or
+                GebruiksklasseEnum.H_daken_alleen_toegankelijk_voor_onderhoud_meer_dan_20_graden or
+                GebruiksklasseEnum.H_daken_van_ruimten_onder_maaiveld_geen_verkeersbelasting => new MomentaanFactoren(mom0: 0.0, mom1: 0.0, mom2: 0.0),
+                GebruiksklasseEnum.EigenOpgave => new MomentaanFactoren(mom0: 0.4, mom1: 0.5, mom2: 0.3),
                 _ => new MomentaanFactoren(mom0: 0.4, mom1: 0.5, mom2: 0.3),
 
             };

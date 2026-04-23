@@ -5,6 +5,10 @@ namespace Eurocode.Belastingen
 {
     public enum GebruiksklasseEnum
     {
+        [Description("Eigen opgave")]
+        [Display(Name = "Eigen opgave", ShortName = "–")]
+        EigenOpgave = 0,
+
         [Description("A : gemeenschappelijke vloeren, trappenhuizen en balkons")]
         [Display(Name = "A : gemeenschappelijke vloeren, trappenhuizen en balkons", ShortName = "A")]
         A_gemeenschappelijke_vloeren = 11,
@@ -80,5 +84,20 @@ namespace Eurocode.Belastingen
         [Description("E2 : industrieel gebruik")]
         [Display(Name = "E2 : industrieel gebruik", ShortName = "E2")]
         E2_industrieel_gebruik = 54,
+
+        [Display(Name = "F : garages en voertuigverkeersruimtes (≤25kN)", ShortName = "F1")]
+        F_garages_tot_25kN = 61,
+        [Display(Name = "F : garages en voertuigverkeersruimtes (25-120kN)", ShortName = "F2")]
+        F_garages_25_tot_120kN = 62,
+
+
+        [Display(Name = "H : daken alleen toegankelijk voor onderhoud (0-20°)", ShortName = "H1")]
+        H_daken_alleen_toegankelijk_voor_onderhoud_0_tot_20_graden = 71,
+        [Display(Name = "H : daken alleen toegankelijk voor onderhoud (>20°)", ShortName = "H2")]
+        H_daken_alleen_toegankelijk_voor_onderhoud_meer_dan_20_graden = 72,
+        [Display(Name = "H : daken van ruimten onder maaiveld, geen verkeersbelasting", ShortName = "H3")]
+        H_daken_van_ruimten_onder_maaiveld_geen_verkeersbelasting = 73,
+
+
     }
 }
