@@ -90,11 +90,15 @@ namespace Eurocode.Belastingen
         [Display(Name = "F : garages en voertuigverkeersruimtes (25-120kN)", ShortName = "F2")]
         F_garages_25_tot_120kN = 62,
 
-
+        [Description("H : daken alleen toegankelijk voor onderhoud (0-20°)")]
         [Display(Name = "H : daken alleen toegankelijk voor onderhoud (0-20°)", ShortName = "H1")]
         H_daken_alleen_toegankelijk_voor_onderhoud_0_tot_20_graden = 71,
+        
+        [Description("H : daken alleen toegankelijk voor onderhoud (>20°)")]
         [Display(Name = "H : daken alleen toegankelijk voor onderhoud (>20°)", ShortName = "H2")]
         H_daken_alleen_toegankelijk_voor_onderhoud_meer_dan_20_graden = 72,
+        
+        [Description("H : daken van ruimten onder maaiveld, geen verkeersbelasting")]
         [Display(Name = "H : daken van ruimten onder maaiveld, geen verkeersbelasting", ShortName = "H3")]
         H_daken_van_ruimten_onder_maaiveld_geen_verkeersbelasting = 73,
 
