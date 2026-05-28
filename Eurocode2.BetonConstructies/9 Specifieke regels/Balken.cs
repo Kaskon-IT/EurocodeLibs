@@ -120,19 +120,6 @@ namespace Eurocode.BetonConstructies.SpecifiekeRegels
 
 
     /// <summary>
-    /// 9.5 Kolommen
-    /// </summary>
-    class Kolommen
-    {
-
-        public static double GetAsMax(double betonOppervlakAc)
-        {
-            return 0.08 * betonOppervlakAc;
-        }
-    }
-
-
-    /// <summary>
     /// 9.6 Wanden
     /// </summary>
     class Wanden

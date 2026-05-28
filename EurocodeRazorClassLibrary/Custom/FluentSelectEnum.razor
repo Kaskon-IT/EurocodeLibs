@@ -72,6 +72,8 @@ else if(LabelPosition == LabelPosition.Top)
     [Parameter] public LabelPosition LabelPosition { get; set; } = LabelPosition.Top; // gewijzigd naar top by default
     [Parameter] public TEnum? EnumSelectedValue { get; set; }
     [Parameter] public EventCallback<TEnum?> EnumSelectedValueChanged { get; set; }
+    [Parameter] public TEnum EnumValue { get; set; }
+    [Parameter] public EventCallback<TEnum> EnumValueChanged { get; set; }
     [Parameter] public EventCallback OnStateChanged { get; set; }
     [Parameter] public TEnum[] ExcludeEnumItems { get; set; } = [];
     [Parameter] public TEnum[] DisabledEnumItems { get; set; } = [];
@@ -92,14 +94,28 @@ else if(LabelPosition == LabelPosition.Top)
 
     private Option<int> _selectedIntOption { get; set; } = new();
     private List<Option<int>> _enumOptions = [];
+    private bool UseNonNullable => EnumValueChanged.HasDelegate;
+
     private string? _selectedValue
     {
-        get { return _enumOptions.FirstOrDefault(e => e.Value.Equals(GetEnumInt(EnumSelectedValue)))?.Value.ToString(); }
+        get
+        {
+            var current = UseNonNullable ? (TEnum?)EnumValue : EnumSelectedValue;
+            return _enumOptions.FirstOrDefault(e => e.Value.Equals(GetEnumInt(current)))?.Value.ToString();
+        }
         set
         {
             if (value is null || !Enum.TryParse<TEnum>(value, out var result)) return;
-            EnumSelectedValue = result;
-            EnumSelectedValueChanged.InvokeAsync(result);
+            if (UseNonNullable)
+            {
+                EnumValue = result;
+                EnumValueChanged.InvokeAsync(result);
+            }
+            else
+            {
+                EnumSelectedValue = result;
+                EnumSelectedValueChanged.InvokeAsync(result);
+            }
             OnStateChanged.InvokeAsync();
         }
     }
@@ -126,7 +142,7 @@ else if(LabelPosition == LabelPosition.Top)
                {
                    Value = GetEnumInt(e).GetValueOrDefault(),
                    Text = e.GetDescription(false),
-                   Selected = e.Equals(EnumSelectedValue),
+                   Selected = UseNonNullable ? e.Equals(EnumValue) : e.Equals(EnumSelectedValue),
                    Disabled = DisabledEnumItems.Contains(e),
                })
            .ToList();
@@ -140,7 +156,7 @@ else if(LabelPosition == LabelPosition.Top)
               {
                   Value = GetEnumInt(e).GetValueOrDefault(),
                   Text = e.ToString(),
-                  Selected = e.Equals(EnumSelectedValue),
+                  Selected = UseNonNullable ? e.Equals(EnumValue) : e.Equals(EnumSelectedValue),
                   Disabled = DisabledEnumItems.Contains(e),
               })
           .ToList();
