@@ -312,9 +312,9 @@
                                 break;
 
                             default:
-                                // ✅ Check of de paragraph.Tag HTML bevat (bijv. div, table)
+                                // ✅ Check of de paragraph.Tag HTML bevat (bijv. div, table, img, p)
                                 if (paragraph.Tag is string tagHtml && 
-                                    (tagHtml.Contains("<div") || tagHtml.Contains("<table")))
+                                    (tagHtml.Contains("<div") || tagHtml.Contains("<table") || tagHtml.Contains("<img") || tagHtml.Contains("<p")))
                                 {
                                     // Gebruik de HTML uit de Tag direct (voor TOC met flexbox/table layout)
                                     htmlBuilder.AppendLine(tagHtml);
@@ -709,7 +709,7 @@
 
             var sb = new StringBuilder();
 
-            if (paragraph.Tag is string tagString && tagString.StartsWith("<svg"))
+            if (paragraph.Tag is string tagString && (tagString.StartsWith("<svg") || tagString.StartsWith("<img")))
             {
 
                 //sb.AppendLine("<div class=\"svg-container\">");

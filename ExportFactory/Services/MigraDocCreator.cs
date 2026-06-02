@@ -1543,6 +1543,7 @@ namespace ExportFactory.Services
                @"(?<div>\<div[^>]*>.*?\</div\>)|" +
                @"(?<table>\<table[^>]*>.*?\</table\>)|" +
                @"(?<svg>\<svg.*?\</svg\>)|" +
+               @"(?<img>\<img\s[^>]*/?>)|" +
                 @"(?<png>data:image\/png;base64,[A-Za-z0-9+/=]+)|" +
                 @"(?<link><a\s+href=['""]#([^'""]+)['""][^>]*>(.*?)</a>)|" +
                 @"(?<bookmark><span\s+id=['""]([^'""]+)['""][^>]*>(.*?)</span>)|" +
@@ -1612,6 +1613,28 @@ namespace ExportFactory.Services
                     // gebruik de Tag om het SVG object in te bewaren
                     // dit wordt gebruikt bij conversie naar HTML.
                     paragraph.Tag = svgString;
+                }
+
+                if (match.Groups["img"].Success)
+                {
+                    string imgHtml = match.Value;
+
+                    if (_isRtfContent)
+                    {
+                        // RTF: probeer base64 png uit src attribuut te halen
+                        var srcMatch = Regex.Match(imgHtml, @"src=['""]data:image\/png;base64,([A-Za-z0-9+/=]+)['""]");
+                        if (srcMatch.Success && cache != null)
+                        {
+                            byte[] pngBytes = Convert.FromBase64String(srcMatch.Groups[1].Value);
+                            cache.AddPngBytesToSection(paragraph.Section, pngBytes, widthCm: 10, maxHeightCm: 15);
+                        }
+                    }
+                    else
+                    {
+                        // HTML/preview: bewaar de img tag in de Tag voor HtmlCreator
+                        paragraph.Tag = imgHtml;
+                    }
+                    continue;
                 }
 
                 if (match.Groups["png"].Success)
