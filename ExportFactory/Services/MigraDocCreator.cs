@@ -1243,7 +1243,15 @@ namespace ExportFactory.Services
             {
                 var row = table.AddRow();
                 row.Cells[0].AddParagraph(item.Label);
-                row.Cells[1].AddParagraph(item.StringValue);
+
+                // SVG/img content moet als paragraph.Tag worden gezet zodat HtmlCreator
+                // het direct als HTML rendert via ProcessParagraph — niet als plain text.
+                var valuePar = row.Cells[1].AddParagraph();
+                var trimmed = item.StringValue?.TrimStart() ?? "";
+                if (trimmed.StartsWith("<svg") || trimmed.StartsWith("<img"))
+                    valuePar.Tag = item.StringValue;
+                else
+                    valuePar.AddText(item.StringValue);
             }
         }
 
@@ -2042,14 +2050,22 @@ namespace ExportFactory.Services
                 }
                 else if (token.StartsWith("{") && token.Contains(":") && token.EndsWith("}")) // Color
                 {
-                    var parts = token.Trim('{', '}').Split(':');
-                    var color = parts[0];
-                    var text = parts[1];
-                    var formattedText = paragraph.AddFormattedText(text);
-                    formattedText.Color = Color.Parse(color);
+                    var parts = Regex.Match(token, @"\{(.*?):(.*?)\}").Groups;
+                    var color = parts[1].Value.Trim(); // linkerdeel is de kleur
+                    var content = parts[2].Value.Trim(); // rechterdeel is de tekst
+
+                    AddFormattedTextWithEmojiFont(paragraph, content, Color.Parse(color));
+
+                    //var text = paragraph.AddFormattedText(content); // TODO ook Emoji in kleur zetten.
+                    //text.Color = Color.Parse(color);
                 }
-                else // Plain text
+                else if (token == "\n")
                 {
+                    paragraph.AddLineBreak();
+                }
+                else
+                {
+                    // Regular text
                     paragraph.AddText(token);
                 }
             }
