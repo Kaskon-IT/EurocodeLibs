@@ -294,6 +294,21 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        private bool _isOpgave;
+
+        /// <summary>
+        /// Geeft aan of de wapening een vaste opgave van de gebruiker is.
+        /// - <c>true</c>: de wapening wordt NIET automatisch bijgewerkt door de applicatie; er wordt
+        ///   gerekend met de door de gebruiker opgegeven <see cref="Tekst"/>. De invoer is aanpasbaar.
+        /// - <c>false</c>: de wapening wordt automatisch berekend/bijgewerkt door de applicatie; de invoer is disabled.
+        /// </summary>
+        [TableColumn(Label = "opgave gebruiker")]
+        public bool IsOpgave
+        {
+            get => _isOpgave;
+            set => SetProperty(ref _isOpgave, value);
+        }
+
         private string? _tekstOndergrens;
 
         /// <summary>
@@ -448,6 +463,7 @@ namespace Eurocode.BetonConstructies
                 ReferentieLengte = this.ReferentieLengte,
                 ReferentieDekking = this.ReferentieDekking,
                 LaagNummer = this.LaagNummer,
+                IsOpgave = this.IsOpgave,
                 AantalBijlegStaven = this.AantalBijlegStaven,
                 DiameterBijlegStaven = this.DiameterBijlegStaven
             };
@@ -546,6 +562,49 @@ namespace Eurocode.BetonConstructies
                 return AsBasis + AsBijleg;
             } 
         }
+
+        /// <summary>
+        /// Aantal staven met bijbehorende diameter per staafgroep, afgeleid uit <see cref="Tekst"/>.
+        /// <para>
+        /// Voorbeelden (bij <see cref="ReferentieLengte"/> = 1000 mm):
+        /// <list type="bullet">
+        /// <item>"4r12" → [(4, 12)]</item>
+        /// <item>"r8-150" → [(1000/150 ≈ 6.67, 8)]</item>
+        /// <item>"r8-150+3r12" → [(6.67, 8), (3, 12)]</item>
+        /// </list>
+        /// Bij hart-op-hart-formaat schaalt het aantal mee met <see cref="ReferentieLengte"/>.
+        /// </para>
+        /// </summary>
+        public List<(double Aantal, double Diameter)> Staven
+        {
+            get
+            {
+                List<(double Aantal, double Diameter)> staven = [];
+                if (string.IsNullOrWhiteSpace(Tekst))
+                    return staven;
+
+                var wapgroepen = WapeningHelper.GetWapGroepen(Tekst);
+                if (wapgroepen == null)
+                    return staven;
+
+                foreach (var wapgroep in wapgroepen)
+                {
+                    var trimmed = wapgroep.Trim();
+                    if (string.IsNullOrEmpty(trimmed))
+                        continue;
+
+                    staven.Add(WapeningHelper.GetAantalEnDiameter(trimmed, ReferentieLengte));
+                }
+
+                return staven;
+            }
+        }
+
+        /// <summary>
+        /// Totaal aantal staven over alle staafgroepen, afgeleid uit <see cref="Tekst"/>.
+        /// Bij hart-op-hart-formaat is dit afhankelijk van <see cref="ReferentieLengte"/>.
+        /// </summary>
+        public double AantalStaven => Staven.Sum(s => s.Aantal);
 
         private List<string>? _wapgroepen;
         public List<WapeningContext> _subgroepen { get; set; } = [];

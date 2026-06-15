@@ -210,6 +210,30 @@ namespace Eurocode.BetonConstructies
         }
 
 
+        /// <summary>
+        /// Bepaalt het aantal staven en de diameter van één enkele staafgroep (zonder '+').
+        /// <para>
+        /// - Staaf-formaat (bijv. "4r12") geeft het opgegeven aantal terug (n=4, Ø=12).<br/>
+        /// - Hart-op-hart-formaat (bijv. "r8-150") geeft aantal = <paramref name="lengte"/> / hoh (Ø=8).
+        ///   Bij meerdere sneden (bijv. "2r8-100") wordt dat n<sub>snede</sub> · <paramref name="lengte"/> / hoh.
+        /// </para>
+        /// </summary>
+        /// <param name="wapgroep">één enkele staafgroep (zonder '+')</param>
+        /// <param name="lengte">referentielengte in mm waarover het aantal wordt bepaald (alleen relevant voor hoh-formaat)</param>
+        /// <returns>aantal staven en diameter [mm] van de groep</returns>
+        public static (double aantal, double diameter) GetAantalEnDiameter(string wapgroep, double lengte = 1000.0)
+        {
+            var details = GetWapDetails(wapgroep);
+
+            // Hart-op-hart-formaat: GetWapDetails geeft het aantal per 1000 mm; schaal naar referentielengte.
+            if (wapgroep.Contains('-'))
+                return ((details.n ?? 0) * lengte / 1000.0, details.diam);
+
+            // Staaf-formaat: aantal is direct opgegeven (bijv. "4r12").
+            return (details.n ?? 0, details.diam);
+        }
+
+
         public static double GetKleinsteHohMaat(List<string>? wapGroepen)
         {
             if (wapGroepen == null) return 1000;
