@@ -44,25 +44,20 @@ namespace Eurocode.Grondslagen
         public override string Heading { get; set; } = "Grondslagen";
 
         //[TableColumn("Eurocode")]
-        public NationaleBijlageEnum? NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
+        public NationaleBijlageEnum NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
 
         //[TableColumn("NB")]
         public string FlagSvg
         {
             get
             {
-                if (NationaleBijlage == null)
-                    return "";
-                else
+                return NationaleBijlage switch
                 {
-                    return NationaleBijlage switch
-                    {
-                        NationaleBijlageEnum.NL => Flags.NL,
-                        NationaleBijlageEnum.BE => Flags.BE,
-                        NationaleBijlageEnum.DE => Flags.DE,
-                        _ => Flags.EU,
-                    };
-                }
+                    NationaleBijlageEnum.NL => Flags.NL,
+                    NationaleBijlageEnum.BE => Flags.BE,
+                    NationaleBijlageEnum.DE => Flags.DE,
+                    _ => Flags.EU,
+                };
             }
         }
 
@@ -100,7 +95,7 @@ namespace Eurocode.Grondslagen
 
 
         [TableColumn(Label = "ontwerplevensduur", Article = "2.3")]
-        public OntwerpLevensduurEnum? OntwerpLevensduur { get; set; } = OntwerpLevensduurEnum.Vijftig;
+        public OntwerpLevensduurEnum OntwerpLevensduur { get; set; } = OntwerpLevensduurEnum.Vijftig;
 
 
         /// <summary>
@@ -111,7 +106,7 @@ namespace Eurocode.Grondslagen
         /// </summary>
         /// 
         [TableColumn(Label = "gevolgklasse", Article = "Bijlage B")]
-        public GevolgklasseEnum? Gevolgklasse
+        public GevolgklasseEnum Gevolgklasse
         {
             get => _gevolgklasse;
             set
@@ -123,7 +118,7 @@ namespace Eurocode.Grondslagen
                 }
             }
         }
-        private GevolgklasseEnum? _gevolgklasse = GevolgklasseEnum.CC2;
+        private GevolgklasseEnum _gevolgklasse = GevolgklasseEnum.CC2;
 
 
 
@@ -203,13 +198,6 @@ namespace Eurocode.Grondslagen
         protected override bool Valideer()
         {
             Meldingen.Clear();
-            if (NationaleBijlage == null)
-            {
-                Meldingen.Add(new Melding(MeldingType.Error, "Nationale bijlage is niet opgegeven"));
-                return false;
-            }
-
-
             return true;
         }
 

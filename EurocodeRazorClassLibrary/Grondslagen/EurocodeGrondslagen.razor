@@ -9,19 +9,19 @@
                   ReadOnly="ReadOnly"
                   Placeholder="Selecteer..."
                   TEnum="Eurocode.Grondslagen.NationaleBijlageEnum"
-                  ShowDescription="true" @bind-EnumSelectedValue="@Model.NationaleBijlage" />
+                  ShowDescription="true" @bind-EnumValue="@Model.NationaleBijlage" />
 
 <FluentSelectEnum Label="gevolgklasse (Consequence Class)"
                   ReadOnly="ReadOnly"
                   Placeholder="Selecteer..."
                   TEnum="Eurocode.Grondslagen.GevolgklasseEnum"
                   ShowDescription="false"
-                  @bind-EnumSelectedValue="@Model.Gevolgklasse" />
+                  @bind-EnumValue="@Model.Gevolgklasse" />
 
 <FluentSelectEnum Label="ontwerplevensduur"
                   ReadOnly="ReadOnly"
                   TEnum="Eurocode.Grondslagen.OntwerpLevensduurEnum"
-                  @bind-EnumSelectedValue="@Model.OntwerpLevensduur" />
+                  @bind-EnumValue="@Model.OntwerpLevensduur" />
 
 
 

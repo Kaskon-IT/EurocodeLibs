@@ -14,7 +14,7 @@
             };
         }
 
-        public static BetrouwbaarheidsklasseEnum GetBetrouwbaarheidsklasse(this GevolgklasseEnum? gevolgklasse)
+        public static BetrouwbaarheidsklasseEnum GetBetrouwbaarheidsklasse(this GevolgklasseEnum gevolgklasse)
         {
             return gevolgklasse switch
             {
@@ -31,12 +31,12 @@
         /// </summary>
         /// <param name="nb"></param>
         /// <returns></returns>
-        public static double GetReductieFactorVoorOngunstigeBlijvendeBelastingen(this NationaleBijlageEnum? nb)
+        public static double GetReductieFactorVoorOngunstigeBlijvendeBelastingen(this NationaleBijlageEnum nb)
         {
             return nb switch
             {
                 NationaleBijlageEnum.EU => 1.15 / 1.35,
-                NationaleBijlageEnum.NL => 1.2 / 1.35,
+                NationaleBijlageEnum.NL => 1.20 / 1.35,
                 _ => 1.15 / 1.35
             };
         }
@@ -47,7 +47,7 @@
         /// </summary>
         /// <param name="nb">De nationale bijlage</param>
         /// <returns></returns>
-        public static double GetUitvoeringstoleraties(this NationaleBijlageEnum? nb)
+        public static double GetUitvoeringstoleraties(this NationaleBijlageEnum nb)
         {
             return nb switch
             {
@@ -60,14 +60,10 @@
         }
 
 
-        public static string GetOntwerplevensduurTekst(this OntwerpLevensduurEnum? OntwerpLevensduur)
+        public static string GetOntwerplevensduurTekst(this OntwerpLevensduurEnum OntwerpLevensduur)
         {
-            if (OntwerpLevensduur == null) return "onbekend";
-            else
-            {
-                var jaren = (int)OntwerpLevensduur;
-                return $"{jaren} jaar";
-            }
+            var jaren = (int)OntwerpLevensduur;
+            return $"{jaren} jaar";
         }
 
         //public static Dictionary<string, string> GetRowData(this GrondslagenContext context)
