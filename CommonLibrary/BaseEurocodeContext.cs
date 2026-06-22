@@ -326,6 +326,7 @@ namespace CommonLibrary
             if (!bestaatAl)
             {
                 Meldingen.Add(melding);
+                //Console.WriteLine(melding);
             }
         }
 
@@ -339,7 +340,7 @@ namespace CommonLibrary
             var melding = CommonLibrary.Helpers.MeldingenBetonHelper.GetMelding(code);
             AddMelding(melding);
 #if DEBUG
-            Console.WriteLine($"{melding}");
+            //Console.WriteLine($"{melding}");
 #endif
         }
 

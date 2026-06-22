@@ -123,6 +123,7 @@ namespace Eurocode.BetonConstructies
             }
 
             // Gemiddeld oppervlak per staaf
+            if (nTotaal <= 0 || oppTotaal <= 0) return 0;
             double gemiddeldOppervlak = oppTotaal / nTotaal;
 
             // Equivalent gemiddelde diameter
@@ -130,7 +131,8 @@ namespace Eurocode.BetonConstructies
 
             return Math.Round(gemiddeldeDiameter, 3);
 
-            //return noemer > 0 ? teller / noemer : 0.0;
+           
+
         }
 
         public double BerekenGemiddeldeDiamter(List<(double a, double d, double? hoh, double? n)> groepen)

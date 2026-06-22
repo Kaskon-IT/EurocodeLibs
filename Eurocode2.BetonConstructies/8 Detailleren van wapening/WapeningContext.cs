@@ -114,7 +114,15 @@ namespace Eurocode.BetonConstructies
 
         public string SanitizedTekst()
         {
-            return Tekst
+            string tekstCompleet = $"{Tekst}";
+            
+            if (!String.IsNullOrWhiteSpace(BijlegWapening))
+            {
+                tekstCompleet += $"+{BijlegWapening}";
+            }
+
+
+            return tekstCompleet
                 .Replace("x", "Ø")
                 .Replace("*", "Ø")
                 .Replace("r", "Ø")

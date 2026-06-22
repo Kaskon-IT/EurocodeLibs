@@ -34,11 +34,13 @@
                     stream.CopyTo(ms);
                     _fontData[fontKey] = ms.ToArray();
 
-                    Console.WriteLine($"✅ Font geladen: {fontKey} vanuit resource: {resource}");
 
                     _faceNameToKey[fontKey] = fontKey;
                 }
             }
+
+            Console.WriteLine($"✅ Fonts geladen: {string.Join(", ", _fontData.Keys)}");
+
 
             // Voeg handmatige alias toe voor veelgebruikte fontnamen
 

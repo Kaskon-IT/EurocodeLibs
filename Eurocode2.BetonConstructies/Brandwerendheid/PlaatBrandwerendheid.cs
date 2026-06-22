@@ -47,6 +47,9 @@ namespace Eurocode.BetonConstructies
             return rei;
         }
 
+
+
+
         /// <summary>
         /// Bepaal de minimale hartafstand a voor een vrijdragende massieve plaat in 1 richting.
         /// Ref: NEN-EN 1992-1-2:2004, Tabel 5.8
