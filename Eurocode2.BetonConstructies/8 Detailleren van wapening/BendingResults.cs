@@ -487,12 +487,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public double LengteMaatBijGedrongenLiggerInMM { get; set; } = 400;
         public bool Uitkraging = false;
-
-
         public bool StatischBepaald { get; set; } = true;
-
-
-
 
         public Schematisering.GedrongenEnum? Gedrongen
         {
@@ -803,9 +798,16 @@ namespace Eurocode.BetonConstructies
             //_meldingCodes?.Clear();
             bool returnVal = true;
 
+            if (double.IsNaN(AsRequired))
+            {
+                AddMelding(StandaardMeldingenCatalogus.BerekeningNietAkkoord);
+                returnVal = false;
+            }
+
             if (double.IsNaN(Xu))
             {
                 AddMelding(StandaardMeldingenCatalogus.BerekeningNietAkkoord);
+                returnVal = false;
             }
 
             if (Xu > XuMax)

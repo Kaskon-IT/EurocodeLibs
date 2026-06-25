@@ -145,9 +145,12 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                if (_gemiddeldeDiameter == 0 && !string.IsNullOrEmpty(Tekst))
+                if (_gemiddeldeDiameter == 0 &&
+                    !string.IsNullOrEmpty(TekstCompleet)
+                    )
                 {
-                    _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
+                    var wat = TekstCompleet;
+                    _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(TekstCompleet);
                 }
                 return _gemiddeldeDiameter;
             }
@@ -227,8 +230,8 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public void SetZRef()
         {
-            _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
-            _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
+            _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(TekstCompleet);
+            _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(TekstCompleet);
             _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
             // GEEN OnPropertyChanged calls - dit voorkomt loops!
         }
@@ -303,6 +306,8 @@ namespace Eurocode.BetonConstructies
         }
 
         private bool _isOpgave;
+
+        public string TekstCompleet => string.Join("+", new[] { Tekst, BijlegWapening }.Where(s => !string.IsNullOrEmpty(s)));
 
         /// <summary>
         /// Geeft aan of de wapening een vaste opgave van de gebruiker is.
@@ -549,6 +554,8 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+        
+
         public double AsBijleg
         {
             get
@@ -588,10 +595,10 @@ namespace Eurocode.BetonConstructies
             get
             {
                 List<(double Aantal, double Diameter)> staven = [];
-                if (string.IsNullOrWhiteSpace(Tekst))
+                if (string.IsNullOrWhiteSpace(TekstCompleet))
                     return staven;
 
-                var wapgroepen = WapeningHelper.GetWapGroepen(Tekst);
+                var wapgroepen = WapeningHelper.GetWapGroepen(TekstCompleet);
                 if (wapgroepen == null)
                     return staven;
 
@@ -639,8 +646,8 @@ namespace Eurocode.BetonConstructies
         {
             if (!string.IsNullOrEmpty(Tekst))
             {
-                _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(Tekst);
-                _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(Tekst);
+                _gemiddeldeDiameter = WapeningHelper.GetGemiddeldeDiameter(TekstCompleet);
+                _grootsteDiameter = WapeningHelper.GetGrootsteDiameter(TekstCompleet);
                 _referentieAfstand = _referentieDekking + (_gemiddeldeDiameter / 2.0);
             }
         }

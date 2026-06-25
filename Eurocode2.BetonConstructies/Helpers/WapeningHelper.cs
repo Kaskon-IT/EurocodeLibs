@@ -72,6 +72,9 @@ namespace Eurocode.BetonConstructies
         {
 
             var wapgroepen = GetWapGroepen(wapening);
+
+            
+
             if (wapgroepen == null) return 0;
 
             return BerekenGemiddeldeDiameter(wapgroepen);
@@ -95,8 +98,8 @@ namespace Eurocode.BetonConstructies
 
         public static double BerekenGemiddeldeDiameter(List<string> wapgroepen)
         {
-            var teller = 0.0;
-            var noemer = 0.0;
+            //var teller = 0.0;
+            //var noemer = 0.0;
 
             var oppTotaal = 0.0;
             var nTotaal = 0.0;
@@ -135,14 +138,14 @@ namespace Eurocode.BetonConstructies
 
         }
 
-        public double BerekenGemiddeldeDiamter(List<(double a, double d, double? hoh, double? n)> groepen)
-        {
+        //public double BerekenGemiddeldeDiamter(List<(double a, double d, double? hoh, double? n)> groepen)
+        //{
 
-            double teller = groepen.Sum(g => g.n.Value * g.d);
-            double noemer = groepen.Sum(g => g.n.Value);
+        //    double teller = groepen.Sum(g => g.n.Value * g.d);
+        //    double noemer = groepen.Sum(g => g.n.Value);
 
-            return noemer > 0 ? teller / noemer : 0.0;
-        }
+        //    return noemer > 0 ? teller / noemer : 0.0;
+        //}
 
 
 
