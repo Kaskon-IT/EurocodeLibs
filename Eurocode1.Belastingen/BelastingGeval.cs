@@ -53,17 +53,30 @@ namespace Eurocode.Belastingen
             set => SetProperty(ref _gebruiksklasse, value);
         }
 
+
+
+
+        private OpgelegdeBelastingen _eigenOpgaveOpgelegdeBelastingen = new(3.0, 3.0);
         /// <summary>
         /// Opgelegde belastingen bij <see cref="GebruiksklasseEnum.EigenOpgave"/>.
         /// Wordt geserialiseerd; bij andere gebruiksklassen genegeerd.
         /// </summary>
-        public OpgelegdeBelastingen EigenOpgaveOpgelegdeBelastingen { get; set; } = new OpgelegdeBelastingen(3.0, 3.0);
+        public OpgelegdeBelastingen EigenOpgaveOpgelegdeBelastingen
+        {
+            get => _eigenOpgaveOpgelegdeBelastingen;
+            set => SetProperty(ref _eigenOpgaveOpgelegdeBelastingen, value);
+        }
 
+        private MomentaanFactoren _eigenOpgaveMomentaanFactoren = new(0.4, 0.5, 0.3);
         /// <summary>
         /// Momentaanfactoren bij <see cref="GebruiksklasseEnum.EigenOpgave"/>.
         /// Wordt geserialiseerd; bij andere gebruiksklassen genegeerd.
         /// </summary>
-        public MomentaanFactoren EigenOpgaveMomentaanFactoren { get; set; } = new MomentaanFactoren(0.4, 0.5, 0.3);
+        public MomentaanFactoren EigenOpgaveMomentaanFactoren
+        {
+            get => _eigenOpgaveMomentaanFactoren;
+            set => SetProperty(ref _eigenOpgaveMomentaanFactoren, value);
+        }
 
         // Platte bindbare properties voor de eigen-opgave waarden (structs zijn niet direct bindbaar)
         [JsonIgnore] public double EigenOpgaveVlaklast  { get => EigenOpgaveOpgelegdeBelastingen.Vlaklast;  set { var v = EigenOpgaveOpgelegdeBelastingen; v.Vlaklast  = value; EigenOpgaveOpgelegdeBelastingen = v; } }

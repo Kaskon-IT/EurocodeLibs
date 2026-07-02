@@ -16,16 +16,6 @@ namespace Eurocode.Grondslagen
 {
     public class GrondslagenContext : BaseEurocodeContext, IMarkupConvertible, INotifyPropertyChanged
     {
-        //public event PropertyChangedEventHandler? PropertyChanged;
-
-        //protected void OnPropertyChanged(string propertyName)
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
-
-        // check of alles nog werkt, met bovenstaande uitgecommentarieerde code
-
-
         public override string ToString()
         {
             return ToString(false);
@@ -43,10 +33,20 @@ namespace Eurocode.Grondslagen
 
         public override string Heading { get; set; } = "Grondslagen";
 
-        //[TableColumn("Eurocode")]
-        public NationaleBijlageEnum NationaleBijlage { get; set; } = NationaleBijlageEnum.NL;
+        private NationaleBijlageEnum _nationaleBijlage = NationaleBijlageEnum.NL;
+        public NationaleBijlageEnum NationaleBijlage 
+        { 
+            get => _nationaleBijlage;
+            set
+            {
+                if (_nationaleBijlage != value)
+                {
+                    _nationaleBijlage = value;
+                    OnPropertyChanged(nameof(NationaleBijlage));
+                }
+            }
+        } 
 
-        //[TableColumn("NB")]
         public string FlagSvg
         {
             get
@@ -61,7 +61,6 @@ namespace Eurocode.Grondslagen
             }
         }
 
-        //[TableColumn("Land")]
         public string FlagEmoji
         {
             get
@@ -93,9 +92,20 @@ namespace Eurocode.Grondslagen
         public string NormTitel => $"{NormPrefix}-EN 1990 Grondslagen voor het ontwerp van constructies";
 
 
-
+        private OntwerpLevensduurEnum _ontwerplevensduur;
         [TableColumn(Label = "ontwerplevensduur", Article = "2.3")]
-        public OntwerpLevensduurEnum OntwerpLevensduur { get; set; } = OntwerpLevensduurEnum.Vijftig;
+        public OntwerpLevensduurEnum OntwerpLevensduur
+        {
+            get => _ontwerplevensduur;
+            set
+            {
+                if (_ontwerplevensduur != value)
+                {
+                    _ontwerplevensduur = value;
+                    OnPropertyChanged(nameof(OntwerpLevensduur));
+                }
+            }
+        }
 
 
         /// <summary>

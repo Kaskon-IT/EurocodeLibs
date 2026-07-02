@@ -398,9 +398,14 @@ namespace Eurocode.BetonConstructies
         {
             get
             {
-                return Math.Max(XuD / XuDMax, AsRequired / Wapening.As);
+                return _unityChecks.Max();
             }
         }
+
+
+        private List<double> _unityChecks => new List<double> { XuD / XuDMax, AsRequired / Wapening.As, AsApplied / AsMax };
+
+
 
         [TableColumn(
             Visible = !false,

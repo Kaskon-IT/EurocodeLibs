@@ -1,20 +1,16 @@
 ﻿using CommonLibrary;
 using Eurocode.Grondslagen;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace Eurocode.Belastingen
 {
-
-
-
-
-
     public class BelastingenContext : BaseEurocodeContext
     {
-
         public BelastingenContext()
         {
             Grondslagen = new();
+            SubscribeBelastingGevallen();
         }
 
         public override string? ToString()
@@ -27,13 +23,15 @@ namespace Eurocode.Belastingen
         public BelastingenContext(GrondslagenContext grondslagen)
         {
             Grondslagen = grondslagen;
-
-
+            SubscribeBelastingGevallen();
             GenereerBelastingCombinaties(this, this.BelastingGevallen, this.CombinatiesTypes);
         }
 
         private GrondslagenContext _grondslagen = new();
-
+        
+        /// <summary>
+        /// Grondslagen voor de belastingen. 
+        /// </summary>
         public GrondslagenContext Grondslagen
         {
             get => _grondslagen;
@@ -46,33 +44,38 @@ namespace Eurocode.Belastingen
         }
 
 
+        private List<BelastingGeval> _belastingGevallen = 
+        [
+            new BelastingGeval(){
+                Nr = 1,
+                Omschrijving = "G",
+                Type = BelastingGeval.BelastingGevalTypeEnum.Permanent,
+                Gebruiksklasse = null,
+            },
 
+            new BelastingGeval(){
+                Nr = 2,
+                Omschrijving = "q",
+                Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
+                Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_vloeren,
+                Opmerking = "vlaklast"
+            },
+        ];
 
-        public List<BelastingGeval> BelastingGevallen { get; set; } =
-            [
-                new BelastingGeval(){
-                    Nr = 1,
-                    Omschrijving = "G",
-                    Type = BelastingGeval.BelastingGevalTypeEnum.Permanent,
-                    Gebruiksklasse = null,
-                },
-
-                new BelastingGeval(){
-                    Nr = 2,
-                    Omschrijving = "q",
-                    Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
-                    Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_vloeren,
-                    Opmerking = "vlaklast"
-                },
-
-                //new BelastingGeval(){
-                //    Nr = 3,
-                //    Omschrijving = "Q",
-                //    Type = BelastingGeval.BelastingGevalTypeEnum.Veranderlijk,
-                //    Gebruiksklasse = GebruiksklasseEnum.A_gemeenschappelijke_trappen,
-                //    Opmerking = "puntlast"
-                //},
-            ];
+        /// <summary>
+        /// Belastinggevallen, standaard BG1 ben BG2 voor respectievelijk permanent en veranderlijk.
+        /// </summary>
+        public List<BelastingGeval> BelastingGevallen
+        {
+            get => _belastingGevallen;
+            set
+            {
+                UnsubscribeBelastingGevallen();
+                _belastingGevallen = value ?? [];
+                SubscribeBelastingGevallen();
+                OnPropertyChanged(nameof(BelastingGevallen));
+            }
+        }
 
 
         public List<BelastingCombinatieTypeEnum> CombinatiesTypes { get; set; } = [
@@ -87,11 +90,7 @@ namespace Eurocode.Belastingen
 
 
 
-
-
-
         public List<BelastingCombinatie> BelastingCombinaties { get; set; } = [];
-
 
 
         public void GenereerBelastingCombinaties(
@@ -100,8 +99,6 @@ namespace Eurocode.Belastingen
             List<BelastingCombinatieTypeEnum> combinatieTypes,
             bool permanentOokGunstig = false,
             bool ookAlleenPermanenteBelasting = false
-
-
             )
         {
             // alleen voor situatie met 1 permanent (BG1), en veranderlijk q (BG2) en Q(BG3)
@@ -239,6 +236,26 @@ namespace Eurocode.Belastingen
         }
 
 
+        private void SubscribeBelastingGevallen()
+        {
+            foreach (var bg in _belastingGevallen)
+            {
+                bg.PropertyChanged -= OnBelastingGevalChanged; // voorkom dubbele subscription
+                bg.PropertyChanged += OnBelastingGevalChanged;
+            }
+        }
+
+        private void UnsubscribeBelastingGevallen()
+        {
+            if (_belastingGevallen is null) return;
+            foreach (var bg in _belastingGevallen)
+                bg.PropertyChanged -= OnBelastingGevalChanged;
+        }
+
+        // Bubbelt een wijziging van een BelastingGeval omhoog naar de assemblage → ProjectState
+        private void OnBelastingGevalChanged(object? sender, PropertyChangedEventArgs e)
+            => OnPropertyChanged(nameof(BelastingGevallen));
+
 
         protected override void Bereken()
         {
@@ -249,14 +266,5 @@ namespace Eurocode.Belastingen
         {
             return true; // geen validatie
         }
-
-        //public override MarkupString ToHtml(bool isDraaiTabel = true)
-        //{
-        //    return new MarkupString("BelastingenContext.ToHtml() not implemented yet.");
-        //    //throw new NotImplementedException();
-        //}
     }
-
-
-
 }

@@ -117,12 +117,13 @@ namespace Eurocode.BetonConstructies
             get => _dekkingToe;
             set
             {
-                if (_dekkingToe != value)
-                {
-                    _dekkingToe = value;
-                    OnPropertyChanged(nameof(DekkingToe));
-                    BerekenEnValideer();
-                }
+                SetProperty(ref _dekkingToe, value);
+                //if (_dekkingToe != value)
+                //{
+                //    _dekkingToe = value;
+                //    OnPropertyChanged(nameof(DekkingToe));
+                //    BerekenEnValideer();
+                //}
 
 
             }
