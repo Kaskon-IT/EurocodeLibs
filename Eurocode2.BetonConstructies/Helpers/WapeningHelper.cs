@@ -17,6 +17,38 @@ namespace Eurocode.BetonConstructies
             return n * Math.Pow(d, 2) * Math.PI / 4;
         }
 
+        public static double GetBuigdoorMin(double diam)
+        {
+            if (diam > 16) return 7 * diam;
+            else return 4 * diam;
+        }
+
+        public static double GetBuigdoornMin(double fcd, double ab, double fbt, double d)
+        {
+            // diam >= Fbt ((1/ab) +1/(2 φ)) / fcd 
+            fcd = Math.Clamp(fcd, 1, 55.0 / 1.5); // niet voorbij fck 55.
+            d = Math.Max(d, 1); // voorkom deling door nul
+            ab = Math.Max(ab, 1); // voorkom deling door nul
+
+            return fbt * ((1/ab) + 1/(2*d)) / fcd;
+        }
+
+
+        public static double GetLbReq(double ab, double fbt, double d, int fck )
+        {
+            var i = new VerankeringslengteInput()
+            {
+                Ab = ab,
+                Fbt = fbt,
+                Diameter = d,
+                Beton = new BetonContext(fck)
+            };
+            
+            var r = VerankeringslengteCalculator.Bereken(i);
+            return r.BasisVerankeringslengte;
+        }
+
+
 
         public static List<string>? GetWapGroepen(string wapening)
         {

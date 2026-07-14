@@ -4,11 +4,11 @@
 
     public class J3ConsoleInput : BaseInput
     {
-        private double _l = 250;
-        public double L
+        private double _lc = 250;
+        public double Lc
         {
-            get => _l;
-            set => SetProperty(ref _l, value);
+            get => _lc;
+            set => SetProperty(ref _lc, value);
         }
 
         private double _factorHEd = 0.4;
@@ -16,6 +16,13 @@
         {
             get => _factorHEd;
             set => SetProperty(ref _factorHEd, value);
+        }
+
+        private double _factorZ = 0.8;
+        public double FactorZ
+        {
+            get => _factorZ;
+            set => SetProperty(ref _factorZ, value);
         }
 
         public double HEd => FactorHEd * FEd;
@@ -28,26 +35,26 @@
         }
 
 
-        private double _b = 350;
-        public double B
+        private double _bc = 350;
+        public double Bc
         {
-            get => _b;
-            set => SetProperty(ref _b, value);
+            get => _bc;
+            set => SetProperty(ref _bc, value);
         }
 
-        private double _bw = 400;
-        public double Bw
+        private double _kolomDikte = 300;
+        public double KolomDikte
         {
-            get => _bw;
-            set => SetProperty(ref _bw, value);
+            get => _kolomDikte;
+            set => SetProperty(ref _kolomDikte, value);
         }
 
 
-        private double _h = 450;
-        public double H
+        private double _hc = 450;
+        public double Hc
         {
-            get => _h;
-            set => SetProperty(ref _h, value);
+            get => _hc;
+            set => SetProperty(ref _hc, value);
         }
 
         private double _ac = 125;
@@ -107,6 +114,21 @@
             set => SetProperty(ref _hoofdstaafDiameter, value);
         }
 
+        private double _hoofdstaafAantal = 4;
+        public double HoofdstaafAantal
+        {
+            get => _hoofdstaafAantal;
+            set => SetProperty(ref _hoofdstaafAantal, value);
+        }
+
+        private double _hoofdstaafBuigdoornDiameterFactor = 10;
+        public double HoofdstaafBuigdoornDiameterFactor
+        {
+            get => _hoofdstaafBuigdoornDiameterFactor;
+            set => SetProperty(ref _hoofdstaafBuigdoornDiameterFactor, value);
+        }
+        
+
         private double _fck = 30;
         public double Fck
         {
@@ -114,7 +136,7 @@
             set => SetProperty(ref _fck, value);
         }
 
-        private double _alphaCc = 0.85;
+        private double _alphaCc = 1.0;
         public double AlphaCc
         {
             get => _alphaCc;

@@ -397,6 +397,15 @@ namespace Eurocode.BetonConstructies
 
                 r.ResultRows.Add(new()
                 {
+                    Toelichting = "Verankeringslengte",
+                    SymboolTex = @"l_{b,req}",
+                    Waarde = r.Verankeringslengte.ToString("0"),
+                    Eenheid = "mm",
+
+                });
+
+                r.ResultRows.Add(new()
+                {
                     Toelichting = "Minimale buigstraal (binnenzijde)",
                     SymboolHtml = "<i>r</i><sub>min</sub>",
                     SymboolTex = @"r_{min}",
@@ -404,6 +413,8 @@ namespace Eurocode.BetonConstructies
                     Eenheid = "mm",
                     FormuleTex = @"r_{min}=Ø_{m,min}/2",
                 });
+
+                
             }
         }
     }

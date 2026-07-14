@@ -10,10 +10,10 @@ namespace Eurocode.BetonConstructies
         {
             var ci = CultureInfo.InvariantCulture;
 
-            double B = i.B;
-            double Bw = i.Bw;
-            double H = i.H;
-            double L = i.L;
+            double B = i.Bc;
+            double Bw = i.KolomDikte;
+            double H = i.Hc;
+            double L = i.Lc;
             double x1 = r.X1;
             double ac = i.Ac;
             double c = i.Dekking;
@@ -41,7 +41,7 @@ namespace Eurocode.BetonConstructies
             double n0x = ac;
             double n0y = 0;
 
-            double dX = i.FactorHEd * (r.H - r.D);
+            double dX = i.FactorHEd * (r.Hc - r.D);
 
 
 

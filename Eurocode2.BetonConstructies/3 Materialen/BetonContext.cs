@@ -24,6 +24,27 @@ namespace Eurocode.BetonConstructies
         public override double E => Ecm;
 
 
+        public BetonContext(int fck)
+        {
+
+            if (fck >= 90) Betonsterkteklasse = BetonsterkteklasseEnum.C90_105;
+            else if (fck >= 80) Betonsterkteklasse = BetonsterkteklasseEnum.C80_95;
+            else if (fck >= 70) Betonsterkteklasse = BetonsterkteklasseEnum.C70_85;
+            else if (fck >= 60) Betonsterkteklasse = BetonsterkteklasseEnum.C60_75;
+            
+            else if (fck >= 55) Betonsterkteklasse = BetonsterkteklasseEnum.C55_67;
+            else if (fck >= 50) Betonsterkteklasse = BetonsterkteklasseEnum.C50_60;
+            else if (fck >= 45) Betonsterkteklasse = BetonsterkteklasseEnum.C45_55;
+            else if (fck >= 40) Betonsterkteklasse = BetonsterkteklasseEnum.C40_50;
+            else if (fck >= 35) Betonsterkteklasse = BetonsterkteklasseEnum.C35_45;
+            else if (fck >= 30) Betonsterkteklasse = BetonsterkteklasseEnum.C30_37;
+            else if (fck >= 25) Betonsterkteklasse = BetonsterkteklasseEnum.C25_30;
+            else if (fck >= 20) Betonsterkteklasse = BetonsterkteklasseEnum.C20_25;
+            
+            else if (fck >= 16) Betonsterkteklasse = BetonsterkteklasseEnum.C16_20;
+            else Betonsterkteklasse = BetonsterkteklasseEnum.C12_15;
+        }
+
         public BetonContext() 
         {
             PartieleFactor = 1.5;

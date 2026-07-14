@@ -8,10 +8,10 @@
             double fyd = i.Fyk / i.GammaS;
             double nu = 1.0 - i.Fck / 250.0;
             double nEd = i.NEd; // normaalkracht in kolom/wand
-            double dsnOppKolom = i.Bw * i.B;
-            double sigmaBasis = nEd * 1000 / dsnOppKolom;
-            
+            double dsnOppKolom = i.KolomDikte * i.Bc;
+            double sigmaBasis = 0; // er is geen spanning, // check dit met Martijn, waarom niet nEd * 1000 / dsnOppKolom;
 
+            double factorZ = i.FactorZ;
 
 
             double sigma1RdMax = 1.00 * nu * fcd; // CCC
@@ -29,33 +29,38 @@
             {
                 case J3ConsoleLinkType.Geen: 
                 case J3ConsoleLinkType.HorizontaalOfSchuin: 
-                    d = i.H - i.Dekking - 0.5 * i.HoofdstaafDiameter; break;
+                    d = i.Hc - i.Dekking - 0.5 * i.HoofdstaafDiameter; break;
                 case J3ConsoleLinkType.Verticaal:
-                    d = i.H - i.Dekking - i.BeugelDiameter - 0.5 * i.HoofdstaafDiameter; break;
+                    d = i.Hc - i.Dekking - i.BeugelDiameter - 0.5 * i.HoofdstaafDiameter; break;
 
             }
 
             // x1 uit druksterkte node 1 (met zelfbedachte ondergrens)
             double sigmaToelaatbaar = Math.Max(sigma1RdMax - sigmaBasis, 0);
-
-            double x1 = Math.Max(i.FEd * 1000.0 / (sigmaToelaatbaar * i.B), 0.2 * d);
-            double deltaA = i.FactorHEd * (i.H - d);
+            double x1Min = i.Dekking;
+            double x1 = Math.Max(i.FEd * 1000.0 / (sigmaToelaatbaar * i.Bc),x1Min);
+            double deltaA = i.FactorHEd * (i.Hc - d);
 
             // a = ac + x1/2 + deltaA
             double a = i.Ac + x1 / 2.0 + deltaA;
             // volgens jouw voorbeeld
-            double z = 0.9 * d;
+            double z = factorZ * d;
             double z0 = z * (i.Ac + deltaA) / a;
-            double y1 = (d - z) * 2; // volgens mij
             double tanTheta = z / a;
             double thetaDeg = Math.Atan(tanTheta) * 180.0 / Math.PI;
 
-            // Rotational equilibrium: FEd * a = Fc * z, zodat Ft = Fc = FEd * a/z + HEd
-
-            double ft = i.FEd * a / z + i.HEd; // met aandeel horizontaal
+            // Trekbandkracht volgens rekenvoorbeeld: Ft = FvEd * a_eff / z,
+            // waarbij a_eff (= a) de correctie voor de horizontale belasting al bevat (deltaA).
+            // Oftewel: Ft = (FvEd*a + FhEd*d1) / z.
+            // Oude logica (vervangen): double ft = i.FEd * a / z + i.HEd; // met aandeel horizontaal
+            double ft = i.FEd * a / z;
             double f1x = i.FEd * a / z; // 
             double f1y = i.FEd;
             double f1c = Math.Sqrt(f1x * f1x + f1y * f1y);
+
+            // Horizontaal knoopvlak volgens rekenvoorbeeld: y1 = Fc,x / (b * sigma_n).
+            // Oude logica (vervangen): double y1 = (d - z) * 2; // volgens mij
+            double y1 = f1x * 1000.0 / (i.Bc * sigmaToelaatbaar);
 
 
 
@@ -79,25 +84,27 @@
 
 
             // Node 1 verification
-            double sigmaNode1Ed = f1x * 1000.0 / (i.B * y1);
+            double sigmaNode1Ed = f1x * 1000.0 / (i.Bc * y1);
 
             // Node 2 verification below load plate
             double sigmaNode2Ed = i.FEd * 1000.0 / (i.LoadPlateLength * i.LoadPlateWidth);
 
             var result = new J3ConsoleResult
             {
-                H = i.H, // wacht even dit is input?? maar die wil ik ook in resultaat... hmmm.. even nadenken
-                B = i.B,
+                Hc = i.Hc, // wacht even dit is input?? maar die wil ik ook in resultaat... hmmm.. even nadenken
+                Bc = i.Bc,
                 FvEd = i.FEd,
+
                 FactorHorizontaal = i.FactorHEd,
                 DikteOplegmateriaal = i.DikteOplegmateriaal,
                 Ac = i.Ac,
 
-                L = i.L,
+                Lc = i.Lc,
                 Dekking = i.Dekking,
                 LoadPlateLength = i.LoadPlateLength,
                 LoadPlateWidth = i.LoadPlateWidth,
 
+                Fck = (int)i.Fck,
                 Fcd = fcd,
                 Fyd = fyd,
                 Nu = nu,
@@ -119,7 +126,13 @@
                 Y1 = y1,
 
                 DiameterBgl = i.BeugelDiameter,
+                
                 DiameterMain = i.HoofdstaafDiameter,
+                BuigdoorMain = i.HoofdstaafBuigdoornDiameterFactor * i.HoofdstaafDiameter,
+                AantalMain = (int)i.HoofdstaafAantal,
+
+                DiameterMainAnchorage = i.HoofdstaafDiameter, // gelijk aan hoofdstaafdiameter
+                DiameterBeugelAnchorage = i.BeugelDiameter, // gelijk aan diameter
 
                 TanTheta = tanTheta,
                 ThetaDeg = thetaDeg,
@@ -161,18 +174,21 @@
 
             VulRegels(i, result);
 
+            // Uitgebreid rekenvoorbeeld (markdown + LaTeX) voor de detail-popup / rapport.
+            result.RekenvoorbeeldMarkdown = J3ConsoleRekenvoorbeeld.Genereer(i, result);
+
             return result;
         }
 
         private static J3ConsoleLinkType BepaalLinkType(J3ConsoleInput i)
         {
-            if (i.Ac < 0.5 * i.H) 
+            if (i.Ac < 0.5 * i.Hc) 
                 return J3ConsoleLinkType.HorizontaalOfSchuin;
 
-            if (i.Ac > 0.5 * i.H && i.FEd > i.VRdc)
+            if (i.Ac > 0.5 * i.Hc && i.FEd > i.VRdc)
                 return J3ConsoleLinkType.Verticaal; // 'slanke consoles' krijgen vertikale beugels!
 
-            if (i.Ac == 0.5 * i.H)
+            if (i.Ac == 0.5 * i.Hc)
             {
                 return J3ConsoleLinkType.HorizontaalOfSchuin; // aanvulling altijd beugels toepassen voor Fwd. 
             }
@@ -195,7 +211,7 @@
                 Toelichting = "Lengte console",
                 SymboolHtml = "<i>L</i><sub>c</sub>",
                 SymboolTex = @"L_c",
-                Waarde = i.L.ToString("0"),
+                Waarde = i.Lc.ToString("0"),
                 Eenheid = "mm",
             });
 
@@ -204,7 +220,7 @@
                 Toelichting = "Hoogte console",
                 SymboolHtml = "<i>H</i><sub>c</sub>",
                 SymboolTex = @"H_c",
-                Waarde = r.H.ToString("0"),
+                Waarde = r.Hc.ToString("0"),
                 Eenheid = "mm",
             });
 
@@ -213,7 +229,7 @@
                 Toelichting = "Breedte console",
                 SymboolHtml = "<i>B</i><sub>c</sub>",
                 SymboolTex = @"B_c",
-                Waarde = r.B.ToString("0"),
+                Waarde = r.Bc.ToString("0"),
                 Eenheid = "mm"
             });
 
@@ -246,7 +262,6 @@
             r.ResultRows.Add(new()
             {
                 Toelichting = "afstand belasting tot kolomrand",
-                SymboolHtml = "<i>a</i><sub>c</sub>",
                 SymboolTex = @"a_c",
                 Waarde = i.Ac.ToString("0"),
                 Eenheid = "mm"
@@ -255,8 +270,7 @@
             r.ResultRows.Add(new()
             {
                 Toelichting = "Staafdiameter",
-                SymboolHtml = "<i>Ø</i><sub>bgl</sub>",
-                SymboolTex = @"Ø_{bgl}",
+                SymboolTex = @"\phi_{bgl}",
                 Waarde = i.BeugelDiameter.ToString("0"),
                 Eenheid = "mm"
             });
@@ -265,8 +279,7 @@
             r.ResultRows.Add(new()
             {
                 Toelichting = "Staafdiameter",
-                SymboolHtml = "<i>Ø</i><sub>hoofd</sub>",
-                SymboolTex = @"Ø_{hoofd}",
+                SymboolTex = @"\phi_{hoofd}",
                 Waarde = i.HoofdstaafDiameter.ToString("0"),
                 Eenheid = "mm"
             });
@@ -381,7 +394,7 @@
                 SymboolTex = @"d",
                 Waarde = r.D.ToString("0.0"),
                 Eenheid = "mm",
-                FormuleTex = r.VerticaleBeugelsNodig ? @"d=h-c-Ø_{bgl}-Ø_{hoofd}/2" : @"d=h-c-Ø_{hoofd}/2"
+                FormuleTex = r.VerticaleBeugelsNodig ? @"d=h-c-\phi_{bgl}-\phi_{hoofd}/2" : @"d=h-c-\phi_{hoofd}/2"
             });
 
             r.ResultRows.Add(new()
@@ -390,7 +403,7 @@
                 SymboolTex = @"d_1",
                 Waarde = r.D1.ToString("0.0"),
                 Eenheid = "mm",
-                FormuleTex = r.VerticaleBeugelsNodig ? @"d=h-c-Ø_{bgl}-Ø_{hoofd}/2" : @"d=h-c-Ø_{hoofd}/2"
+                FormuleTex = @"d_1 = h-d"
             });
 
             r.ResultRows.Add(new()
@@ -400,7 +413,7 @@
                 SymboolTex = @"z",
                 Waarde = r.Z.ToString("0.0"),
                 Eenheid = "mm",
-                FormuleTex = @"z=0.9d"
+                FormuleTex = @$"z={i.FactorZ:0} \cdot d"
             });
 
             r.ResultRows.Add(new()
@@ -544,7 +557,7 @@
             {
                 Toelichting = $"Toegepaste wapening",
                 SymboolTex = @"A_{s,main,prov}",
-                Waarde = $"{r.AantalStaven}Ø{i.HoofdstaafDiameter}",
+                Waarde = $"{r.AantalMain}Ø{i.HoofdstaafDiameter}",
                 FormuleTex = @"A_{s,main}=\frac{F_{t}}{f_{yd}}"
 
             });
@@ -554,6 +567,7 @@
             {
                 Toelichting = "Controle knoop 1",
                 SymboolHtml = "σ<sub>Ed,1</sub>",
+                SymboolTex = @"\sigma_{Ed,1}",
                 Waarde = $"{r.SigmaNode1Ed:0.00} ≤ {r.Sigma1RdMax:0.00}",
                 Eenheid = "N/mm²",
                 IsOk = r.Node1Ok,
@@ -567,11 +581,71 @@
             {
                 Toelichting = "Controle knoop 2 onder oplegplaat",
                 SymboolHtml = "σ<sub>Ed,2</sub>",
+                SymboolTex = @"\sigma_{Ed,2}",
                 Waarde = $"{r.SigmaNode2Ed:0.00} ≤ {r.Sigma2RdMax:0.00}",
                 Eenheid = "N/mm²",
                 IsOk = r.Node2Ok,
                 FormuleTex = @"\sigma_{Ed,2}=\frac{F_{Ed}}{l_{plate}b_{plate}}"
             });
+
+            r.ResultRows.Add(new()
+            {
+                Toelichting = "Staafspanning (main)",
+                SymboolTex = @"f_{y,main}",
+                Waarde = $"{r.MainFy:0}",
+                Eenheid = "N/mm²",
+                IsOk = r.MainFy < r.Fyd
+            });
+
+            if (r.MainFy > r.Fyd)
+            {
+                r.ResultRows.Add(new()
+                {
+                    Toelichting = "Overschrijding",
+                    SymboolTex = @"f_{y,main}>f_{yd}",
+                    IsOk = r.MainFy < r.Fyd
+                });
+            }
+
+            r.ResultRows.Add(new()
+            {
+                Toelichting = "Controle buigdoorn",
+                SymboolTex = @"\phi_{m,min}",
+                Waarde = $"{(2 * r.BuigstraalMainReq):0.00}",
+                Eenheid = "mm",
+                Artikel = "8.3"
+            });
+
+            r.ResultRows.Add(new()
+            {
+                Toelichting = "Controle buigradius",
+                SymboolTex = @"r_{m,min}",
+                Waarde = $"{r.BuigstraalMainReq:0.00}",
+                Eenheid = "mm",
+                Artikel = "8.3"
+            });
+
+            r.ResultRows.Add(new()
+            {
+                Toelichting = "Buigdoorn", SymboolTex = @"\phi_{m,prov}",
+                Waarde = $"{r.BuigdoorMain}",
+                Eenheid = "mm",
+                IsOk = r.BuigdoorMain >= 2 * r.BuigstraalMainReq
+            });
+
+
+            r.ResultRows.Add(new()
+            {
+                Toelichting = "Verankeringslengte",
+                SymboolTex = @"l_{b,req}",
+                Waarde = $"{r.VerankeringsLengteReq:0}",
+                Eenheid = "mm",
+                Artikel = "8.4"
+            });
+
+
+
+
         }
 
     }

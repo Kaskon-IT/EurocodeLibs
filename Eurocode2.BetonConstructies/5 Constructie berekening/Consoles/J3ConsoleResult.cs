@@ -6,25 +6,54 @@
     {
         public List<ResultRow> ResultRows { get; } = [];
 
-        public double H { get; set; }
-        public double B { get; set; }
+        /// <summary>
+        /// Hoogte van de console
+        /// </summary>
+        public double Hc { get; set; }
+
+        /// <summary>
+        /// Breedte van de console
+        /// </summary>
+        public double Bc { get; set; }
+
+        /// <summary>
+        /// Afstand van belasting tot rand kolom/wand
+        /// </summary>
         public double Ac { get; set; }
 
         // Geometrie-invoer die nodig is voor weergave en validaties.
-        public double L { get; set; }
+
+        /// <summary>
+        /// Lengte van de console (in de richting van de belasting)
+        /// </summary>
+        public double Lc { get; set; }
+        
+        
         public double Dekking { get; set; }
+
+        /// <summary>
+        /// Lengte van de oplegplaat (in de richting van de belasting)
+        /// </summary>
         public double LoadPlateLength { get; set; }
+
+        /// <summary>
+        /// Breedte van de oplegplaat (loodrecht op de richting van de belasting)
+        /// </summary>
         public double LoadPlateWidth { get; set; }
 
+        /// <summary>
+        /// Factor voor de horizontale kracht. Wordt gebruikt om FhEd te berekenen uit FvEd.
+        /// </summary>
         public double FactorHorizontaal { get; set; } = 0.4;
         public double FhEd => FactorHorizontaal * FvEd;
 
         public double DikteOplegmateriaal { get; set; } = 20;
-        public double DeltaAc => (H - D + DikteOplegmateriaal) * FactorHorizontaal;
+        public double DeltaAc => (Hc - D + DikteOplegmateriaal) * FactorHorizontaal;
 
         public double FvEd { get; set; }
         public double FEd => Math.Sqrt(FvEd * FvEd + FhEd * FhEd);
 
+        public int Fck { get; set; }
         public double Fcd { get; set; }
         public double Fyd { get; set; }
 
@@ -34,10 +63,20 @@
         public double X1 { get; set; }
         public double A { get; set; }
         public double D { get; set; }
-        public double D1 => H - D;
-        public double DiameterMain { get; set; }
-        public double DiameterBgl { get; set; }
+        public double D1 => Hc - D;
         
+        
+        
+        public double DiameterMain { get; set; }
+        public double DiameterMainAnchorage { get; set; }
+        public double DiameterBeugelAnchorage { get; set; }
+
+        public double DiameterBgl { get; set; }
+        public WapeningContext WapKolomMain { get; set; } = new() { Tekst = "8r20"};
+        public WapeningContext WapKolomBeugels { get; set; } = new() { Tekst = "8-150"};
+        public WapeningContext WapConsoleMain { get; set; } = new() { Tekst = "3r16" };
+
+
         public double Z { get; set; }
 
         public double Z0 { get; set; }
@@ -61,8 +100,8 @@
         public bool Node1Ok => SigmaNode1Ed <= Sigma1RdMax;
         public bool Node2Ok => SigmaNode2Ed <= Sigma2RdMax;
 
-        public bool HorizontaleBeugelsNodig => Ac <= 0.5 * H;
-        public bool VerticaleBeugelsNodig => Ac > 0.5 * H;
+        public bool HorizontaleBeugelsNodig => Ac <= 0.5 * Hc;
+        public bool VerticaleBeugelsNodig => Ac > 0.5 * Hc;
 
         public int AantalStaven
         {
@@ -72,6 +111,56 @@
                 return (int)Math.Ceiling(AsMain / asMainPerStaaf);
             }
         } 
+
+        
+        public int AantalMain { get; set; }
+        public double BuigdoorMain { get; set; }
+
+        public double BuigstraalMainReq
+        {
+            get
+            {
+                var buigdoornMin1 = WapeningHelper.GetBuigdoorMin(DiameterMain);
+                var buigdoornMin2 = WapeningHelper.GetBuigdoornMin(Fcd, D1, MainFbt, DiameterMain);
+                return Math.Max(buigdoornMin1, buigdoornMin2) / 2;
+            }
+        }
+
+
+        
+
+
+        public double MainFy
+        {
+            get
+            {
+                var applied = new WapeningContext($"{AantalMain}r{DiameterMain}", Dekking);
+                return AsMain / applied.As * Fyd;
+            }
+        }
+
+
+
+        public double MainFbt
+        {
+            get
+            {
+                return MainFy * WapeningHelper.GetDsnOpp(1, DiameterMain);
+            }
+        }
+
+
+        public double VerankeringsLengteReq
+        {
+            get
+            {
+                return WapeningHelper.GetLbReq(D1, MainFbt, DiameterMain, Fck);
+            }
+        }
+
+
+        
+
 
         public int AantalBeugels
         {
@@ -110,6 +199,13 @@
             Nodes.FirstOrDefault(x => x.Naam == "Knoop 2");
 
         /// <summary>
+        /// Uitgebreid rekenvoorbeeld als markdown (met LaTeX-formules),
+        /// gegenereerd door <see cref="J3ConsoleRekenvoorbeeld"/>.
+        /// Kan met Markdig + KaTeX op scherm of in een rapport worden getoond.
+        /// </summary>
+        public string RekenvoorbeeldMarkdown { get; set; } = string.Empty;
+
+        /// <summary>
         /// Validatiefouten op de consoleberekening. Gedeeld door alle weergaven
         /// (SVG/HTML/Razor) zodat ze dezelfde lijst tonen.
         /// </summary>
@@ -122,16 +218,16 @@
                 var fouten = new List<string>();
 
                 // Breedte oplegplaat mag niet groter zijn dan de breedte van de console.
-                if (LoadPlateWidth > B)
-                    fouten.Add($"Breedte oplegplaat ({N(LoadPlateWidth)} mm) > breedte console ({N(B)} mm).");
+                if (LoadPlateWidth > Bc)
+                    fouten.Add($"Breedte oplegplaat ({N(LoadPlateWidth)} mm) > breedte console ({N(Bc)} mm).");
 
                 // Lengte oplegplaat mag niet groter zijn dan de lengte van de console - dekking.
-                double maxPlaatLengte = L - Dekking;
+                double maxPlaatLengte = Lc - Dekking;
                 if (LoadPlateLength > maxPlaatLengte)
                     fouten.Add($"Lengte oplegplaat ({N(LoadPlateLength)} mm) > lengte console - dekking ({N(maxPlaatLengte)} mm).");
 
                 // De rand van de oplegplaat mag niet voorbij de dekking vallen.
-                double randX = L - Dekking;
+                double randX = Lc - Dekking;
                 double maxPlaatX = Ac + LoadPlateLength / 2.0;
                 if (maxPlaatX > randX)
                     fouten.Add("Oplegplaat steekt voorbij de console");
@@ -146,6 +242,16 @@
                 // Z0 mag niet kleiner zijn dan ac.
                 if (Z0 < Ac)
                     fouten.Add($"z0 ({N(Z0)} mm) > ac ({N(Ac)} mm).");
+
+                if (MainFy > Fyd)
+                    fouten.Add("Hoofdwapening niet akkoord");
+
+                if (!Node1Ok)
+                    fouten.Add("Drukknoop niet akkoord");
+                if (!Node2Ok)
+                    fouten.Add("Knoop tpv oplegging niet akkoord");
+
+                
 
                 return fouten;
             }
