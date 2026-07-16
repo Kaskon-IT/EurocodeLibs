@@ -30,6 +30,8 @@ namespace Eurocode.BetonConstructies
         public double X { get; set; }              // mm
         public double Y { get; set; }              // mm
 
+
+
         public double SigmaEd { get; set; }        // N/mm²
         public double SigmaRdMax { get; set; }     // N/mm²
 

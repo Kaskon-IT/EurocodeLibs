@@ -21,12 +21,18 @@
         /// </summary>
         public double Ac { get; set; }
 
+        /// <summary>
+        /// Afstand van horizontale belasting tot hart trekband
+        /// </summary>
+        public double Ah { get; set; }
+
         // Geometrie-invoer die nodig is voor weergave en validaties.
 
         /// <summary>
         /// Lengte van de console (in de richting van de belasting)
         /// </summary>
         public double Lc { get; set; }
+        public double KolomDikte { get; set; }
         
         
         public double Dekking { get; set; }
@@ -45,13 +51,16 @@
         /// Factor voor de horizontale kracht. Wordt gebruikt om FhEd te berekenen uit FvEd.
         /// </summary>
         public double FactorHorizontaal { get; set; } = 0.4;
-        public double FhEd => FactorHorizontaal * FvEd;
+        public double HEd { get; set; }
+
+        //public double FhEd => FactorHorizontaal * FvEd;
 
         public double DikteOplegmateriaal { get; set; } = 20;
         public double DeltaAc => (Hc - D + DikteOplegmateriaal) * FactorHorizontaal;
 
-        public double FvEd { get; set; }
-        public double FEd => Math.Sqrt(FvEd * FvEd + FhEd * FhEd);
+        public double FEd { get; set; }
+        
+        public double FEdTotaal => Math.Sqrt(FEd * FEd + HEd * HEd);
 
         public int Fck { get; set; }
         public double Fcd { get; set; }
@@ -93,6 +102,8 @@
 
         public double AsMain { get; set; }
         public double Asw { get; set; }
+        public double Mrand { get; set; }
+        public double Mhart => Mrand + FEd * (KolomDikte / 1000.0); 
 
         public double SigmaNode1Ed { get; set; }
         public double SigmaNode2Ed { get; set; }
@@ -189,6 +200,78 @@
         public J3ConsoleLinkType LinkType { get; set; }
 
 
+        public List<StrutAndTie.StrutAndTieNode> StrutAndTieNodes { get; set; } = [];
+        public StrutAndTie.StrutAndTieNode? STN1 =>
+            StrutAndTieNodes.FirstOrDefault(n => n.Id == "node-1");
+        public StrutAndTie.StrutAndTieNode? STN2 =>
+            StrutAndTieNodes.FirstOrDefault(n => n.Id == "node-2");
+
+
+        /// <summary>
+        /// Maakt knoop 1 (CCC) en knoop 2 (CCT) voor het
+        /// strut-and-tie-model van de console.
+        /// </summary>
+        /// <param name="node1Center">
+        /// Hart van de onderste CCC-knoop, in mm.
+        /// </param>
+        /// <param name="node2Center">
+        /// Hart van de bovenste CCT-knoop, in mm.
+        /// </param>
+        /// <param name="fvEd">
+        /// Verticale kracht in N.
+        /// </param>
+        /// <param name="ftEd">
+        /// Horizontale trekbandkracht in N.
+        /// </param>
+        /// <param name="width">
+        /// Breedte van de console loodrecht op het STM-vlak, in mm.
+        /// </param>
+        /// <param name="sigmaCccRdMax">
+        /// Toelaatbare knoopspanning van knoop 1, in N/mm².
+        /// </param>
+        /// <param name="sigmaCctRdMax">
+        /// Toelaatbare knoopspanning van knoop 2, in N/mm².
+        /// </param>
+        public void CreateNodes(
+            StrutAndTie.Point2D node1Center,
+            StrutAndTie.Point2D node2Center,
+            StrutAndTie.Vector2D f1,
+            StrutAndTie.Vector2D f2,
+            double width,
+            double sigmaCccRdMax,
+            double sigmaCctRdMax)
+        {
+
+            var node1 = new StrutAndTie.StrutAndTieNode()
+            {
+                Name = "Knoop 1",
+                Id = "node-1",
+                Type = StrutAndTie.StrutAndTieNodeType.CCC,
+                Geometry = new StrutAndTie.StrutAndTieNodeGeometry()
+                {
+                    Center = node1Center
+                }
+                // waar width?
+                // waar sigma
+                // waar vector voor F
+            };
+
+            var node2 = new StrutAndTie.StrutAndTieNode()
+            {
+                Name = "Knoop 2",
+                Id = "node-2",
+                Type = StrutAndTie.StrutAndTieNodeType.CCT,
+                Geometry = new StrutAndTie.StrutAndTieNodeGeometry()
+                {
+                    Center = node2Center
+                }
+            };
+
+            StrutAndTieNodes.Add(node1);
+            StrutAndTieNodes.Add(node2);
+        }
+
+
 
         public List<J3ConsoleNodeResult> Nodes { get; set; } = [];
 
@@ -206,6 +289,14 @@
         public string RekenvoorbeeldMarkdown { get; set; } = string.Empty;
 
         /// <summary>
+        /// Eenvoudig strut-and-tie schema (knopen, drukdiagonalen, trekband en
+        /// krachten) als schaalbare SVG. Gegenereerd door
+        /// <see cref="J3ConsoleSvg.CreateSchemaSvg"/> en o.a. gebruikt in het
+        /// markdown-rekenvoorbeeld.
+        /// </summary>
+        public string SchemaSvg { get; set; } = string.Empty;
+
+        /// <summary>
         /// Validatiefouten op de consoleberekening. Gedeeld door alle weergaven
         /// (SVG/HTML/Razor) zodat ze dezelfde lijst tonen.
         /// </summary>
@@ -216,6 +307,23 @@
                 static string N(double v) => v.ToString("0.##");
 
                 var fouten = new List<string>();
+
+                // FEd mag niet negatief! 
+                if (FEd <= 0)
+                {
+                    fouten.Add($"F<sub>Ed</sub> moet groter dan 0 zijn.");
+                }
+
+                if (FEd < Math.Abs(HEd))
+                {
+                    fouten.Add("F moet groter of gelijk zijn aan H");
+                }
+
+                if (HEd < 0)
+                {
+                    fouten.Add("H mag niet kleiner dan 0 zijn.");
+                }
+
 
                 // Breedte oplegplaat mag niet groter zijn dan de breedte van de console.
                 if (LoadPlateWidth > Bc)

@@ -6,6 +6,156 @@ namespace Eurocode.BetonConstructies
 
     public static class J3ConsoleSvg
     {
+
+        /// <summary>
+        /// Eenvoudig strut-and-tie schema: contour, knopen, drukdiagonalen,
+        /// trekband en de belastingen/reacties. Bedoeld voor het markdown-
+        /// rekenvoorbeeld (schaalbaar via viewBox, geen vaste afmetingen).
+        /// Het modelassenstelsel (y naar beneden) valt samen met dat van SVG.
+        /// </summary>
+        public static string CreateSchemaSvg(J3ConsoleResult r, J3ConsoleInput i)
+        {
+            var ci = CultureInfo.InvariantCulture;
+            string N(double v) => v.ToString("0.#", ci);
+
+            double H = i.Hc, L = i.Lc, Bw = i.KolomDikte, ac = i.Ac;
+            double y2 = i.Hc - r.D;
+            double y1 = y2 + r.Z;
+            double y3 = (y1 + y2) / 2.0;
+            double dX = i.FactorHEd * (r.Hc - r.D);
+            double hPl = i.DikteOplegmateriaal;
+            double lPl = i.LoadPlateLength;
+
+            // Knopen (zelfde afleiding als J3ConsoleViewModel)
+            (double x, double y) n0 = (ac, 0);
+            (double x, double y) n1 = (-r.X1 / 2.0, y1);
+            (double x, double y) n2 = (ac + dX, y2);
+            (double x, double y) n3 = (-r.X1 / 2.0, y3);
+            (double x, double y) n4 = (ac + dX, y3);
+
+            double kolomBoven = -0.35 * H, kolomOnder = H + 0.5 * H;
+            double pijl = 0.5 * H; // pijllengte belasting
+            double pijlH = 0.5 * pijl;
+
+            var sb = new StringBuilder();
+
+            string Rect(double x, double y, double w, double h, string stroke, string fill, string extra) =>
+                $"<rect x=\"{N(x)}\" y=\"{N(y)}\" width=\"{N(w)}\" height=\"{N(h)}\" stroke=\"{stroke}\" stroke-width=\"1\" fill='{fill}' {extra}/>";
+
+
+            string Line(double xa, double ya, double xb, double yb, string stroke, string extra = "") =>
+                $"<line x1=\"{N(xa)}\" y1=\"{N(ya)}\" x2=\"{N(xb)}\" y2=\"{N(yb)}\" stroke=\"{stroke}\" stroke-width=\"6\" {extra}/>";
+
+            void Strut(( double x, double y) a, (double x, double y) b) =>
+                sb.AppendLine(Line(a.x, a.y, b.x, b.y, "#d32f2f", "stroke-dasharray=\"18 12\""));
+
+            void Knoop((double x, double y) p, string naam, double dxLbl, double dyLbl)
+            {
+                sb.AppendLine($"<circle cx=\"{N(p.x)}\" cy=\"{N(p.y)}\" r=\"14\" stroke='#111' fill=\"#eee\"/>");
+                sb.AppendLine($"<text x=\"{N(p.x + dxLbl)}\" y=\"{N(p.y + dyLbl)}\" font-size=\"52\" fill=\"#000\">{naam}</text>");
+            }
+
+            void Label(double x, double y, string text, string extra)
+            {
+                sb.AppendLine($"<text x=\"{N(x)}\" y=\"{N(y)}\" font-size=\"52\" fill=\"#000\" {extra}>{text}</text>");
+            }
+
+            void KrachtPijl(double x, double y, double dx, double dy, string kleur, string label)
+            {
+                double xe = x + dx, ye = y + dy;
+                double len = Math.Sqrt(dx * dx + dy * dy);
+                if (len < 1e-9) return;
+
+                // Pijlpunt meeschalend met de pijllengte (met onder-/bovengrens),
+                // in dezelfde kleur als de lijn; lijn stopt bij de basis van de punt.
+                double kop = Math.Clamp(0.22 * len, 20, 60);
+                double ux = dx / len, uy = dy / len;   // richting
+                double bx = xe - kop * ux, by = ye - kop * uy; // basis van de punt
+                double px = -uy, py = ux;              // loodrecht
+                double halfB = 0.35 * kop;
+
+                sb.AppendLine(Line(x, y, bx, by, kleur));
+                sb.AppendLine($"<polygon points=\"{N(xe)},{N(ye)} {N(bx + halfB * px)},{N(by + halfB * py)} {N(bx - halfB * px)},{N(by - halfB * py)}\" fill=\"{kleur}\"/>");
+                sb.AppendLine($"<text x=\"{N(xe + 15)}\" y=\"{N(ye - 15)}\" font-size=\"52\" fill=\"{kleur}\">{label}</text>");
+            }
+
+            // Contour kolom + console (licht)
+            sb.AppendLine($"<path d=\"M {N(-Bw)} {N(kolomBoven)} L {N(-Bw)} {N(kolomOnder)} M 0 {N(kolomOnder)} L 0 {N(H)} L {N(L)} {N(H)} L {N(L)} 0 L 0 0 L 0 {N(kolomBoven)}\" fill=\"none\" stroke=\"#999\" stroke-width=\"4\"/>");
+
+            // Trekband (blauw) en drukdiagonalen (rood, gestreept)
+            sb.AppendLine(Line(n3.x, n3.y, n4.x, n4.y, "#1565c0"));
+            Strut(n0, n2);
+            Strut(n1, n2);
+            Strut(n1, n3);
+            Strut(n1, n4);
+            Strut(n3, n2);
+            Strut(n4, n2);
+
+            // Knopen
+            Knoop(n1, "1", -70, 0);
+            Knoop(n2, "2", 30, 0);
+            Knoop(n3, "3", -70, 0);
+            Knoop(n4, "4", 30, 0);
+
+            // plaat
+            sb.AppendLine(Rect(n0.x - lPl / 2.0, -hPl, lPl, hPl, "red", fill: "red", ""));
+
+            // Labels
+            Label(n1.x -pijl - 10, n1.y, "F1h", "text-anchor='end' dominant-baseline='middle'");
+            Label(n1.x, n1.y + pijl + 10, "F1v", "text-anchor='middle' dominant-baseline='hanging'");
+            Label(n2.x - pijl - pijlH - 10, n2.y, "Ft", "text-anchor='end' dominant-baseline='middle'");
+            Label(n0.x, n0.y - pijl - hPl -10, "F", "text-anchor='middle' dominant-baseline='above'");
+            Label(n0.x + pijlH + 10, n0.y - hPl, "H", "text-anchor='start' dominant-baseline='middle'");
+
+
+
+            // Krachten schalen: de grootste kracht krijgt de volle pijllengte,
+            // alle andere pijlen worden relatief daaraan getekend.
+            // nieuw inzicht
+            // alle pijleen gelijke hoogte
+
+
+            double fRes = Math.Sqrt(r.FEd * r.FEd + r.HEd * r.HEd);
+            double fMax = Math.Max(Math.Max(fRes, Math.Max(r.FEd, r.HEd)),
+                          Math.Max(Math.Max(r.F1x, r.FEd), r.Ft));
+            double schaal = pijl / Math.Max(fMax, 1e-9);
+            double LenF(double f) => f * schaal;
+
+            // Belasting op n0: één resulterende pijl F = √(Fv² + Fh²),
+            // in de werkelijke richting (Fh naar rechts, Fv omlaag).
+            double fdx = LenF(r.HEd);
+            double fdy = LenF(r.FEd);
+
+           
+
+            // HEd
+            KrachtPijl(n0.x, n0.y - hPl, pijlH, 0, "#111", $"");
+            // FEd
+            KrachtPijl(n0.x, n0.y - hPl - pijl, 0, pijl, "#111", $"");
+
+            // Fi
+            //KrachtPijl(n0.x - fdx, n0.y - fdy, fdx, fdy, "#111", $"F");
+
+            // n1: componenten + resultante (F1x naar rechts, FvEd omhoog)
+            KrachtPijl(n1.x - pijl, n1.y, dx: pijl, 0, kleur: "#111", label: "");
+            KrachtPijl(n1.x, n1.y + pijl, dx: 0, dy: -pijl, kleur: "#111", label: "");
+            //KrachtPijl(n1.x - LenF(r.F1x), n1.y + LenF(r.FvEd), dx: LenF(r.F1x), dy: -LenF(r.FvEd), kleur: "#111", label: "Fc");
+
+            // n2
+            KrachtPijl(n2.x, n2.y, -(pijl + pijlH), 0, "#111", label: ""); // Ft = Fc + H dus 
+            
+            
+            //sb.AppendLine($"<text x=\"{N(n2.x - 0.9 * pijl)}\" y=\"{N(n2.y - 30)}\" font-size=\"52\" fill=\"#1565c0\">F<tspan font-size=\"36\" dy=\"10\">t</tspan> = {N(r.Ft)} kN</text>");
+
+            // ViewBox met marge rondom
+            double minX = -Bw - pijl - 100, maxX = L + 3.2 * pijl;
+            double minY = kolomBoven - pijl, maxY = kolomOnder + 60;
+
+            return $@"<svg xmlns=""http://www.w3.org/2000/svg"" viewBox=""{N(minX)} {N(minY)} {N(maxX - minX)} {N(maxY - minY)}"" width=""100%"">
+<defs><marker id=""pk"" markerWidth=""8"" markerHeight=""8"" refX=""6"" refY=""3"" orient=""auto""><path d=""M0,0 L7,3 L0,6 z""/></marker></defs>
+{sb}</svg>";
+        }
+
         public static string CreateSvg(J3ConsoleResult r, J3ConsoleInput i)
         {
             var ci = CultureInfo.InvariantCulture;

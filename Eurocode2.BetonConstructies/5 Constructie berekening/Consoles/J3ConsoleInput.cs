@@ -11,12 +11,10 @@
             set => SetProperty(ref _lc, value);
         }
 
-        private double _factorHEd = 0.4;
-        public double FactorHEd
-        {
-            get => _factorHEd;
-            set => SetProperty(ref _factorHEd, value);
-        }
+
+
+        public double FactorHEd => HEd / FEd;
+        
 
         private double _factorZ = 0.8;
         public double FactorZ
@@ -25,7 +23,12 @@
             set => SetProperty(ref _factorZ, value);
         }
 
-        public double HEd => FactorHEd * FEd;
+        private double _hEd = 0;
+        public double HEd
+        {
+            get => _hEd;
+            set => SetProperty(ref _hEd, value);
+        }
 
         private double _dikteOplegmateriaal = 20;
         public double DikteOplegmateriaal
@@ -34,6 +37,7 @@
             set => SetProperty(ref _dikteOplegmateriaal, value);
         }
 
+        
 
         private double _bc = 350;
         public double Bc

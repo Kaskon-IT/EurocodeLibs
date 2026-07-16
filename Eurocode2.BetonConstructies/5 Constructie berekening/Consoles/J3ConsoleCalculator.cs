@@ -49,11 +49,16 @@
             double tanTheta = z / a;
             double thetaDeg = Math.Atan(tanTheta) * 180.0 / Math.PI;
 
+            double d1 = i.Hc - d;
+            double ah = i.DikteOplegmateriaal + d1;
+
+
+
             // Trekbandkracht volgens rekenvoorbeeld: Ft = FvEd * a_eff / z,
             // waarbij a_eff (= a) de correctie voor de horizontale belasting al bevat (deltaA).
             // Oftewel: Ft = (FvEd*a + FhEd*d1) / z.
             // Oude logica (vervangen): double ft = i.FEd * a / z + i.HEd; // met aandeel horizontaal
-            double ft = i.FEd * a / z;
+            double ft = i.HEd + i.FEd * a / z;
             double f1x = i.FEd * a / z; // 
             double f1y = i.FEd;
             double f1c = Math.Sqrt(f1x * f1x + f1y * f1y);
@@ -89,17 +94,33 @@
             // Node 2 verification below load plate
             double sigmaNode2Ed = i.FEd * 1000.0 / (i.LoadPlateLength * i.LoadPlateWidth);
 
+            // M_rand voor opgave kolomberekening
+            double mRand = i.FEd * i.Ac / 1000.0 + i.HEd * ah / 1000.0;
+
+
+
             var result = new J3ConsoleResult
             {
-                Hc = i.Hc, // wacht even dit is input?? maar die wil ik ook in resultaat... hmmm.. even nadenken
+                // Input overnemen
+                
+                // geometrie console
+                Hc = i.Hc, 
                 Bc = i.Bc,
-                FvEd = i.FEd,
+                Lc = i.Lc,
+                KolomDikte = i.KolomDikte,
+
+                // geometrie plaat
+
+                // krachten
+                FEd = i.FEd,
+                HEd = i.HEd,
 
                 FactorHorizontaal = i.FactorHEd,
                 DikteOplegmateriaal = i.DikteOplegmateriaal,
+                
                 Ac = i.Ac,
+                Ah = ah,
 
-                Lc = i.Lc,
                 Dekking = i.Dekking,
                 LoadPlateLength = i.LoadPlateLength,
                 LoadPlateWidth = i.LoadPlateWidth,
@@ -118,6 +139,7 @@
                 SigmaNode2Ed = sigmaNode2Ed,
 
                 X1 = x1,
+                
                 A = a,
 
                 D = d,
@@ -146,10 +168,22 @@
                 Fwd = fwd,
 
                 AsMain = asMain,
-                Asw = asw
+                Asw = asw,
+                Mrand = mRand,
             };
 
-            
+
+            result.StrutAndTieNodes.Add(new StrutAndTie.StrutAndTieNode
+            {
+                Name = "Knoop 1",
+                Id = "node-1",
+                Type = StrutAndTie.StrutAndTieNodeType.CCC,
+                Geometry = new StrutAndTie.StrutAndTieNodeGeometry()
+                {
+                    Center = new StrutAndTie.Point2D(-x1 / 2.0, y1)
+                }
+            });
+
 
             result.Nodes.Add(new J3ConsoleNodeResult
             {
@@ -173,6 +207,9 @@
 
 
             VulRegels(i, result);
+
+            // Eenvoudig strut-and-tie schema (knopen, diagonalen, krachten) als SVG.
+            result.SchemaSvg = J3ConsoleSvg.CreateSchemaSvg(result, i);
 
             // Uitgebreid rekenvoorbeeld (markdown + LaTeX) voor de detail-popup / rapport.
             result.RekenvoorbeeldMarkdown = J3ConsoleRekenvoorbeeld.Genereer(i, result);
@@ -237,26 +274,20 @@
             {
                 Toelichting = "Ontwerpbelasting",
                 SymboolHtml = "<i>F</i><sub>Ed</sub>",
-                SymboolTex = @"F_{v,Ed}",
-                Waarde = r.FvEd.ToString("0"),
-                Eenheid = "kN"
-            });
-
-            r.ResultRows.Add(new()
-            {
-                Toelichting = "Ontwerpbelasting",
-                SymboolTex = @"F_{h,Ed}",
-                Waarde = r.FhEd.ToString("0"),
-                Eenheid = "kN"
-            });
-
-            r.ResultRows.Add(new()
-            {
-                Toelichting = "Ontwerpbelasting",
                 SymboolTex = @"F_{Ed}",
                 Waarde = r.FEd.ToString("0"),
                 Eenheid = "kN"
             });
+
+            r.ResultRows.Add(new()
+            {
+                Toelichting = "Ontwerpbelasting",
+                SymboolTex = @"H_{Ed}",
+                Waarde = r.HEd.ToString("0"),
+                Eenheid = "kN"
+            });
+
+           
 
 
             r.ResultRows.Add(new()
