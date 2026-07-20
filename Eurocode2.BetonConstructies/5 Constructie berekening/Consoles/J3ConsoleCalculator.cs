@@ -108,6 +108,7 @@
                 Bc = i.Bc,
                 Lc = i.Lc,
                 KolomDikte = i.KolomDikte,
+                KolomBreedte = i.KolomBreedte,
 
                 // geometrie plaat
 
@@ -642,26 +643,19 @@
             {
                 Toelichting = "Controle buigdoorn",
                 SymboolTex = @"\phi_{m,min}",
-                Waarde = $"{(2 * r.BuigstraalMainReq):0.00}",
+                Waarde = $"{(r.BuigdoornMainReq):0.00}",
                 Eenheid = "mm",
                 Artikel = "8.3"
             });
 
-            r.ResultRows.Add(new()
-            {
-                Toelichting = "Controle buigradius",
-                SymboolTex = @"r_{m,min}",
-                Waarde = $"{r.BuigstraalMainReq:0.00}",
-                Eenheid = "mm",
-                Artikel = "8.3"
-            });
+          
 
             r.ResultRows.Add(new()
             {
                 Toelichting = "Buigdoorn", SymboolTex = @"\phi_{m,prov}",
                 Waarde = $"{r.BuigdoorMain}",
                 Eenheid = "mm",
-                IsOk = r.BuigdoorMain >= 2 * r.BuigstraalMainReq
+                IsOk = r.BuigdoorMain >= r.BuigdoornMainReq
             });
 
 

@@ -1,6 +1,7 @@
 ﻿namespace Eurocode.BetonConstructies
 {
     using CommonLibrary.Models;
+    using Eurocode.BetonConstructies.StrutAndTie;
 
     public class J3ConsoleResult : IRowResult
     {
@@ -32,9 +33,30 @@
         /// Lengte van de console (in de richting van de belasting)
         /// </summary>
         public double Lc { get; set; }
+
+        // kolom
         public double KolomDikte { get; set; }
-        
-        
+        public double KolomBreedte { get; set; }
+
+        public double P5x => -KolomDikte + Dekking + DiameterBgl + DiameterMain / 2.0;
+        public double BeenlengteMainNaVerankering => -X1/2.0 - P5x;
+
+        public double MaximaleBuigdoornToepasbaar => BeenlengteMainNaVerankering * 2.0 - DiameterMain;
+
+        public bool OmbuigingMainMogelijk => MaximaleBuigdoornToepasbaar > BuigdoornMainReq;
+
+        public double VerhoudingBuigdoorn => BuigdoorMain / BuigdoornMainReq;
+        public double BenodigdeRechteDeel
+        {
+            get
+            {
+                if (VerhoudingBuigdoorn > 1) return 0;
+                else return (1-VerhoudingBuigdoorn) * VerankeringsLengteReq;
+            }
+        }
+
+        public double RechtDeelMain => BeenlengteMainNaVerankering - DiameterMain / 2.0 - BuigdoorMain / 2.0;
+
         public double Dekking { get; set; }
 
         /// <summary>
@@ -82,9 +104,9 @@
 
         public double DiameterBgl { get; set; }
         public WapeningContext WapKolomMain { get; set; } = new() { Tekst = "8r20"};
-        public WapeningContext WapKolomBeugels { get; set; } = new() { Tekst = "8-150"};
-        public WapeningContext WapConsoleMain { get; set; } = new() { Tekst = "3r16" };
 
+
+        
 
         public double Z { get; set; }
 
@@ -108,25 +130,43 @@
         public double SigmaNode1Ed { get; set; }
         public double SigmaNode2Ed { get; set; }
 
-        public bool Node1Ok => SigmaNode1Ed <= Sigma1RdMax;
-        public bool Node2Ok => SigmaNode2Ed <= Sigma2RdMax;
+        public bool Node1Ok => SigmaNode1Ed <= Sigma1RdMax + 1e-5;
+        public bool Node2Ok => SigmaNode2Ed <= Sigma2RdMax + 1e-5;
 
         public bool HorizontaleBeugelsNodig => Ac <= 0.5 * Hc;
         public bool VerticaleBeugelsNodig => Ac > 0.5 * Hc;
 
-        public int AantalStaven
-        {
-            get
-            {
-                var asMainPerStaaf = WapeningHelper.GetDsnOpp(1, DiameterMain);
-                return (int)Math.Ceiling(AsMain / asMainPerStaaf);
-            }
-        } 
+       
 
         
         public int AantalMain { get; set; }
+        public double AsMainProv => AantalMain * WapeningHelper.GetDsnOpp(1, DiameterMain);
+        public bool AsMainProvOk => AsMainProv >= AsMain;
+        public double AswProv => AantalBeugels * WapeningHelper.GetDsnOpp(2, DiameterBgl);
+        public bool AswProvOk => AswProv >= Asw;
+
+
+
         public double BuigdoorMain { get; set; }
 
+        
+
+        public double BuigdoornMainMin
+        {
+            get
+            {
+                return WapeningHelper.GetBuigdoorMin(DiameterMain);
+            }
+        }
+        public double BuigdoornMainReq
+        {
+            get
+            {
+                var buigdoornMin1 = WapeningHelper.GetBuigdoorMin(DiameterMain);
+                var buigdoornMin2 = WapeningHelper.GetBuigdoornMin(Fcd, D1, MainFbt, DiameterMain);
+                return Math.Max(buigdoornMin1, buigdoornMin2);
+            }
+        }
         public double BuigstraalMainReq
         {
             get
@@ -136,7 +176,6 @@
                 return Math.Max(buigdoornMin1, buigdoornMin2) / 2;
             }
         }
-
 
         
 
@@ -343,6 +382,20 @@
                 if (minPlaatX < 0)
                     fouten.Add("Oplegplaat steekt voorbij de oplegging");
 
+                // buigstaal
+                if (RechtDeelMain < 0)
+                {
+                    fouten.Add("Buigdoorn te groot");
+                }
+
+                if (RechtDeelMain < BenodigdeRechteDeel)
+                {
+                    fouten.Add("Buigdoorn niet akkoord");
+                    fouten.Add($"recht deel benodigd = {BenodigdeRechteDeel:0} mm, beschikbaar = {RechtDeelMain:0} mm");
+
+                }
+
+
                 // tan(theta) moet tussen 1 en 2,5 liggen.
                 if (TanTheta < 1.0 || TanTheta > 2.5)
                     fouten.Add($"tan(theta) = {N(TanTheta)} valt buiten [1 ; 2,5].");
@@ -352,10 +405,18 @@
                     fouten.Add($"z0 ({N(Z0)} mm) > ac ({N(Ac)} mm).");
 
                 if (MainFy > Fyd)
-                    fouten.Add("Hoofdwapening niet akkoord");
+                {
+                    fouten.Add($"Hoofdwapening niet akkoord (fy = {MainFy:0} N/mm²)");
+
+                }
 
                 if (!Node1Ok)
+                {
                     fouten.Add("Drukknoop niet akkoord");
+                    fouten.Add($"sigma_Ed = {Node1?.SigmaEd}");
+                    fouten.Add($"sigma_Rd = {Node1?.SigmaRdMax}");
+
+                }
                 if (!Node2Ok)
                     fouten.Add("Knoop tpv oplegging niet akkoord");
 

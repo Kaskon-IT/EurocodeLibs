@@ -4,7 +4,7 @@
 
     public class J3ConsoleInput : BaseInput
     {
-        private double _lc = 250;
+        private double _lc = 280;
         public double Lc
         {
             get => _lc;
@@ -16,14 +16,28 @@
         public double FactorHEd => HEd / FEd;
         
 
-        private double _factorZ = 0.8;
+        private double _factorZ = 0.9;
         public double FactorZ
         {
             get => _factorZ;
             set => SetProperty(ref _factorZ, value);
         }
 
-        private double _hEd = 0;
+        private bool _toonKolom = true;
+        public bool ToonKolom
+        {
+            get => _toonKolom;
+            set => SetProperty(ref _toonKolom, value);
+        }
+
+        private bool _toonKolomWap = false;
+        public bool ToonKolomWap
+        {
+            get => _toonKolomWap;
+            set => SetProperty(ref _toonKolomWap, value);
+        }
+
+        private double _hEd = 100;
         public double HEd
         {
             get => _hEd;
@@ -46,11 +60,18 @@
             set => SetProperty(ref _bc, value);
         }
 
-        private double _kolomDikte = 300;
+        private double _kolomDikte = 350;
         public double KolomDikte
         {
             get => _kolomDikte;
             set => SetProperty(ref _kolomDikte, value);
+        }
+
+        private double _kolomBreedte = 350;
+        public double KolomBreedte
+        {
+            get => _kolomBreedte;
+            set => SetProperty(ref _kolomBreedte, value);
         }
 
 
@@ -68,7 +89,7 @@
             set => SetProperty(ref _ac, value);
         }
 
-        private double _nEd = 600;
+        private double _nEd = 500;
         public double NEd
         {
             get => _nEd;
@@ -76,7 +97,7 @@
         }
 
 
-        private double _fEd = 600;
+        private double _fEd = 500;
         public double FEd
         {
             get => _fEd;
@@ -111,14 +132,14 @@
             set => SetProperty(ref _beugelDiameter, value);
         }
 
-        private double _hoofdstaafDiameter = 16;
+        private double _hoofdstaafDiameter = 20;
         public double HoofdstaafDiameter
         {
             get => _hoofdstaafDiameter;
             set => SetProperty(ref _hoofdstaafDiameter, value);
         }
 
-        private double _hoofdstaafAantal = 4;
+        private double _hoofdstaafAantal = 3;
         public double HoofdstaafAantal
         {
             get => _hoofdstaafAantal;
@@ -133,7 +154,7 @@
         }
         
 
-        private double _fck = 30;
+        private double _fck = 40;
         public double Fck
         {
             get => _fck;
@@ -174,5 +195,15 @@
             get => _vRdc;
             set => SetProperty(ref _vRdc, value);
         }
+
+        // ---- noodzakelijk? of verplaatsen
+        private double _diamKolomWap = 12;
+        public double DiamKolomWap
+        {
+            get => _diamKolomWap;
+            set => SetProperty(ref _diamKolomWap, value);
+        }
+
+
     }
 }

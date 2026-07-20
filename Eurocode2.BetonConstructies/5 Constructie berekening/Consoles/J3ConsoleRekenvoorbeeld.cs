@@ -37,6 +37,20 @@ namespace Eurocode.BetonConstructies
             return new RekenvoorbeeldBuilder("Rekenvoorbeeld console (Strut-and-Tie)")
                 .Intro($@"## Uitgangspunten
 
+
+<table>
+    <tr><td>Schema</td><td>Grootheid</td><td>Waarde</td></tr>
+  <tr>
+    
+    <td rowspan=""3"">{r.SchemaSvg}</td>
+    <td>K2</td>
+    <td>K3</td>
+  </tr>
+  <tr>
+    <td>Data kolom 2 (onderste rij)</td>
+  </tr>
+</table>
+
 | Grootheid | Waarde |
 | --- | --- |
 | Verticale belasting           | $F_{{v,Ed}}={N(r.FEd, "0")}\ \mathrm{{kN}}$ |
@@ -171,9 +185,47 @@ $$
 
 "
 
+            
+
+
 
                 )
 
+                .Stap_("controle wapening", "Controle wapening", $@"Controle van de hoofdtrekwapening:
+
+
+
+Toegepast is {N(i.HoofdstaafAantal, "0")}Ø{N(i.HoofdstaafDiameter, "0")} met een
+staalspanning f~y~ van {N(r.MainFy, "0")} N/mm² en f~bt~ van {N(r.MainFbt, "0")} N.
+
+{(r.MainFy > r.Fyd? "⚠️ overschrijding trekspanning." : "")}
+
+
+De benodigde verankeringslengte l~b,req~ = {N(r.VerankeringsLengteReq, "0")} mm. 
+De benodigde buigdoorn op dit punt Ø~m,req~ = {N(r.BuigdoornMainReq, "0")} mm. 
+
+We passen een buigdoorn toe van {N(i.HoofdstaafBuigdoornDiameterFactor, "0")} ×Ø = {N(r.BuigdoorMain, "0")} mm.
+De afname van de buigdoorn is evenredig met de afname van f~bt~. 
+Het benodigde rechte deel voor de ombuiging is dus {N(r.BenodigdeRechteDeel, "0")} mm.
+
+Toegepast is een recht deel van {N(r.RechtDeelMain, "0")} mm.
+
+
+
+
+
+
+
+
+
+
+we rekenen de maximale trekspanning voor toepassing van deze buigstraal is...
+het rechte deel van staaf (tussen verankeringspunt en de ombuiging) is ....
+hierdoor is de spanning aan het begin van de buiging ...
+indien akkoord ✅
+indien niet akkoord ❌
+"
+)
 
                 .Slot($@"# Samenvatting
 

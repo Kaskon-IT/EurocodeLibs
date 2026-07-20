@@ -33,6 +33,15 @@ namespace Eurocode.BetonConstructies
             return fbt * ((1/ab) + 1/(2*d)) / fcd;
         }
 
+        public static double GetFbtBuigdoorn(double fcd, double ab, double d, double buigdoornDiam)
+        {
+            fcd = Math.Clamp(fcd, 1, 55.0 / 1.5);
+            d = Math.Max(d, 1);
+            ab = Math.Max(ab, 1);
+
+            return buigdoornDiam * fcd / (1.0 / ab + 1.0 / 2 * d);
+        }
+
 
         public static double GetLbReq(double ab, double fbt, double d, int fck )
         {
