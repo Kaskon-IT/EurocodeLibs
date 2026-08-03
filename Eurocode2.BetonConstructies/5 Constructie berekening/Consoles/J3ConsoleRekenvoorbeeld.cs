@@ -49,10 +49,10 @@ namespace Eurocode.BetonConstructies
 Schematisering met CCC-knoop (1) in de kolom aan de onderzijde van de console en een CCT-knoop (2) 
 boven in de console ter hoogte van de trekband.
 
-|Symbool |Waarde | |
+| Invoer | Waarde | |
 |---|---|---:|
-| *F*~Ed~  | {N(r.FEd, "0 kN")} | Verticale belasting |
-| *H*~Ed~  | {N(r.HEd, "0 kN")} | Horizontale belasting |
+| *F*~Ed~  | {N(i.FEd, "0 kN")} | Verticale belasting |
+| *H*~Ed~  | {N(i.HEd, "0 kN")} | Horizontale belasting |
 | *a*~c~   | {N(i.Ac, "0 mm")} | Afstand belasting tot betonrand |
 | *B*~c~   | {N(i.Bc, "0 mm")} | Breedte console |
 | *H*~c~   | {N(i.Hc, "0 mm")} | Hoogte console |
@@ -106,6 +106,18 @@ $$
 
 
 ")
+
+                .Stap_("demoZ", "Gedrongen constructie 6.1 (10)", $@"
+In deze berekening is gekozen voor een benadering door mideel van de gedrongen ligger om
+de berekening eenvoudig te houden.
+De inwendige hefboomsarm *z* wordt afgeleid uit de formule voor gedrongen constructies (NEN-EN 1992-1-1 6.1 (10)):
+
+$$
+{r.GedrongenUitkraging.ZFormula.FullValue}
+$$
+
+" )
+
 
                 .Stap_("z", "Hefboomarm ↕", $@"
 Voor de hefboomsarm houden we een ondergrens aan van:
@@ -336,7 +348,16 @@ M_{{hart,Ed}}=M_{{rand}} +  \frac{{d_{{kolom}}}}{{2}} \cdot F_{{Ed}}
 = {N(r.Mrand, "0.0")} + \frac{{{(N((i.KolomDikte / 1000.0), "0.000"))}}}{{2}}  \cdot {r.FEd}
 = {N(r.Mhart, "0.0")}\ \mathrm{{kNm}} 
 $$
-"); 
+")
+                .Slot(@"
+## Samenvatting
+
+
+")
+                
+                
+                
+                ; 
         }
     }
 }

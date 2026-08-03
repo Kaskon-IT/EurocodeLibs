@@ -149,13 +149,7 @@
         public bool UseAnchorageBar { get; set; }
         
 
-        public double BuigdoornMainMin
-        {
-            get
-            {
-                return WapeningHelper.GetBuigdoorMin(DiameterMain);
-            }
-        }
+       
         public double BuigdoornMainReq(double afstandTotAanOmbuiging = 0)
         {
             var factor = ResterendPercentageVerankeringsLengte(afstandTotAanOmbuiging);
@@ -165,8 +159,7 @@
             
         }
         
-
-        
+                
 
 
         public double MainFy
@@ -239,6 +232,32 @@
 
 
         public double VerankeringsLengteReq => VerankeringMain.Verankeringslengte;
+
+
+        private GedrongenUitkragingResult? _gedrongenUitkraging;
+        public GedrongenUitkragingResult GedrongenUitkraging
+        {
+            get
+            {
+                if (_gedrongenUitkraging is null)
+                {
+                    var ab = LoadPlateLength;
+                    var ac = Ac;
+                    var h = Hc;
+                    var l = Lc;
+
+                    var input = new GedrongenUitkragingInput() {
+                        Ac = ac,
+                        H = h,
+                        L = l,
+                        Ab = ab
+                    };
+
+                    _gedrongenUitkraging = GedrongenUitkragingCalculator.Calculate(input);
+                }
+                return _gedrongenUitkraging;
+            }
+        }
 
 
 
