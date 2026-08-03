@@ -29,98 +29,143 @@ namespace Eurocode.BetonConstructies
         {
             double sigmaN = r.Sigma1RdMax;
             double sigmaCCT = r.Sigma2RdMax;
+            double sigmaNode1VerticalPlane = r.F1x * 1000.0 / (r.Y1 * r.Bc);
             double deltaA = i.FactorHEd * (i.Hc - r.D);
             double w = r.Fc * 1000.0 / (i.Bc * sigmaN);
-            string aswFactorTex = r.LinkType == J3ConsoleLinkType.Verticaal ? "0{,}5" : "0{,}25";
-            double aswMin = (r.LinkType == J3ConsoleLinkType.Verticaal ? 0.5 : 0.25) * r.AsMain;
+            string aswMinTex = r.LinkType == J3ConsoleLinkType.Verticaal ?
+                @"0.5 \cdot \frac{{ F_{{Ed}} }}{{ f_{{yd}} }}" :
+                @"0.25 \cdot A_{s,main}";
+            //string aswFactorTex = r.LinkType == J3ConsoleLinkType.Verticaal ? "0.5" : "0.25";
+            double aswMin = (r.LinkType == J3ConsoleLinkType.Verticaal ? 
+                0.5 * r.FEd * 1000 / r.Fyd : 
+                0.25 * r.AsMain);
 
             return new RekenvoorbeeldBuilder("Rekenvoorbeeld console (Strut-and-Tie)")
-                .Intro($@"## Uitgangspunten
-
-
-<table>
-    <tr><td>Schema</td><td>Grootheid</td><td>Waarde</td></tr>
-  <tr>
-    
-    <td rowspan=""3"">{r.SchemaSvg}</td>
-    <td>K2</td>
-    <td>K3</td>
-  </tr>
-  <tr>
-    <td>Data kolom 2 (onderste rij)</td>
-  </tr>
-</table>
-
-| Grootheid | Waarde |
-| --- | --- |
-| Verticale belasting           | $F_{{v,Ed}}={N(r.FEd, "0")}\ \mathrm{{kN}}$ |
-| Horizontale belasting         | $F_{{h,Ed}}={N(r.HEd, "0")}\ \mathrm{{kN}}$ |
-| Afstand belasting tot kolom   | $a_c={N(i.Ac, "0")}\ \mathrm{{mm}}$ |
-| Breedte console               | $b_c={N(i.Bc, "0")}\ \mathrm{{mm}}$ |
-| Hoogte console                | $h_c={N(i.Hc, "0")}\ \mathrm{{mm}}$ |
-| Dekking                       | $h_c={N(i.Dekking, "0")}\ \mathrm{{mm}}$ |
-| Diameter                      | $Ø_{{main}}={N(i.HoofdstaafDiameter, "0")}\ \mathrm{{mm}}$ |
-| Effectieve hoogte             | $d={N(r.D)}\ \mathrm{{mm}}$ |
-| Hefboomarm trekband           | $z={N(r.Z)}\ \mathrm{{mm}}$ |
-| Toelaatbare CCC-spanning      | $\sigma_n=\sigma_{{Rd,\max}}={N(sigmaN, "0.00")}\ \mathrm{{N/mm^2}}$ |
-| Toelaatbare CCT-spanning      | $\sigma_n=\sigma_{{Rd,\max}}={N(sigmaCCT, "0.00")}\ \mathrm{{N/mm^2}}$ |
-
+                .Intro($@"
 ### Schema
-
 <div style=""max-width:480px"">
 {r.SchemaSvg}
-</div>")
+</div>
+Schematisering met CCC-knoop (1) in de kolom aan de onderzijde van de console en een CCT-knoop (2) 
+boven in de console ter hoogte van de trekband.
 
-                .Stap_("schema", "schema", r.SchemaSvg)
+|Symbool |Waarde | |
+|---|---|---:|
+| *F*~Ed~  | {N(r.FEd, "0 kN")} | Verticale belasting |
+| *H*~Ed~  | {N(r.HEd, "0 kN")} | Horizontale belasting |
+| *a*~c~   | {N(i.Ac, "0 mm")} | Afstand belasting tot betonrand |
+| *B*~c~   | {N(i.Bc, "0 mm")} | Breedte console |
+| *H*~c~   | {N(i.Hc, "0 mm")} | Hoogte console |
+| *c*      | {N(i.Dekking, "0 mm")} | Dekking |
+| *Ø*~main~| {N(i.HoofdstaafDiameter, "0 mm")} | Diameter trekbandwapening |
+| *f*~ck~  | {N(i.Fck, "0 N/mm²")} | Druksterkte beton |
+| *f*~yk~  | {N(i.Fyk, "0 N/mm²")} | Trekstrekte betonstaal |
 
-                .Stap_("x1", "Verticaal knoopvlak", $@"De bekende verticale belasting bepaalt direct de hoogte van het eerste knoopvlak:
+")
+
+                .Stap_("nutHo", "Nuttige hoogte", $@"
+$$
+d = H_c - d_1 = {N(i.Hc)} - {N(r.D1, "0")} = {N(r.D, "0")} \text{{ mm}}
+$$
+$$
+d_1 = c + \frac{{Ø_{{main}}}}{{2}} {(r.HorizontaleBeugelsNodig ? "" : "+ Ø_{{bgl}}")} = {r.D1:0} \text{{ mm}}
+$$
+")
+
+                .Stap_("x1", "Afmeting knoopvlak", $@"
+De bekende verticale belasting in knoop 1 ($F_{{1,v}}=F_{{Ed}}$) bepaalt direct de horizontale afmeting van dit knoopvlak:
 
 $$
-x_1=\frac{{F_{{v,Ed}}}}{{b\,\sigma_n}}
+x_1=\frac{{F_{{1,v}}}}{{b\,\sigma_n}}
 =\frac{{{N(r.FEd * 1000.0, "0")}}}{{{N(i.Bc, "0")}\cdot{N(sigmaN, "0.00")}}}
 ={N(r.X1)}\ \mathrm{{mm}}
-$$")
-
-                .Stap_("deltaA", "Correctie voor horizontale belasting", $@"Een horizontale belasting op de bovenzijde van de console veroorzaakt een extra moment.
-De vergroting van de arm is:
+$$
 
 $$
-\Delta a=\frac{{F_{{h,Ed}}}}{{F_{{v,Ed}}}}\,(h_c-d)
-={N(i.FactorHEd, "0.00")}\cdot{N(i.Hc - r.D)}
-={N(deltaA)}\ \mathrm{{mm}}
-$$")
+\sigma_n = \sigma_{{Rd,max}} = k_1  \nu' f_{{cd}} = {N(r.Sigma1RdMax)} \text{{ N/mm²}} 
+$$
 
-                .Stap_("a", "Horizontale arm", $@"Het knooppunt ligt in het midden van het knoopvlak:
 
+")
+
+                .Stap_("arm", "Horizontale arm ↔", $@"
+De totale horizontale arm:
 $$
 a=a_c+\frac{{x_1}}{{2}}+\Delta a
 ={N(i.Ac, "0")}+\frac{{{N(r.X1)}}}{{2}}+{N(deltaA)}
-={N(r.A)}\ \mathrm{{mm}}
-$$")
+={N(r.A)}\ \text{{ mm}}
+$$
 
-                .Stap_("z", "Hefboomarm trekband", $@"De hefboomarm van de trekband is:
+met vergroting uit horizontale belasting:
+$$
+\Delta a=\frac{{F_{{h,Ed}}}}{{F_{{v,Ed}}}} \cdot d_1
+={N(i.FactorHEd, "0.00")}\cdot{N(r.D1, "0")}
+={N(deltaA)}\ \text{{ mm}}
+$$
+
+
+
+")
+
+                .Stap_("z", "Hefboomarm ↕", $@"
+Voor de hefboomsarm houden we een ondergrens aan van:
 
 $$
-z={N(i.FactorZ, "0.0")}\cdot d
-= {N(i.FactorZ, "0.0")}\cdot{N(r.D, "0")}
-= {N(r.Z)}\ \mathrm{{mm}}
-$$")
+z \leq {N(i.FactorZ, "0.###")}\cdot d
+\leq {N(i.FactorZ, "0.###")}\cdot{N(r.D, "0")}
+\leq {N(i.FactorZ * r.D)} \text{{ mm}}
+$$
 
-                .Stap_("ft", 
+Tevens berekenen we *z* (situatie met maximale spanning in vertikaal knoopvlak) zodat we zeker weten dat toelaatbare spanning niet wordt overschreden:
+
+$$
+z =\frac{{d+\sqrt{{d^{{2}}-\frac{{2F_{{Ed}}\,a}}{{b\,\sigma_{{Rd}}}}}}}}{{2}} = {N(r.ZBer)} \text{{ mm}}
+$$
+
+We houden de kleinste waarde aan:
+$$
+z = \min({N(i.FactorZ * r.D)};{N(r.ZBer)}) = {N(r.Z)} \text{{ mm}}
+$$
+")
+                 .Stap_("y1", "Afmeting knoopvlak", $@"
+
+$$ 
+y_1 = 2 \cdot (d-z) = {N(r.Y1)} \text{{ mm}}
+$$
+
+$$
+\sigma_{{c}} = \frac{{F_{{}} }}{{y_1\cdot b}} = {N(sigmaNode1VerticalPlane, "0.00")} \text{{ N/mm²}}
+$$
+
+
+")
+
+
+
+
+                .Stap_("ft",
                 "Trekbandkracht",
-                $@"Momentenevenwicht (de horizontale belasting zit al in $a$ via $\Delta a$):
+                $@"Momentenevenwicht:
 
 $$
-F_{{t}}=H+\frac{{F_{{v,Ed}}\,a}}{{z}}
+F_{{t}} = F_2 = H+\frac{{F_{{v,Ed}}\,a}}{{z}}
 ={N(r.HEd)}+ \frac{{{N(r.FEd, "0")}\cdot{N(r.A)}}}{{{N(r.Z)}}}
 ={N(r.Ft)}\ \mathrm{{kN}}
-$$")
+$$
+
+
+")
 
                 .Stap_("fc", "Drukstaaf", $@"Uit krachtenevenwicht:
 
 $$
-F_c=\sqrt{{F_{{v,Ed}}^2+F_{{1x}}^2}}
-=\sqrt{{{N(r.FEd, "0")}^2+{N(r.F1x)}^2}}
+F_{{1,h}}=\frac{{F_{{v,Ed}}\,a}}{{z}}
+={N(r.F1x)}\ \mathrm{{kN}}
+$$
+
+$$
+F_c = F_1 =\sqrt{{F_{{1,h}}^2+F_{{1,v}}^2}}
+=\sqrt{{{N(r.F1x, "0")}^2+{N(r.F1y)}^2}}
 ={N(r.Fc)}\ \mathrm{{kN}}
 $$")
 
@@ -130,11 +175,7 @@ $$")
 ={N(r.ThetaDeg)}^\circ
 $$")
 
-                .Stap_("y1", "Horizontaal knoopvlak", $@"$$
-y_1=\frac{{F_{{t,Ed}}}}{{b\,\sigma_n}}
-=\frac{{{N(r.Ft * 1000.0, "0")}}}{{{N(i.Bc, "0")}\cdot{N(sigmaN, "0.00")}}}
-={N(r.Y1)}\ \mathrm{{mm}}
-$$")
+
 
                 .Stap_("w1", "Breedte loodrecht op de drukstaaf", $@"$$
 w_1=\frac{{F_c}}{{b\,\sigma_n}}
@@ -154,97 +195,148 @@ $$")
                 .Stap_("wapening", "Benodigde wapening", $@"Hoofdtrekwapening uit de trekbandkracht:
 
 $$
-A_{{s,req}}=\frac{{F_{{t,Ed}}}}{{f_{{yd}}}}
+A_{{s,main}}=\frac{{F_{{t,Ed}}}}{{f_{{yd}}}}
 =\frac{{{N(r.Ft * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}}
-={N(r.AsMain, "0")}\ \mathrm{{mm^2}}
+={N(r.AsMain, "0")} \text{{ mm²}}
 $$
 
-Aanvullende {(r.VerticaleBeugelsNodig? "vertikale" : "horizontale")} beugels uit $F_{{wd}}$, met als minimum ${aswFactorTex}\,A_{{s,req}}$:
+
+
+Aanvullende {(r.VerticaleBeugelsNodig ?
+"vertikale" : "horizontale")} beugels met 
+$\Sigma A_{{s,lnk}} \geq {aswMinTex}$
 
 $$
-A_{{sw,req}}=\max\left(\frac{{ F_{{wd}} }}{{ f_{{yd}} }};\ {aswFactorTex}\,A_{{s,req}}\right)
+\Sigma A_{{s,lnk,req}}
+=\max\left(\frac{{ F_{{wd}} }}{{ f_{{yd}} }};\ {aswMinTex} \right)
 =\max\left(\frac{{{N(r.Fwd * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}};\ {N(aswMin, "0")}\right)
-={N(r.Asw, "0")}\ \mathrm{{mm^2}}
+={N(r.Asw, "0")} \text{{ mm²}}
 $$")
 
-                .Stap_("moment-rand", "Moment rand", $@"Moment aan de rand :
-$$
-M_{{rand,Ed}}=F*a_c+H \cdot a_h
-={N(r.FEd, "0.#")} \cdot {N(r.Ac/1000, "0.000")} + {N(r.HEd, "0.#")} \cdot {N(r.Ah/1000, "0.000")}
-={N(r.Mrand, "0.0")}\ \mathrm{{kNm}}
-$$
 
-Moment tot aan hart kolom/wand:
 
+                .Stap_("wapening-trekband", "Wapening trekband", $@"
 $$
-M_{{hart,Ed}}=M_{{rand}} +  \frac{{d_{{kolom}}}}{{2}} \cdot F_{{Ed}}
-= {N(r.Mrand, "0.0")} + \frac{{{(N((i.KolomDikte/1000.0), "0.000"))}}}{{2}}  \cdot {r.FEd}
-= {N(r.Mhart, "0.0")}\ \mathrm{{kNm}} 
+{r.AsMainFormula.FullValue}
 $$
 
+$$
+A_{{s,main,prov}} = {r.AantalMain} \phi {r.DiameterMain} = {N(r.AsMainProv, "0")} \text{{ mm²}}
+$$
 
-"
+Staalspanning:
+$$
+f_y 
+= \frac{{F_t}}{{A_{{s,prov}}}} 
+= \frac{{{r.Ft * 1000:0}}}{{{r.AsMainProv:0}}}
+= {r.MainFy:0} \text{{ N/mm²}}
+$$
 
-            
+{(r.MainFy > r.Fyd ? "⚠️ Overschrijding trekspanning." : "")}  <br />
 
+Verankeringslengte :
+$$
+{r.VerankeringMain.VerankeringslengteFormula.FullValue}
+$$
 
+$$
+{r.VerankeringMain.BasisVerankeringslengteFormula.FullValue}
+$$
 
-                )
-
-                .Stap_("controle wapening", "Controle wapening", $@"Controle van de hoofdtrekwapening:
-
-
-
-Toegepast is {N(i.HoofdstaafAantal, "0")}Ø{N(i.HoofdstaafDiameter, "0")} met een
-staalspanning f~y~ van {N(r.MainFy, "0")} N/mm² en f~bt~ van {N(r.MainFbt, "0")} N.
-
-{(r.MainFy > r.Fyd? "⚠️ overschrijding trekspanning." : "")}
-
-
-De benodigde verankeringslengte l~b,req~ = {N(r.VerankeringsLengteReq, "0")} mm. 
-De benodigde buigdoorn op dit punt Ø~m,req~ = {N(r.BuigdoornMainReq, "0")} mm. 
-
-We passen een buigdoorn toe van {N(i.HoofdstaafBuigdoornDiameterFactor, "0")} ×Ø = {N(r.BuigdoorMain, "0")} mm.
-De afname van de buigdoorn is evenredig met de afname van f~bt~. 
-Het benodigde rechte deel voor de ombuiging is dus {N(r.BenodigdeRechteDeel, "0")} mm.
-
-Toegepast is een recht deel van {N(r.RechtDeelMain, "0")} mm.
-
+$$
+{r.VerankeringMain.FbdFormula.FullValue}
+$$
 
 
 
 
 
+Minimale buigdoorn diameter (zonder recht staafdeel):
+$$
+{r.VerankeringContext.MinimaleBuigdoornDiameterFormula.FullValue}
+$$
+
+$$
+F_{{bt(0)}} = f_y \cdot A_{{s}} 
+= {N(r.MainFy)} \cdot {N(WapeningHelper.GetDsnOpp(1, r.DiameterMain))}
+= {N(r.MainFbt(0), "0")} \text{{ N}} 
+$$ 
+
+
+Toegepast is buigdoorndiameter van {r.BuigdoorMain:0} mm. <br/> 
+Aan de **kolomzijde** begint de verankering op de vertikale lijn die door knoop 1 gaat en is er 
+een rechte lengte van {r.RechtDeelMain:0} mm aanwezig tot aan de ombuiging.
+<br />
+Aan de **consolezijde** begint de verankering aan het begin van de oplegplaat en is er
+een rechte lengte van {r.RechtDeelMain2:0} mm aanwezig tot aan de ombuiging.
 
 
 
 
-we rekenen de maximale trekspanning voor toepassing van deze buigstraal is...
-het rechte deel van staaf (tussen verankeringspunt en de ombuiging) is ....
-hierdoor is de spanning aan het begin van de buiging ...
-indien akkoord ✅
-indien niet akkoord ❌
+Het kleinst rechte staafdeel tot aan de ombuiging is {N(Math.Min(r.RechtDeelMain, r.RechtDeelMain2), "0")} mm en het
+resterende deel is:
+$$
+\eta = 1 - (\frac{{{N(Math.Min(r.RechtDeelMain, r.RechtDeelMain2), "0")}}}{{{r.VerankeringMain.Verankeringslengte:0}}}) = {N(r.ResterendPercentageVerankeringsLengte(Math.Min(r.RechtDeelMain, r.RechtDeelMain2)), "0.00")}
+$$
+
+$$
+F_{{bt({N(Math.Min(r.RechtDeelMain, r.RechtDeelMain2), "0")})}} = \eta \cdot F_{{bt(0)}} = {N(r.MainFbt(Math.Min(r.RechtDeelMain, r.RechtDeelMain2) ), "0")} \text{{ N}}
+$$
+
+
+
+$$
+\phi_{{m,min}} \geq {Math.Min(r.VerankeringMain.MinimaleBuigdoornDiameter, r.VerankeringMainConsoleZijde.MinimaleBuigdoornDiameter):0} \text{{ mm}}
+$$
+
+Toegepast:
+$$
+\phi_{{m}} = {N(r.BuigdoorMain, "0")} \text{{ mm}} 
+$$
+$$
+r_{{i}} = {N((r.BuigdoorMain + r.DiameterMain) * 0.5, "0")} \text{{ mm}} 
+$$
+
+{(r.BuigdoornMainReq(r.RechtDeelMain) > r.BuigdoorMain ?
+"⚠️ Let op, ombuiging niet akkoord. Zorg voor alternatieve verankering zonder omgebogen staven"
+: "")}
+
 "
 )
 
-                .Slot($@"# Samenvatting
+                .Stap_("beugels", "Beugels", $@"
+$$
+\Sigma A_{{s,lnk}}
+= \frac{{ F_{{wd}} }}{{ f_{{yd}} }}
+= \frac{{{N(r.Fwd * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}}
+= {N(r.Asw, "0")} \text{{ mm²}}
+$$
 
-| Grootheid | Resultaat |
-| --- | --- |
-| $x_1$ | {N(r.X1)} mm |
-| $\Delta a$ | {N(deltaA)} mm |
-| $a$ | {N(r.A)} mm |
-| $z$ | {N(r.Z)} mm |
-| $\theta$ | {N(r.ThetaDeg)}° |
-| $F_{{t}}$ | {N(r.Ft)} kN |
-| $F_{{c}}$ | {N(r.Fc)} kN |
-| $F_{{c,h}}$ | {N(r.F1x)} kN |
-| $F_{{c,v}}c$ | {N(r.F1y)} kN |
-| $y_1$ | {N(r.Y1)} mm |
-| $w_1$ | {N(w)} mm |
-| $F_{{wd}}$ | {N(r.Fwd)} kN |
-| $A_{{s,req}}$ | {N(r.AsMain, "0")} mm² |
-| $A_{{sw,req}}$ | {N(r.Asw, "0")} mm² |");
+$$
+{r.AsLnkFormula.FullValue}
+$$
+
+$$
+\Sigma A_{{s,lnk, prov}} 
+= {(r.AantalBeugels)} \text{{bg}} \phi{r.DiameterBgl} = {r.AswProv:0} \text{{ mm²}}
+$$
+
+")
+
+                .Stap_("momenten", "Momenten extern", $@"
+Moment aan de rand:
+$$
+M_{{rand,Ed}}=F \cdot a_c + H \cdot a_h
+={N(r.FEd, "0.#")} \cdot {N(r.Ac / 1000, "0.000")} + {N(r.HEd, "0.#")} \cdot {N(r.Ah / 1000, "0.000")}
+={N(r.Mrand, "0.0")}\ \mathrm{{kNm}}
+$$
+Moment tot aan hart kolom/wand:
+$$
+M_{{hart,Ed}}=M_{{rand}} +  \frac{{d_{{kolom}}}}{{2}} \cdot F_{{Ed}}
+= {N(r.Mrand, "0.0")} + \frac{{{(N((i.KolomDikte / 1000.0), "0.000"))}}}{{2}}  \cdot {r.FEd}
+= {N(r.Mhart, "0.0")}\ \mathrm{{kNm}} 
+$$
+"); 
         }
     }
 }

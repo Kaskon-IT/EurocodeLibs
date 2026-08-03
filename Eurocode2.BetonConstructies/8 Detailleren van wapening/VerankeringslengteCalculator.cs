@@ -7,7 +7,7 @@ namespace Eurocode.BetonConstructies
     /// </summary>
     public static class VerankeringslengteCalculator
     {
-        public static VerankeringslengteResult Bereken(VerankeringslengteInput i)
+        public static VerankeringResult Bereken(VerankeringslengteInput i)
         {
             bool isTrek = i.StaafType == VerankeringStaafType.Trekstaaf;
             bool isGebogen = i.StaafVorm == VerankeringStaafVorm.Gebogen;
@@ -17,6 +17,9 @@ namespace Eurocode.BetonConstructies
             double eta1 = i.GoedeAanhechting ? 1.0 : 0.7;
             double eta2 = i.Diameter <= 32.0 ? 1.0 : (132.0 - i.Diameter) / 100.0;
             double fbd = 2.25 * eta1 * eta2 * fctd; // (8.2)
+            double fcd = BepaalFcdBuiging(i.Beton);
+            double fbt = i.Fbt;
+            double ab = i.Ab;
 
             // 8.4.3 (2) Basisverankeringslengte
             double lbRqd = (i.Diameter / 4.0) * (i.RekenwaardeStaafspanning / fbd); // (8.3)
@@ -44,7 +47,7 @@ namespace Eurocode.BetonConstructies
             double buigrolDiameterBeton = BepaalBuigrolDiameterBeton(i);                // (8.1)
             double buigstraal = buigrolDiameter / 2.0;                                  // r = Øm/2
 
-            var result = new VerankeringslengteResult
+            var result = new VerankeringResult
             {
                 Diameter = i.Diameter,
                 RekenwaardeStaafspanning = i.RekenwaardeStaafspanning,
@@ -55,6 +58,10 @@ namespace Eurocode.BetonConstructies
                 Eta1 = eta1,
                 Eta2 = eta2,
                 Fbd = fbd,
+                Fcd = fcd,
+                Fbt = fbt,
+                Ab = ab,
+
 
                 BasisVerankeringslengte = lbRqd,
 
@@ -68,8 +75,8 @@ namespace Eurocode.BetonConstructies
                 MinimumVerankeringslengte = lbMin,
                 Verankeringslengte = lbd,
 
-                MinimaleBuigrolDiameter = buigrolDiameter,
-                MinimaleBuigrolDiameterBeton = buigrolDiameterBeton,
+                MinimaleBuigdoornDiamStaal = buigrolDiameter,
+                MinimaleBuigdoornDiameterBeton = buigrolDiameterBeton,
                 MinimaleBuigstraal = buigstraal,
 
                 ToegepasteVerankeringslengte = i.ToegepasteVerankeringslengte,
@@ -136,7 +143,7 @@ namespace Eurocode.BetonConstructies
                 return 0;
 
             double fcd = BepaalFcdBuiging(i.Beton);
-            return i.Fbt * 1000.0 * (1.0 / i.Ab + 1.0 / (2.0 * i.Diameter)) / fcd; // (8.1)
+            return i.Fbt * (1.0 / i.Ab + 1.0 / (2.0 * i.Diameter)) / fcd; // (8.1)
         }
 
         /// <summary>
@@ -151,7 +158,7 @@ namespace Eurocode.BetonConstructies
             return c55.Fcd;
         }
 
-        private static void VulRegels(VerankeringslengteInput i, VerankeringslengteResult r)
+        private static void VulRegels(VerankeringslengteInput i, VerankeringResult r)
         {
             r.ResultRows.Add(new()
             {
@@ -366,7 +373,7 @@ namespace Eurocode.BetonConstructies
                     Toelichting = "Minimale buigroldiameter (beschadiging wapening)",
                     SymboolHtml = "<i>Ø</i><sub>m,min</sub>",
                     SymboolTex = @"Ø_{m,min}",
-                    Waarde = r.MinimaleBuigrolDiameter.ToString("0"),
+                    Waarde = r.MinimaleBuigdoornDiamStaal.ToString("0"),
                     Eenheid = "mm",
                     FormuleTex = i.Diameter <= 16.0 ? @"Ø_{m,min}=4Ø" : @"Ø_{m,min}=7Ø",
                     Artikel = "Tabel 8.1N",
@@ -379,7 +386,7 @@ namespace Eurocode.BetonConstructies
                         Toelichting = "Minimale buigroldiameter (betondrukbezwijken)",
                         SymboolHtml = "<i>Ø</i><sub>m,min</sub>",
                         SymboolTex = @"Ø_{m,min}",
-                        Waarde = r.MinimaleBuigrolDiameterBeton.ToString("0"),
+                        Waarde = r.MinimaleBuigdoornDiameterBeton.ToString("0"),
                         Eenheid = "mm",
                         FormuleTex = @"Ø_{m,min}\geq F_{bt}\left(\frac{1}{a_b}+\frac{1}{2Ø}\right)/f_{cd}",
                         Artikel = "(8.1)",
@@ -390,7 +397,7 @@ namespace Eurocode.BetonConstructies
                         Toelichting = "Maatgevende buigroldiameter",
                         SymboolHtml = "<i>Ø</i><sub>m,min</sub>",
                         SymboolTex = @"Ø_{m,min}",
-                        Waarde = r.MaatgevendeBuigrolDiameter.ToString("0"),
+                        Waarde = r.MinimaleBuigdoornDiameter.ToString("0"),
                         Eenheid = "mm",
                     });
                 }
@@ -409,7 +416,7 @@ namespace Eurocode.BetonConstructies
                     Toelichting = "Minimale buigstraal (binnenzijde)",
                     SymboolHtml = "<i>r</i><sub>min</sub>",
                     SymboolTex = @"r_{min}",
-                    Waarde = (r.MaatgevendeBuigrolDiameter / 2.0).ToString("0"),
+                    Waarde = (r.MinimaleBuigdoornDiameter / 2.0).ToString("0"),
                     Eenheid = "mm",
                     FormuleTex = @"r_{min}=Ø_{m,min}/2",
                 });

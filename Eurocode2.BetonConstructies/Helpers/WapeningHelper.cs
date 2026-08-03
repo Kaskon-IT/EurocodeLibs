@@ -57,7 +57,22 @@ namespace Eurocode.BetonConstructies
             return r.BasisVerankeringslengte;
         }
 
+        public static VerankeringResult GetVerankeringResult(double ab, double fbt, double d, int fck, double benutting = 1.0)
+        {
+            
 
+            var i = new VerankeringslengteInput()
+            {
+                Ab = ab,
+                Fbt = fbt,
+                Diameter = d,
+                Beton = new BetonContext(fck),
+                Benuttingsgraad = benutting
+            };
+
+            var r = VerankeringslengteCalculator.Bereken(i);
+            return r;
+        }
 
         public static List<string>? GetWapGroepen(string wapening)
         {

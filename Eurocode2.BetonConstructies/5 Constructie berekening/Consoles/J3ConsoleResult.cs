@@ -2,6 +2,7 @@
 {
     using CommonLibrary.Models;
     using Eurocode.BetonConstructies.StrutAndTie;
+    using ExportFactory.Shared;
 
     public class J3ConsoleResult : IRowResult
     {
@@ -41,22 +42,18 @@
         public double P5x => -KolomDikte + Dekking + DiameterBgl + DiameterMain / 2.0;
         public double BeenlengteMainNaVerankering => -X1/2.0 - P5x;
 
-        public double MaximaleBuigdoornToepasbaar => BeenlengteMainNaVerankering * 2.0 - DiameterMain;
+        
 
-        public bool OmbuigingMainMogelijk => MaximaleBuigdoornToepasbaar > BuigdoornMainReq;
-
-        public double VerhoudingBuigdoorn => BuigdoorMain / BuigdoornMainReq;
-        public double BenodigdeRechteDeel
-        {
-            get
-            {
-                if (VerhoudingBuigdoorn > 1) return 0;
-                else return (1-VerhoudingBuigdoorn) * VerankeringsLengteReq;
-            }
-        }
-
+        // Autovalues
         public double RechtDeelMain => BeenlengteMainNaVerankering - DiameterMain / 2.0 - BuigdoorMain / 2.0;
 
+        public double RechtDeelMain2 => Lc - Dekking - DiameterBgl - (BuigdoorMain + DiameterMain) / 2.0 - (Ac - LoadPlateLength / 2.0); 
+        
+        public double FactorHorizontaal => HEd / FEd;
+
+        /// <summary>
+        /// Dekking op de beugel
+        /// </summary>
         public double Dekking { get; set; }
 
         /// <summary>
@@ -70,15 +67,15 @@
         public double LoadPlateWidth { get; set; }
 
         /// <summary>
-        /// Factor voor de horizontale kracht. Wordt gebruikt om FhEd te berekenen uit FvEd.
+        /// Horizontale kracht (rekenwaarde in kN)
         /// </summary>
-        public double FactorHorizontaal { get; set; } = 0.4;
         public double HEd { get; set; }
 
-        //public double FhEd => FactorHorizontaal * FvEd;
 
         public double DikteOplegmateriaal { get; set; } = 20;
-        public double DeltaAc => (Hc - D + DikteOplegmateriaal) * FactorHorizontaal;
+        
+        
+        //public double DeltaAc => (Hc - D + DikteOplegmateriaal) * FactorHorizontaal;
 
         public double FEd { get; set; }
         
@@ -109,6 +106,7 @@
         
 
         public double Z { get; set; }
+        public double ZBer { get; set; }
 
         public double Z0 { get; set; }
         public double Y1 { get; set; }
@@ -148,7 +146,7 @@
 
 
         public double BuigdoorMain { get; set; }
-
+        public bool UseAnchorageBar { get; set; }
         
 
         public double BuigdoornMainMin
@@ -158,24 +156,15 @@
                 return WapeningHelper.GetBuigdoorMin(DiameterMain);
             }
         }
-        public double BuigdoornMainReq
+        public double BuigdoornMainReq(double afstandTotAanOmbuiging = 0)
         {
-            get
-            {
-                var buigdoornMin1 = WapeningHelper.GetBuigdoorMin(DiameterMain);
-                var buigdoornMin2 = WapeningHelper.GetBuigdoornMin(Fcd, D1, MainFbt, DiameterMain);
-                return Math.Max(buigdoornMin1, buigdoornMin2);
-            }
+            var factor = ResterendPercentageVerankeringsLengte(afstandTotAanOmbuiging);
+            var buigdoornMin1 = WapeningHelper.GetBuigdoorMin(DiameterMain);
+            var buigdoornMin2 = WapeningHelper.GetBuigdoornMin(Fcd, D1, MainFbt(afstandTotAanOmbuiging), DiameterMain);
+            return Math.Max(buigdoornMin1, buigdoornMin2);
+            
         }
-        public double BuigstraalMainReq
-        {
-            get
-            {
-                var buigdoornMin1 = WapeningHelper.GetBuigdoorMin(DiameterMain);
-                var buigdoornMin2 = WapeningHelper.GetBuigdoornMin(Fcd, D1, MainFbt, DiameterMain);
-                return Math.Max(buigdoornMin1, buigdoornMin2) / 2;
-            }
-        }
+        
 
         
 
@@ -191,25 +180,120 @@
 
 
 
-        public double MainFbt
+        public double MainFbt(double afstandTotOmbuiging)
         {
-            get
-            {
-                return MainFy * WapeningHelper.GetDsnOpp(1, DiameterMain);
-            }
+            var restant = ResterendPercentageVerankeringsLengte(afstandTotOmbuiging);
+           
+            return restant * MainFy * WapeningHelper.GetDsnOpp(1, DiameterMain);
+            
         }
-
-
-        public double VerankeringsLengteReq
-        {
-            get
-            {
-                return WapeningHelper.GetLbReq(D1, MainFbt, DiameterMain, Fck);
-            }
-        }
-
 
         
+        /// <summary>
+        /// Geeft het resterende percentage (van 100% tot 0%) bij ontwikkelde verankeringslengte.
+        /// Bij een afstand van 0 -> 100%
+        /// Bij een afstand van 30% -> 70%
+        /// Bij de volledige lengte 0% 
+        /// Lineair 
+        /// </summary>
+        /// <param name="ontwikkeldeLengte">De ontwikkelde lengte van de verankeringslengte is </param>
+        /// <returns>Resterend percentage van de verankering</returns>
+        public double ResterendPercentageVerankeringsLengte(double ontwikkeldeLengte)
+        {
+            // Bij afstand 0 is per definitie 100% over; dit voorkomt bovendien
+            // oneindige recursie via VerankeringsLengteReq -> MainFbt(0) -> hier.
+            if (ontwikkeldeLengte <= 0)
+                return 1.0;
+
+            // Referentie is de verankeringslengte bij volledige staafkracht (afstand 0),
+            // zodat er geen cyclische afhankelijkheid met VerankeringsLengteReq ontstaat.
+            double referentie = VerankeringsLengteBasis;
+            if (referentie <= 0)
+                return 0;
+
+            return Math.Clamp(1.0 - ontwikkeldeLengte / referentie, 0.0, 1.0);
+        }
+
+
+        /// <summary>
+        /// Verankeringslengte bij volledige staafkracht (fbt op afstand 0).
+        /// Dient als vaste referentie voor <see cref="ResterendPercentageVerankeringsLengte"/>.
+        /// Gecachet: de onderliggende berekening is relatief duur en wordt vaak aangeroepen.
+        /// </summary>
+        private double? _verankeringsLengteBasis;
+        public double VerankeringsLengteBasis
+        {
+            get
+            {
+                if (_verankeringsLengteBasis is null)
+                {
+                    double ab = D1;
+                    double fbt = MainFbt(0);
+                    double benutting = MainFy / Fyd;
+
+                    _verankeringsLengteBasis = WapeningHelper.GetVerankeringResult(ab, fbt, this.DiameterMain, this.Fck, benutting).Verankeringslengte;
+                }
+                return _verankeringsLengteBasis.Value;
+            }
+        }
+
+
+        public double VerankeringsLengteReq => VerankeringMain.Verankeringslengte;
+
+
+
+        private VerankeringResult? _verankeringContext;
+        public VerankeringResult VerankeringContext
+        {
+            get
+            {
+                if (_verankeringContext is null)
+                {
+                    double ab = D1;
+                    double fbt = MainFbt(0);
+                    double benutting = 1.0;
+                    _verankeringContext = WapeningHelper.GetVerankeringResult(ab, fbt, this.DiameterMain, this.Fck, benutting);
+                }
+                return _verankeringContext;
+            }
+        }
+
+
+        private VerankeringResult? _verankeringMain;
+        public VerankeringResult VerankeringMain
+        {
+            get
+            {
+                if (_verankeringMain is null)
+                {
+                    double ab = D1;
+                    double fbt = MainFbt(RechtDeelMain);
+                    double benutting = MainFy / Fyd;
+
+                    _verankeringMain = WapeningHelper.GetVerankeringResult(ab, fbt, this.DiameterMain, this.Fck, benutting);
+                }
+                return _verankeringMain;
+            }
+        }
+
+
+        private VerankeringResult? _verankeringMainConsoleZijde;
+        public VerankeringResult VerankeringMainConsoleZijde
+        {
+            get
+            {
+                if (_verankeringMainConsoleZijde is null)
+                {
+                    double ab = D1;
+                    double fbt = MainFbt(RechtDeelMain2);
+                    double benutting = MainFy / Fyd;
+
+                    _verankeringMainConsoleZijde = WapeningHelper.GetVerankeringResult(ab, fbt, this.DiameterMain, this.Fck, benutting);
+                }
+                return _verankeringMainConsoleZijde;
+            }
+        }
+
 
 
         public int AantalBeugels
@@ -221,6 +305,33 @@
                 int minimum = 3;
 
                 return Math.Max(benodigd, minimum);
+            }
+        }
+
+
+        public Formula AsMainFormula => new()
+        {
+            StaticValue = @"A_{s,main,req} = \frac{F_{t}}{f_{yd}}",
+            DynamicValue = @$"= \frac{{{(Ft * 1000):0}}}{{{Fyd:0}}} = {AsMain:0} \text{{ mm²}}"
+        };
+
+        public Formula AsLnkFormula
+        {
+            get
+            {
+                if (HorizontaleBeugelsNodig)
+                {
+                    return new()
+                    {
+                        StaticValue = @"\Sigma A_{s,lnk} \geq k1 \cdot A_{s,main}",
+                        DynamicValue = $@"\geq 0.25 \cdot {AsMain:0} \geq {(0.25*AsMain):0} \text{{ mm²}}",
+                    };
+                }
+                else return new()
+                {
+                    StaticValue = @"\Sigma A_{s,lnk} \geq k2 \cdot \frac{F_{Ed}}{f_{yd}}",
+                    DynamicValue = $@"\geq 0.50 \cdot \frac{{{FEd:0}}}{{{Fyd:0}}} \geq {(0.5*FEd/Fyd):0} \text{{ mm²}}",
+                };
             }
         }
 
@@ -388,12 +499,12 @@
                     fouten.Add("Buigdoorn te groot");
                 }
 
-                if (RechtDeelMain < BenodigdeRechteDeel)
-                {
-                    fouten.Add("Buigdoorn niet akkoord");
-                    fouten.Add($"recht deel benodigd = {BenodigdeRechteDeel:0} mm, beschikbaar = {RechtDeelMain:0} mm");
+                //if (RechtDeelMain < BenodigdeRechteDeel)
+                //{
+                //    fouten.Add("Buigdoorn niet akkoord");
+                //    fouten.Add($"recht deel benodigd = {BenodigdeRechteDeel:0} mm, beschikbaar = {RechtDeelMain:0} mm");
 
-                }
+                //}
 
 
                 // tan(theta) moet tussen 1 en 2,5 liggen.
@@ -409,6 +520,16 @@
                     fouten.Add($"Hoofdwapening niet akkoord (fy = {MainFy:0} N/mm²)");
 
                 }
+
+                if (BuigdoorMain < VerankeringMain.MinimaleBuigdoornDiameter)
+                {
+                    fouten.Add($"Buigdoorn in kolom niet akkoord (minimaal {VerankeringMain.MinimaleBuigdoornDiameter:0} mm)");
+                }
+                if (BuigdoorMain < VerankeringMainConsoleZijde.MinimaleBuigdoornDiameter)
+                {
+                    fouten.Add($"Buigdoorn in consol niet akkoord");
+                }
+
 
                 if (!Node1Ok)
                 {

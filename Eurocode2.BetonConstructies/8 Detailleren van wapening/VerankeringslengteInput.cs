@@ -135,7 +135,7 @@ namespace Eurocode.BetonConstructies
 
         private double _fbt = 0;
         /// <summary>
-        /// <i>F</i><sub>bt</sub> – trekkracht in de staaf aan het begin van de buiging [kN].
+        /// <i>F</i><sub>bt</sub> – trekkracht in de staaf aan het begin van de buiging [N].
         /// 0 = de controle op betondrukbezwijken bij de buiging (8.1) overslaan.
         /// </summary>
         public double Fbt

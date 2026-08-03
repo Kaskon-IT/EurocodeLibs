@@ -43,6 +43,8 @@
         /// </summary>
         public string? DynamicValue { get; set; } = null;
 
+        public string FullValue => StaticValue + DynamicValue;
+
         /// <summary>
         /// Naam bijvoorbeeld (B.3)
         /// </summary>

@@ -177,7 +177,7 @@ namespace Eurocode.BetonConstructies.Consoles
                     new NumericPropertyMetadata<J3ConsoleInput>
                     {
                         PropertyName = nameof(J3ConsoleInput.HoofdstaafBuigdoornDiameterFactor),
-                        Label = "buigdoorn",
+                        Label = "buigd.",
                         Description = "Factor voor buigdoorndiameter",
                         Unit = "×Ø",
                         Order = 101,
@@ -234,10 +234,10 @@ namespace Eurocode.BetonConstructies.Consoles
                         Description = "Factor voor z",
                         Unit = "-",
                         Order = 115,
-                        Min = _ => 0.5,
-                        Max = _ => 0.9,
+                        Min = _ => 0.4,
+                        Max = _ => 0.95,
                         Step = _ => 0.1,
-                        Decimals = 1
+                        Decimals = 2
                     },
                 [nameof(J3ConsoleInput.KolomDikte)] =
                     new NumericPropertyMetadata<J3ConsoleInput> {
@@ -260,7 +260,10 @@ namespace Eurocode.BetonConstructies.Consoles
                     },
 
 
+
+
             };
+
 
             return new ModelMetadata<J3ConsoleInput>(properties);
         }

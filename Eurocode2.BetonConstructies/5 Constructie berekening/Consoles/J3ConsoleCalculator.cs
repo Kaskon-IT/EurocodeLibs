@@ -45,6 +45,11 @@
             double a = i.Ac + x1 / 2.0 + deltaA;
             // volgens jouw voorbeeld
             double z = factorZ * d;
+
+            double zBer = BerekenHoogteZ(i.FEd * 1000, a, d, i.Bc, sigma1RdMax);
+
+            z = Math.Min(z, zBer);
+
             double z0 = z * (i.Ac + deltaA) / a;
             double tanTheta = z / a;
             double thetaDeg = Math.Atan(tanTheta) * 180.0 / Math.PI;
@@ -63,13 +68,11 @@
             double f1y = i.FEd;
             double f1c = Math.Sqrt(f1x * f1x + f1y * f1y);
 
-            // Horizontaal knoopvlak volgens rekenvoorbeeld: y1 = Fc,x / (b * sigma_n).
-            // Oude logica (vervangen): double y1 = (d - z) * 2; // volgens mij
-            double y1 = f1x * 1000.0 / (i.Bc * sigmaToelaatbaar);
+            
 
-
-
-           
+            // Logica: gebruik
+            double y1 = 2 * (d - z);
+                       
          
 
             // Main reinforcement
@@ -78,7 +81,7 @@
             double aswMin = 0.25 * asMain;
             if (linkType == J3ConsoleLinkType.Verticaal)
             {
-                aswMin = 0.5 * asMain;
+                aswMin = 0.5 * i.FEd * 1000 / fyd;
             }
 
            // Aanvullende wapening
@@ -89,14 +92,15 @@
 
 
             // Node 1 verification
-            double sigmaNode1Ed = f1x * 1000.0 / (i.Bc * y1);
+            double sigmaNode1Edx = f1x * 1000.0 / (i.Bc * y1);
+            double sigmaNode1Edy = f1y * 1000.0 / (i.Bc * x1);
+            double sigmaNode1Ed = Math.Max(sigmaNode1Edx, sigmaNode1Edy);
 
             // Node 2 verification below load plate
             double sigmaNode2Ed = i.FEd * 1000.0 / (i.LoadPlateLength * i.LoadPlateWidth);
 
             // M_rand voor opgave kolomberekening
             double mRand = i.FEd * i.Ac / 1000.0 + i.HEd * ah / 1000.0;
-
 
 
             var result = new J3ConsoleResult
@@ -116,7 +120,7 @@
                 FEd = i.FEd,
                 HEd = i.HEd,
 
-                FactorHorizontaal = i.FactorHEd,
+                //FactorHorizontaal = i.FactorHEd,
                 DikteOplegmateriaal = i.DikteOplegmateriaal,
                 
                 Ac = i.Ac,
@@ -145,6 +149,7 @@
 
                 D = d,
                 Z = z,
+                ZBer = zBer,
                 Z0 = z0,
                 Y1 = y1,
 
@@ -173,6 +178,7 @@
                 Mrand = mRand,
             };
 
+            result.UseAnchorageBar = result.BuigdoorMain < result.VerankeringMainConsoleZijde.MinimaleBuigdoornDiameter;
 
             result.StrutAndTieNodes.Add(new StrutAndTie.StrutAndTieNode
             {
@@ -233,6 +239,9 @@
 
             return J3ConsoleLinkType.Geen;
         }
+
+
+
 
         private static void VulRegels(J3ConsoleInput i, J3ConsoleResult r)
         {
@@ -655,7 +664,7 @@
                 Toelichting = "Buigdoorn", SymboolTex = @"\phi_{m,prov}",
                 Waarde = $"{r.BuigdoorMain}",
                 Eenheid = "mm",
-                IsOk = r.BuigdoorMain >= r.BuigdoornMainReq
+                IsOk = r.BuigdoorMain >= r.BuigdoornMainReq(r.RechtDeelMain)
             });
 
 
@@ -672,6 +681,63 @@
 
 
         }
+
+
+        /// <summary>
+        /// Berekent de effectieve hefboomsarm z uit:
+        ///
+        /// Fh = FEd * a / z
+        /// y1 = Fh / (b * sigma)
+        /// z + y1 / 2 = d
+        ///
+        /// Eenheden:
+        /// - fEd: N
+        /// - a, d, b: mm
+        /// - sigma: N/mm²
+        /// - resultaat: mm
+        /// </summary>
+        public static double BerekenHoogteZ(
+            double fEd,
+            double a,
+            double d,
+            double b,
+            double sigma)
+        {
+            if (fEd < 0)
+                throw new ArgumentOutOfRangeException(nameof(fEd));
+
+            if (a < 0)
+                throw new ArgumentOutOfRangeException(nameof(a));
+
+            if (d <= 0)
+                throw new ArgumentOutOfRangeException(nameof(d));
+
+            if (b <= 0)
+                throw new ArgumentOutOfRangeException(nameof(b));
+
+            if (sigma <= 0)
+                throw new ArgumentOutOfRangeException(nameof(sigma));
+
+            if (fEd == 0 || a == 0)
+                return d;
+
+            var discriminant =
+                d * d -
+                2.0 * fEd * a / (b * sigma);
+
+            if (discriminant < 0)
+            {
+                throw new InvalidOperationException(
+                    "Er bestaat geen reële oplossing voor z. " +
+                    "De belasting is te groot voor de beschikbare geometrie " +
+                    "en toegestane spanning.");
+            }
+
+            // Grootste en fysisch bruikbare oplossing.
+            return (d + Math.Sqrt(discriminant)) / 2.0;
+        }
+
+      
 
     }
 }
