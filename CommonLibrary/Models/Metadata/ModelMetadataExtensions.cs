@@ -17,6 +17,14 @@ namespace CommonLibrary.Models.Metadata
                 as NumericPropertyMetadata<TModel>;
         }
 
+        public static BooleanPropertyMetadata<TModel>? TryGetBoolean<TModel>(
+    this IModelMetadata<TModel> metadata,
+    string propertyName)
+        {
+            return metadata.Get(propertyName)
+                as BooleanPropertyMetadata<TModel>;
+        }
+
 
         //public static NumericPropertyMetadata<TModel> GetNumeric<TModel>(
         //    this IModelMetadata<TModel> metadata,

@@ -35,7 +35,7 @@ namespace Eurocode.BetonConstructies
                 .Intro($@"
 | Invoer | Waarde | |
 |---|---|---:|
-| *F*~Ed~  | {N(i.FEd, "0 kN")} | Verticale belasting |
+| $F_{{Ed}}$  | {N(i.FEd, "0 kN")} | Verticale belasting |
 | *H*~Ed~  | {N(i.HEd, "0 kN")} | Horizontale belasting |
 | *f*~BGT~ | {N(i.FactorBgt, "0.00")} | Factor BGT/UGT |
 | *a*~c~   | {N(i.Ac, "0 mm")} | Afstand belasting tot betonrand |

@@ -67,6 +67,12 @@ namespace CommonLibrary.Models.Metadata
 
     }
 
+    /// <summary>Metadata voor boolean-invoervelden (checkbox/switch).</summary>
+    public sealed class BooleanPropertyMetadata<TModel>
+    : PropertyMetadata<TModel>
+    {
+    }
+
     public interface IPropertyMetadataProvider<TModel>
     {
         IReadOnlyDictionary<string, PropertyMetadata<TModel>> PropertyMetadata { get; }

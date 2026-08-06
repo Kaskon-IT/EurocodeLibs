@@ -47,6 +47,15 @@
             set => SetProperty(ref _toonKolom, value);
         }
 
+        // Afschuining (verjonging) aan de onderzijde van de console.
+        // Niet toegestaan als J.3(3) van toepassing is (ac > 0,5·hc, verticale beugels).
+        private bool _afschuiningOnderzijde = false;
+        public bool AfschuiningOnderzijde
+        {
+            get => _afschuiningOnderzijde;
+            set => SetProperty(ref _afschuiningOnderzijde, value);
+        }
+
         private bool _toonKolomWap = false;
         public bool ToonKolomWap
         {

@@ -335,6 +335,17 @@ namespace Eurocode.BetonConstructies.Consoles
                         Decimals = 0
                     },
 
+                [nameof(J3ConsoleInput.AfschuiningOnderzijde)] =
+                    new BooleanPropertyMetadata<J3ConsoleInput>
+                    {
+                        PropertyName = nameof(J3ConsoleInput.AfschuiningOnderzijde),
+                        Label = "Afschuining onderzijde",
+                        Description = "Afschuining (verjonging) aan de onderzijde van de console. " +
+                                      "Niet toegestaan als J.3(3) van toepassing is (a<sub>c</sub> > 0,5·h<sub>c</sub>, verticale beugels).",
+                        Order = 75,
+                        // J.3(3): bij ac > 0,5·hc zijn verticale beugels vereist en is een afschuining niet toegestaan.
+                        //IsEnabled = model => model.Ac <= 0.5 * model.Hc
+                    },
 
 
             };
