@@ -82,20 +82,28 @@ namespace Eurocode.BetonConstructies
             // Contour kolom + console (licht)
             sb.AppendLine($"<path d=\"M {N(-Bw)} {N(kolomBoven)} L {N(-Bw)} {N(kolomOnder)} M 0 {N(kolomOnder)} L 0 {N(H)} L {N(L)} {N(H)} L {N(L)} 0 L 0 0 L 0 {N(kolomBoven)}\" fill=\"none\" stroke=\"#999\" stroke-width=\"4\"/>");
 
+            bool toonVakwerkDetails = i.RekenMethode != J3ConsoleInput.RekenMethodeOptie.GedrongenLiggerTheorie;
+
             // Trekband (blauw) en drukdiagonalen (rood, gestreept)
             sb.AppendLine(Line(n3.x, n3.y, n4.x, n4.y, "#1565c0"));
             Strut(n0, n2);
             Strut(n1, n2);
-            Strut(n1, n3);
-            Strut(n1, n4);
-            Strut(n3, n2);
-            Strut(n4, n2);
+            if (toonVakwerkDetails)
+            {
+                Strut(n1, n3);
+                Strut(n1, n4);
+                Strut(n3, n2);
+                Strut(n4, n2);
+            }
 
             // Knopen
             Knoop(n1, "1", -70, 0);
             Knoop(n2, "2", 30, 0);
-            Knoop(n3, "3", -70, 0);
-            Knoop(n4, "4", 30, 0);
+            if (toonVakwerkDetails)
+            {
+                Knoop(n3, "3", -70, 0);
+                Knoop(n4, "4", 30, 0);
+            }
 
             // plaat
             sb.AppendLine(Rect(n0.x - lPl / 2.0, -hPl, lPl, hPl, "red", fill: "red", ""));

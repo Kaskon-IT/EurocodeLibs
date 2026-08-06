@@ -1,5 +1,8 @@
 ﻿namespace Eurocode.BetonConstructies
 {
+    using CommonLibrary.Extensions;
+    using ExportFactory.Shared;
+
     public partial class Scheurbeheersing
     {
         /// <summary>
@@ -20,8 +23,57 @@
                     return this.FactorKc * this.FactorK * this.FctEff * this.Act / this.SigmaS;
                 }
             }
+
+            public Formula AsMinFormula => new("(7.1)",
+                @"A_{s,min} = k_c \cdot k \cdot f_{ct,eff} \cdot A_{ct} / \sigma_s",
+                $@"= {FactorKc.ToTeX()} \cdot {FactorK.ToTeX()} \cdot {FctEff.ToTeX()} \cdot {Act.ToTeX()} / {SigmaS.ToTeX()} = {AsMin.ToTeX()} \text{{ mm}}^2");
+
+            // ---- Geometrie en normaalkracht t.b.v. hcr / Act ----
+
+            /// <summary> Breedte van de doorsnede [mm]. </summary>
+            public double B { get; set; }
+
+            /// <summary> Hoogte van de doorsnede [mm]. </summary>
+            public double H { get; set; }
+
+            /// <summary> Normaalkracht [kN], trek positief. </summary>
+            public double N { get; set; }
+
+            /// <summary> σ<sub>N</sub> = N/(b·h) [N/mm²]. </summary>
+            public double SigmaN => (B > 0 && H > 0) ? N * 1000.0 / (B * H) : 0;
+
+            /// <summary> Spanning in de meest getrokken vezel net voor scheurvorming: σ<sub>boven</sub> = f<sub>ct,eff</sub>. </summary>
+            public double SigmaBoven => FctEff;
+
+            /// <summary> σ<sub>onder</sub> = 2·σ<sub>N</sub> − f<sub>ct,eff</sub> (lineair spanningsverloop). </summary>
+            public double SigmaOnder => 2.0 * SigmaN - FctEff;
+
+            /// <summary> h<sub>cr</sub> – hoogte van de trekzone net voor scheurvorming [mm]. </summary>
+            public double Hcr => SigmaBoven - SigmaOnder > 0
+                ? Math.Min(SigmaBoven / (SigmaBoven - SigmaOnder) * H, H)
+                : H;
+
+            public Formula HcrFormula => new("",
+                @"h_{cr} = \frac{\sigma_{boven}}{\sigma_{boven} - \sigma_{onder}} \cdot h",
+                $@"= \frac{{{SigmaBoven.ToTeX()}}}{{{SigmaBoven.ToTeX()} - {SigmaOnder.ToTeX()}}} \cdot {H.ToTeX()} = {Hcr.ToTeX()} \text{{ mm}}");
+
+            public Formula ActFormula => new("",
+                @"A_{ct} = b \cdot h_{cr}",
+                $@"= {B.ToTeX()} \cdot {Hcr.ToTeX()} = {(B * Hcr).ToTeX()} \text{{ mm}}^2");
+
             public double Act { get; set; }
-            public double SigmaS { get { return Beton.BetonStaal.SigmaSd; } } // todo: check
+
+            private double? _sigmaS;
+            /// <summary>
+            /// σs – maximale toelaatbare spanning in de wapening direct na scheurvorming.
+            /// Expliciet instelbaar (bijv. fyk); zonder waarde wordt teruggevallen op
+            /// de staalspanning uit de betoncontext.
+            /// </summary>
+            public double SigmaS
+            {
+                get => _sigmaS ?? Beton.BetonStaal.SigmaSd;
+                set => _sigmaS = value;
+            }
             public double FctEff { get; set; }
             public double FactorK { get; set; }
             public double FactorKc { get; set; }

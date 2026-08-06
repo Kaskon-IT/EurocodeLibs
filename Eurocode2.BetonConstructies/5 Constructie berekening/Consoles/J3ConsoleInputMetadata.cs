@@ -186,6 +186,71 @@ namespace Eurocode.BetonConstructies.Consoles
                         Step = _ => 1,
                         Decimals = 0
                     },
+                [nameof(J3ConsoleInput.D1Opgave)] =
+                    new NumericPropertyMetadata<J3ConsoleInput>
+                    {
+                        PropertyName = nameof(J3ConsoleInput.D1Opgave),
+                        Label = "<i>d</i><sub>1</sub>",
+                        Description = "Optionele opgave van d1 (afstand hart trekband tot bovenrand); 0 = automatisch.",
+                        Unit = "mm",
+                        Order = 85,
+                        Min = _ => 0,
+                        Max = model => model.Hc / 2.0,
+                        Step = _ => 5,
+                        Decimals = 0
+                    },
+                [nameof(J3ConsoleInput.HoofdstaafDiameter2)] =
+                    new NumericPropertyMetadata<J3ConsoleInput>
+                    {
+                        PropertyName = nameof(J3ConsoleInput.HoofdstaafDiameter2),
+                        Label = "<i>Ø</i><sub>hoofd,2</sub>",
+                        Description = "Diameter van de tweede laag hoofdstaven (0 = niet gebruikt).",
+                        Unit = "mm",
+                        Order = 102,
+                        Min = _ => 0,
+                        Max = _ => 32,
+                        Step = _ => 1,
+                        Decimals = 0
+                    },
+                [nameof(J3ConsoleInput.HoofdstaafAantal2)] =
+                    new NumericPropertyMetadata<J3ConsoleInput>
+                    {
+                        PropertyName = nameof(J3ConsoleInput.HoofdstaafAantal2),
+                        Label = "<i>n</i><sub>hoofd,2</sub>",
+                        Description = "Aantal hoofdstaven in de tweede laag.",
+                        Unit = "st",
+                        Order = 103,
+                        Min = _ => 0,
+                        Max = _ => 10,
+                        Step = _ => 1,
+                        Decimals = 0
+                    },
+                [nameof(J3ConsoleInput.FactorBgt)] =
+                    new NumericPropertyMetadata<J3ConsoleInput>
+                    {
+                        PropertyName = nameof(J3ConsoleInput.FactorBgt),
+                        Label = "<i>f</i><sub>BGT</sub>",
+                        Description = "Factor BGT/UGT voor de bruikbaarheidsgrenstoestand (scheurwijdte).",
+                        Unit = "",
+                        Order = 25,
+                        Min = _ => 0.1,
+                        Max = _ => 1.0,
+                        Step = _ => 0.05,
+                        Decimals = 2
+                    },
+                [nameof(J3ConsoleInput.ExcentriciteitBreedte)] =
+                    new NumericPropertyMetadata<J3ConsoleInput>
+                    {
+                        PropertyName = nameof(J3ConsoleInput.ExcentriciteitBreedte),
+                        Label = "<i>e</i>",
+                        Description = "Excentriciteit van F<sub>Ed</sub> in de breedterichting (wringing T<sub>Ed</sub> = F<sub>Ed</sub>·e).",
+                        Unit = "mm",
+                        Order = 26,
+                        Min = _ => 0,
+                        Max = i => i.Bc / 2.0,
+                        Step = _ => 5,
+                        Decimals = 0
+                    },
                 [nameof(J3ConsoleInput.BeugelDiameter)] =
                     new NumericPropertyMetadata<J3ConsoleInput>
                     {
@@ -231,11 +296,11 @@ namespace Eurocode.BetonConstructies.Consoles
                     {
                         PropertyName = nameof(J3ConsoleInput.FactorZ),
                         Label = "<i>z/d</i>",
-                        Description = "Factor voor z",
+                        Description = "Factor voor z (bovengrens)",
                         Unit = "-",
                         Order = 115,
                         Min = _ => 0.4,
-                        Max = _ => 0.95,
+                        Max = _ => 1.0,
                         Step = _ => 0.1,
                         Decimals = 2
                     },
@@ -259,6 +324,16 @@ namespace Eurocode.BetonConstructies.Consoles
                         Decimals = 0
                     },
 
+                [nameof(J3ConsoleInput.DiamKolomWap)] =
+                    new NumericPropertyMetadata<J3ConsoleInput>
+                    {
+                        PropertyName = nameof(J3ConsoleInput.DiamKolomWap),
+                        Label = "<i>Ø</i><sub>kolom</sub>",
+                        Min = _ =>8,
+                        Max = _ => 40,
+                        Step = _ => 1,
+                        Decimals = 0
+                    },
 
 
 

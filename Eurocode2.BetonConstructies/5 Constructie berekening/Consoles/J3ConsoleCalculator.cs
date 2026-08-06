@@ -6,10 +6,12 @@
         {
             double fcd = i.AlphaCc * i.Fck / i.GammaC;
             double fyd = i.Fyk / i.GammaS;
-            double nu = 1.0 - i.Fck / 250.0;
-            double nEd = i.NEd; // normaalkracht in kolom/wand
-            double dsnOppKolom = i.KolomDikte * i.Bc;
-            double sigmaBasis = 0; // er is geen spanning, // check dit met Martijn, waarom niet nEd * 1000 / dsnOppKolom;
+            double fywd = 0.8 * i.Fyk; // UITGANGSPUNT: f_ywd = 80% * f_yk
+            double nu = 0.6 * (1.0 - i.Fck / 250.0); // 6.2.2 (6)
+            double nu1 = 0.6; // UITGANGSPUNT: f_ywd = 80% * f_yk 
+            //double nEd = i.NEd; // normaalkracht in kolom/wand
+            //double dsnOppKolom = i.KolomDikte * i.Bc;
+            //double sigmaBasis = 0; // er is geen spanning, // check dit met Martijn, waarom niet nEd * 1000 / dsnOppKolom;
 
             double factorZ = i.FactorZ;
 
@@ -35,8 +37,16 @@
 
             }
 
-            // x1 uit druksterkte node 1 (met zelfbedachte ondergrens)
-            double sigmaToelaatbaar = Math.Max(sigma1RdMax - sigmaBasis, 0);
+            // Optionele opgave d1: d = Hc - d1 (bijv. papieren voorbeeld: d1 = 50 -> d = 450)
+            if (i.D1Opgave > 0)
+            {
+                d = i.Hc - i.D1Opgave;
+            }
+
+
+
+            // x1 uit druksterkte node 1 
+            double sigmaToelaatbaar = sigma1RdMax;
             double x1Min = i.Dekking;
             double x1 = Math.Max(i.FEd * 1000.0 / (sigmaToelaatbaar * i.Bc),x1Min);
             double deltaA = i.FactorHEd * (i.Hc - d);
@@ -50,33 +60,112 @@
 
             z = Math.Min(z, zBer);
 
+            if (i.RekenMethode == J3ConsoleInput.RekenMethodeOptie.GedrongenLiggerTheorie)
+            {
+                // 6.1 (10): z volgens gedrongen-liggertheorie, z = min(0.4a + 0.4h ; 1.6a)
+                var gedrongen = GedrongenUitkragingCalculator.Calculate(new GedrongenUitkragingInput
+                {
+                    Ac = i.Ac,
+                    H = i.Hc,
+                    L = i.Lc,
+                    Ab = i.LoadPlateLength
+                });
+                a = gedrongen.A;
+                z = gedrongen.Z;
+            }
+
             double z0 = z * (i.Ac + deltaA) / a;
             double tanTheta = z / a;
             double thetaDeg = Math.Atan(tanTheta) * 180.0 / Math.PI;
 
             double d1 = i.Hc - d;
             double ah = i.DikteOplegmateriaal + d1;
-
-
-
-            // Trekbandkracht volgens rekenvoorbeeld: Ft = FvEd * a_eff / z,
-            // waarbij a_eff (= a) de correctie voor de horizontale belasting al bevat (deltaA).
-            // Oftewel: Ft = (FvEd*a + FhEd*d1) / z.
-            // Oude logica (vervangen): double ft = i.FEd * a / z + i.HEd; // met aandeel horizontaal
             double ft = i.HEd + i.FEd * a / z;
             double f1x = i.FEd * a / z; // 
             double f1y = i.FEd;
             double f1c = Math.Sqrt(f1x * f1x + f1y * f1y);
 
-            
 
             // Logica: gebruik
             double y1 = 2 * (d - z);
-                       
-         
 
             // Main reinforcement
             double asMain = ft * 1000.0 / fyd;
+
+            double mEd = 0;
+            double asMin = 0;
+            double asOplegging = 0;
+            bool flexibelOplegmateriaal = i.FlexibelOplegmateriaal;
+
+            if (flexibelOplegmateriaal)
+            {
+                asOplegging = i.FEd * 1000.0 / fyd * 0.25 * (i.DikteOplegmateriaal / i.LoadPlateWidth);
+            }
+
+            double w1 = 0;
+            Scheurbeheersing.ScheurwijdteMinimumWapening? minWap = null;
+            J3ConsoleScheurwijdteResult? scheurwijdte = null;
+            J3ConsoleDwarskrachtResult? dwarskracht = null;
+            J3ConsoleTorsieResult? torsie = null;
+            J3ConsoleTorsieDwarskrachtCombinatie? torsieCombinatie = null;
+            if (i.RekenMethode == J3ConsoleInput.RekenMethodeOptie.GedrongenLiggerTheorie)
+            {
+                // Knoop 1 (onderin): lengte x1 = min(ab ; L/2 ; H/2), consistent met ar in 6.1 (10)
+                x1 = new[] { i.LoadPlateLength, i.Lc / 2.0, i.Hc / 2.0 }.Min();
+
+                // y1 zó dat de spanning op het verticale knoopvlak gelijk is aan de
+                // spanning onderin: sigma = F/(b*x1) = F1x/(b*y1)  =>  y1 = x1 * F1x / F
+                y1 = x1 * f1x / i.FEd;
+
+                // Breedte loodrecht op de drukstaaf; hierop is de spanning dan eveneens gelijk:
+                // sigma = Fc/(b*w1) met w1 = sqrt(x1^2 + y1^2)
+                w1 = Math.Sqrt(x1 * x1 + y1 * y1);
+
+                // 6.1 (10): As = MEd / (fyd * z) met MEd = a*F + (z + Hc - d) * H  [N*mm]
+                mEd = a * i.FEd * 1000 + (z + i.Hc - d) * i.HEd * 1000;
+                asMain = mEd / (fyd * z);
+                ft = asMain * fyd / 1000.0; // bijbehorende trekbandkracht [kN]
+
+                // 7.3.2 (7.1): As,min = kc * k * fct,eff * Act / sigma_s
+                // met normaalkracht N = H,BGT (trek) en trekzonehoogte hcr uit de
+                // lineaire spanningsverdeling (sigma_boven = fct,eff bij scheurvorming).
+                var beton = new BetonContext((int)i.Fck);
+                double fctEff = beton.Fctm;
+
+                minWap = new Scheurbeheersing.ScheurwijdteMinimumWapening
+                {
+                    Beton = beton,
+                    B = i.Bc,
+                    H = i.Hc,
+                    N = i.HBgt, // trekkracht [kN]
+                    FctEff = fctEff,
+                    FactorK = 1.0, // doorsnedebreedte <= 300 mm (conform papieren voorbeeld)
+                    SigmaS = i.Fyk
+                };
+
+                // kc volgens vgl. (7.2); sigma_c = NEd/(b*h), trek negatief; k1 = 2h*/(3h) bij trek
+                double hStar = Math.Min(i.Hc, 1000.0);
+                double k1 = 2.0 * hStar / (3.0 * i.Hc);
+                minWap.FactorKc = Math.Min(0.4 * (1.0 - (-minWap.SigmaN) / (k1 * (i.Hc / hStar) * fctEff)), 1.0);
+
+                minWap.Act = i.Bc * minWap.Hcr;
+                asMin = minWap.AsMin;
+
+                // 7.3.4: scheurwijdtetoetsing in BGT
+                double asProv = i.HoofdstaafAantal * WapeningHelper.GetDsnOpp(1, i.HoofdstaafDiameter)
+                              + i.HoofdstaafAantal2 * WapeningHelper.GetDsnOpp(1, i.HoofdstaafDiameter2);
+                scheurwijdte = J3ConsoleScheurwijdteCalculator.Bereken(i, a, z, d, asProv, beton);
+
+                // 6.2.2: dwarskrachtweerstand zonder wapening (VRd,c) met NEd = -HEd
+                // en VRd,max met theta = 45 graden en z = a
+                // OPMERKING: f_ywd = 0.8 * fyd (zie 6.2.2 (6) en 6.3.2 (6))
+                dwarskracht = J3ConsoleDwarskrachtCalculator.Bereken(i, d, asProv, a, fcd, nu1);
+
+                // 6.3.2: torsie (TEd = FEd * e), TRd,max en combinatietoetsen (6.31)/(6.29)
+                // OPMERKING hier niet nu1 gebruiken, maar nu (0.6 * (1 - fck/250)) conform 6.2.2 (6)
+                torsie = J3ConsoleTorsieCalculator.Bereken(i, beton, fcd, nu);
+                torsieCombinatie = J3ConsoleTorsieCalculator.Combineer(torsie, dwarskracht);
+            }
 
             double aswMin = 0.25 * asMain;
             if (linkType == J3ConsoleLinkType.Verticaal)
@@ -88,9 +177,6 @@
            double fwd = ((2.0 * z / a - 1.0) / (3.0 + i.FEd / f1x)) * f1x;
            double asw = Math.Max(fwd * 1000.0 / fyd, aswMin);
 
-            
-
-
             // Node 1 verification
             double sigmaNode1Edx = f1x * 1000.0 / (i.Bc * y1);
             double sigmaNode1Edy = f1y * 1000.0 / (i.Bc * x1);
@@ -101,7 +187,6 @@
 
             // M_rand voor opgave kolomberekening
             double mRand = i.FEd * i.Ac / 1000.0 + i.HEd * ah / 1000.0;
-
 
             var result = new J3ConsoleResult
             {
@@ -133,6 +218,7 @@
                 Fck = (int)i.Fck,
                 Fcd = fcd,
                 Fyd = fyd,
+                Fywd = fywd,
                 Nu = nu,
 
 
@@ -144,7 +230,8 @@
                 SigmaNode2Ed = sigmaNode2Ed,
 
                 X1 = x1,
-                
+                W1 = w1,
+
                 A = a,
 
                 D = d,
@@ -158,6 +245,9 @@
                 DiameterMain = i.HoofdstaafDiameter,
                 BuigdoorMain = i.HoofdstaafBuigdoornDiameterFactor * i.HoofdstaafDiameter,
                 AantalMain = (int)i.HoofdstaafAantal,
+
+                DiameterMain2 = i.HoofdstaafDiameter2,
+                AantalMain2 = (int)i.HoofdstaafAantal2,
 
                 DiameterMainAnchorage = i.HoofdstaafDiameter, // gelijk aan hoofdstaafdiameter
                 DiameterBeugelAnchorage = i.BeugelDiameter, // gelijk aan diameter
@@ -174,12 +264,19 @@
                 Fwd = fwd,
 
                 AsMain = asMain,
+                AsMin = asMin,
+                AsOplegging = asOplegging,
+                MinimumWapening = minWap,
+                Scheurwijdte = scheurwijdte,
+                Dwarskracht = dwarskracht,
+                Torsie = torsie,
+                TorsieDwarskrachtCombinatie = torsieCombinatie,
+                MEd = mEd,
                 Asw = asw,
                 Mrand = mRand,
             };
 
             result.UseAnchorageBar = result.BuigdoorMain < result.VerankeringMainConsoleZijde.MinimaleBuigdoornDiameter;
-
             result.StrutAndTieNodes.Add(new StrutAndTie.StrutAndTieNode
             {
                 Name = "Knoop 1",
@@ -190,8 +287,6 @@
                     Center = new StrutAndTie.Point2D(-x1 / 2.0, y1)
                 }
             });
-
-
             result.Nodes.Add(new J3ConsoleNodeResult
             {
                 Naam = "Knoop 1",
@@ -201,7 +296,6 @@
                 SigmaEd = sigmaNode1Ed,
                 SigmaRdMax = sigma1RdMax
             });
-
             result.Nodes.Add(new J3ConsoleNodeResult
             {
                 Naam = "Knoop 2",
@@ -211,7 +305,6 @@
                 SigmaEd = sigmaNode2Ed,
                 SigmaRdMax = sigma2RdMax
             });
-
 
             VulRegels(i, result);
 
@@ -226,21 +319,19 @@
 
         private static J3ConsoleLinkType BepaalLinkType(J3ConsoleInput i)
         {
-            if (i.Ac < 0.5 * i.Hc) 
+            // todo: input de optie om horizontaal + vertikaal beugels toe te passen.
+
+
+            if (i.Ac <= 0.5 * i.Hc) 
                 return J3ConsoleLinkType.HorizontaalOfSchuin;
 
             if (i.Ac > 0.5 * i.Hc && i.FEd > i.VRdc)
                 return J3ConsoleLinkType.Verticaal; // 'slanke consoles' krijgen vertikale beugels!
 
-            if (i.Ac == 0.5 * i.Hc)
-            {
-                return J3ConsoleLinkType.HorizontaalOfSchuin; // aanvulling altijd beugels toepassen voor Fwd. 
-            }
+            
 
             return J3ConsoleLinkType.Geen;
         }
-
-
 
 
         private static void VulRegels(J3ConsoleInput i, J3ConsoleResult r)

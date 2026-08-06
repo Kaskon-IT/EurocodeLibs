@@ -19,7 +19,344 @@ namespace Eurocode.BetonConstructies
             v.ToString(format, CultureInfo.InvariantCulture);
 
         public static string Genereer(J3ConsoleInput i, J3ConsoleResult r) =>
-            MaakBuilder(i, r).Build();
+            i.RekenMethode switch
+            {
+                J3ConsoleInput.RekenMethodeOptie.GedrongenLiggerTheorie => MaakBuilderGedrongenLigger(i, r).Build(),
+                _ => MaakBuilder(i, r).Build(),
+            };
+
+        /// <summary>
+        /// Rekenvoorbeeld voor de gedrongen-liggertheorie (6.1 (10)).
+        /// Opzet conform stappenplan; controles 3.2 t/m 3.4 volgen nog.
+        /// </summary>
+        public static RekenvoorbeeldBuilder MaakBuilderGedrongenLigger(J3ConsoleInput i, J3ConsoleResult r)
+        {
+            var builder = new RekenvoorbeeldBuilder("Rekenvoorbeeld console (gedrongen-liggertheorie 6.1 (10))")
+                .Intro($@"
+| Invoer | Waarde | |
+|---|---|---:|
+| *F*~Ed~  | {N(i.FEd, "0 kN")} | Verticale belasting |
+| *H*~Ed~  | {N(i.HEd, "0 kN")} | Horizontale belasting |
+| *f*~BGT~ | {N(i.FactorBgt, "0.00")} | Factor BGT/UGT |
+| *a*~c~   | {N(i.Ac, "0 mm")} | Afstand belasting tot betonrand |
+| *B*~c~   | {N(i.Bc, "0 mm")} | Breedte console |
+| *H*~c~   | {N(i.Hc, "0 mm")} | Hoogte console |
+| *c*      | {N(i.Dekking, "0 mm")} | Dekking |
+| *f*~ck~  | {N(i.Fck, "0 N/mm²")} | Druksterkte beton |
+| *f*~yk~  | {N(i.Fyk, "0 N/mm²")} | Vloeigrens betonstaal |
+
+")
+
+                .Stap_("nutHo", "Nuttige hoogte", $@"
+$$
+d = H_c - d_1 = {N(i.Hc)} - {N(r.D1, "0")} = {N(r.D, "0")} \text{{ mm}}
+$$
+")
+
+                .Stap_("z", "Hefboomsarm gedrongen constructie 6.1 (10)", $@"
+De inwendige hefboomsarm *z* volgt uit de formule voor gedrongen constructies (NEN-EN 1992-1-1 6.1 (10)):
+
+$$
+{r.GedrongenUitkraging.ZFormula.FullValue}
+$$
+
+Voor consoles is er een begrenzing gegeven aan de hellingshoek van de drukdiagonaal (EC2 J.3):
+$$
+1.0 \leq \tan\theta \leq 2.5
+$$
+
+waarbij 
+$$
+\tan\theta = \frac{{z}}{{a}} = \frac{{{N(r.Z,"0")}}}{{{N(r.A,"0")}}} = {N(r.Z / r.A, "0.0")}
+$$
+
+")
+
+                .Stap_("med", "Buigend moment", $@"
+$$
+M_{{Ed}} = a \cdot F_{{Ed}} + (z + H_c - d) \cdot H_{{Ed}}
+= {N(r.A, "0")} \cdot {N(r.FEd*1000, "0")} + ({N(r.Z, "0")} + {N(i.Hc, "0")} - {N(r.D, "0")}) \cdot {N(r.HEd*1000, "0")}
+= {N(r.MEd, "0")} \text{{ Nmm}}
+$$
+")
+
+                .Stap_("wapening", "Benodigde hoofdwapening", $@"
+$$
+A_{{s,req}} = \frac{{M_{{Ed}}}}{{f_{{yd}} \cdot z}}
+= \frac{{{N(r.MEd, "0")}}}{{{N(r.Fyd, "0")} \cdot {N(r.Z, "0")}}}
+= {N(r.AsMain, "0")} \text{{ mm²}}
+$$
+
+$$
+A_{{s,prov}} = {r.AantalMain} \phi {r.DiameterMain}{(r.AantalMain2 > 0 ? $@" + {r.AantalMain2} \phi {r.DiameterMain2}" : "")} = {N(r.AsMainProv, "0")} \text{{ mm²}}
+$$
+
+{(r.AsMainProv >= r.AsMain ? "✔️ Toegepaste wapening voldoet." : "⚠️ Toegepaste wapening onvoldoende.")}
+");
+
+            // 3.1 Minimale wapening EC2 7.3.2 (7.1)
+            if (r.MinimumWapening is not null)
+            {
+                var mw = r.MinimumWapening;
+                builder.Stap_("asmin", "Minimale wapening 7.3.2 (7.1)", $@"
+Normaalkracht (trek) in BGT: $N = {N(i.HBgt, "0")}$ kN, dus
+$\sigma_N = N/(b \cdot h) = {N(mw.SigmaN, "0.00")}$ N/mm².
+
+Spanningen net voor scheurvorming (lineair verloop):
+$$
+\sigma_{{boven}} = f_{{ct,eff}} = {N(mw.SigmaBoven, "0.0")} \text{{ N/mm²}} \qquad
+\sigma_{{onder}} = 2 \cdot \sigma_N - f_{{ct,eff}} = {N(mw.SigmaOnder, "0.0")} \text{{ N/mm²}}
+$$
+
+$$
+{mw.HcrFormula.FullValue}
+$$
+
+$$
+{mw.ActFormula.FullValue}
+$$
+
+$$
+{mw.AsMinFormula.FullValue}
+$$
+
+{(r.AsMinOk ? "✔️ As,prov ≥ As,min." : "⚠️ As,prov < As,min.")}
+");
+            }
+
+            // 3.2 Scheurwijdtetoetsing 7.3.4 (7.8)
+            if (r.Scheurwijdte is not null)
+            {
+                var sw = r.Scheurwijdte;
+                builder.Stap_("scheurwijdte", "Scheurwijdtetoetsing 7.3.4 (7.8)", $@"
+BGT-belastingen: $F = {N(i.FBgt, "0")}$ kN en $H = {N(i.HBgt, "0")}$ kN
+(factor {N(i.FactorBgt, "0.00")}), dus $M_{{BGT}} = {N(sw.MBgt, "0")}$ kNmm.
+
+$$
+{sw.SigmaSFormula.FullValue}
+$$
+
+$$
+{sw.DiameterEqFormula.FullValue}
+$$
+
+$$
+{sw.HcEffFormula.FullValue}
+$$
+
+met $\rho_{{p,eff}} = A_s / A_{{c,eff}} = {N(sw.AsProv, "0")} / {N(sw.AcEff, "0")} = {N(sw.RhoPEff, "0.0000")}$.
+
+$$
+{sw.SrMaxFormula.FullValue}
+$$
+
+$$
+{sw.EpsSmMinusEpsCmFormula.FullValue}
+$$
+
+$$
+{sw.WkFormula.FullValue}
+$$
+
+{(sw.IsVoldoende ? $"✔️ w~k~ = {N(sw.Wk, "0.00")} mm ≤ w~max~ = {N(sw.WMax, "0.00")} mm." : $"⚠️ w~k~ = {N(sw.Wk, "0.00")} mm > w~max~ = {N(sw.WMax, "0.00")} mm.")}
+");
+            }
+
+            // 3.3 Controle dwarskracht 6.2.2
+            builder.Stap_("dwarskracht", "Controle dwarskracht en wringing", $@"
+De dwarskrachtweerstand van de console met dwarskrachtwapnening wordt getoetst op basis van de sterkte van de betondrukdiagonaal. Bij dwarskracht mag volgens EC2 (6.7N) deze hoek niet groter dan 45 graden zijn.
+We stellen dus de hoek in op 45 graden en gebruiken ook de bijbehorende hoogte z. De maximale spanning in de beugels houdeen we op 80% van de f~yk~.
+$$
+\theta = 45^\circ
+$$
+
+$$
+z = a = {N(r.A,"0")} \text{{ mm}}
+$$
+
+$$
+f_{{ywd}}= 0.8 \cdot f_{{yk}} = 0.8 \cdot {i.Fyk:0} = {r.Fywd:0} \text{{ N/mm²}}
+$$
+
+
+{(r.Dwarskracht is null ? "" : $@"
+Eerst de dwarskrachtweerstand zonder dwarskrachtwapening volgens 6.2.2 vgl. (6.2a),
+met $N_{{Ed}} = -H_{{Ed}} = {N(r.Dwarskracht.NEd, "0")}$ kN (trek):
+
+$$
+{r.Dwarskracht.CRdcFormula.FullValue}
+$$
+
+$$
+{r.Dwarskracht.KFormula.FullValue}
+$$
+
+$$
+{r.Dwarskracht.RhoLFormula.FullValue}
+$$
+
+$$
+k_1 = {N(r.Dwarskracht.K1, "0.00")}
+$$
+
+$$
+{r.Dwarskracht.SigmaCpFormula.FullValue}
+$$
+
+$$
+{r.Dwarskracht.VRdcFormula.FullValue}
+$$
+
+Reductie van de belastingsbijdrage bij een last dicht bij de oplegging, 6.2.2 (6):
+
+$$
+{r.Dwarskracht.BetaFormula.FullValue}
+$$
+
+$$
+{r.Dwarskracht.VEdRedFormula.FullValue}
+$$
+
+{(r.Dwarskracht.IsVoldoende
+    ? $"✔️ V~Ed,red~ = {N(r.Dwarskracht.VEdRed, "0")} kN ≤ V~Rd,c~ = {N(r.Dwarskracht.VRdc, "0")} kN, geen dwarskrachtwapening vereist."
+    : $"⚠️ V~Ed,red~ = {N(r.Dwarskracht.VEdRed, "0")} kN > V~Rd,c~ = {N(r.Dwarskracht.VRdc, "0")} kN, dwarskrachtwapening vereist.")}
+
+Controle drukdiagonaal (θ = 45°), met V~Ed~ zonder reductie:
+
+$$
+{r.Dwarskracht.VRdMaxFormula.FullValue}
+$$
+
+{(r.Dwarskracht.VRdMaxOk
+    ? $"✔️ V~Ed~ = {N(r.Dwarskracht.VEd, "0")} kN ≤ V~Rd,max~ = {N(r.Dwarskracht.VRdMax, "0")} kN."
+    : $"⚠️ V~Ed~ = {N(r.Dwarskracht.VEd, "0")} kN > V~Rd,max~ = {N(r.Dwarskracht.VRdMax, "0")} kN, drukdiagonaal niet toereikend!")}
+
+Beugelwapening t.b.v. dwarskracht volgens vgl. (6.19), aan te brengen in het middelste ¾ deel van $a_v$:
+
+$$
+{r.Dwarskracht.AswVFormula.FullValue}
+$$
+")}
+
+{(r.Torsie is null ? "" : r.Torsie.TEd <= 0 ? @"
+### Wringing 6.3.2
+
+Torsie niet van toepassing (geen excentriciteit van de belasting).
+" : $@"
+### Wringing 6.3.2
+
+Wringmoment door excentriciteit $e = {N(r.Torsie.Excentriciteit, "0")}$ mm in de breedterichting,
+$T_{{Ed}} = F_{{Ed}} \cdot e = {N(r.Torsie.TEd, "0.00")}$ kNm.
+
+$$
+{r.Torsie.TEfFormula.FullValue}
+$$
+
+{(r.Torsie.TEfMinMaatgevend ? "De ondergrens $2c + 2Ø_{bgl} + Ø_{langs}$ is maatgevend." : "")}
+
+$$
+{r.Torsie.AkFormula.FullValue}
+$$
+
+$$
+{r.Torsie.TRdcFormula.FullValue}
+$$
+
+{(r.Torsie.IsVoldoende
+    ? $"✔️ T~Ed~ = {N(r.Torsie.TEd, "0.00")} kNm ≤ T~Rd,c~ = {N(r.Torsie.TRdc, "0.00")} kNm."
+    : $"⚠️ T~Ed~ = {N(r.Torsie.TEd, "0.00")} kNm > T~Rd,c~ = {N(r.Torsie.TRdc, "0.00")} kNm.")}
+
+$$
+{r.Torsie.TRdMaxFormula.FullValue}
+$$
+
+Beugelwapening t.b.v. wringing (per zijde):
+
+$$
+{r.Torsie.AswTFormula.FullValue}
+$$
+")}
+
+{(r.TorsieDwarskrachtCombinatie is null || r.Torsie is null || r.Torsie.TEd <= 0 ? "" : $@"
+### Combinatie dwarskracht en wringing 6.3.2 (5)
+
+Controle drukdiagonaal, met V~Ed~ zonder reductie:
+
+$$
+{r.TorsieDwarskrachtCombinatie.UnityCheckMaxFormula.FullValue}
+$$
+
+{(r.TorsieDwarskrachtCombinatie.IsDrukdiagonaalVoldoende
+    ? $"✔️ Unity check (6.29) = {N(r.TorsieDwarskrachtCombinatie.UnityCheckMax, "0.00")} ≤ 1.0, drukdiagonaal toereikend."
+    : $"⚠️ Unity check (6.29) = {N(r.TorsieDwarskrachtCombinatie.UnityCheckMax, "0.00")} > 1.0, drukdiagonaal niet toereikend!")}
+
+Totale beugelwapening (dwarskracht + wringing) in zone $a_v = {N(r.TorsieDwarskrachtCombinatie.AvZone, "0")}$ mm:
+
+Bij 2-snedige beugels:
+
+Bij 3-snedige beugels:
+
+Bij 4-snedige beugels:
+
+Bij n-snedige beugels (n>=2):
+Buitenste benen (links/recht):
+Asw,req = {r.TorsieDwarskrachtCombinatie.AswT:0} + {r.TorsieDwarskrachtCombinatie.AswV:0} / n = 
+Binnenste benen:
+Asw,req = {r.TorsieDwarskrachtCombinatie.AswV:0} / n =
+
+
+
+
+$$
+{r.TorsieDwarskrachtCombinatie.AswTZoneFormula.FullValue}
+$$
+
+$$
+{r.TorsieDwarskrachtCombinatie.AswTotaalFormula.FullValue}
+$$
+
+$$
+{r.TorsieDwarskrachtCombinatie.UnityCheckFormula.FullValue}
+$$
+
+{(r.TorsieDwarskrachtCombinatie.IsVoldoende
+    ? $"✔️ Unity check = {N(r.TorsieDwarskrachtCombinatie.UnityCheck, "0.00")} ≤ 1.0, geen aanvullende wapening voor dwarskracht + wringing vereist."
+    : $"⚠️ Unity check = {N(r.TorsieDwarskrachtCombinatie.UnityCheck, "0.00")} > 1.0, aanvullende wapening voor dwarskracht + wringing vereist.")}
+")}
+")
+
+                .Stap_("wap-oplegging", "Wapening t.p.v. oplegging", $@"
+Onder de oplegging moet de wapening in de dwarsrichting van de console gecontroleerd worden:
+todo: Dit alleen als flexibel oplegmateriaal, anders conform art 6.5
+$$
+A_s = 0.25 \cdot (t/h) F_{{Ed}} / f_{{yd}} = 0.25 \cdot ({N(i.DikteOplegmateriaal, "0")} / {N(r.LoadPlateWidth, "0")}) \cdot ({N(r.FEd * 1000.0, "0")} / {N(r.Fyd, "0")}) = {N(r.AsOplegging, "0")} \text{{ mm²}}
+$$
+
+$$
+A_{{s,oplegging}} 
+= 0.25 \cdot \frac{{t}}{{h}} \cdot \frac{{F_{{Ed}}}}{{f_{{yd}}}} 
+= \frac{{{N(r.FEd * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}} = {N(r.AsOplegging, "0")} \text{{ mm²}}
+$$
+")
+                .Stap_("wap-lnk", "Wapening lnk", $@"
+$$
+{r.AsLnkFormula.FullValue}
+$$
+")
+
+                .Stap_("controle", "Controle wapening", $@"
+*Nog uit te werken:* verankering, buigdoorndiameter en detailleringseisen.
+")
+
+                .Slot(@"
+## Samenvatting
+
+
+");
+
+            return builder;
+        }
+
 
         /// <summary>
         /// Exposeert de builder zodat aanroepers stappen kunnen overslaan of
@@ -107,19 +444,11 @@ $$
 
 ")
 
-                .Stap_("demoZ", "Gedrongen constructie 6.1 (10)", $@"
-In deze berekening is gekozen voor een benadering door mideel van de gedrongen ligger om
-de berekening eenvoudig te houden.
-De inwendige hefboomsarm *z* wordt afgeleid uit de formule voor gedrongen constructies (NEN-EN 1992-1-1 6.1 (10)):
-
-$$
-{r.GedrongenUitkraging.ZFormula.FullValue}
-$$
-
-" )
+                
 
 
                 .Stap_("z", "Hefboomarm ↕", $@"
+
 Voor de hefboomsarm houden we een ondergrens aan van:
 
 $$

@@ -109,6 +109,17 @@ namespace Eurocode.BetonConstructies
             set => SetProperty(ref _cd, value);
         }
 
+
+        private double _alpha2 = 1.0;
+        /// <summary>
+        /// is voor het effect van de minimumbetondekking (zie figuur 8.3). Standaard 1.0
+        /// </summary>
+        public double Alpha2
+        {
+            get => _alpha2;
+            set => SetProperty(ref _alpha2, value);
+        }
+
         private double _alpha3 = 1.0;
         /// <summary> <i>α</i><sub>3</sub> – opsluiting door (niet gelaste) dwarswapening. Standaard 1,0. </summary>
         public double Alpha3

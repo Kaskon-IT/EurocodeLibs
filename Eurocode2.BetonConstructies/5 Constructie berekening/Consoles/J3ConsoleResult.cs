@@ -73,6 +73,7 @@
 
 
         public double DikteOplegmateriaal { get; set; } = 20;
+        public bool FlexibelOplegmateriaal { get; set; } = true;
         
         
         //public double DeltaAc => (Hc - D + DikteOplegmateriaal) * FactorHorizontaal;
@@ -84,11 +85,15 @@
         public int Fck { get; set; }
         public double Fcd { get; set; }
         public double Fyd { get; set; }
+        public double Fywd { get; set; }
 
         public double Sigma1RdMax { get; set; }
         public double Sigma2RdMax { get; set; }
 
         public double X1 { get; set; }
+
+        /// <summary> w1 – breedte loodrecht op de drukstaaf: √(x1²+y1²) [mm] (gedrongen-liggertheorie). </summary>
+        public double W1 { get; set; }
         public double A { get; set; }
         public double D { get; set; }
         public double D1 => Hc - D;
@@ -121,6 +126,37 @@
         public double Fwd { get; set; }
 
         public double AsMain { get; set; }
+
+        /// <summary> As,min – minimumwapening volgens EC2 7.3.2 vgl. (7.1) [mm²] (gedrongen-liggertheorie). </summary>
+        public double AsMin { get; set; }
+        public bool AsMinOk => AsMainProv >= AsMin;
+
+        public double AsOplegging { get; set; }
+
+        /// <summary>
+        /// Volledige 7.3.2-berekening (incl. HcrFormula, ActFormula, AsMinFormula);
+        /// null bij de strut-and-tie methode.
+        /// </summary>
+        public Scheurbeheersing.ScheurwijdteMinimumWapening? MinimumWapening { get; set; }
+
+        /// <summary>
+        /// Scheurwijdtetoetsing 7.3.4 (BGT); null bij de strut-and-tie methode.
+        /// </summary>
+        public J3ConsoleScheurwijdteResult? Scheurwijdte { get; set; }
+
+        /// <summary>
+        /// Dwarskrachtweerstand zonder wapening 6.2.2 (VRd,c); null bij de strut-and-tie methode.
+        /// </summary>
+        public J3ConsoleDwarskrachtResult? Dwarskracht { get; set; }
+
+        /// <summary> Torsietoets 6.3.2 (TRd,c); null bij de strut-and-tie methode. </summary>
+        public J3ConsoleTorsieResult? Torsie { get; set; }
+
+        /// <summary> Combinatietoets dwarskracht + torsie vgl. (6.31); null bij de strut-and-tie methode. </summary>
+        public J3ConsoleTorsieDwarskrachtCombinatie? TorsieDwarskrachtCombinatie { get; set; }
+
+        /// <summary> MEd – buigend moment t.p.v. de kolomrand [kNm] (gedrongen-liggertheorie). </summary>
+        public double MEd { get; set; }
         public double Asw { get; set; }
         public double Mrand { get; set; }
         public double Mhart => Mrand + FEd * (KolomDikte / 1000.0); 
@@ -138,7 +174,12 @@
 
         
         public int AantalMain { get; set; }
-        public double AsMainProv => AantalMain * WapeningHelper.GetDsnOpp(1, DiameterMain);
+
+        // NB1: tweede laag hoofdwapening (0 = niet gebruikt)
+        public double DiameterMain2 { get; set; }
+        public int AantalMain2 { get; set; }
+        public double AsMainProv => AantalMain * WapeningHelper.GetDsnOpp(1, DiameterMain)
+                                    + AantalMain2 * WapeningHelper.GetDsnOpp(1, DiameterMain2);
         public bool AsMainProvOk => AsMainProv >= AsMain;
         public double AswProv => AantalBeugels * WapeningHelper.GetDsnOpp(2, DiameterBgl);
         public bool AswProvOk => AswProv >= Asw;

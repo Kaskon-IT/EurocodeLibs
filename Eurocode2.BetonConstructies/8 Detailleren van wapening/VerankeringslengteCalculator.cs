@@ -26,7 +26,7 @@ namespace Eurocode.BetonConstructies
 
             // Tabel 8.2 α-factoren
             double alpha1 = BepaalAlpha1(isTrek, isGebogen, i.Diameter, i.Cd);
-            double alpha2 = BepaalAlpha2(isTrek, isGebogen, i.Diameter, i.Cd);
+            double alpha2 =  BepaalAlpha2(isTrek, isGebogen, i.Diameter, i.Cd);
             double alpha3 = i.Alpha3;
             double alpha4 = i.Alpha4;
             double alpha5 = i.Alpha5;
