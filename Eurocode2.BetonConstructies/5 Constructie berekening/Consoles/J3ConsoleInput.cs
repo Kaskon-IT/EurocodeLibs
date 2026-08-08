@@ -157,40 +157,120 @@
             set => SetProperty(ref _dekking, value);
         }
 
-        private double _beugelDiameter = 8;
+        // ---- Wapeninggroepen (v1): de gebruiker geeft Diameter en (waar van
+        // toepassing) Aantal op; de calculator vult shapes en verdeellijn in.
+        // De scalars hieronder blijven tijdelijk als doorgeef-properties bestaan.
+
+        private WapeningGroep _wapBglsHor = new()
+        {
+            Diameter = 8,
+            Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 2 },
+        };
+        /// <summary> Horizontale beugels (gesloten beugel, horizontaal verdeeld). </summary>
+        public WapeningGroep WapBglsHor
+        {
+            get => _wapBglsHor;
+            set => SetProperty(ref _wapBglsHor, value);
+        }
+
+        private WapeningGroep _wapBglsVer = new()
+        {
+            Diameter = 8,
+            Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 2 },
+        };
+        /// <summary> Verticale beugels (gesloten beugel, verticaal verdeeld). </summary>
+        public WapeningGroep WapBglsVer
+        {
+            get => _wapBglsVer;
+            set => SetProperty(ref _wapBglsVer, value);
+        }
+
+        private WapeningGroep _wapVerticaleHaarspelden = new()
+        {
+            Diameter = 12,
+            Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 4 },
+        };
+        /// <summary> Hoofd-trekwapening als verticale haarspelden (AsMain). </summary>
+        public WapeningGroep WapVerticaleHaarspelden
+        {
+            get => _wapVerticaleHaarspelden;
+            set => SetProperty(ref _wapVerticaleHaarspelden, value);
+        }
+
+        private WapeningGroep _wapHorizontaleHaarspelden = new()
+        {
+            Diameter = 10,
+            Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 4 },
+        };
+        /// <summary> Tweede laag hoofdwapening als horizontale haarspelden (Aantal = 0 = niet gebruikt). </summary>
+        public WapeningGroep WapHorizontaleHaarspelden
+        {
+            get => _wapHorizontaleHaarspelden;
+            set => SetProperty(ref _wapHorizontaleHaarspelden, value);
+        }
+
+        // ---- Doorgeef-properties (overgangsfase, worden later [Obsolete]) ----
+
+        /// <summary> Doorgeef: schrijft naar <see cref="WapBglsHor"/> én <see cref="WapBglsVer"/>. </summary>
         public double BeugelDiameter
         {
-            get => _beugelDiameter;
-            set => SetProperty(ref _beugelDiameter, value);
+            get => _wapBglsHor.Diameter;
+            set
+            {
+                if (_wapBglsHor.Diameter == value && _wapBglsVer.Diameter == value) return;
+                _wapBglsHor.Diameter = value;
+                _wapBglsVer.Diameter = value;
+                OnPropertyChanged();
+            }
         }
 
-        private double _hoofdstaafDiameter = 12;
+        /// <summary> Doorgeef: <see cref="WapVerticaleHaarspelden"/>.Diameter. </summary>
         public double HoofdstaafDiameter
         {
-            get => _hoofdstaafDiameter;
-            set => SetProperty(ref _hoofdstaafDiameter, value);
+            get => _wapVerticaleHaarspelden.Diameter;
+            set
+            {
+                if (_wapVerticaleHaarspelden.Diameter == value) return;
+                _wapVerticaleHaarspelden.Diameter = value;
+                OnPropertyChanged();
+            }
         }
 
-        private double _hoofdstaafAantal = 4;
+        /// <summary> Doorgeef: <see cref="WapVerticaleHaarspelden"/>.Verdeling.Aantal. </summary>
         public double HoofdstaafAantal
         {
-            get => _hoofdstaafAantal;
-            set => SetProperty(ref _hoofdstaafAantal, value);
+            get => _wapVerticaleHaarspelden.Verdeling.Aantal;
+            set
+            {
+                if (_wapVerticaleHaarspelden.Verdeling.Aantal == (int)value) return;
+                _wapVerticaleHaarspelden.Verdeling.Aantal = (int)value;
+                OnPropertyChanged();
+            }
         }
 
         // NB1: tweede laag hoofdwapening (0 = niet gebruikt), bijv. 4r12 + 4r10
-        private double _hoofdstaafDiameter2 = 10;
+        /// <summary> Doorgeef: <see cref="WapHorizontaleHaarspelden"/>.Diameter. </summary>
         public double HoofdstaafDiameter2
         {
-            get => _hoofdstaafDiameter2;
-            set => SetProperty(ref _hoofdstaafDiameter2, value);
+            get => _wapHorizontaleHaarspelden.Diameter;
+            set
+            {
+                if (_wapHorizontaleHaarspelden.Diameter == value) return;
+                _wapHorizontaleHaarspelden.Diameter = value;
+                OnPropertyChanged();
+            }
         }
 
-        private double _hoofdstaafAantal2 = 4;
+        /// <summary> Doorgeef: <see cref="WapHorizontaleHaarspelden"/>.Verdeling.Aantal. </summary>
         public double HoofdstaafAantal2
         {
-            get => _hoofdstaafAantal2;
-            set => SetProperty(ref _hoofdstaafAantal2, value);
+            get => _wapHorizontaleHaarspelden.Verdeling.Aantal;
+            set
+            {
+                if (_wapHorizontaleHaarspelden.Verdeling.Aantal == (int)value) return;
+                _wapHorizontaleHaarspelden.Verdeling.Aantal = (int)value;
+                OnPropertyChanged();
+            }
         }
 
         // NB2: factor voor de bruikbaarheidsgrenstoestand (BGT), t.b.v. scheurwijdtetoetsing

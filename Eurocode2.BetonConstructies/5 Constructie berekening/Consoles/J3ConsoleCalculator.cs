@@ -9,13 +9,7 @@
             double fywd = 0.8 * i.Fyk; // UITGANGSPUNT: f_ywd = 80% * f_yk
             double nu = 0.6 * (1.0 - i.Fck / 250.0); // 6.2.2 (6)
             double nu1 = 0.6; // UITGANGSPUNT: f_ywd = 80% * f_yk 
-            //double nEd = i.NEd; // normaalkracht in kolom/wand
-            //double dsnOppKolom = i.KolomDikte * i.Bc;
-            //double sigmaBasis = 0; // er is geen spanning, // check dit met Martijn, waarom niet nEd * 1000 / dsnOppKolom;
-
             double factorZ = i.FactorZ;
-
-
             double sigma1RdMax = 1.00 * nu * fcd; // CCC
             double sigma2RdMax = 0.85 * nu * fcd; // CCT
             double sigma3RdMax = 0.75 * nu * fcd; // CTT
@@ -31,7 +25,9 @@
             {
                 case J3ConsoleLinkType.Geen: 
                 case J3ConsoleLinkType.HorizontaalOfSchuin: 
-                    d = i.Hc - i.Dekking - 0.5 * i.HoofdstaafDiameter; break;
+                    d = i.Hc - i.Dekking - i.BeugelDiameter - 0.5 * i.HoofdstaafDiameter;
+                    // nu altijd vertikale beugels toepassen of iig verwerken in de nuttige hoogte
+                    break;
                 case J3ConsoleLinkType.Verticaal:
                     d = i.Hc - i.Dekking - i.BeugelDiameter - 0.5 * i.HoofdstaafDiameter; break;
 
@@ -108,6 +104,7 @@
             J3ConsoleDwarskrachtResult? dwarskracht = null;
             J3ConsoleTorsieResult? torsie = null;
             J3ConsoleTorsieDwarskrachtCombinatie? torsieCombinatie = null;
+            
             if (i.RekenMethode == J3ConsoleInput.RekenMethodeOptie.GedrongenLiggerTheorie)
             {
                 // Knoop 1 (onderin): lengte x1 = min(ab ; L/2 ; H/2), consistent met ar in 6.1 (10)
@@ -158,24 +155,27 @@
 
                 // 6.2.2: dwarskrachtweerstand zonder wapening (VRd,c) met NEd = -HEd
                 // en VRd,max met theta = 45 graden en z = a
-                // OPMERKING: f_ywd = 0.8 * fyd (zie 6.2.2 (6) en 6.3.2 (6))
+                // OPMERKING: f_ywd = 0.8 * fyd (zie 6.2.2 (6) en 6.3.2 (6)) zodat we nu_1 kunnen gebruiken!
                 dwarskracht = J3ConsoleDwarskrachtCalculator.Bereken(i, d, asProv, a, fcd, nu1);
 
                 // 6.3.2: torsie (TEd = FEd * e), TRd,max en combinatietoetsen (6.31)/(6.29)
-                // OPMERKING hier niet nu1 gebruiken, maar nu (0.6 * (1 - fck/250)) conform 6.2.2 (6)
+                // OPMERKING hier de normale 'nu' gebruiken.
                 torsie = J3ConsoleTorsieCalculator.Bereken(i, beton, fcd, nu);
                 torsieCombinatie = J3ConsoleTorsieCalculator.Combineer(torsie, dwarskracht);
             }
 
-            double aswMin = 0.25 * asMain;
+
+            // J.3(.)
+            double asLnk = 0.25 * asMain;
             if (linkType == J3ConsoleLinkType.Verticaal)
             {
-                aswMin = 0.5 * i.FEd * 1000 / fyd;
+                asLnk = 0.5 * i.FEd * 1000 / fyd;
             }
+                
 
            // Aanvullende wapening
            double fwd = ((2.0 * z / a - 1.0) / (3.0 + i.FEd / f1x)) * f1x;
-           double asw = Math.Max(fwd * 1000.0 / fyd, aswMin);
+           double asw = Math.Max(fwd * 1000.0 / fyd, asLnk);
 
             // Node 1 verification
             double sigmaNode1Edx = f1x * 1000.0 / (i.Bc * y1);
