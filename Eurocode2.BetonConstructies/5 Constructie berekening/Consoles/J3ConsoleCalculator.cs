@@ -149,8 +149,8 @@
                 asMin = minWap.AsMin;
 
                 // 7.3.4: scheurwijdtetoetsing in BGT
-                double asProv = i.HoofdstaafAantal * WapeningHelper.GetDsnOpp(1, i.HoofdstaafDiameter)
-                              + i.HoofdstaafAantal2 * WapeningHelper.GetDsnOpp(1, i.HoofdstaafDiameter2);
+                double asProv = i.WapVerticaleHaarspelden.TotaalAs
+                              + i.WapHorizontaleHaarspelden.TotaalAs;
                 scheurwijdte = J3ConsoleScheurwijdteCalculator.Bereken(i, a, z, d, asProv, beton);
 
                 // 6.2.2: dwarskrachtweerstand zonder wapening (VRd,c) met NEd = -HEd
@@ -277,6 +277,11 @@
             };
 
             result.UseAnchorageBar = result.BuigdoorMain < result.VerankeringMainConsoleZijde.MinimaleBuigdoornDiameter;
+
+            // Wapeninggroepen geometrisch afmaken (shapes + verdeellijn) nu alle
+            // benodigde resultaten (D, AantalBeugels, UseAnchorageBar) bekend zijn.
+            J3ConsoleWapeningBuilder.VulGroepen(i, result);
+
             result.StrutAndTieNodes.Add(new StrutAndTie.StrutAndTieNode
             {
                 Name = "Knoop 1",

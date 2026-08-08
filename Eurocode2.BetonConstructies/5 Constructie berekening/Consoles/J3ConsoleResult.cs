@@ -107,6 +107,12 @@
         public double DiameterBgl { get; set; }
         public WapeningContext WapKolomMain { get; set; } = new() { Tekst = "8r20"};
 
+        // ---- Afgemaakte wapeninggroepen (gevuld door J3ConsoleWapeningBuilder) ----
+        public WapeningGroep? WapBglsHor { get; set; }
+        public WapeningGroep? WapBglsVer { get; set; }
+        public WapeningGroep? WapVerticaleHaarspelden { get; set; }
+        public WapeningGroep? WapHorizontaleHaarspelden { get; set; }
+
 
         
 
