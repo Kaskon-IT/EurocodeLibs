@@ -346,6 +346,14 @@ namespace Eurocode.BetonConstructies.Consoles
                         // J.3(3): bij ac > 0,5·hc zijn verticale beugels vereist en is een afschuining niet toegestaan.
                         //IsEnabled = model => model.Ac <= 0.5 * model.Hc
                     },
+                [nameof(J3ConsoleInput.UseAnchorageBar)] =
+                    new BooleanPropertyMetadata<J3ConsoleInput>
+                    {
+                        PropertyName = nameof(J3ConsoleInput.UseAnchorageBar),
+                        Label = "Gebruik verankeringsstaaf",
+                        Description = "Gebruik een verankeringsstaaf aan de bovenzijde van de console.",
+                        Order = 76
+                    }
 
 
             };

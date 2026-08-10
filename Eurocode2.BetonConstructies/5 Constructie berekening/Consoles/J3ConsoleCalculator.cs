@@ -99,6 +99,12 @@
             }
 
             double w1 = 0;
+
+            // aavnulling voor verjonging
+            double hoogteTpvAc = i.AfschuiningOnderzijde ? i.Hc / 2.0 + ((1 - (i.Ac / i.Lc)) * i.Hc / 2.0) : i.Hc;
+            double nutHoogteTpvAc = hoogteTpvAc - d1;
+
+
             Scheurbeheersing.ScheurwijdteMinimumWapening? minWap = null;
             J3ConsoleScheurwijdteResult? scheurwijdte = null;
             J3ConsoleDwarskrachtResult? dwarskracht = null;
@@ -156,11 +162,11 @@
                 // 6.2.2: dwarskrachtweerstand zonder wapening (VRd,c) met NEd = -HEd
                 // en VRd,max met theta = 45 graden en z = a
                 // OPMERKING: f_ywd = 0.8 * fyd (zie 6.2.2 (6) en 6.3.2 (6)) zodat we nu_1 kunnen gebruiken!
-                dwarskracht = J3ConsoleDwarskrachtCalculator.Bereken(i, d, asProv, a, fcd, nu1);
+                dwarskracht = J3ConsoleDwarskrachtCalculator.Bereken(i, nutHoogteTpvAc, hoogteTpvAc, asProv, a, fcd, nu1);
 
                 // 6.3.2: torsie (TEd = FEd * e), TRd,max en combinatietoetsen (6.31)/(6.29)
                 // OPMERKING hier de normale 'nu' gebruiken.
-                torsie = J3ConsoleTorsieCalculator.Bereken(i, beton, fcd, nu);
+                torsie = J3ConsoleTorsieCalculator.Bereken(i, beton, fcd, nu, hoogteTpvAc);
                 torsieCombinatie = J3ConsoleTorsieCalculator.Combineer(torsie, dwarskracht);
             }
 
@@ -187,6 +193,9 @@
 
             // M_rand voor opgave kolomberekening
             double mRand = i.FEd * i.Ac / 1000.0 + i.HEd * ah / 1000.0;
+
+           
+
 
             var result = new J3ConsoleResult
             {
@@ -274,9 +283,16 @@
                 MEd = mEd,
                 Asw = asw,
                 Mrand = mRand,
+
+
+                HoogteTpvAc = hoogteTpvAc,
+                NutHoogteTpvAc = nutHoogteTpvAc
+
+
             };
 
-            result.UseAnchorageBar = result.BuigdoorMain < result.VerankeringMainConsoleZijde.MinimaleBuigdoornDiameter;
+            // Gebruikerskeuze (voorheen: BuigdoorMain < minimale buigdoorndiameter)
+            result.UseAnchorageBar = i.UseAnchorageBar;
 
             // Wapeninggroepen geometrisch afmaken (shapes + verdeellijn) nu alle
             // benodigde resultaten (D, AantalBeugels, UseAnchorageBar) bekend zijn.

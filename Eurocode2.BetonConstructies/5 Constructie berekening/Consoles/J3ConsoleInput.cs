@@ -49,7 +49,7 @@
 
         // Afschuining (verjonging) aan de onderzijde van de console.
         // Niet toegestaan als J.3(3) van toepassing is (ac > 0,5·hc, verticale beugels).
-        private bool _afschuiningOnderzijde = false;
+        private bool _afschuiningOnderzijde = !false;
         public bool AfschuiningOnderzijde
         {
             get => _afschuiningOnderzijde;
@@ -114,6 +114,9 @@
             set => SetProperty(ref _hc, value);
         }
 
+       
+
+
         private double _ac = 150;
         public double Ac
         {
@@ -177,6 +180,7 @@
         {
             Diameter = 8,
             Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 2 },
+            Kleur = "#de5114",
         };
         /// <summary> Verticale beugels (gesloten beugel, verticaal verdeeld). </summary>
         public WapeningGroep WapBglsVer
@@ -188,7 +192,8 @@
         private WapeningGroep _wapVerticaleHaarspelden = new()
         {
             Diameter = 12,
-            Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 4 },
+            Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 4  },
+            Kleur = "#14de4a",
         };
         /// <summary> Hoofd-trekwapening als verticale haarspelden (AsMain). </summary>
         public WapeningGroep WapVerticaleHaarspelden
@@ -200,7 +205,8 @@
         private WapeningGroep _wapHorizontaleHaarspelden = new()
         {
             Diameter = 10,
-            Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 4 },
+            Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 2 },
+            Kleur = "#d7de14",
         };
         /// <summary> Tweede laag hoofdwapening als horizontale haarspelden (Aantal = 0 = niet gebruikt). </summary>
         public WapeningGroep WapHorizontaleHaarspelden
@@ -274,7 +280,7 @@
         }
 
         // NB2: factor voor de bruikbaarheidsgrenstoestand (BGT), t.b.v. scheurwijdtetoetsing
-        private double _factorBgt = 185.0 / 245.0;
+        private double _factorBgt = 0.755;
         public double FactorBgt
         {
             get => _factorBgt;
@@ -288,7 +294,7 @@
         /// Optionele opgave van d1 (afstand hart trekband tot bovenrand) [mm].
         /// 0 = automatisch bepalen uit dekking/staafdiameters; &gt; 0 = d wordt Hc - d1.
         /// </summary>
-        private double _d1Opgave = 50;
+        private double _d1Opgave = 0;
         public double D1Opgave
         {
             get => _d1Opgave;
@@ -300,6 +306,17 @@
         {
             get => _hoofdstaafBuigdoornDiameterFactor;
             set => SetProperty(ref _hoofdstaafBuigdoornDiameterFactor, value);
+        }
+
+        /// <summary>
+        /// Gebruikerskeuze: verankeringsstaaf (rechte staaf + haarspeld) toepassen.
+        /// Voorheen berekend (BuigdoorMain &lt; minimale buigdoorndiameter); nu invoer.
+        /// </summary>
+        private bool _useAnchorageBar;
+        public bool UseAnchorageBar
+        {
+            get => _useAnchorageBar;
+            set => SetProperty(ref _useAnchorageBar, value);
         }
         
 

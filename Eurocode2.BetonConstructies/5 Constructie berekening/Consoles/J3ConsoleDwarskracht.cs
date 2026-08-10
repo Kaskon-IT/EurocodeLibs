@@ -78,7 +78,7 @@ namespace Eurocode.BetonConstructies
         /// <summary> V<sub>Rd,max</sub> volgens vgl. (6.9) met θ = 45° [kN]. </summary>
         public double VRdMax { get; set; }
         public Formula VRdMaxFormula => new("(6.9)",
-            @"V_{Rd,max} = \frac{\alpha_{cw} \cdot b_w \cdot z \cdot \nu_1 \cdot f_{cd}}{\cot\theta + \tan\theta} \quad (\theta = 45^\circ)",
+            @"V_{Rd,max} = \frac{\alpha_{cw} \cdot b_w \cdot z \cdot \nu_1 \cdot f_{cd}}{\cot\theta + \tan\theta}",
             $@"= \frac{{1.0 \cdot {B.ToTeX()} \cdot {Zw.ToTeX()} \cdot {Nu1:0.00} \cdot {Fcd:0.0}}}{{2}} \cdot 10^{{-3}} = {VRdMax:0} \text{{ kN}}");
 
         public bool VRdMaxOk => VEd <= VRdMax;
@@ -105,7 +105,7 @@ namespace Eurocode.BetonConstructies
 
     public static class J3ConsoleDwarskrachtCalculator
     {
-        public static J3ConsoleDwarskrachtResult Bereken(J3ConsoleInput i, double d, double asProv, double zw, double fcd, double nu)
+        public static J3ConsoleDwarskrachtResult Bereken(J3ConsoleInput i, double d, double h, double asProv, double zw, double fcd, double nu)
         {
             var r = new J3ConsoleDwarskrachtResult
             {
@@ -114,7 +114,7 @@ namespace Eurocode.BetonConstructies
                 Fck = i.Fck,
                 AsL = asProv,
                 NEd = -i.HEd, // trek negatief
-                Ac = i.Bc * i.Hc,
+                Ac = i.Bc * h,
                 VEd = i.FEd,
                 Av = i.Ac,
                 Zw = zw,

@@ -14,6 +14,23 @@ namespace Eurocode.BetonConstructies
         /// <summary> Bundelgrootte n per positie (1 = geen bundel), §8.9. </summary>
         public int AantalStavenPerPositie { get; set; } = 1;
 
+        /// <summary> Weergavekleur (hex, bijv. "#ff8800"); null = standaardmateriaal. </summary>
+        public string? Kleur { get; set; }
+
+        /// <summary>
+        /// Door de gebruiker opgegeven buigstralen [mm] (lengte 1 = voor alle knikken).
+        /// Null of leeg = automatisch bepaald door de builder.
+        /// </summary>
+        public double[]? Buigstralen { get; set; }
+
+        /// <summary>
+        /// Posities (t = 0..1) van de shapes langs de verdeellijn, één per shape.
+        /// Tussen twee opeenvolgende posities wordt lineair geïnterpoleerd;
+        /// zijn twee opeenvolgende shapes gelijk, dan blijft de vorm constant op dat traject.
+        /// Null of leeg = gelijkmatig verdeeld (bijv. [0, 1] bij 2 shapes, [0, 0.5, 1] bij 3).
+        /// </summary>
+        public double[]? ShapePosities { get; set; }
+
         /// <summary> Startpunt van de verdeellijn (positie van de startvorm). </summary>
         public Punt3D VerdeelStart { get; set; }
 
@@ -26,10 +43,14 @@ namespace Eurocode.BetonConstructies
 
         public WapeningVerdeling Verdeling { get; set; } = new();
 
-        /// <summary> Lengte van de verdeellijn L [mm] (bij ExacteHartOpHart: Σsᵢ). </summary>
+        /// <summary> Lengte van de verdeellijn L [mm] (bij ExacteHartOpHart: Σsᵢ), na aftrek van de offsets. </summary>
         public double VerdeelLengte => Verdeling.Type == VerdelingType.ExacteHartOpHart
             ? Verdeling.HartOpHartAfstanden.Sum()
-            : Punt3D.Afstand(VerdeelStart, VerdeelEind);
+            : EffectieveLengte;
+
+        /// <summary> Beschikbare verdeellengte [mm]: afstand start→eind minus OffsetStart en OffsetEind. </summary>
+        private double EffectieveLengte =>
+            Math.Max(Punt3D.Afstand(VerdeelStart, VerdeelEind) - Verdeling.OffsetStart - Verdeling.OffsetEind, 0);
 
         /// <summary> Aantal staafposities, afhankelijk van het verdelingstype. </summary>
         public int AantalPosities => Verdeling.Type switch
@@ -37,7 +58,7 @@ namespace Eurocode.BetonConstructies
             VerdelingType.Gelijkmatig => Verdeling.Aantal,
             VerdelingType.ExacteHartOpHart => Verdeling.HartOpHartAfstanden.Count + 1,
             VerdelingType.BeoogdeHartOpHart => Verdeling.BeoogdeHartOpHart > 0
-                ? (int)Math.Ceiling(Punt3D.Afstand(VerdeelStart, VerdeelEind) / Verdeling.BeoogdeHartOpHart) + 1
+                ? (int)Math.Ceiling(EffectieveLengte / Verdeling.BeoogdeHartOpHart) + 1
                 : 0,
             _ => 0,
         };
@@ -83,6 +104,8 @@ namespace Eurocode.BetonConstructies
             var n = AantalPosities;
             var richting = (VerdeelEind - VerdeelStart).Genormaliseerd();
             var lengte = VerdeelLengte;
+            var start = VerdeelStart + Verdeling.OffsetStart * richting;
+            var totaleLengte = Punt3D.Afstand(VerdeelStart, VerdeelEind);
 
             for (var i = 0; i < n; i++)
             {
@@ -90,16 +113,43 @@ namespace Eurocode.BetonConstructies
                     ? Verdeling.HartOpHartAfstanden.Take(i).Sum()
                     : n > 1 ? i * lengte / (n - 1) : 0;
 
-                var t = lengte > 0 ? afstand / lengte : 0;
-
-                var shape = Shapes.Length == 2
-                    ? StaafShape.Lerp(Shapes[0], Shapes[1], t)
-                    : Shapes[0];
+                // interpolatiefactor t over de volledige verdeellijn (start→eind),
+                // zodat de vorm bij meerdere shapes ook met offsets correct meeloopt
+                var t = totaleLengte > 0 ? (Verdeling.OffsetStart + afstand) / totaleLengte : 0;
 
                 yield return new StaafInstantie(
-                    shape.Transleer(VerdeelStart + afstand * richting),
+                    ShapeOpPositie(t).Transleer(start + afstand * richting),
                     Diameter);
             }
+        }
+
+        /// <summary>
+        /// De (geïnterpoleerde) staafvorm op positie t (0..1) langs de verdeellijn.
+        /// De shapes fungeren als keyframes op <see cref="ShapePosities"/>
+        /// (of gelijkmatig verdeeld); tussen twee keyframes wordt puntsgewijs
+        /// lineair geïnterpoleerd. Zo geeft bijv. [recht, recht, taps] met posities
+        /// [0, 0.4, 1] een constante vorm tot t = 0.4 en daarna een verlopende vorm.
+        /// </summary>
+        public StaafShape ShapeOpPositie(double t)
+        {
+            if (Shapes.Length == 1) return Shapes[0];
+
+            var posities = ShapePosities is { Length: > 0 } && ShapePosities.Length == Shapes.Length
+                ? ShapePosities
+                : [.. Enumerable.Range(0, Shapes.Length).Select(k => (double)k / (Shapes.Length - 1))];
+
+            if (t <= posities[0]) return Shapes[0];
+            if (t >= posities[^1]) return Shapes[^1];
+
+            for (var k = 1; k < posities.Length; k++)
+            {
+                if (t > posities[k]) continue;
+                var segment = posities[k] - posities[k - 1];
+                var f = segment > 0 ? (t - posities[k - 1]) / segment : 1;
+                return StaafShape.Lerp(Shapes[k - 1], Shapes[k], f);
+            }
+
+            return Shapes[^1];
         }
 
         public override void Valideer()
@@ -110,6 +160,19 @@ namespace Eurocode.BetonConstructies
             if (AantalStavenPerPositie < 1)
             {
                 throw new InvalidOperationException("AantalStavenPerPositie moet ≥ 1 zijn.");
+            }
+
+            if (ShapePosities is { Length: > 0 })
+            {
+                if (ShapePosities.Length != Shapes.Length)
+                {
+                    throw new InvalidOperationException("ShapePosities moet evenveel waarden hebben als Shapes.");
+                }
+
+                if (ShapePosities.Zip(ShapePosities.Skip(1)).Any(p => p.Second < p.First))
+                {
+                    throw new InvalidOperationException("ShapePosities moet oplopend zijn.");
+                }
             }
 
             if (Verdeling.Type != VerdelingType.ExacteHartOpHart

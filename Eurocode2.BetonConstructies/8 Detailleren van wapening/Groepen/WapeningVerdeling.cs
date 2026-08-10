@@ -34,8 +34,25 @@ namespace Eurocode.BetonConstructies
         /// <summary> Bij BeoogdeHartOpHart: beoogde (maximale) h.o.h.-maat s [mm]. </summary>
         public double BeoogdeHartOpHart { get; set; }
 
+        /// <summary>
+        /// Offset [mm] vanaf VerdeelStart, in de richting van VerdeelEind.
+        /// De verdeling begint op VerdeelStart + OffsetStart·richting.
+        /// </summary>
+        public double OffsetStart { get; set; }
+
+        /// <summary>
+        /// Offset [mm] vanaf VerdeelEind, terug richting VerdeelStart.
+        /// De verdeling eindigt op VerdeelEind − OffsetEind·richting.
+        /// </summary>
+        public double OffsetEind { get; set; }
+
         public void Valideer()
         {
+            if (OffsetStart < 0 || OffsetEind < 0)
+            {
+                throw new InvalidOperationException("OffsetStart en OffsetEind moeten ≥ 0 zijn.");
+            }
+
             switch (Type)
             {
                 case VerdelingType.Gelijkmatig when Aantal < 1:

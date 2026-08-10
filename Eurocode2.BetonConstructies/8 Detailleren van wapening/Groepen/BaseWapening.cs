@@ -12,8 +12,9 @@ namespace Eurocode.BetonConstructies
 
         /// <summary>
         /// De staafvorm(en): polyline (hartlijn) + buigstralen.
-        /// Standaard 1 shape (alle staven identiek). Bij een groep zijn 2 shapes
-        /// toegestaan: [0] = startvorm, [1] = eindvorm (lineaire interpolatie).
+        /// Standaard 1 shape (alle staven identiek). Bij een groep zijn meerdere
+        /// shapes toegestaan als 'keyframes' langs de verdeellijn; tussen twee
+        /// opeenvolgende shapes wordt puntsgewijs lineair geïnterpoleerd.
         /// Alle shapes moeten hetzelfde aantal punten hebben.
         /// </summary>
         public StaafShape[] Shapes { get; set; } = [];
@@ -35,9 +36,9 @@ namespace Eurocode.BetonConstructies
                 throw new InvalidOperationException("Diameter moet groter dan 0 zijn.");
             }
 
-            if (Shapes.Length is < 1 or > 2)
+            if (Shapes.Length < 1)
             {
-                throw new InvalidOperationException("1 of 2 staafvormen verwacht.");
+                throw new InvalidOperationException("Minimaal 1 staafvorm verwacht.");
             }
 
             foreach (var shape in Shapes)
@@ -45,9 +46,9 @@ namespace Eurocode.BetonConstructies
                 shape.Valideer();
             }
 
-            if (Shapes.Length == 2 && Shapes[0].Punten.Count != Shapes[1].Punten.Count)
+            if (Shapes.Any(s => s.Punten.Count != Shapes[0].Punten.Count))
             {
-                throw new InvalidOperationException("Beide staafvormen moeten hetzelfde aantal punten hebben.");
+                throw new InvalidOperationException("Alle staafvormen moeten hetzelfde aantal punten hebben.");
             }
         }
     }

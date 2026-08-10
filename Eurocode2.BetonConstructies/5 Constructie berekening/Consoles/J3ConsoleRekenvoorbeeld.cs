@@ -18,6 +18,14 @@ namespace Eurocode.BetonConstructies
         private static string N(double v, string format = "0.0") =>
             v.ToString(format, CultureInfo.InvariantCulture);
 
+        /// <summary>
+        /// Voegt de stap alleen toe als aan de voorwaarde is voldaan; de inhoud
+        /// wordt lazy opgebouwd zodat null-waarden geen exceptie geven.
+        /// </summary>
+        private static RekenvoorbeeldBuilder Stap_Als(this RekenvoorbeeldBuilder b,
+            bool voorwaarde, string key, string titel, Func<string> inhoud)
+            => voorwaarde ? b.Stap_(key, titel, inhoud()) : b;
+
         public static string Genereer(J3ConsoleInput i, J3ConsoleResult r) =>
             i.RekenMethode switch
             {
@@ -165,7 +173,7 @@ $$
             // 3.3 Controle dwarskracht 6.2.2
             builder.Stap_("dwarskracht", "Controle dwarskracht en wringing", $@"
 De dwarskrachtweerstand van de console met dwarskrachtwapnening wordt getoetst op basis van de sterkte van de betondrukdiagonaal. Bij dwarskracht mag volgens EC2 (6.7N) deze hoek niet groter dan 45 graden zijn.
-We stellen dus de hoek in op 45 graden en gebruiken ook de bijbehorende hoogte z. De maximale spanning in de beugels houdeen we op 80% van de f~yk~.
+We stellen dus de hoek in op 45 graden en gebruiken ook de bijbehorende hoogte z. De maximale spanning in de beugels houden we op 80% van f~yk~.
 $$
 \theta = 45^\circ
 $$
@@ -177,6 +185,22 @@ $$
 $$
 f_{{ywd}}= 0.8 \cdot f_{{yk}} = 0.8 \cdot {i.Fyk:0} = {r.Fywd:0} \text{{ N/mm²}}
 $$
+
+
+{(!i.AfschuiningOnderzijde ? "" : $@"
+Er is een afschuining/verjonging toegepast. De hoogte van de dwarskrachtzone wordt dan beperkt tot de consolehoogte ter plaatse van ac.
+$$
+h = H_c/2.0 + (1 - (a_c / L_c)) \cdot H_c/2.0 = {N(i.Hc / 2.0, "0")} + (1 - ({N(i.Ac, "0")} / {N(i.Lc, "0")})) \cdot {N(i.Hc/2.0, "0")} = {N(r.HoogteTpvAc, "0")} \text{{ mm}}
+$$
+
+$$
+d = h - d_1 = {N(r.NutHoogteTpvAc, "0")} \text{{ mm}}
+$$
+
+")}
+
+
+
 
 
 {(r.Dwarskracht is null ? "" : $@"
@@ -204,7 +228,11 @@ $$
 $$
 
 $$
-{r.Dwarskracht.VRdcFormula.FullValue}
+{r.Dwarskracht.VRdcFormula.StaticValue}
+$$
+
+$$
+{r.Dwarskracht.VRdcFormula.DynamicValue}
 $$
 
 Reductie van de belastingsbijdrage bij een last dicht bij de oplegging, 6.2.2 (6):
@@ -218,10 +246,10 @@ $$
 $$
 
 {(r.Dwarskracht.IsVoldoende
-    ? $"✔️ V~Ed,red~ = {N(r.Dwarskracht.VEdRed, "0")} kN ≤ V~Rd,c~ = {N(r.Dwarskracht.VRdc, "0")} kN, geen dwarskrachtwapening vereist."
-    : $"⚠️ V~Ed,red~ = {N(r.Dwarskracht.VEdRed, "0")} kN > V~Rd,c~ = {N(r.Dwarskracht.VRdc, "0")} kN, dwarskrachtwapening vereist.")}
+    ? $"✔️ V~Ed,red~ = {N(r.Dwarskracht.VEdRed, "0")} kN ≤ V~Rd,c~ = {N(r.Dwarskracht.VRdc, "0")} kN, *geen* dwarskrachtwapening vereist."
+    : $"V~Ed,red~ = {N(r.Dwarskracht.VEdRed, "0")} kN > V~Rd,c~ = {N(r.Dwarskracht.VRdc, "0")} kN, *dwarskrachtwapening* vereist.")}
 
-Controle drukdiagonaal (θ = 45°), met V~Ed~ zonder reductie:
+Controle drukdiagonaal, met V~Ed~ zonder reductie:
 
 $$
 {r.Dwarskracht.VRdMaxFormula.FullValue}
@@ -264,7 +292,7 @@ $$
 
 {(r.Torsie.IsVoldoende
     ? $"✔️ T~Ed~ = {N(r.Torsie.TEd, "0.00")} kNm ≤ T~Rd,c~ = {N(r.Torsie.TRdc, "0.00")} kNm."
-    : $"⚠️ T~Ed~ = {N(r.Torsie.TEd, "0.00")} kNm > T~Rd,c~ = {N(r.Torsie.TRdc, "0.00")} kNm.")}
+    : $"T~Ed~ = {N(r.Torsie.TEd, "0.00")} kNm > T~Rd,c~ = {N(r.Torsie.TRdc, "0.00")} kNm, aanvullende wapening vereist.")}
 
 $$
 {r.Torsie.TRdMaxFormula.FullValue}
@@ -292,18 +320,6 @@ $$
 
 Totale beugelwapening (dwarskracht + wringing) in zone $a_v = {N(r.TorsieDwarskrachtCombinatie.AvZone, "0")}$ mm:
 
-Bij 2-snedige beugels:
-
-Bij 3-snedige beugels:
-
-Bij 4-snedige beugels:
-
-Bij n-snedige beugels (n>=2):
-Buitenste benen (links/recht):
-Asw,req = {r.TorsieDwarskrachtCombinatie.AswT:0} + {r.TorsieDwarskrachtCombinatie.AswV:0} / n = 
-Binnenste benen:
-Asw,req = {r.TorsieDwarskrachtCombinatie.AswV:0} / n =
-
 
 
 
@@ -315,14 +331,44 @@ $$
 {r.TorsieDwarskrachtCombinatie.AswTotaalFormula.FullValue}
 $$
 
+Controleer of minimale wapening volstaat:
+
 $$
 {r.TorsieDwarskrachtCombinatie.UnityCheckFormula.FullValue}
 $$
 
 {(r.TorsieDwarskrachtCombinatie.IsVoldoende
-    ? $"✔️ Unity check = {N(r.TorsieDwarskrachtCombinatie.UnityCheck, "0.00")} ≤ 1.0, geen aanvullende wapening voor dwarskracht + wringing vereist."
-    : $"⚠️ Unity check = {N(r.TorsieDwarskrachtCombinatie.UnityCheck, "0.00")} > 1.0, aanvullende wapening voor dwarskracht + wringing vereist.")}
+    ? $"✔️ Unity check = {N(r.TorsieDwarskrachtCombinatie.UnityCheck, "0.00")} ≤ 1.0, **geen** aanvullende wapening voor vereist."
+    : $"Unity check = {N(r.TorsieDwarskrachtCombinatie.UnityCheck, "0.00")} > 1.0, aanvullende wapening vereist.")}
 ")}
+")
+
+                .Stap_Als(r.Torsie is { TEd: > 0 }, "langswap-torsie", "Langswapening wringing", () => $@"
+Benodigde langswapening t.b.v. wringing volgens vgl. (6.28), gelijkmatig
+te verdelen over de omtrek $u_k = {N(r.Torsie!.Uk, "0")}$ mm:
+
+$$
+{r.Torsie.AslFormula.FullValue}
+$$
+
+waarin:
+$$
+{r.Torsie.UkFormula.FullValue}
+$$
+
+$$
+{r.Torsie.AkFormula.FullValue}
+$$
+
+Per zijde van de console is de benodigde langswapening:
+$$
+{r.Torsie.AslBovenOnderFormula.FullValue} 
+$$
+$$
+{r.Torsie.AslLinksRechtsFormula.FullValue} 
+$$
+
+
 ")
 
                 .Stap_("wap-oplegging", "Wapening t.p.v. oplegging", $@"
@@ -342,6 +388,16 @@ $$
 $$
 {r.AsLnkFormula.FullValue}
 $$
+")
+
+                .Stap_("wap-overzicht", "Overzicht wapening", $@"
+## Langswapening:
+boven: {r.OverzichtBoven}
+onder: {r.OverzichtOnder}
+zijkant: {r.OverzichtZijkant}
+## Dwarswapening:
+beugels vertikaal: {r.OverzichtBeugels}
+
 ")
 
                 .Stap_("controle", "Controle wapening", $@"

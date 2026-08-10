@@ -21,6 +21,35 @@ namespace Eurocode.BetonConstructies
             r.WapBglsVer = BouwBeugelsVerticaal(i, r);
         }
 
+        /// <summary> Gebruikers-buigstralen van de groep, of anders de standaardwaarde. </summary>
+        private static double[] Buigstralen(WapeningGroep groep, double standaard) =>
+            groep.Buigstralen is { Length: > 0 } ? groep.Buigstralen : [standaard];
+
+        /// <summary>
+        /// Buitenrand (x) van de betonvorm op hoogte ym, loodrecht 'off' naar binnen;
+        /// port van <c>betonXBuiten()</c> in <c>j3console-build.js</c>.
+        /// </summary>
+        private static double BetonXBuiten(double ym, double off, double L, double H, bool taper)
+        {
+            var xVert = L - off;
+            if (!taper) return xVert;
+            var hyp = Math.Sqrt(L * L + H / 2.0 * (H / 2.0));
+            var xTaper = 2.0 / H * (L * H - off * hyp - L * ym);
+            return Math.Min(xVert, xTaper);
+        }
+
+        /// <summary>
+        /// Onderrand (ym) van de betonvorm op positie x, loodrecht 'off' naar binnen;
+        /// port van <c>betonYOnder()</c> in <c>j3console-build.js</c>.
+        /// </summary>
+        private static double BetonYOnder(double x, double off, double L, double H)
+        {
+            var hyp = Math.Sqrt(L * L + H / 2.0 * (H / 2.0));
+            var yVlak = H - off;
+            var yTaper = H - H * x / (2.0 * L) - off * hyp / L;
+            return Math.Min(yVlak, yTaper);
+        }
+
         /// <summary>
         /// Hoofd-trekwapening (AsMain) als verticale haarspeld; geometrie identiek
         /// aan <c>rebar()</c> in <c>j3console-build.js</c>. Verdeeld over de
@@ -29,6 +58,7 @@ namespace Eurocode.BetonConstructies
         public static WapeningGroep BouwVerticaleHaarspelden(J3ConsoleInput i, J3ConsoleResult r)
         {
             var groep = i.WapVerticaleHaarspelden;
+            var hspPlat = i.WapHorizontaleHaarspelden;
             var toonTaper = i.AfschuiningOnderzijde && !r.VerticaleBeugelsNodig;
 
             var c = i.Dekking;
@@ -77,66 +107,70 @@ namespace Eurocode.BetonConstructies
                 punten = [c1, c2, c3, c4, c5];
             }
 
-            groep.Shapes = [new StaafShape { Punten = punten, Buigstralen = [bendR] }];
+            groep.Shapes = [new StaafShape { Punten = punten, Buigstralen = Buigstralen(groep, bendR) }];
 
-            var halfClear = Math.Max(i.Bc / 2.0 - c - dBgl - ctxPhi - phi / 2.0, 0);
-            groep.VerdeelStart = new Punt3D(0, 0, -halfClear);
-            groep.VerdeelEind = new Punt3D(0, 0, halfClear);
+            var offStartEnd = c + i.WapBglsHor.Diameter + i.WapBglsVer.Diameter + i.WapHorizontaleHaarspelden.Diameter + i.WapVerticaleHaarspelden.Diameter / 2.0 ;
+            //var halfClear = Math.Max(i.Bc / 2.0 - c - dBgl - ctxPhi -hspPlat.Diameter - phi / 2.0, 0);
+            var halfDepth = i.Bc / 2.0;
+
+            groep.VerdeelStart = new Punt3D(0, 0, halfDepth);
+            groep.VerdeelEind = new Punt3D(0, 0, -halfDepth);
+            groep.Verdeling.OffsetStart = offStartEnd;
+            groep.Verdeling.OffsetEind = offStartEnd;
 
             return groep;
         }
 
         /// <summary>
-        /// Tweede laag hoofdwapening als horizontale haarspeld; geometrie identiek
-        /// aan de haarspeld in <c>J3ConsoleThreeView.razor</c>. Meerdere posities
-        /// worden (v1) gestapeld in y met h.o.h. 2Ø, omhoog vanaf de onderste laag.
+        /// Horizontale haarspeld bij de trekband (hoort bij de rechte
+        /// verankeringsstaaf, zichtbaar bij <see cref="J3ConsoleInput.UseAnchorageBar"/>).
+        /// V1: polyline van 6 punten — punt 1–3 op het voorvlak (z = B/2 − c − ØbglHor − ØbglVer),
+        /// punt 4–6 op het achtervlak (z = −B/2 + c + ØbglHor + ØbglVer).
+        /// Punt 1/6: x = linkerzijde kolom + c + ØbglHor, 10Ø onder de trekband.
+        /// Punt 2/5: zelfde x, op de trekband. Punt 3/4: consoletip op de trekband.
+        /// De definitieve shape wordt later uitgewerkt.
         /// </summary>
         public static WapeningGroep BouwHorizontaleHaarspelden(J3ConsoleInput i, J3ConsoleResult r)
         {
             var groep = i.WapHorizontaleHaarspelden;
-            var toonTaper = i.AfschuiningOnderzijde && !r.VerticaleBeugelsNodig;
 
             var c = i.Dekking;
-            var dBgl = i.WapBglsVer.Diameter;
+            var dBglHor = i.WapBglsHor.Diameter;
+            var dBglVer = i.WapBglsVer.Diameter;
             var phi = groep.Diameter;
-            var ctxPhi = r.WapKolomMain.GrootsteDiameter;
 
-            var H = i.Hc;
             var L = i.Lc;
             var Bw = i.KolomDikte;
             var B = i.Bc;
 
-            var hoek = toonTaper ? Math.Atan2(H / 2.0, L) : 0;
-            var hsC = c + dBgl + phi / 2.0;
-            var hsDy = hsC / Math.Cos(hoek);
-            var z1 = -B / 2.0 + c + dBgl + ctxPhi + phi / 2.0;
-            var z2 = B / 2.0 - c - dBgl - ctxPhi - phi / 2.0;
-            var x0 = Math.Max(-30 * phi, -Bw + c);
+            var zVoor = B / 2.0 - c - dBglHor - dBglVer - phi/2.0;
+            var zAchter = -B / 2.0 + c + dBglHor + dBglVer + phi/2.0;
+
+            var xLinks = -Bw + c + dBglHor + groep.Diameter / 2.0;
+            var xTip = L - c - groep.Diameter / 2.0;
+
+            var yTrek = i.Hc - r.D;        // positie trekband (d1) [mm, y omlaag]
+            var yHaak = yTrek + Math.Min(20 * phi, 200);  // 10Ø onder de trekband
 
             List<Punt3D> punten =
             [
-                new(x0, H - hsDy, z1),
-                new(0, H - hsDy, z1),
-                new(L - hsC, H - (L - hsC) * Math.Tan(hoek) - hsDy, z1),
-                new(L - hsC, hsC, z1),
-                new(L - hsC, hsC, z2),
-                new(L - hsC, H - (L - hsC) * Math.Tan(hoek) - hsDy, z2),
-                new(0, H - hsDy, z2),
-                new(x0, H - hsDy, z2),
+                new(xLinks, yHaak, zVoor),   // 1: haak, voorvlak
+                new(xLinks, yTrek, zVoor),   // 2: trekband, voorvlak
+                new(xTip, yTrek, zVoor),     // 3: consoletip, voorvlak
+                new(xTip, yTrek, zAchter),   // 4: consoletip, achtervlak
+                new(xLinks, yTrek, zAchter), // 5: trekband, achtervlak
+                new(xLinks, yHaak, zAchter), // 6: haak, achtervlak
             ];
 
-            groep.Shapes = [new StaafShape { Punten = punten, Buigstralen = [phi * 2.5] }];
+            groep.Shapes = [new StaafShape { Punten = punten, Buigstralen = Buigstralen(groep, phi * 2.5) }];
 
-            // v1: lagen gestapeld in y (omhoog = -y in modelcoördinaten? nee: y omlaag,
-            // dus tweede laag ligt hoger = kleinere y → richting -y).
-            var n = Math.Max(groep.AantalPosities, 1);
-            var hoh = 2 * phi;
+            // Eén positie: verdeellijn is richting-only.
             groep.VerdeelStart = new Punt3D(0, 0, 0);
-            groep.VerdeelEind = new Punt3D(0, -(n - 1) * hoh, 0);
-            if (n == 1)
-            {
-                groep.VerdeelEind = new Punt3D(0, -1, 0); // richting-only, 1 positie
-            }
+            groep.VerdeelEind = new Punt3D(0, 100, 0);
+            groep.Verdeling.Type = VerdelingType.ExacteHartOpHart;
+            groep.Verdeling.HartOpHartAfstanden = [20];
+            groep.Buigstralen = [55]; // fixed
+            //groep.Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig };
 
             return groep;
         }
@@ -159,35 +193,74 @@ namespace Eurocode.BetonConstructies
             var B = i.Bc;
 
             var y2 = i.Hc - r.D;
-            var yFirst = y2 + 2 * dMain;
+            var yFirst = y2 + 4 * dMain;
             var yLast = Math.Min(2.0 / 3.0 * r.D, H - c - dBgl / 2.0);
 
-            var xOut = L - (c + dBgl / 2.0); // v1: rechte rand (geen afschuining-correctie per beugel)
+            var taper = i.AfschuiningOnderzijde && !r.VerticaleBeugelsNodig;
             var xIn = -Bw + c + dBgl / 2.0;
             var zPos = B / 2.0 - c - dBgl / 2.0;
             var zNeg = -zPos;
             var hook = 10 * dBgl;
             var dd = dBgl;
 
-            List<Punt3D> punten =
-            [
-                new(xIn, 0, zPos - hook),   // 1: beginhaak
-                new(xIn, 0, zPos),          // 2: hoek A
-                new(xOut, dd / 2.0, zPos),  // 3: hoek B
-                new(xOut, dd / 2.0, zNeg),  // 4: hoek C
-                new(xIn, dd, zNeg),         // 5: hoek D
-                new(xIn, dd, zPos),         // 6: terug op hoek A
-                new(xIn + hook, dd, zPos),  // 7: eindhaak
-            ];
-
-            groep.Shapes = [new StaafShape { Punten = punten, Buigstralen = [2.5 * dBgl] }];
-            groep.VerdeelStart = new Punt3D(0, yFirst, 0);
-            groep.VerdeelEind = new Punt3D(0, yLast, 0);
-            groep.Verdeling = new WapeningVerdeling
+            // 7-punts curve op hoogte y; de buitenrand xOut volgt de betonvorm
+            // (bij afschuining wordt de beugel dus smaller richting de tip).
+            List<Punt3D> Punten(double y, double x1, double x2)
             {
-                Type = VerdelingType.Gelijkmatig,
-                Aantal = Math.Max(r.AantalBeugels, 1),
-            };
+                //var xOut = BetonXBuiten(y, c + dBgl / 2.0, L, H, taper);
+                return
+                [
+                    new(x1, 0, zPos - hook),   // 1: beginhaak
+                    new(x1, 0, zPos),          // 2: hoek A
+                    new(x2, dd / 2.0, zPos),  // 3: hoek B
+                    new(x2, dd / 2.0, zNeg),  // 4: hoek C
+                    new(x1, dd, zNeg),         // 5: hoek D
+                    new(x1, dd, zPos),         // 6: terug op hoek A
+                    new(x1 + hook, dd, zPos),  // 7: eindhaak
+                ];
+            }
+
+            var buigstralen = Buigstralen(groep, 2.5 * dBgl);
+            StaafShape Shape(double y, double x1, double x2) => new() { Punten = Punten(y, x1, x2), Buigstralen = buigstralen };
+            var off = c + dBgl / 2.0;
+            if (taper)
+            {
+                // Knikpunt: hoogte waarop de schuine rand de verticale rand snijdt
+                // (BetonXBuiten schakelt daar van xVert naar xTaper). Tot dat punt
+                // blijven de beugels gelijk; daarna verloopt de vorm mee met de rand.
+                
+                var hyp = Math.Sqrt(L * L + H / 2.0 * (H / 2.0));
+                var yKnik = H / 2.0 + off * (H / 2.0 - hyp) / L;
+                yKnik = Math.Clamp(yKnik, yFirst, yLast);
+
+                var bereik = yLast - yFirst;
+                var tKnik = bereik > 0 ? (yKnik - yFirst) / bereik : 0;
+
+                // 3 shapes: [0] en [1] gelijk (constant traject), [2] de eindvorm.
+                groep.Shapes = [Shape(0,xIn, L-off), Shape(H/2, xIn, L-off), Shape(H, xIn, 0-off)];
+                // totdat we de offset op de shape hebben moet
+                // voorlopig de hoogte snijpunt bepaald worden.
+                var deltaSp = Math.Cos(Math.Atan2(H / 2.0, L)) * off;
+                var percSp = deltaSp / H;
+                Console.WriteLine($"percentage = {percSp}");
+                groep.ShapePosities = [0, 0.5 - percSp, 1.0 - percSp/2.0];
+            }
+            else
+            {
+                groep.Shapes = [Shape(0,xIn, L-off)];
+                groep.ShapePosities = null;
+            }
+            groep.VerdeelStart = new Punt3D(0, 0, 0);
+            groep.VerdeelEind = new Punt3D(0, H, 0);
+            groep.Verdeling.OffsetStart = yFirst - 0;
+            groep.Verdeling.OffsetEind = H - yLast;
+
+            // Alleen bij Gelijkmatig het aantal uit de berekening overnemen;
+            // een expliciete gebruikersverdeling (Exacte/BeoogdeHartOpHart) blijft staan.
+            if (groep.Verdeling.Type == VerdelingType.Gelijkmatig)
+            {
+                groep.Verdeling.Aantal = Math.Max(r.AantalBeugels, 1);
+            }
 
             return groep;
         }
@@ -210,32 +283,45 @@ namespace Eurocode.BetonConstructies
             var dx = i.FactorHEd * (i.Hc - r.D);
             var xLast = i.Ac + dx; // = N2x in de view
 
+            var taper = i.AfschuiningOnderzijde && !r.VerticaleBeugelsNodig;
+            var L = i.Lc;
             var yTopB = c + dBgl / 2.0;
-            var yBotB = H - c - dBgl / 2.0; // v1: rechte onderzijde (geen afschuining-correctie)
             var zPos = B / 2.0 - c - 1.5 * dBgl; // binnen de horizontale beugel
             var zNeg = -zPos;
             var hook = 10 * dBgl;
             var dd = dBgl;
 
-            List<Punt3D> punten =
-            [
-                new(0, yTopB, zPos - hook),        // 1: beginhaak
-                new(0, yTopB, zPos),               // 2: hoek A
-                new(dd / 2.0, yBotB, zPos),        // 3: hoek B
-                new(dd / 2.0, yBotB, zNeg),        // 4: hoek C
-                new(dd, yTopB, zNeg),              // 5: hoek D
-                new(dd, yTopB, zPos),              // 6: terug op hoek A
-                new(dd, yTopB + hook, zPos),       // 7: eindhaak
-            ];
+            // 7-punts curve op positie x; bij afschuining volgt de onderste
+            // beugeltak de schuine rand (dekking op het diepste punt: x + dBgl).
+            List<Punt3D> Punten(double x)
+            {
+                var yBotB = taper
+                    ? BetonYOnder(x + dBgl, c + dBgl / 2.0, L, H)
+                    : H - c - dBgl / 2.0;
+                return
+                [
+                    new(0, yTopB, zPos - hook),        // 1: beginhaak
+                    new(0, yTopB, zPos),               // 2: hoek A
+                    new(dd / 2.0, yBotB, zPos),        // 3: hoek B
+                    new(dd / 2.0, yBotB, zNeg),        // 4: hoek C
+                    new(dd, yTopB, zNeg),              // 5: hoek D
+                    new(dd, yTopB, zPos),              // 6: terug op hoek A
+                    new(dd, yTopB + hook, zPos),       // 7: eindhaak
+                ];
+            }
 
-            groep.Shapes = [new StaafShape { Punten = punten, Buigstralen = [2.5 * dBgl] }];
+            var buigstralen = Buigstralen(groep, 2.5 * dBgl);
+            var startShape = new StaafShape { Punten = Punten(xFirst), Buigstralen = buigstralen };
+            groep.Shapes = taper
+                ? [startShape, new StaafShape { Punten = Punten(xLast), Buigstralen = buigstralen }]
+                : [startShape];
             groep.VerdeelStart = new Punt3D(xFirst, 0, 0);
             groep.VerdeelEind = new Punt3D(xLast, 0, 0);
-            groep.Verdeling = new WapeningVerdeling
+
+            if (groep.Verdeling.Type == VerdelingType.Gelijkmatig)
             {
-                Type = VerdelingType.Gelijkmatig,
-                Aantal = Math.Max(r.AantalBeugels, 1),
-            };
+                groep.Verdeling.Aantal = Math.Max(r.AantalBeugels, 1);
+            }
 
             return groep;
         }

@@ -176,9 +176,11 @@
         public bool HorizontaleBeugelsNodig => Ac <= 0.5 * Hc;
         public bool VerticaleBeugelsNodig => Ac > 0.5 * Hc;
 
-       
 
-        
+        public double HoogteTpvAc { get; set; }
+        public double NutHoogteTpvAc { get; set; }
+
+
         public int AantalMain { get; set; }
 
         // NB1: tweede laag hoofdwapening (0 = niet gebruikt)
@@ -195,6 +197,76 @@
         public double BuigdoorMain { get; set; }
         public bool UseAnchorageBar { get; set; }
         
+
+        // helpers (overzicht)
+        public string OverzichtBoven
+        {
+            get
+            {
+                List<string> strValues = [AsMain.ToString("0")];
+                if ( Torsie is not null)
+                {
+                    strValues.Add(Torsie.AslBovenOnder.ToString("0"));
+                } 
+                return string.Join(", ", strValues);
+            }
+        }
+
+        public string OverzichtOnder
+        {
+            get
+            {
+                if (Torsie is not null)
+                {
+                    return Torsie.AslBovenOnder.ToString("0");
+                }
+                else
+                {
+                    return "n.v.t.";
+                }
+            }
+        }
+
+        public string OverzichtZijkant
+        {
+            get
+            {
+                List<string> strValues = [];
+                if (HorizontaleBeugelsNodig)
+                {
+                    strValues.Add(AsLnkFormula.FullValue);
+                }
+
+                if (Torsie is not null)
+                {
+                    strValues.Add(Torsie.AslLinksRechts.ToString("0"));
+                }
+                return string.Join(", ", strValues);
+            }
+        }
+
+        public string OverzichtBeugels
+        {
+            get
+            {
+                List<string> strValues = [];
+                if (VerticaleBeugelsNodig)
+                {
+                    strValues.Add(AsLnkFormula.FullValue);
+                }
+                if (Dwarskracht is not null)
+                {
+                    strValues.Add(Dwarskracht.AswV.ToString("0"));
+                }
+
+
+                if (Torsie is not null)
+                {
+                    strValues.Add(Torsie.AswTFormula.FullValue);
+                }
+                return string.Join(", ", strValues);
+            }
+        }
 
        
         public double BuigdoornMainReq(double afstandTotAanOmbuiging = 0)

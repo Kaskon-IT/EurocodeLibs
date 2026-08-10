@@ -25,6 +25,17 @@ namespace Eurocode.BetonConstructies
         /// <summary> t<sub>ef</sub> = A/u – effectieve wanddikte [mm], met ondergrens 2c + 2Øbgl + Ølangs. </summary>
         public double TEf { get; set; }
 
+        public double BEf => B - TEf;
+        public double HEf => H - TEf;
+        public double AslBovenOnder => (BEf / Uk) * Asl;
+        public Formula AslBovenOnderFormula => new("", 
+            @"A_{sl,top/bottom} = \frac{B_{ef}}{u_k} \cdot \Sigma A_{sl}",
+            $@"= \frac{{{BEf:0}}}{{{Uk:0}}} \cdot {Asl:0} = {AslBovenOnder:0} \text{{ mm}}^2");
+        public double AslLinksRechts => (HEf / Uk) * Asl;
+        public Formula AslLinksRechtsFormula => new("",
+            @"A_{sl,left/right} = \frac{H_{ef}}{u_k} \cdot \Sigma A_{sl}",
+            $@"= \frac{{{HEf:0}}}{{{Uk:0}}} \cdot {Asl:0} = {AslLinksRechts:0} \text{{ mm}}^2");
+
         /// <summary> Ondergrens t<sub>ef,min</sub> = 2c + 2Ø<sub>bgl</sub> + Ø<sub>langs</sub> [mm]. </summary>
         public double TEfMin { get; set; }
         public double Dekking { get; set; }
@@ -59,7 +70,7 @@ namespace Eurocode.BetonConstructies
         /// <summary> T<sub>Rd,max</sub> volgens vgl. (6.30) met θ = 45° [kNm]. </summary>
         public double TRdMax { get; set; }
         public Formula TRdMaxFormula => new("(6.30)",
-            @"T_{Rd,max} = 2 \cdot \nu \cdot \alpha_{cw} \cdot f_{cd} \cdot A_k \cdot t_{ef} \cdot \sin\theta \cos\theta \quad (\theta = 45^\circ)",
+            @"T_{Rd,max} = 2 \cdot \nu \cdot \alpha_{cw} \cdot f_{cd} \cdot A_k \cdot t_{ef} \cdot \sin\theta \cos\theta",
             $@"= 2 \cdot {Nu:0.00} \cdot 1.0 \cdot {Fcd:0.0} \cdot {Ak:0} \cdot {TEf:0} \cdot 0.5 \cdot 10^{{-6}} = {TRdMax:0.0} \text{{ kNm}}");
 
         public double Fywd { get; set; }
@@ -70,8 +81,26 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public double AswTPerLengte { get; set; }
         public Formula AswTFormula => new("(6.3.2)",
-            @"\frac{A_{sw,T}}{s} = \frac{T_{Ed}}{2 \cdot A_k \cdot f_{ywd} \cdot \cot\theta} \quad (\theta = 45^\circ)",
+            @"\frac{A_{sw,T}}{s} = \frac{T_{Ed}}{2 \cdot A_k \cdot f_{ywd} \cdot \cot\theta}",
             $@"= \frac{{{(TEd * 1.0e6).ToTeX()}}}{{2 \cdot {Ak:0} \cdot {Fywd:0} \cdot 1.0}} = {AswTPerLengte:0.000} \text{{ mm}}^2/\text{{mm}}");
+
+        /// <summary> u<sub>k</sub> – omtrek van het oppervlak A<sub>k</sub> [mm]. </summary>
+        public double Uk { get; set; }
+        public Formula UkFormula =>  new("(6.3.2)",
+            @"u_k = 2 \cdot (b - t_{ef}) + 2 \cdot (h - t_{ef})",
+            $@"= 2 \cdot ({B:0} - {TEf:0}) + 2 \cdot ({H:0} - {TEf:0}) = {Uk:0} \text{{ mm}}");
+
+        public double Fyd { get; set; }
+
+        /// <summary>
+        /// Benodigde langswapening t.b.v. wringing volgens vgl. (6.28) met θ = 45°:
+        /// ΣA<sub>sl</sub> = T<sub>Ed</sub>·u<sub>k</sub>·cotθ / (2·A<sub>k</sub>·f<sub>yd</sub>) [mm²],
+        /// gelijkmatig te verdelen over de omtrek u<sub>k</sub>.
+        /// </summary>
+        public double Asl { get; set; }
+        public Formula AslFormula => new("(6.28)",
+            @"\Sigma A_{sl} = \frac{T_{Ed} \cdot u_k \cdot \cot\theta}{2 \cdot A_k \cdot f_{ywd}}",
+            $@"= \frac{{{(TEd * 1.0e6).ToTeX()} \cdot {Uk:0} \cdot 1.0}}{{2 \cdot {Ak:0} \cdot {Fywd:0}}} = {Asl:0} \text{{ mm}}^2");
     }
 
     /// <summary>
@@ -127,12 +156,12 @@ namespace Eurocode.BetonConstructies
 
     public static class J3ConsoleTorsieCalculator
     {
-        public static J3ConsoleTorsieResult Bereken(J3ConsoleInput i, BetonContext beton, double fcd, double nu)
+        public static J3ConsoleTorsieResult Bereken(J3ConsoleInput i, BetonContext beton, double fcd, double nu, double h)
         {
             var r = new J3ConsoleTorsieResult
             {
                 B = i.Bc,
-                H = i.Hc,
+                H = h,
                 Fctd = beton.Fctd,
                 Excentriciteit = i.ExcentriciteitBreedte,
                 TEd = i.TEd,
@@ -146,7 +175,7 @@ namespace Eurocode.BetonConstructies
             r.TEfBerekend = (i.Bc * i.Hc) / (2.0 * (i.Bc + i.Hc));
             r.TEfMin = 2.0 * i.Dekking + 2.0 * i.BeugelDiameter + i.HoofdstaafDiameter;
             r.TEf = Math.Max(r.TEfBerekend, r.TEfMin);
-            r.Ak = (i.Bc - r.TEf) * (i.Hc - r.TEf);
+            r.Ak = (i.Bc - r.TEf) * (h - r.TEf);
             r.TRdc = 2.0 * r.Ak * r.TEf * beton.Fctd / 1.0e6; // [kNm]
 
             // (6.30) met theta = 45 graden: sin*cos = 0.5
@@ -155,6 +184,11 @@ namespace Eurocode.BetonConstructies
             // Beugelwapening wringing per zijde: Asw,T/s = TEd / (2*Ak*fywd*cot(45)) 
             r.Fywd = i.Fyk * 0.80; // neem 80% van fyk
             r.AswTPerLengte = r.TEd * 1.0e6 / (2.0 * r.Ak * r.Fywd);
+
+            // Langswapening wringing (6.28) met theta = 45 graden, verdeeld over uk
+            r.Uk = 2.0 * ((i.Bc - r.TEf) + (i.Hc - r.TEf));
+            r.Fyd = i.Fyk / 1.15;
+            r.Asl = r.TEd * 1.0e6 * r.Uk / (2.0 * r.Ak * r.Fywd);
 
             return r;
         }
