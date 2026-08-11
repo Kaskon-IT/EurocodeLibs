@@ -1,4 +1,4 @@
-namespace Eurocode.BetonConstructies
+namespace CommonLibrary.Modelling
 {
     public enum VerdelingType
     {

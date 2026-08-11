@@ -80,7 +80,7 @@ namespace Eurocode.BetonConstructies.Tests
             var groep = Groep(new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 2 });
             groep.AantalStavenPerPositie = 2;
 
-            Assert.Equal(12 * Math.Sqrt(2), groep.EquivalenteDiameter, 6);
+            Assert.Equal(12 * Math.Sqrt(2), groep.EquivalenteDiameter(), 6);
             Assert.Equal(4, groep.TotaalAantalStaven);
             Assert.Equal(4 * Math.PI / 4 * 144, groep.TotaalAs, 6);
         }

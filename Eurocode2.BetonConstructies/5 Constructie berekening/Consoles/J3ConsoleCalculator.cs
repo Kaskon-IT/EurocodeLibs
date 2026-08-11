@@ -839,6 +839,7 @@
 
             if (discriminant < 0)
             {
+                return d;
                 throw new InvalidOperationException(
                     "Er bestaat geen reële oplossing voor z. " +
                     "De belasting is te groot voor de beschikbare geometrie " +

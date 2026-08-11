@@ -141,7 +141,7 @@ namespace Eurocode.BetonConstructies.Consoles
                         Description = "Dekking van de wapening.",
                         Unit = "mm",
                         Order = 80,
-                        Min = _ => 15,
+                        Min = _ => 0,
                         Max = _ => 100,
                         Step = _ => 1,
                         Decimals = 0

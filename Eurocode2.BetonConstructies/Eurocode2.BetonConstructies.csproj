@@ -38,7 +38,11 @@
     <PackageReference Include="Kaskon.Algemeen" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Profielen\BetonProfielen\BetonProfielen.csproj" />
+	<Using Include="CommonLibrary.Modelling" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
+	<ProjectReference Include="..\..\Profielen\BetonProfielen\BetonProfielen.csproj" />
     <ProjectReference Include="..\..\Profielen\ParametrischeProfielen\ParametrischeProfielen.csproj" />
     <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
     <ProjectReference Include="..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />

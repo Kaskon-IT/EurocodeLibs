@@ -1,4 +1,4 @@
-namespace Eurocode.BetonConstructies
+namespace CommonLibrary.Modelling
 {
     /// <summary> Eén gegenereerde staaf uit een <see cref="WapeningGroep"/>. </summary>
     public record StaafInstantie(StaafShape Shape, double Diameter);
@@ -11,7 +11,7 @@ namespace Eurocode.BetonConstructies
     /// </summary>
     public class WapeningGroep : BaseWapening
     {
-        /// <summary> Bundelgrootte n per positie (1 = geen bundel), §8.9. </summary>
+        /// <summary> Bundelgrootte n per positie (1 = geen bundel). </summary>
         public int AantalStavenPerPositie { get; set; } = 1;
 
         /// <summary> Weergavekleur (hex, bijv. "#ff8800"); null = standaardmateriaal. </summary>
@@ -69,29 +69,10 @@ namespace Eurocode.BetonConstructies
         /// <summary> Totale wapeningsdoorsnede [mm²]. </summary>
         public double TotaalAs => TotaalAantalStaven * As;
 
-        /// <summary> Equivalente diameter Øn = Ø·√n ≤ 55 mm bij bundels (§8.9.1). </summary>
-        public double EquivalenteDiameter => AantalStavenPerPositie > 1
-            ? Math.Min(Diameter * Math.Sqrt(AantalStavenPerPositie), 55)
-            : Diameter;
-
         /// <summary> Werkelijke h.o.h.-maat bij gelijkmatige verdeling [mm] (0 bij 1 positie). </summary>
         public double WerkelijkeHartOpHart => AantalPosities > 1
             ? VerdeelLengte / (AantalPosities - 1)
             : 0;
-
-        /// <summary>
-        /// Minimale vrije tussenruimte tussen staven volgens §8.2:
-        /// max(k1·Ø; dg + k2; 20 mm) met k1 = 1, k2 = 5 mm (NL-bijlage).
-        /// </summary>
-        public double MinimaleTussenruimte(double dg) =>
-            Math.Max(Math.Max(Diameter, dg + 5), 20);
-
-        /// <summary> Vrije tussenruimte tussen de staafposities [mm]. </summary>
-        public double Tussenruimte => WerkelijkeHartOpHart > 0
-            ? WerkelijkeHartOpHart - EquivalenteDiameter
-            : double.PositiveInfinity;
-
-        public bool TussenruimteVoldoet(double dg) => Tussenruimte >= MinimaleTussenruimte(dg);
 
         /// <summary>
         /// Genereert per staafpositie de (geïnterpoleerde en getransleerde) staaf.

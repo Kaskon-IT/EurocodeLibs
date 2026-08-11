@@ -1,7 +1,7 @@
-namespace Eurocode.BetonConstructies
+namespace CommonLibrary.Modelling
 {
     /// <summary>
-    /// Eenvoudig 3D-punt [mm] voor wapeninggeometrie — bewust zonder
+    /// Eenvoudig 3D-punt [mm] voor modelleergeometrie — bewust zonder
     /// THREE-/Tekla-afhankelijkheid, serialiseerbaar naar JSON.
     /// </summary>
     public readonly record struct Punt3D(double X, double Y, double Z)

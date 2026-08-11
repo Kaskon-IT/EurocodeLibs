@@ -1,4 +1,4 @@
-namespace Eurocode.BetonConstructies
+namespace CommonLibrary.Modelling
 {
     /// <summary>
     /// Losse wapeningsstaaf (analoog aan Tekla SingleRebar): precies één

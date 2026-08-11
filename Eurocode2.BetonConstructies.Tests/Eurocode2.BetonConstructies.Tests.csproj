@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Using Include="CommonLibrary.Modelling" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,3 +28,4 @@
   </ItemGroup>
 
 </Project>
+

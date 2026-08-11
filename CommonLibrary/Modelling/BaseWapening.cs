@@ -1,4 +1,4 @@
-namespace Eurocode.BetonConstructies
+namespace CommonLibrary.Modelling
 {
     /// <summary>
     /// Gedeelde basis voor een losse wapeningsstaaf (<see cref="WapeningStaaf"/>)

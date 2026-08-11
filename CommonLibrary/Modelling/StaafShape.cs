@@ -1,4 +1,4 @@
-namespace Eurocode.BetonConstructies
+namespace CommonLibrary.Modelling
 {
     /// <summary>
     /// De vorm van een wapeningsstaaf: polyline (hartlijn) + buigstralen per knik.

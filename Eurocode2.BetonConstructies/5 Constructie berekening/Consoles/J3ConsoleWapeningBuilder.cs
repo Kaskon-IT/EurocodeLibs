@@ -1,3 +1,5 @@
+using Eurocode.BetonConstructies.StrutAndTie;
+
 namespace Eurocode.BetonConstructies
 {
     /// <summary>
@@ -58,7 +60,7 @@ namespace Eurocode.BetonConstructies
         public static WapeningGroep BouwVerticaleHaarspelden(J3ConsoleInput i, J3ConsoleResult r)
         {
             var groep = i.WapVerticaleHaarspelden;
-            var hspPlat = i.WapHorizontaleHaarspelden;
+            //var hspPlat = i.WapHorizontaleHaarspelden;
             var toonTaper = i.AfschuiningOnderzijde && !r.VerticaleBeugelsNodig;
 
             var c = i.Dekking;
@@ -67,7 +69,7 @@ namespace Eurocode.BetonConstructies
             var bendR = i.HoofdstaafBuigdoornDiameterFactor > 0
                 ? (i.HoofdstaafBuigdoornDiameterFactor * phi + phi) / 2.0
                 : (r.BuigdoorMain + phi) / 2.0;
-            var ctxPhi = r.WapKolomMain.GrootsteDiameter;
+            //var ctxPhi = r.WapKolomMain.GrootsteDiameter;
 
             var H = i.Hc;
             var L = i.Lc;
@@ -240,10 +242,120 @@ namespace Eurocode.BetonConstructies
                 groep.Shapes = [Shape(0,xIn, L-off), Shape(H/2, xIn, L-off), Shape(H, xIn, 0-off)];
                 // totdat we de offset op de shape hebben moet
                 // voorlopig de hoogte snijpunt bepaald worden.
+                var hoek = Math.Atan2(H / 2.0, L);
                 var deltaSp = Math.Cos(Math.Atan2(H / 2.0, L)) * off;
                 var percSp = deltaSp / H;
+               
+
+                 /// <summary>
+                 /// Berekent de verschuiving van het snijpunt (dx, dy) na een loodrechte offset.
+                 /// </summary>
+                (double dx, double dy) BerekenSnijpuntVerschuivingBAK(double B, double H, double a)
+        {
+            // 1. Bereken de lengte van de richtingsvector (schuine zijde)
+            double lengte = Math.Sqrt(B * B + H * H);
+
+            // 2. De verticale lijn schuift puur horizontaal op met afstand a
+            double dx = a;
+
+            // 3. Bereken dy op basis van de geometrische wetten van de offset
+            double dy = a * (B + lengte) / H;
+
+
+
+            return (dx, dy);
+        }
+
+                
+
+
+            Point2D BerekenLoodrechtSnijpunt(Point2D a, Point2D b, Point2D c, Point2D d, double offset)
+                {
+                    // 1. Richtingsvectoren van beide lijnen bepalen
+                    double v1x = b.X - a.X;
+                    double v1y = b.Y - a.Y;
+                    double v2x = d.X - c.X;
+                    double v2y = d.Y - c.Y;
+
+                    // 2. Lengte berekenen voor normalisatie
+                    double len1 = Math.Sqrt(v1x * v1x + v1y * v1y);
+                    double len2 = Math.Sqrt(v2x * v2x + v2y * v2y);
+
+                    if (len1 < 1e-9 || len2 < 1e-9)
+                        throw new ArgumentException("Punten liggen te dicht bij elkaar om een lijn te vormen.");
+
+                    // 3. Loodrechte eenheidsvector (normaalvector naar links gedraaid)
+                    double n1x = -v1y / len1;
+                    double n1y = v1x / len1;
+
+                    double n2x = -v2y / len2;
+                    double n2y = v2x / len2;
+
+                    // 4. Verschuif de oorspronkelijke punten loodrecht met de offset
+                    Point2D a_offset = new Point2D(a.X + n1x * offset, a.Y + n1y * offset);
+                    Point2D b_offset = new Point2D(b.X + n1x * offset, b.Y + n1y * offset);
+
+                    Point2D c_offset = new Point2D(c.X + n2x * offset, c.Y + n2y * offset);
+                    Point2D d_offset = new Point2D(d.X + n2x * offset, d.Y + n2y * offset);
+
+                    // 5. Bereken het snijpunt tussen de twee nieuwe, verschoven lijnen (Lijn-Lijn intersectie)
+                    double determinant = v1x * v2y - v1y * v2x;
+
+
+                    // 2. BEREKEN OORSPRONKELIJK SNIJPUNT
+                    double t_orig = ((c.X - a.X) * v2y - (c.Y - a.Y) * v2x) / determinant;
+                    Point2D sp1 = new Point2D(a.X + t_orig * v1x, a.Y + t_orig * v1y);
+
+
+                    if (Math.Abs(determinant) < 1e-9)
+                        throw new InvalidOperationException("De lijnen lopen parallel; er is geen snijpunt.");
+
+                    // Lineair stelsel oplossen op basis van de verschoven punten
+                    double t = ((c_offset.X - a_offset.X) * v2y - (c_offset.Y - a_offset.Y) * v2x) / determinant;
+                    Point2D sp2 = new Point2D(a_offset.X + t * v1x, a_offset.Y + t * v1y);
+
+
+
+
+                    // Het verschil
+                    Point2D delta = new(
+                        Math.Max(sp1.X, sp2.X) - Math.Min(sp1.X,sp2.X),
+                        Math.Max(sp1.Y, sp2.Y) - Math.Min(sp1.Y, sp2.Y));
+
+                    Console.Write($"sp1 x{sp1.X} y{sp1.Y}");
+                    Console.Write($"sp2 x{sp2.X} y{sp2.Y}");
+
+
+                    return delta;
+                }
+
+
+
+
+                var translatie = BerekenLoodrechtSnijpunt(
+                    new(0,0),
+                    new(L, H/2.0),
+                    new(L,0),
+                    new(L,1),
+                    off);
+
+                Console.WriteLine($"offst = {off:0.000} mm");
+
+                Console.WriteLine($"verschuiving = x={translatie.X:0.000} y={translatie.Y:0.000} mm");
+
                 Console.WriteLine($"percentage = {percSp}");
-                groep.ShapePosities = [0, 0.5 - percSp, 1.0 - percSp/2.0];
+
+                var translatiePruts = dBgl; // totdat we dekking correct hebben even prutsen    
+                var posSp1 = H / 2.0 - translatie.Y -translatiePruts;
+                var posSp2 = H - translatie.Y - translatiePruts;
+
+                groep.ShapePosities = [0, posSp1 / H, posSp2 / H];
+                Console.WriteLine($"$dy = {deltaSp:0.000} mm");
+                Console.WriteLine($"hoek = {hoek:0.000} rad");
+                Console.WriteLine($"p1 ={posSp1 / H} %");
+                Console.WriteLine($"p2 ={posSp2 / H} %");
+
+
             }
             else
             {
@@ -279,6 +391,9 @@ namespace Eurocode.BetonConstructies
             var H = i.Hc;
             var B = i.Bc;
 
+            var v1 = new Punt3D(0, 0, 0);
+            var v2 = new Punt3D(i.Lc, 0, 0);
+
             var xFirst = dBgl / 2.0;
             var dx = i.FactorHEd * (i.Hc - r.D);
             var xLast = i.Ac + dx; // = N2x in de view
@@ -289,6 +404,7 @@ namespace Eurocode.BetonConstructies
             var zPos = B / 2.0 - c - 1.5 * dBgl; // binnen de horizontale beugel
             var zNeg = -zPos;
             var hook = 10 * dBgl;
+            
             var dd = dBgl;
 
             // 7-punts curve op positie x; bij afschuining volgt de onderste
@@ -296,7 +412,7 @@ namespace Eurocode.BetonConstructies
             List<Punt3D> Punten(double x)
             {
                 var yBotB = taper
-                    ? BetonYOnder(x + dBgl, c + dBgl / 2.0, L, H)
+                    ? BetonYOnder(x + dd/2.0, c + dBgl / 2.0, L, H)
                     : H - c - dBgl / 2.0;
                 return
                 [
@@ -311,12 +427,12 @@ namespace Eurocode.BetonConstructies
             }
 
             var buigstralen = Buigstralen(groep, 2.5 * dBgl);
-            var startShape = new StaafShape { Punten = Punten(xFirst), Buigstralen = buigstralen };
+            var startShape = new StaafShape { Punten = Punten(v1.X), Buigstralen = buigstralen };
             groep.Shapes = taper
-                ? [startShape, new StaafShape { Punten = Punten(xLast), Buigstralen = buigstralen }]
+                ? [startShape, new StaafShape { Punten = Punten(v2.X), Buigstralen = buigstralen }]
                 : [startShape];
-            groep.VerdeelStart = new Punt3D(xFirst, 0, 0);
-            groep.VerdeelEind = new Punt3D(xLast, 0, 0);
+            groep.VerdeelStart = v1;
+            groep.VerdeelEind = v2;
 
             if (groep.Verdeling.Type == VerdelingType.Gelijkmatig)
             {
