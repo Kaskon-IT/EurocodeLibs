@@ -24,7 +24,7 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         private static RekenvoorbeeldBuilder Stap_Als(this RekenvoorbeeldBuilder b,
             bool voorwaarde, string key, string titel, Func<string> inhoud)
-            => voorwaarde ? b.Stap_(key, titel, inhoud()) : b;
+            => voorwaarde ? b.Stap(key, titel, inhoud()) : b;
 
         public static string Genereer(J3ConsoleInput i, J3ConsoleResult r) =>
             i.RekenMethode switch
@@ -39,8 +39,8 @@ namespace Eurocode.BetonConstructies
         /// </summary>
         public static RekenvoorbeeldBuilder MaakBuilderGedrongenLigger(J3ConsoleInput i, J3ConsoleResult r)
         {
-            var builder = new RekenvoorbeeldBuilder("Rekenvoorbeeld console (gedrongen-liggertheorie 6.1 (10))")
-                .Intro($@"
+            var builder = new RekenvoorbeeldBuilder("Rekenvoorbeeld console (gedrongen-liggertheorie 6.1 (10))");
+            builder.Intro($@"
 | Invoer | Waarde | |
 |---|---|---:|
 | $F_{{Ed}}$  | {N(i.FEd, "0 kN")} | Verticale belasting |
@@ -53,42 +53,51 @@ namespace Eurocode.BetonConstructies
 | *f*~ck~  | {N(i.Fck, "0 N/mm²")} | Druksterkte beton |
 | *f*~yk~  | {N(i.Fyk, "0 N/mm²")} | Vloeigrens betonstaal |
 
-")
+");
 
-                .Stap_("nutHo", "Nuttige hoogte", $@"
+            builder.Stap("nutHo", "Nuttige hoogte", $@"
 $$
 d = H_c - d_1 = {N(i.Hc)} - {N(r.D1, "0")} = {N(r.D, "0")} \text{{ mm}}
 $$
-")
+");
+            builder.Stap("stap-z", "Hefboomsarm gedrongen constructie 6.1 (10)", s => s
+            .Regel("De inwendige hefboomsarm *z* volgt uit de formule voor gedrongen constructies (NEN-EN 1992-1-1 6.1 (10)):")
+            .Formule(r.GedrongenUitkraging.ZFormula.FullValue)
+            .Regel("Voor consoles is er een begrenzing gegeven aan de hellingshoek van de drukdiagonaal (EC2 J.3):")
+            .Formule(@$"1.0 \leg \tan \theta \leq 2.5")
+            .Formule(@$"\tan\theta = \frac{{z}}{{a}} = \frac{{{N(r.Z, "0")}}}{{{N(r.A, "0")}}} = {N(r.Z / r.A, "0.0")}")
+            );
 
-                .Stap_("z", "Hefboomsarm gedrongen constructie 6.1 (10)", $@"
-De inwendige hefboomsarm *z* volgt uit de formule voor gedrongen constructies (NEN-EN 1992-1-1 6.1 (10)):
 
-$$
-{r.GedrongenUitkraging.ZFormula.FullValue}
-$$
 
-Voor consoles is er een begrenzing gegeven aan de hellingshoek van de drukdiagonaal (EC2 J.3):
-$$
-1.0 \leq \tan\theta \leq 2.5
-$$
+            //            builder.Stap("z", "Hefboomsarm gedrongen constructie 6.1 (10)", $@"
+            //De inwendige hefboomsarm *z* volgt uit de formule voor gedrongen constructies (NEN-EN 1992-1-1 6.1 (10)):
 
-waarbij 
-$$
-\tan\theta = \frac{{z}}{{a}} = \frac{{{N(r.Z,"0")}}}{{{N(r.A,"0")}}} = {N(r.Z / r.A, "0.0")}
-$$
+            //$$
+            //{r.GedrongenUitkraging.ZFormula.FullValue}
+            //$$
 
-")
+            //Voor consoles is er een begrenzing gegeven aan de hellingshoek van de drukdiagonaal (EC2 J.3):
+            //$$
+            //1.0 \leq \tan\theta \leq 2.5
+            //$$
 
-                .Stap_("med", "Buigend moment", $@"
+            //waarbij 
+            //$$
+            //\tan\theta = \frac{{z}}{{a}} = \frac{{{N(r.Z,"0")}}}{{{N(r.A,"0")}}} = {N(r.Z / r.A, "0.0")}
+            //$$
+
+            //")
+
+            builder.Stap("med", "Buigend moment", $@"
 $$
 M_{{Ed}} = a \cdot F_{{Ed}} + (z + H_c - d) \cdot H_{{Ed}}
-= {N(r.A, "0")} \cdot {N(r.FEd*1000, "0")} + ({N(r.Z, "0")} + {N(i.Hc, "0")} - {N(r.D, "0")}) \cdot {N(r.HEd*1000, "0")}
+= {N(r.A, "0")} \cdot {N(r.FEd * 1000, "0")} + ({N(r.Z, "0")} + {N(i.Hc, "0")} - {N(r.D, "0")}) \cdot {N(r.HEd * 1000, "0")}
 = {N(r.MEd, "0")} \text{{ Nmm}}
 $$
-")
+");
 
-                .Stap_("wapening", "Benodigde hoofdwapening", $@"
+                builder.Stap("wapening", "Benodigde hoofdwapening", $@"
 $$
 A_{{s,req}} = \frac{{M_{{Ed}}}}{{f_{{yd}} \cdot z}}
 = \frac{{{N(r.MEd, "0")}}}{{{N(r.Fyd, "0")} \cdot {N(r.Z, "0")}}}
@@ -106,7 +115,7 @@ $$
             if (r.MinimumWapening is not null)
             {
                 var mw = r.MinimumWapening;
-                builder.Stap_("asmin", "Minimale wapening 7.3.2 (7.1)", $@"
+                builder.Stap("asmin", "Minimale wapening 7.3.2 (7.1)", $@"
 Normaalkracht (trek) in BGT: $N = {N(i.HBgt, "0")}$ kN, dus
 $\sigma_N = N/(b \cdot h) = {N(mw.SigmaN, "0.00")}$ N/mm².
 
@@ -136,7 +145,7 @@ $$
             if (r.Scheurwijdte is not null)
             {
                 var sw = r.Scheurwijdte;
-                builder.Stap_("scheurwijdte", "Scheurwijdtetoetsing 7.3.4 (7.8)", $@"
+                builder.Stap("scheurwijdte", "Scheurwijdtetoetsing 7.3.4 (7.8)", $@"
 BGT-belastingen: $F = {N(i.FBgt, "0")}$ kN en $H = {N(i.HBgt, "0")}$ kN
 (factor {N(i.FactorBgt, "0.00")}), dus $M_{{BGT}} = {N(sw.MBgt, "0")}$ kNmm.
 
@@ -171,7 +180,7 @@ $$
             }
 
             // 3.3 Controle dwarskracht 6.2.2
-            builder.Stap_("dwarskracht", "Controle dwarskracht en wringing", $@"
+            builder.Stap("dwarskracht", "Controle dwarskracht en wringing", $@"
 De dwarskrachtweerstand van de console met dwarskrachtwapnening wordt getoetst op basis van de sterkte van de betondrukdiagonaal. Bij dwarskracht mag volgens EC2 (6.7N) deze hoek niet groter dan 45 graden zijn.
 We stellen dus de hoek in op 45 graden en gebruiken ook de bijbehorende hoogte z. De maximale spanning in de beugels houden we op 80% van f~yk~.
 $$
@@ -179,7 +188,7 @@ $$
 $$
 
 $$
-z = a = {N(r.A,"0")} \text{{ mm}}
+z = a = {N(r.A, "0")} \text{{ mm}}
 $$
 
 $$
@@ -190,7 +199,7 @@ $$
 {(!i.AfschuiningOnderzijde ? "" : $@"
 Er is een afschuining/verjonging toegepast. De hoogte van de dwarskrachtzone wordt dan beperkt tot de consolehoogte ter plaatse van ac.
 $$
-h = H_c/2.0 + (1 - (a_c / L_c)) \cdot H_c/2.0 = {N(i.Hc / 2.0, "0")} + (1 - ({N(i.Ac, "0")} / {N(i.Lc, "0")})) \cdot {N(i.Hc/2.0, "0")} = {N(r.HoogteTpvAc, "0")} \text{{ mm}}
+h = H_c/2.0 + (1 - (a_c / L_c)) \cdot H_c/2.0 = {N(i.Hc / 2.0, "0")} + (1 - ({N(i.Ac, "0")} / {N(i.Lc, "0")})) \cdot {N(i.Hc / 2.0, "0")} = {N(r.HoogteTpvAc, "0")} \text{{ mm}}
 $$
 
 $$
@@ -371,7 +380,7 @@ $$
 
 ")
 
-                .Stap_("wap-oplegging", "Wapening t.p.v. oplegging", $@"
+                .Stap("wap-oplegging", "Wapening t.p.v. oplegging", $@"
 Onder de oplegging moet de wapening in de dwarsrichting van de console gecontroleerd worden:
 todo: Dit alleen als flexibel oplegmateriaal, anders conform art 6.5
 $$
@@ -384,13 +393,16 @@ A_{{s,oplegging}}
 = \frac{{{N(r.FEd * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}} = {N(r.AsOplegging, "0")} \text{{ mm²}}
 $$
 ")
-                .Stap_("wap-lnk", "Wapening lnk", $@"
+                .Stap("wap-lnk", "Wapening lnk", $@"
 $$
 {r.AsLnkFormula.FullValue}
 $$
-")
+");
+            builder.Stap("stap-asLnk", "Wapening lnk", s => s
+            .Regel("De benodigde wapening om de drukstaaf:")
+            .Formule(r.AsLnkFormula.FullValue));
 
-                .Stap_("wap-overzicht", "Overzicht wapening", $@"
+            builder.Stap("wap-overzicht", "Overzicht wapening", $@"
 ## Langswapening:
 boven: {r.OverzichtBoven}
 onder: {r.OverzichtOnder}
@@ -400,8 +412,11 @@ beugels vertikaal: {r.OverzichtBeugels}
 
 ")
 
-                .Stap_("controle", "Controle wapening", $@"
+
+
+                .Stap("controle", "Controle wapening", $@"
 *Nog uit te werken:* verankering, buigdoorndiameter en detailleringseisen.
+
 ")
 
                 .Slot(@"
@@ -409,6 +424,30 @@ beugels vertikaal: {r.OverzichtBeugels}
 
 
 ");
+
+            foreach (var t in r.StaafgroepToetsen)
+            {
+                builder.Stap($"toets-{t.Naam}", $"Toets {t.Naam}", s => s
+                    .Regel($"{t.Groep.TotaalAantalStaven}Ø{t.Groep.Diameter}")
+                    .Regel($"Aantal doorsneden in snede/zone: $n = {t.AantalDoorsneden}$")
+                    .Formule($@"A_{{s,aanw}} = {N(t.AsAanwezig, "0")} \text{{ mm²}} \qquad A_{{s,ben}} = {N(t.AsBenodigd, "0")} \text{{ mm²}}")
+                    .Formule($@"\sigma_s = \frac{{A_{{s,ben}}}}{{A_{{s,aanw}}}} \cdot f_{{yd}} = {N(t.SigmaS, "0")} \text{{ N/mm²}} \quad (UC = {N(t.UcDoorsneden, "0.00")})")
+                    .Toets(t.VoldoetDoorsneden, "Doorsneden voldoen.", "Doorsneden onvoldoende.")
+                    .RegelAls(t.IsLangswapening,
+                        $@"Verankering: $l_{{bd}} = {N(t.VerankeringBenodigd ?? 0, "0")}$ mm $\leq$ $l_{{aanw}} = {N(t.VerankeringAanwezig ?? 0, "0")}$ mm {(t.VoldoetVerankering ? "✔️" : "⚠️")}")
+                    .RegelAls(t.IsLangswapening,
+                        $@"Buigdoorn: $\varnothing_{{m,min}} = {N(t.BuigdoornBenodigd ?? 0, "0")}$ mm $\leq$ $\varnothing_m = {N(t.BuigdoornToegepast ?? 0, "0")}$ mm {(t.VoldoetBuigdoorn ? "✔️" : "⚠️")}"));
+            }
+
+            if (r.TrekbandToets is { } tb)
+            {
+                builder.Stap("toets-trekband", "Toets trekband bovenin (snede x = 0)", s => s
+                    .Formule($@"A_{{s,ben}} = A_{{s,main}} + \Delta A_{{sl,T}} = {N(tb.AsMainReq, "0")} + {N(tb.AslTorsie, "0")} = {N(tb.AsBenodigd, "0")} \text{{ mm²}}")
+                    .Regel($"Doorsneden op $x = 0$: {tb.DoorsnedenVerticaal} (verticale haarspelden) + {tb.DoorsnedenHorizontaal} (horizontale haarspelden)")
+                    .Formule($@"A_{{s,aanw}} = {N(tb.AsAanwezig, "0")} \text{{ mm²}} \qquad UC = {N(tb.Uc, "0.00")}")
+                    .Toets(tb.Voldoet, "Trekband voldoet.", "Trekband onvoldoende."));
+            }
+
 
             return builder;
         }
@@ -456,7 +495,7 @@ boven in de console ter hoogte van de trekband.
 
 ")
 
-                .Stap_("nutHo", "Nuttige hoogte", $@"
+                .Stap("nutHo", "Nuttige hoogte", $@"
 $$
 d = H_c - d_1 = {N(i.Hc)} - {N(r.D1, "0")} = {N(r.D, "0")} \text{{ mm}}
 $$
@@ -465,7 +504,7 @@ d_1 = c + \frac{{Ø_{{main}}}}{{2}} {(r.HorizontaleBeugelsNodig ? "" : "+ Ø_{{b
 $$
 ")
 
-                .Stap_("x1", "Afmeting knoopvlak", $@"
+                .Stap("x1", "Afmeting knoopvlak", $@"
 De bekende verticale belasting in knoop 1 ($F_{{1,v}}=F_{{Ed}}$) bepaalt direct de horizontale afmeting van dit knoopvlak:
 
 $$
@@ -481,7 +520,7 @@ $$
 
 ")
 
-                .Stap_("arm", "Horizontale arm ↔", $@"
+                .Stap("arm", "Horizontale arm ↔", $@"
 De totale horizontale arm:
 $$
 a=a_c+\frac{{x_1}}{{2}}+\Delta a
@@ -503,7 +542,7 @@ $$
                 
 
 
-                .Stap_("z", "Hefboomarm ↕", $@"
+                .Stap("z", "Hefboomarm ↕", $@"
 
 Voor de hefboomsarm houden we een ondergrens aan van:
 
@@ -524,7 +563,7 @@ $$
 z = \min({N(i.FactorZ * r.D)};{N(r.ZBer)}) = {N(r.Z)} \text{{ mm}}
 $$
 ")
-                 .Stap_("y1", "Afmeting knoopvlak", $@"
+                 .Stap("y1", "Afmeting knoopvlak", $@"
 
 $$ 
 y_1 = 2 \cdot (d-z) = {N(r.Y1)} \text{{ mm}}
@@ -540,7 +579,7 @@ $$
 
 
 
-                .Stap_("ft",
+                .Stap("ft",
                 "Trekbandkracht",
                 $@"Momentenevenwicht:
 
@@ -553,7 +592,7 @@ $$
 
 ")
 
-                .Stap_("fc", "Drukstaaf", $@"Uit krachtenevenwicht:
+                .Stap("fc", "Drukstaaf", $@"Uit krachtenevenwicht:
 
 $$
 F_{{1,h}}=\frac{{F_{{v,Ed}}\,a}}{{z}}
@@ -566,7 +605,7 @@ F_c = F_1 =\sqrt{{F_{{1,h}}^2+F_{{1,v}}^2}}
 ={N(r.Fc)}\ \mathrm{{kN}}
 $$")
 
-                .Stap_("theta", "Hoek drukstaaf", $@"$$
+                .Stap("theta", "Hoek drukstaaf", $@"$$
 \theta=\arctan\left(\frac{{z}}{{a}}\right)
 =\arctan\left(\frac{{{N(r.Z)}}}{{{N(r.A)}}}\right)
 ={N(r.ThetaDeg)}^\circ
@@ -574,13 +613,13 @@ $$")
 
 
 
-                .Stap_("w1", "Breedte loodrecht op de drukstaaf", $@"$$
+                .Stap("w1", "Breedte loodrecht op de drukstaaf", $@"$$
 w_1=\frac{{F_c}}{{b\,\sigma_n}}
 =\frac{{{N(r.Fc * 1000.0, "0")}}}{{{N(i.Bc, "0")}\cdot{N(sigmaN, "0.00")}}}
 ={N(w)}\ \mathrm{{mm}}
 $$")
 
-                .Stap_("fwd", "Kracht in aanvullende beugels", $@"De drukdiagonaal spreidt tussen knoop 1 en knoop 2; de aanvullende beugels
+                .Stap("fwd", "Kracht in aanvullende beugels", $@"De drukdiagonaal spreidt tussen knoop 1 en knoop 2; de aanvullende beugels
 nemen de spreidkracht $F_{{wd}}$ op (vgl. NEN-EN 1992-1-1 J.3):
 
 $$
@@ -589,7 +628,7 @@ F_{{wd}}=\frac{{\dfrac{{2z}}{{a}}-1}}{{3+\dfrac{{F_{{v,Ed}}}}{{F_{{1x}}}}}}\,F_{
 ={N(r.Fwd)}\ \mathrm{{kN}}
 $$")
 
-                .Stap_("wapening", "Benodigde wapening", $@"Hoofdtrekwapening uit de trekbandkracht:
+                .Stap("wapening", "Benodigde wapening", $@"Hoofdtrekwapening uit de trekbandkracht:
 
 $$
 A_{{s,main}}=\frac{{F_{{t,Ed}}}}{{f_{{yd}}}}
@@ -612,7 +651,7 @@ $$")
 
 
 
-                .Stap_("wapening-trekband", "Wapening trekband", $@"
+                .Stap("wapening-trekband", "Wapening trekband", $@"
 $$
 {r.AsMainFormula.FullValue}
 $$
@@ -701,7 +740,7 @@ $$
 "
 )
 
-                .Stap_("beugels", "Beugels", $@"
+                .Stap("beugels", "Beugels", $@"
 $$
 \Sigma A_{{s,lnk}}
 = \frac{{ F_{{wd}} }}{{ f_{{yd}} }}
@@ -720,7 +759,7 @@ $$
 
 ")
 
-                .Stap_("momenten", "Momenten extern", $@"
+                .Stap("momenten", "Momenten extern", $@"
 Moment aan de rand:
 $$
 M_{{rand,Ed}}=F \cdot a_c + H \cdot a_h

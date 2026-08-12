@@ -2,10 +2,15 @@
 {
     using CommonLibrary.Models;
     using Eurocode.BetonConstructies.StrutAndTie;
+    using Eurocode2.BetonConstructies;
     using ExportFactory.Shared;
 
     public class J3ConsoleResult : IRowResult
     {
+        // Toevoegen aan J3ConsoleResult:
+        public List<J3ConsoleStaafgroepToets> StaafgroepToetsen { get; } = [];
+        public J3ConsoleTrekbandToets? TrekbandToets { get; set; }
+
         public List<ResultRow> ResultRows { get; } = [];
 
         /// <summary>

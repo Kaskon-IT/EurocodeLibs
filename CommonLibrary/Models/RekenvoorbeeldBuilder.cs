@@ -17,6 +17,47 @@ namespace CommonLibrary.Models
     /// <param name="Overslaan">Indien true wordt de stap niet gerenderd.</param>
     public sealed record RekenvoorbeeldStap(string Key, string Titel, string Inhoud, bool Overslaan = false);
 
+
+    /// <summary>
+    /// Schrijver voor de inhoud van één stap, voor gebruik met de
+    /// lambda-overload van <see cref="RekenvoorbeeldBuilder.Stap(string, string, Action{StapSchrijver})"/>.
+    /// Verzamelt regels en formules en voegt ze samen tot markdown.
+    /// </summary>
+    public sealed class StapSchrijver
+    {
+        private readonly StringBuilder _sb = new();
+
+        /// <summary>Voegt een markdown-regel toe (mag inline LaTeX bevatten), gevolgd door een lege regel.</summary>
+        public StapSchrijver Regel(string markdown)
+        {
+            _sb.AppendLine(markdown);
+            _sb.AppendLine();
+            return this;
+        }
+
+        /// <summary>Voegt een display-formule toe, verpakt in $$ … $$.</summary>
+        public StapSchrijver Formule(string latex)
+        {
+            _sb.AppendLine("$$");
+            _sb.AppendLine(latex);
+            _sb.AppendLine("$$");
+            _sb.AppendLine();
+            return this;
+        }
+
+        /// <summary>Voegt de regel alleen toe als aan de voorwaarde is voldaan.</summary>
+        public StapSchrijver RegelAls(bool voorwaarde, string markdown) =>
+            voorwaarde ? Regel(markdown) : this;
+
+        /// <summary>Voegt een geslaagd/gefaald-regel toe (✔️/⚠️).</summary>
+        public StapSchrijver Toets(bool voldoet, string omschrijvingVoldoet, string omschrijvingFaalt) =>
+            Regel(voldoet ? $"✔️ {omschrijvingVoldoet}" : $"⚠️ {omschrijvingFaalt}");
+
+        internal string BuildInhoud() => _sb.ToString().TrimEnd();
+    }
+
+
+
     /// <summary>
     /// Generieke builder voor markdown-rekenvoorbeelden (met LaTeX-formules).
     /// <para>
@@ -33,7 +74,7 @@ namespace CommonLibrary.Models
     /// </summary>
     public sealed class RekenvoorbeeldBuilder
     {
-        private sealed class Stap
+        private sealed class StapCtx
         {
             public required string Key { get; init; }
             public required string Titel { get; set; }
@@ -44,7 +85,7 @@ namespace CommonLibrary.Models
         private readonly string _titel;
         private string? _intro;   // bijv. uitgangspunten-tabel (zonder stapnummer)
         private string? _slot;    // bijv. samenvatting (zonder stapnummer)
-        private readonly List<Stap> _stappen = new();
+        private readonly List<StapCtx> _stappen = new();
 
         public RekenvoorbeeldBuilder(string titel) => _titel = titel;
 
@@ -69,7 +110,7 @@ namespace CommonLibrary.Models
         {
             foreach (var s in stappen)
             {
-                Stap_(s.Key, s.Titel, s.Inhoud);
+                Stap(s.Key, s.Titel, s.Inhoud);
                 if (s.Overslaan) Skip(s.Key);
             }
             return this;
@@ -83,14 +124,34 @@ namespace CommonLibrary.Models
         }
 
         /// <summary>Voegt een genummerde stap toe. De sleutel moet uniek zijn.</summary>
-        public RekenvoorbeeldBuilder Stap_(string key, string titel, string inhoud)
+        public RekenvoorbeeldBuilder Stap(string key, string titel, string inhoud)
         {
             if (_stappen.Any(s => s.Key == key))
                 throw new ArgumentException($"Stap met sleutel '{key}' bestaat al.", nameof(key));
 
-            _stappen.Add(new Stap { Key = key, Titel = titel, Inhoud = inhoud });
+            _stappen.Add(new StapCtx { Key = key, Titel = titel, Inhoud = inhoud });
             return this;
         }
+
+        /// <summary>
+        /// Voegt een genummerde stap toe waarvan de inhoud via een
+        /// <see cref="StapSchrijver"/>-lambda wordt opgebouwd.
+        /// </summary>
+        public RekenvoorbeeldBuilder Stap(string key, string titel, Action<StapSchrijver> inhoud)
+        {
+            var s = new StapSchrijver();
+            inhoud(s);
+            return Stap(key, titel, s.BuildInhoud());
+        }
+
+        /// <summary>Voegt een nieuwe stap in direct na een bestaande stap (lambda-variant).</summary>
+        public RekenvoorbeeldBuilder InsertAfter(string afterKey, string key, string titel, Action<StapSchrijver> inhoud)
+        {
+            var s = new StapSchrijver();
+            inhoud(s);
+            return InsertAfter(afterKey, key, titel, s.BuildInhoud());
+        }
+
 
         /// <summary>Slaat een stap over; volgende stappen schuiven automatisch op.</summary>
         public RekenvoorbeeldBuilder Skip(string key)
@@ -115,7 +176,7 @@ namespace CommonLibrary.Models
             if (index < 0)
                 throw new ArgumentException($"Stap met sleutel '{afterKey}' niet gevonden.", nameof(afterKey));
 
-            _stappen.Insert(index + 1, new Stap { Key = key, Titel = titel, Inhoud = inhoud });
+            _stappen.Insert(index + 1, new StapCtx { Key = key, Titel = titel, Inhoud = inhoud });
             return this;
         }
 
@@ -161,7 +222,7 @@ namespace CommonLibrary.Models
             return sb.ToString();
         }
 
-        private Stap Vind(string key) =>
+        private StapCtx Vind(string key) =>
             _stappen.FirstOrDefault(s => s.Key == key)
             ?? throw new ArgumentException($"Stap met sleutel '{key}' niet gevonden.", nameof(key));
     }

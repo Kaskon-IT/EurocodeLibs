@@ -1,4 +1,6 @@
-﻿namespace Eurocode.BetonConstructies
+﻿using Eurocode2.BetonConstructies;
+
+namespace Eurocode.BetonConstructies
 {
     public static class J3ConsoleCalculator
     {
@@ -297,6 +299,7 @@
             // Wapeninggroepen geometrisch afmaken (shapes + verdeellijn) nu alle
             // benodigde resultaten (D, AantalBeugels, UseAnchorageBar) bekend zijn.
             J3ConsoleWapeningBuilder.VulGroepen(i, result);
+            J3ConsoleStaafgroepToetsen.Toets(i, result);   // <-- nieuw
 
             result.StrutAndTieNodes.Add(new StrutAndTie.StrutAndTieNode
             {
