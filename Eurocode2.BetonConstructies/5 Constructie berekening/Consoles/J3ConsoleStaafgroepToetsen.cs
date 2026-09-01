@@ -20,6 +20,8 @@ public class J3ConsoleStaafgroepToets
     public double UcDoorsneden => AsAanwezig > 0 ? AsBenodigd / AsAanwezig : double.PositiveInfinity;
 
     // ---- Alleen langswapening ----
+    public List<VerankeringResult> Verankeringen = [ ];
+    //public VerankeringResult VerankeringStart { get; set; } = new();
     public double? VerankeringBenodigd { get; init; }   // lbd [mm]
     public double? VerankeringAanwezig { get; init; }   // [mm]
     public double? BuigdoornToegepast { get; init; }    // [mm]
@@ -42,6 +44,22 @@ public class J3ConsoleTrekbandToets
     public double AsAanwezig { get; init; }
     public double Uc => AsAanwezig > 0 ? AsBenodigd / AsAanwezig : double.PositiveInfinity;
     public bool Voldoet => Uc <= 1.0;
+}
+
+
+public static class VerankeringResultExtensions
+{
+    public static void AddOrUpdate(
+        this List<VerankeringResult> verankeringen,
+        VerankeringResult verankering)
+    {
+        var index = verankeringen.FindIndex(x => x.Id == verankering.Id);
+
+        if (index >= 0)
+            verankeringen[index] = verankering;
+        else
+            verankeringen.Add(verankering);
+    }
 }
 
 public static class J3ConsoleStaafgroepToetsen
@@ -79,12 +97,31 @@ public static class J3ConsoleStaafgroepToetsen
         double fVer = asTotaal > 0 ? asVer / asTotaal : 0;
         double fHor = asTotaal > 0 ? asHor / asTotaal : 0;
 
+       
+
+
         if (r.WapVerticaleHaarspelden is { } gv)
-            r.StaafgroepToetsen.Add(MaakLangsToets("Verticale haarspelden", gv, nVer, asVer,
-                asReq * fVer, r.MainFy, r.Fcd, (int)i.Fck, gv.UitgeslagenLengte));
+        {
+            // bepaal even de lengte na de verankering.
+            var p0 = gv.Shape.Punten[0];
+            var p1 = gv.Shape.Punten[1];
+            List<Punt3D> punten = new() {
+                p0,
+                p1,
+                new(-r.X1/2.0, p1.Y, p1.Z)
+                };
+            StaafShape vorm = new() { Buigstralen = gv.Shape.Buigstralen, Punten = punten };
+
+            var lProv = vorm.UitgeslagenLengte(gv.Diameter);
+
+        
+            r.StaafgroepToetsen.Add(MaakLangsToets("Trekband wapening", gv, nVer, asVer,
+                asReq * fVer, r.MainFy, r.Fcd, (int)i.Fck, lProv));
+        }
+            
 
         if (r.WapHorizontaleHaarspelden is { } gh)
-            r.StaafgroepToetsen.Add(MaakLangsToets("Horizontale haarspelden", gh, nHor, asHor,
+            r.StaafgroepToetsen.Add(MaakLangsToets("Trekband (platte hs)", gh, nHor, asHor,
                 asReq * fHor, r.MainFy, r.Fcd, (int)i.Fck, gh.UitgeslagenLengte));
         // ---- Horizontale beugels: zone y = d1 … d1 + 2/3·d ----
         if (r.WapBglsHor is { } gbh)
@@ -96,7 +133,7 @@ public static class J3ConsoleStaafgroepToetsen
 
             r.StaafgroepToetsen.Add(new J3ConsoleStaafgroepToets
             {
-                Naam = "Horizontale beugels (y = d₁ … d₁ + ⅔·d)",
+                Naam = "Horizontale beugels (in zone ⅔·d)",
                 Groep = gbh,
                 IsLangswapening = false,
                 AantalDoorsneden = n,
@@ -111,13 +148,14 @@ public static class J3ConsoleStaafgroepToetsen
         if (r.WapBglsVer is { } gbv)
         {
             int n = gbv.AantalPosities;
+            // todo: tel in zone av.
             double asAanw = WapeningHelper.GetDsnOpp(n, gbv.Diameter) * 2;
             double asReqBgl = 0.0; // benodigde Asw uit wringing indien van toepassing
             double sigma = asAanw > 0 ? asReqBgl / asAanw * r.MainFy : 0.0;
 
             r.StaafgroepToetsen.Add(new J3ConsoleStaafgroepToets
             {
-                Naam = "Verticale beugels",
+                Naam = "Verticale beugels (in zone av)",
                 Groep = gbv,
                 IsLangswapening = false,
                 AantalDoorsneden = n,
@@ -127,6 +165,14 @@ public static class J3ConsoleStaafgroepToetsen
                 Fyd = r.MainFy,
             });
         }
+
+        // Door de builder berekende verankeringen (met werkelijke staafvorm)
+        // overnemen als VerankeringStart, waar beschikbaar.
+        foreach (var toets in r.StaafgroepToetsen)
+        {
+            if (r.VerankeringenPerGroep.TryGetValue(toets.Groep, out var verankeringen))
+                toets.Verankeringen = [.. verankeringen];
+        }
     }
 
     private static J3ConsoleStaafgroepToets MaakLangsToets(
@@ -135,14 +181,28 @@ public static class J3ConsoleStaafgroepToetsen
     {
         double benutting = asAanwezig > 0 ? Math.Min(1.0, asBenodigd / asAanwezig) : 1.0;
         double sigma = benutting * fyd;
-        double ab = WapeningHelper.GetDsnOpp(g.Diameter);
-        double fbt = ab * sigma / 1000.0; // trekkracht per staaf [kN]
+        double staafDsn = WapeningHelper.GetDsnOpp(1, g.Diameter);
 
-        double buigdoornMin = Math.Max(
-            WapeningHelper.GetBuigdoorMin(g.Diameter),
-            WapeningHelper.GetBuigdoornMin(fcd, ab, fbt, g.Diameter));
+        double ab = 30; // todo: wijzig naar c + phi/2.0; 
+        double s = g.Tussenruimte() + g.Diameter;
+        if (s > 0)
+            ab = Math.Min(s/2, ab); // kleinste ab een s/2;
 
-        var verankering = WapeningHelper.GetVerankeringResult(ab, fbt, g.Diameter, fck, benutting);
+        double fbt = staafDsn * sigma ; // trekkracht per staaf [N]
+
+
+
+        //double buigdoornMin = Math.Max(
+        //  WapeningHelper.GetBuigdoorMin(g.Diameter),
+        //           WapeningHelper.GetBuigdoornMin(fcd, ab, fbt, g.Diameter));
+
+        //var verankering = WapeningHelper.GetVerankeringResult(ab, fbt, g.EquivalenteDiameter(), fck, benutting);
+        //verankering.StaafType = VerankeringStaafType.Trekstaaf;
+        //verankering.StaafVorm = VerankeringStaafVorm.Gebogen;
+
+
+        
+
 
 
         double buigdoornToegepast = 0.0;
@@ -160,10 +220,7 @@ public static class J3ConsoleStaafgroepToetsen
             AsBenodigd = asBenodigd,
             SigmaS = sigma,
             Fyd = fyd,
-            VerankeringBenodigd = verankering.Verankeringslengte,
             VerankeringAanwezig = verankeringAanwezig,
-            BuigdoornToegepast = buigdoornToegepast,
-            BuigdoornBenodigd = buigdoornMin,
         };
     }
 
@@ -209,7 +266,7 @@ public static class J3ConsoleStaafgroepToetsen
         foreach (var staaf in g.GenereerStaven())
         {
             double y = staaf.Shape.Punten.Average(p => p.Y);
-            if (y >= yMin && y <= yMax) totaal += g.AantalStavenPerPositie;
+            if (y >= yMin && y <= yMax) totaal += 1;
         }
         return totaal;
     }

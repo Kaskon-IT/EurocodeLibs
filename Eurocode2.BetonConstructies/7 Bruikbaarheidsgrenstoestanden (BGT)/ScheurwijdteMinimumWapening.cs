@@ -44,9 +44,16 @@
 
             /// <summary> Spanning in de meest getrokken vezel net voor scheurvorming: σ<sub>boven</sub> = f<sub>ct,eff</sub>. </summary>
             public double SigmaBoven => FctEff;
+            public Formula SigmaBovenFormula => new("",
+                @"\sigma_{boven} = f_{ct,eff}",
+                $@"= {FctEff.ToTeX()} \text{{ N/mm}}^2");
+
 
             /// <summary> σ<sub>onder</sub> = 2·σ<sub>N</sub> − f<sub>ct,eff</sub> (lineair spanningsverloop). </summary>
             public double SigmaOnder => 2.0 * SigmaN - FctEff;
+            public Formula SigmaOnderFormula => new("",
+                @"\sigma_{onder} = 2 \cdot \sigma_N - f_{ct,eff}",
+                $@"= 2 \cdot {SigmaN.ToTeX()} - {FctEff.ToTeX()} = {SigmaOnder.ToTeX()} \text{{ N/mm}}^2");
 
             /// <summary> h<sub>cr</sub> – hoogte van de trekzone net voor scheurvorming [mm]. </summary>
             public double Hcr => SigmaBoven - SigmaOnder > 0

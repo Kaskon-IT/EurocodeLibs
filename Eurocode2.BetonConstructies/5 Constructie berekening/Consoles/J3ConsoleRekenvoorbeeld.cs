@@ -26,6 +26,10 @@ namespace Eurocode.BetonConstructies
             bool voorwaarde, string key, string titel, Func<string> inhoud)
             => voorwaarde ? b.Stap(key, titel, inhoud()) : b;
 
+        private static RekenvoorbeeldBuilder Stap_Als(this RekenvoorbeeldBuilder b,
+           bool voorwaarde, string key, string titel, Action<StapSchrijver> inhoud)
+           => voorwaarde ? b.Stap(key, titel, inhoud) : b;
+
         public static string Genereer(J3ConsoleInput i, J3ConsoleResult r) =>
             i.RekenMethode switch
             {
@@ -44,14 +48,14 @@ namespace Eurocode.BetonConstructies
 | Invoer | Waarde | |
 |---|---|---:|
 | $F_{{Ed}}$  | {N(i.FEd, "0 kN")} | Verticale belasting |
-| *H*~Ed~  | {N(i.HEd, "0 kN")} | Horizontale belasting |
-| *f*~BGT~ | {N(i.FactorBgt, "0.00")} | Factor BGT/UGT |
-| *a*~c~   | {N(i.Ac, "0 mm")} | Afstand belasting tot betonrand |
-| *B*~c~   | {N(i.Bc, "0 mm")} | Breedte console |
-| *H*~c~   | {N(i.Hc, "0 mm")} | Hoogte console |
-| *c*      | {N(i.Dekking, "0 mm")} | Dekking |
-| *f*~ck~  | {N(i.Fck, "0 N/mm²")} | Druksterkte beton |
-| *f*~yk~  | {N(i.Fyk, "0 N/mm²")} | Vloeigrens betonstaal |
+| $H_{{Ed}}$  | {N(i.HEd, "0 kN")} | Horizontale belasting |
+| $f_{{BGT}}$ | {N(i.FactorBgt, "0.00")} | Factor BGT/UGT |
+| $a_c$   | {N(i.Ac, "0 mm")} | Afstand belasting tot betonrand |
+| $B_c$   | {N(i.Bc, "0 mm")} | Breedte console |
+| $H_c$   | {N(i.Hc, "0 mm")} | Hoogte console |
+| $c$      | {N(i.Dekking, "0 mm")} | Dekking |
+| $f_{{ck}}$  | {N(i.Fck, "0 N/mm²")} | Druksterkte beton |
+| $f_{{yk}}$  | {N(i.Fyk, "0 N/mm²")} | Vloeigrens betonstaal |
 
 ");
 
@@ -64,7 +68,7 @@ $$
             .Regel("De inwendige hefboomsarm *z* volgt uit de formule voor gedrongen constructies (NEN-EN 1992-1-1 6.1 (10)):")
             .Formule(r.GedrongenUitkraging.ZFormula.FullValue)
             .Regel("Voor consoles is er een begrenzing gegeven aan de hellingshoek van de drukdiagonaal (EC2 J.3):")
-            .Formule(@$"1.0 \leg \tan \theta \leq 2.5")
+            .Formule(@$"1.0 \leq \tan \theta \leq 2.5")
             .Formule(@$"\tan\theta = \frac{{z}}{{a}} = \frac{{{N(r.Z, "0")}}}{{{N(r.A, "0")}}} = {N(r.Z / r.A, "0.0")}")
             );
 
@@ -96,88 +100,62 @@ M_{{Ed}} = a \cdot F_{{Ed}} + (z + H_c - d) \cdot H_{{Ed}}
 = {N(r.MEd, "0")} \text{{ Nmm}}
 $$
 ");
+            builder.Stap("stap-wapening", "Benodigde hoofdwapening", s => s
+            .Formule(r.AsMainFormula.FullValue)
+            .Formule(r.AsMainProvFormula.FullValue)
+            );
 
-                builder.Stap("wapening", "Benodigde hoofdwapening", $@"
-$$
-A_{{s,req}} = \frac{{M_{{Ed}}}}{{f_{{yd}} \cdot z}}
-= \frac{{{N(r.MEd, "0")}}}{{{N(r.Fyd, "0")} \cdot {N(r.Z, "0")}}}
-= {N(r.AsMain, "0")} \text{{ mm²}}
-$$
+            
+            
+            
+            var mw = r.MinimumWapening;
+            builder.Stap_Als(mw is not null, 
+                key: "stapMinumumWapeningTest",
+                titel: "Minimale wapening 7.3.2 (7.1)",
+                inhoud: s => s
+                .Regel($"Normaalkracht (trek) in BGT: $N = {N(i.HBgt, "0")}$ kN, " +
+            $"dus\r\n$\\sigma_N = N/(b \\cdot h) = {N(mw!.SigmaN, "0.00")}$ N/mm².")
+            .Regel("Spanningen net voor scheurvorming (lineair verloop):")
+            .Formule(mw.SigmaBovenFormula.FullValue)
+            .Formule(mw.SigmaOnderFormula.FullValue)
+            .Formule(mw.HcrFormula.FullValue)
+            .Formule(mw.ActFormula.FullValue)
+            .Formule(mw.AsMinFormula.FullValue)
+            .Regel(r.AsMinOk ? "✔️ As,prov ≥ As,min." : "⚠️ As,prov < As,min.")
+            );
 
-$$
-A_{{s,prov}} = {r.AantalMain} \phi {r.DiameterMain}{(r.AantalMain2 > 0 ? $@" + {r.AantalMain2} \phi {r.DiameterMain2}" : "")} = {N(r.AsMainProv, "0")} \text{{ mm²}}
-$$
 
-{(r.AsMainProv >= r.AsMain ? "✔️ Toegepaste wapening voldoet." : "⚠️ Toegepaste wapening onvoldoende.")}
-");
+            var sw = r.Scheurwijdte;
+            builder.Stap_Als(sw is not null, "stap-scheurwijdte", "Scheurwijdte 7.3.4 (7.8)", s => s
+            .Regel("De scheurwijdte wordt getoetst volgens 7.3.4 (7.8):")
+            .Formule(sw!.SigmaSFormula.FullValue)
+            .Formule(sw.DiameterEqFormula.FullValue)
+            .Formule(sw.HcEffFormula.FullValue)
+            .Formule(sw.SrMaxFormula.FullValue)
+            .Formule(sw.EpsSmMinusEpsCmFormula.FullValue)
+            .Formule(sw.WkFormula.FullValue)
+            .Regel(sw.IsVoldoende ? $"✔️ w~k~ = {N(sw.Wk, "0.00")} mm ≤ w~max~ = {N(sw.WMax, "0.00")} mm." : $"⚠️ w~k~ = {N(sw.Wk, "0.00")} mm > w~max~ = {N(sw.WMax, "0.00")} mm.")
+            );
 
-            // 3.1 Minimale wapening EC2 7.3.2 (7.1)
-            if (r.MinimumWapening is not null)
-            {
-                var mw = r.MinimumWapening;
-                builder.Stap("asmin", "Minimale wapening 7.3.2 (7.1)", $@"
-Normaalkracht (trek) in BGT: $N = {N(i.HBgt, "0")}$ kN, dus
-$\sigma_N = N/(b \cdot h) = {N(mw.SigmaN, "0.00")}$ N/mm².
 
-Spanningen net voor scheurvorming (lineair verloop):
-$$
-\sigma_{{boven}} = f_{{ct,eff}} = {N(mw.SigmaBoven, "0.0")} \text{{ N/mm²}} \qquad
-\sigma_{{onder}} = 2 \cdot \sigma_N - f_{{ct,eff}} = {N(mw.SigmaOnder, "0.0")} \text{{ N/mm²}}
-$$
+            var dwarskracht = r.Dwarskracht;
+            var torsie = r.Torsie;
+            var vtCombi = r.TorsieDwarskrachtCombinatie;
+            builder.Stap("stap-VT", "Controle dwarskracht en wringing", s => s
+            .Regel("De dwarskrachtweerstand van de console wordt getoetst op basis van de sterkte van de betondrukdiagonaal.Bij dwarskracht mag volgens EC2 (6.7N) deze hoek niet groter dan 45 graden zijn.")
+            .Formule("\\theta = 45^\\circ")
+            .Regel("Hieruit volgt dat:")
+            .Formule($"z = a = {N(r.A, "0")} \\text{{ mm}}")
+            .Regel("We houden tevens voor de maximale spanning aan:")
+            .Formule($"f_{{ywd}}= 0.8 \\cdot f_{{yk}} = 0.8 \\cdot {i.Fyk:0} = {r.Fywd:0} \\text{{ N/mm²}}")
+            
+            
+            
+            );
 
-$$
-{mw.HcrFormula.FullValue}
-$$
 
-$$
-{mw.ActFormula.FullValue}
-$$
 
-$$
-{mw.AsMinFormula.FullValue}
-$$
-
-{(r.AsMinOk ? "✔️ As,prov ≥ As,min." : "⚠️ As,prov < As,min.")}
-");
-            }
-
-            // 3.2 Scheurwijdtetoetsing 7.3.4 (7.8)
-            if (r.Scheurwijdte is not null)
-            {
-                var sw = r.Scheurwijdte;
-                builder.Stap("scheurwijdte", "Scheurwijdtetoetsing 7.3.4 (7.8)", $@"
-BGT-belastingen: $F = {N(i.FBgt, "0")}$ kN en $H = {N(i.HBgt, "0")}$ kN
-(factor {N(i.FactorBgt, "0.00")}), dus $M_{{BGT}} = {N(sw.MBgt, "0")}$ kNmm.
-
-$$
-{sw.SigmaSFormula.FullValue}
-$$
-
-$$
-{sw.DiameterEqFormula.FullValue}
-$$
-
-$$
-{sw.HcEffFormula.FullValue}
-$$
-
-met $\rho_{{p,eff}} = A_s / A_{{c,eff}} = {N(sw.AsProv, "0")} / {N(sw.AcEff, "0")} = {N(sw.RhoPEff, "0.0000")}$.
-
-$$
-{sw.SrMaxFormula.FullValue}
-$$
-
-$$
-{sw.EpsSmMinusEpsCmFormula.FullValue}
-$$
-
-$$
-{sw.WkFormula.FullValue}
-$$
-
-{(sw.IsVoldoende ? $"✔️ w~k~ = {N(sw.Wk, "0.00")} mm ≤ w~max~ = {N(sw.WMax, "0.00")} mm." : $"⚠️ w~k~ = {N(sw.Wk, "0.00")} mm > w~max~ = {N(sw.WMax, "0.00")} mm.")}
-");
-            }
+            
 
             // 3.3 Controle dwarskracht 6.2.2
             builder.Stap("dwarskracht", "Controle dwarskracht en wringing", $@"
@@ -390,7 +368,7 @@ $$
 $$
 A_{{s,oplegging}} 
 = 0.25 \cdot \frac{{t}}{{h}} \cdot \frac{{F_{{Ed}}}}{{f_{{yd}}}} 
-= \frac{{{N(r.FEd * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}} = {N(r.AsOplegging, "0")} \text{{ mm²}}
+= \frac{{{N(r.FEd * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}} = {N(r.AsOplegging, "0")} \text{{ mm}}^2
 $$
 ")
                 .Stap("wap-lnk", "Wapening lnk", $@"
@@ -402,49 +380,58 @@ $$
             .Regel("De benodigde wapening om de drukstaaf:")
             .Formule(r.AsLnkFormula.FullValue));
 
-            builder.Stap("wap-overzicht", "Overzicht wapening", $@"
-## Langswapening:
-boven: {r.OverzichtBoven}
-onder: {r.OverzichtOnder}
-zijkant: {r.OverzichtZijkant}
-## Dwarswapening:
-beugels vertikaal: {r.OverzichtBeugels}
-
-")
-
-
-
-                .Stap("controle", "Controle wapening", $@"
-*Nog uit te werken:* verankering, buigdoorndiameter en detailleringseisen.
-
-")
-
-                .Slot(@"
-## Samenvatting
-
-
-");
 
             foreach (var t in r.StaafgroepToetsen)
             {
+                var rbg = t.Groep;
+                var phiEq = rbg.EquivalenteDiameter();
+
                 builder.Stap($"toets-{t.Naam}", $"Toets {t.Naam}", s => s
-                    .Regel($"{t.Groep.TotaalAantalStaven}Ø{t.Groep.Diameter}")
-                    .Regel($"Aantal doorsneden in snede/zone: $n = {t.AantalDoorsneden}$")
-                    .Formule($@"A_{{s,aanw}} = {N(t.AsAanwezig, "0")} \text{{ mm²}} \qquad A_{{s,ben}} = {N(t.AsBenodigd, "0")} \text{{ mm²}}")
-                    .Formule($@"\sigma_s = \frac{{A_{{s,ben}}}}{{A_{{s,aanw}}}} \cdot f_{{yd}} = {N(t.SigmaS, "0")} \text{{ N/mm²}} \quad (UC = {N(t.UcDoorsneden, "0.00")})")
-                    .Toets(t.VoldoetDoorsneden, "Doorsneden voldoen.", "Doorsneden onvoldoende.")
-                    .RegelAls(t.IsLangswapening,
-                        $@"Verankering: $l_{{bd}} = {N(t.VerankeringBenodigd ?? 0, "0")}$ mm $\leq$ $l_{{aanw}} = {N(t.VerankeringAanwezig ?? 0, "0")}$ mm {(t.VoldoetVerankering ? "✔️" : "⚠️")}")
-                    .RegelAls(t.IsLangswapening,
-                        $@"Buigdoorn: $\varnothing_{{m,min}} = {N(t.BuigdoornBenodigd ?? 0, "0")}$ mm $\leq$ $\varnothing_m = {N(t.BuigdoornToegepast ?? 0, "0")}$ mm {(t.VoldoetBuigdoorn ? "✔️" : "⚠️")}"));
-            }
+                   .Formule($@"{rbg.AantalPosities}{rbg.Prefix}\phi{rbg.Diameter}")
+                   .Formule($@"\phi = {t.Groep.Diameter}")
+                   .Formule($@"\phi_{{eq}} = {phiEq:0}")
+                   .Formule($@"\phi_{{m,prov}} = {t.Groep.BuigdoornDiameter():0}")
+                   .Formule($@"s={rbg.Tussenruimte():0} \text{{ mm}}")
+
+                   .Regel($"Aantal doorsneden in snede/zone: $n = {t.AantalDoorsneden}$")
+                   .Formule($@"A_{{s,prov}} = {N(t.AsAanwezig, "0")} \text{{ mm²}} \qquad A_{{s,req}} = {N(t.AsBenodigd, "0")} \text{{ mm}}^2")
+                   .Formule($@"\sigma_s = \frac{{A_{{s,req}}}}{{A_{{s,prov}}}} \cdot f_{{yd}} = {N(t.SigmaS, "0")} \text{{ N/mm²}} \quad (UC = {N(t.UcDoorsneden, "0.00")})")
+                   .Toets(t.VoldoetDoorsneden, "Doorsneden voldoen.", "Doorsneden onvoldoende."));
+
+
+
+                foreach (var v in t.Verankeringen)
+                {
+                    builder.Stap(v.Id, v.Naam, s => s
+                    .Formule(@$"\boxed{{ l_{{bd}} = {v.Verankeringslengte:0} \text{{ mm}} }}")
+
+                    .Formule(v.VerankeringslengteFormula.FullValue)
+                    .Formule(v.BasisVerankeringslengteFormula.FullValue)
+                    .Formule(v.FbdFormula.FullValue)
+                    .Regel($"staafvorm: {v.StaafVorm}")
+                    .Regel($"staaftype: {v.StaafType}")
+                    
+                    .Regel($"Het rechte staafdeel tot aan de ombuiging is {v.AfstandTotFbt:0} mm")
+                    .Formule(@$"\boxed{{ \phi_{{m,min}} \geq {v.MinimaleBuigdoornDiameter:0} \text{{ mm}} }}")
+                    .Formule(v.MinimaleBuigdoornDiameterFormula.FullValue)
+                    .Formule(v.MinimaleBuigdoornDiameterBetonFormula.FullValue)
+                    .Formule(v.MinimaleBuigdoornDiamStaalFormula.FullValue)
+                    
+                    .Formule(v.FbtFormula.FullValue)
+                    .Formule(v.FactorResterendeLengteFormula.FullValue)
+                    );
+
+                }
+
+                    
+    }
 
             if (r.TrekbandToets is { } tb)
             {
                 builder.Stap("toets-trekband", "Toets trekband bovenin (snede x = 0)", s => s
-                    .Formule($@"A_{{s,ben}} = A_{{s,main}} + \Delta A_{{sl,T}} = {N(tb.AsMainReq, "0")} + {N(tb.AslTorsie, "0")} = {N(tb.AsBenodigd, "0")} \text{{ mm²}}")
+                    .Formule($@"A_{{s,ben}} = A_{{s,main}} + \Delta A_{{sl,T}} = {N(tb.AsMainReq, "0")} + {N(tb.AslTorsie, "0")} = {N(tb.AsBenodigd, "0")} \text{{ mm}}^2")
                     .Regel($"Doorsneden op $x = 0$: {tb.DoorsnedenVerticaal} (verticale haarspelden) + {tb.DoorsnedenHorizontaal} (horizontale haarspelden)")
-                    .Formule($@"A_{{s,aanw}} = {N(tb.AsAanwezig, "0")} \text{{ mm²}} \qquad UC = {N(tb.Uc, "0.00")}")
+                    .Formule($@"A_{{s,aanw}} = {N(tb.AsAanwezig, "0")} \text{{ mm}}^2 \qquad UC = {N(tb.Uc, "0.00")}")
                     .Toets(tb.Voldoet, "Trekband voldoet.", "Trekband onvoldoende."));
             }
 
@@ -633,7 +620,7 @@ $$")
 $$
 A_{{s,main}}=\frac{{F_{{t,Ed}}}}{{f_{{yd}}}}
 =\frac{{{N(r.Ft * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}}
-={N(r.AsMain, "0")} \text{{ mm²}}
+={N(r.AsMain, "0")} \text{{ mm}}^2
 $$
 
 
@@ -646,7 +633,7 @@ $$
 \Sigma A_{{s,lnk,req}}
 =\max\left(\frac{{ F_{{wd}} }}{{ f_{{yd}} }};\ {aswMinTex} \right)
 =\max\left(\frac{{{N(r.Fwd * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}};\ {N(aswMin, "0")}\right)
-={N(r.Asw, "0")} \text{{ mm²}}
+={N(r.Asw, "0")} \text{{ mm}}^2
 $$")
 
 
@@ -657,7 +644,7 @@ $$
 $$
 
 $$
-A_{{s,main,prov}} = {r.AantalMain} \phi {r.DiameterMain} = {N(r.AsMainProv, "0")} \text{{ mm²}}
+A_{{s,main,prov}} = {r.AantalMain} \phi {r.DiameterMain} = {N(r.AsMainProv, "0")} \text{{ mm}}^2
 $$
 
 Staalspanning:
@@ -745,7 +732,7 @@ $$
 \Sigma A_{{s,lnk}}
 = \frac{{ F_{{wd}} }}{{ f_{{yd}} }}
 = \frac{{{N(r.Fwd * 1000.0, "0")}}}{{{N(r.Fyd, "0")}}}
-= {N(r.Asw, "0")} \text{{ mm²}}
+= {N(r.Asw, "0")} \text{{ mm}}^2
 $$
 
 $$
@@ -754,7 +741,7 @@ $$
 
 $$
 \Sigma A_{{s,lnk, prov}} 
-= {(r.AantalBeugels)} \text{{bg}} \phi{r.DiameterBgl} = {r.AswProv:0} \text{{ mm²}}
+= {(r.AantalBeugels)} \text{{bg}} \phi{r.DiameterBgl} = {r.AswProv:0} \text{{ mm}}^2
 $$
 
 ")

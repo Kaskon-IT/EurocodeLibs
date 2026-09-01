@@ -32,7 +32,8 @@ namespace CommonLibrary.Modelling
         public List<double> HartOpHartAfstanden { get; set; } = [];
 
         /// <summary> Bij BeoogdeHartOpHart: beoogde (maximale) h.o.h.-maat s [mm]. </summary>
-        public double BeoogdeHartOpHart { get; set; }
+        /// 
+        public double BeoogdeHartOpHart { get; set; } = 150;
 
         /// <summary>
         /// Offset [mm] vanaf VerdeelStart, in de richting van VerdeelEind.
@@ -58,9 +59,11 @@ namespace CommonLibrary.Modelling
                 case VerdelingType.Gelijkmatig when Aantal < 1:
                     throw new InvalidOperationException("Bij Gelijkmatig is Aantal ≥ 1 vereist.");
                 case VerdelingType.ExacteHartOpHart when HartOpHartAfstanden.Count == 0 || HartOpHartAfstanden.Any(s => s <= 0):
-                    throw new InvalidOperationException("Bij ExacteHartOpHart is een niet-lege lijst met positieve afstanden vereist.");
+                    //throw new InvalidOperationException("Bij ExacteHartOpHart is een niet-lege lijst met positieve afstanden vereist.");
+                    break;
                 case VerdelingType.BeoogdeHartOpHart when BeoogdeHartOpHart <= 0:
-                    throw new InvalidOperationException("Bij BeoogdeHartOpHart is s > 0 vereist.");
+                    //throw new InvalidOperationException("Bij BeoogdeHartOpHart is s > 0 vereist.");
+                    break;
             }
         }
     }

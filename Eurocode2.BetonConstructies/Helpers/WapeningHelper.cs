@@ -23,6 +23,14 @@ namespace Eurocode.BetonConstructies
             else return 4 * diam;
         }
 
+        /// <summary>
+        /// Buigdoorn 
+        /// </summary>
+        /// <param name="fcd">betondruksterkte (beperkt tot C55)</param>
+        /// <param name="ab">Kleinste afstand c+phi/2.0 of tussenafstand/2</param>
+        /// <param name="fbt">trekkracht in staaf</param>
+        /// <param name="d">diameter staaf</param>
+        /// <returns></returns>
         public static double GetBuigdoornMin(double fcd, double ab, double fbt, double d)
         {
             // diam >= Fbt ((1/ab) +1/(2 φ)) / fcd 
@@ -43,19 +51,19 @@ namespace Eurocode.BetonConstructies
         }
 
 
-        public static double GetLbReq(double ab, double fbt, double d, int fck )
-        {
-            var i = new VerankeringslengteInput()
-            {
-                Ab = ab,
-                Fbt = fbt,
-                Diameter = d,
-                Beton = new BetonContext(fck)
-            };
+        //public static double GetLbReq(double ab, double fbt, double d, int fck )
+        //{
+        //    var i = new VerankeringslengteInput()
+        //    {
+        //        Ab = ab,
+        //        Fbt = fbt,
+        //        Diameter = d,
+        //        Beton = new BetonContext(fck)
+        //    };
             
-            var r = VerankeringslengteCalculator.Bereken(i);
-            return r.BasisVerankeringslengte;
-        }
+        //    var r = VerankeringslengteCalculator.Bereken(i);
+        //    return r.BasisVerankeringslengte;
+        //}
 
         public static VerankeringResult GetVerankeringResult(double ab, double fbt, double d, int fck, double benutting = 1.0)
         {
@@ -67,7 +75,10 @@ namespace Eurocode.BetonConstructies
                 Fbt = fbt,
                 Diameter = d,
                 Beton = new BetonContext(fck),
-                Benuttingsgraad = benutting
+                Benuttingsgraad = benutting,
+                GoedeAanhechting = false,
+                StaafType = VerankeringStaafType.Trekstaaf,
+                StaafVorm = VerankeringStaafVorm.Gebogen,
             };
 
             var r = VerankeringslengteCalculator.Bereken(i);
@@ -340,9 +351,9 @@ namespace Eurocode.BetonConstructies
         /// <param name="d"></param>
         /// <param name="hoh"></param>
         /// <returns></returns>
-        public static double GetDsnOpp(double n = 1, double d = 8, double hoh = 1000)
+        public static double GetDsnOpp(double n = 1.0, double d = 8.0, double hoh = 1000.0)
         {
-            return n * Math.Pow(d, 2) * Math.PI / 4 / hoh * 1000;
+            return n * Math.Pow(d, 2) * Math.PI / 4 / hoh * 1000.0;
         } // van aantal (n), diameter (d) en hart-op-hart (hoh) naar As (bijvoorbeeld: 2Ø8-300 geeft 335 mm², handig voor beugels en vloer/wand-wapening)
 
 

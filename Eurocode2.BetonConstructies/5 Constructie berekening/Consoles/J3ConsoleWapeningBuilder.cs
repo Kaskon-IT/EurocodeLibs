@@ -1,4 +1,5 @@
 using Eurocode.BetonConstructies.StrutAndTie;
+using Eurocode2.BetonConstructies;
 
 namespace Eurocode.BetonConstructies
 {
@@ -9,8 +10,61 @@ namespace Eurocode.BetonConstructies
     /// (<c>rebar()</c>, <c>beugel()</c>, <c>beugelVer()</c> en de haarspeld in
     /// <c>J3ConsoleThreeView.razor</c>), in modelcoördinaten (y omlaag).
     /// </summary>
-    public static class J3ConsoleWapeningBuilder
+    public class J3ConsoleWapeningBuilder(
+        J3ConsoleInput input,
+        J3ConsoleResult result)
     {
+        private readonly J3ConsoleInput _input = input;
+        private readonly J3ConsoleResult _result = result;
+
+        public Model Build()
+        {
+            //var model = new Model();
+
+            BouwBeton(_result.Model);
+            BouwWapening(_result.Model);
+
+            return _result.Model;
+        }
+
+        // TODO: Hernoem naar J3ConsoleBuilder en maak ALLE modelobjecten in de nieuwe Model class.
+        // TODO: Daarna stop alleen nog dit Model in de THREE render classes waarmee alle onderdelen opgebouwd worden!
+        // eerst nog ZONDER knopen en strut-and-tie in het Model maar later deze ook als modelobject toevoegen.
+
+
+
+        private void BouwBeton(Model model)
+        {
+            // ...
+            Beam test = new()
+            {
+                StartPoint = new Punt3D(0, 0, 0),
+                EndPoint = new Punt3D(1000,1000,1000)
+            };
+            model.Add(test);
+        }
+
+        private void BouwWapening(Model model)
+        {
+            // ...
+            VulWapening(model, _input, _result);
+
+
+        }
+
+
+        public static void VulWapening(Model model, J3ConsoleInput i, J3ConsoleResult r)
+        {
+            Console.WriteLine("[VulWapening] 🔥" + model.Objects.Count);
+            model.Add(BouwVerticaleHaarspelden(i, r));
+            Console.WriteLine("[VulWapening] 🍂" + model.Objects.Count);
+            foreach (var rbg in model.GetObjects<WapeningGroep>())
+            {
+                Console.WriteLine($"rbg:{rbg.DisplayText}");
+            }
+
+        }
+
         /// <summary>
         /// Vult de vier groepen op het resultaat. Aanroepen nadat alle scalars
         /// van het resultaat (D, Z, AantalBeugels, ...) bepaald zijn.
@@ -18,6 +72,7 @@ namespace Eurocode.BetonConstructies
         public static void VulGroepen(J3ConsoleInput i, J3ConsoleResult r)
         {
             r.WapVerticaleHaarspelden = BouwVerticaleHaarspelden(i, r);
+            // uitgecomment als test, kijken of we via r.Model het THREE scene kunnen opbouwen.
             r.WapHorizontaleHaarspelden = BouwHorizontaleHaarspelden(i, r);
             r.WapBglsHor = BouwBeugelsHorizontaal(i, r);
             r.WapBglsVer = BouwBeugelsVerticaal(i, r);
@@ -52,6 +107,8 @@ namespace Eurocode.BetonConstructies
             return Math.Min(yVlak, yTaper);
         }
 
+        
+
         /// <summary>
         /// Hoofd-trekwapening (AsMain) als verticale haarspeld; geometrie identiek
         /// aan <c>rebar()</c> in <c>j3console-build.js</c>. Verdeeld over de
@@ -60,30 +117,114 @@ namespace Eurocode.BetonConstructies
         public static WapeningGroep BouwVerticaleHaarspelden(J3ConsoleInput i, J3ConsoleResult r)
         {
             var groep = i.WapVerticaleHaarspelden;
+            groep.DisplayName = "testDisplayName";
+            
             //var hspPlat = i.WapHorizontaleHaarspelden;
             var toonTaper = i.AfschuiningOnderzijde && !r.VerticaleBeugelsNodig;
 
             var c = i.Dekking;
+            var hart = groep.Tussenruimte() + groep.Diameter;
+            var ab = Math.Min(c + groep.Diameter / 2.0, hart / 2.0);
+            var benutting = r.AsMain / r.AsMainProv;
+            var fbt = benutting * WapeningHelper.GetDsnOpp(1, groep.Diameter) * r.Fyd;
+
+
+
+            var xAnchorLeft = -r.X1 / 2.0;
+            var xAnchorRight = r.Ac - r.LoadPlateLength / 2.0;
+
+
+            var H = i.Hc;
+            var L = i.Lc;
+            var Bw = i.KolomDikte;
             var dBgl = i.WapBglsVer.Diameter;
             var phi = groep.Diameter;
             var bendR = i.HoofdstaafBuigdoornDiameterFactor > 0
                 ? (i.HoofdstaafBuigdoornDiameterFactor * phi + phi) / 2.0
                 : (r.BuigdoorMain + phi) / 2.0;
-            //var ctxPhi = r.WapKolomMain.GrootsteDiameter;
-
-            var H = i.Hc;
-            var L = i.Lc;
-            var Bw = i.KolomDikte;
 
             var cc = c + dBgl + phi / 2.0;   // hart hoofdstaaf
             var yTop = cc;
             var xTip = L - cc;
-            var up = 10 * phi + bendR;
+
+
+
+
             var left = -Bw + cc;
+
+            var a = xAnchorLeft - left - bendR;
+            var b = 90.0 / 360.0 * 2 * bendR * Math.PI;
+
+            var afstandTotFbt = a;
+
+            
+            
+            //var ctxPhi = r.WapKolomMain.GrootsteDiameter;
+
+            var inputVerankering = new VerankeringslengteInput()
+            {
+                Ab = ab,
+                AfstandTotFbt = afstandTotFbt,
+                Benuttingsgraad = benutting,
+                StaafType = VerankeringStaafType.Trekstaaf,
+                StaafVorm = VerankeringStaafVorm.Gebogen,
+                Diameter = groep.Diameter,
+                GoedeAanhechting = false,
+                Beton = new BetonContext(r.Fck),
+                ToegepasteBuigdoornDiameter = groep.BuigdoornDiameter()
+            };
+
+            var resultVerankering = VerankeringslengteCalculator.Bereken(inputVerankering);
+            resultVerankering.Id = "verankering1";
+            resultVerankering.Naam = "Verankering trekband (sg1)";
+
+            // wat is de benodigde lbd?
+            if (groep.Buigstralen != null)
+            {
+                bendR = groep.Buigstralen.FirstOrDefault();
+            }
+            
+            var lbd = resultVerankering.Verankeringslengte;
+
+
+            var upReq = lbd - a - b + bendR;
+            var up = Math.Max(5.0 * phi + bendR, upReq);
+
+            bool ombuigen = upReq > 0;
+            if (!ombuigen)
+            {
+                inputVerankering.StaafVorm = VerankeringStaafVorm.Recht;
+                resultVerankering = VerankeringslengteCalculator.Bereken(inputVerankering);
+
+                lbd = resultVerankering.Verankeringslengte;
+                left = xAnchorLeft - lbd;
+            }
+
+            // geef de verankering terug aan het resultaat (builder → toets)
+            var verankeringKolomzijde = WapeningHelper.GetVerankeringResult(
+                ab,
+                fbt,
+                groep.Diameter,
+                (int)i.Fck,
+                benutting
+                );
+
+            verankeringKolomzijde.Id = $"verankering-{groep.Prefix}-kolom";
+            verankeringKolomzijde.Naam = "Verankering kolomzijde";
+
+            r.SetVerankering(groep, resultVerankering);
+            
+
+
+            
+            //r.VerankeringenPerGroep[groep] = resultVerankering;
 
             var c1 = new Punt3D(left, yTop + up, 0);   // vrij uiteinde onderaan de opgaande tak
             var c2 = new Punt3D(left, yTop, 0);        // bovenhoek links (90°)
             var c3 = new Punt3D(xTip, yTop, 0);        // bovenhoek rechts (90°)
+
+
+
 
             List<Punt3D> punten;
             if (r.UseAnchorageBar)
@@ -120,6 +261,19 @@ namespace Eurocode.BetonConstructies
             groep.Verdeling.OffsetStart = offStartEnd;
             groep.Verdeling.OffsetEind = offStartEnd;
 
+
+            // verankering console zijde
+            inputVerankering.StaafVorm = VerankeringStaafVorm.Gebogen;
+            inputVerankering.AfstandTotFbt = 100;
+            inputVerankering.Alpha5 = 0.7;
+
+            var vResConsole = VerankeringslengteCalculator.Bereken(inputVerankering);
+            vResConsole.Naam = "Verankering console zijde";
+            vResConsole.Id = Guid.NewGuid().ToString();
+            r.SetVerankering(groep, vResConsole);
+
+
+
             return groep;
         }
 
@@ -135,6 +289,13 @@ namespace Eurocode.BetonConstructies
         public static WapeningGroep BouwHorizontaleHaarspelden(J3ConsoleInput i, J3ConsoleResult r)
         {
             var groep = i.WapHorizontaleHaarspelden;
+            var lbd = r.VerankeringMain.Verankeringslengte;
+
+            
+
+            var xLinksBenodigd = -r.X1 / 2.0 - lbd;
+            Console.WriteLine($"hor. haarspeld xL,req = {xLinksBenodigd:0}");
+
 
             var c = i.Dekking;
             var dBglHor = i.WapBglsHor.Diameter;
@@ -148,21 +309,40 @@ namespace Eurocode.BetonConstructies
             var zVoor = B / 2.0 - c - dBglHor - dBglVer - phi/2.0;
             var zAchter = -B / 2.0 + c + dBglHor + dBglVer + phi/2.0;
 
-            var xLinks = -Bw + c + dBglHor + groep.Diameter / 2.0;
+            var xLinksUiterste = -Bw + c + dBglHor + groep.Diameter / 2.0;
+            var xLinks = Math.Max(xLinksUiterste, xLinksBenodigd);
+
+            bool ombuigingLinks = xLinksBenodigd < xLinksUiterste;
+
             var xTip = L - c - groep.Diameter / 2.0;
 
             var yTrek = i.Hc - r.D;        // positie trekband (d1) [mm, y omlaag]
             var yHaak = yTrek + Math.Min(20 * phi, 200);  // 10Ø onder de trekband
 
+            
             List<Punt3D> punten =
             [
-                new(xLinks, yHaak, zVoor),   // 1: haak, voorvlak
+                //new(xLinks, yHaak, zVoor),   // 1: haak, voorvlak
                 new(xLinks, yTrek, zVoor),   // 2: trekband, voorvlak
                 new(xTip, yTrek, zVoor),     // 3: consoletip, voorvlak
                 new(xTip, yTrek, zAchter),   // 4: consoletip, achtervlak
                 new(xLinks, yTrek, zAchter), // 5: trekband, achtervlak
-                new(xLinks, yHaak, zAchter), // 6: haak, achtervlak
+                //new(xLinks, yHaak, zAchter), // 6: haak, achtervlak
             ];
+
+            if (ombuigingLinks)
+            {
+                punten = [
+                new(xLinks, yTrek, zAchter),   // 1: haak!
+                new(xLinks, yTrek, zVoor),   // 2: trekband, voorvlak
+                new(xTip, yTrek, zVoor),     // 3: consoletip, voorvlak
+                new(xTip, yTrek, zAchter),   // 4: consoletip, achtervlak
+                new(xLinks, yTrek, zAchter), // 5: trekband, achtervlak
+                new(xLinks, yTrek, zVoor), // 6: haak!
+                    ];
+
+            }
+
 
             groep.Shapes = [new StaafShape { Punten = punten, Buigstralen = Buigstralen(groep, phi * 2.5) }];
 
@@ -171,8 +351,42 @@ namespace Eurocode.BetonConstructies
             groep.VerdeelEind = new Punt3D(0, 100, 0);
             groep.Verdeling.Type = VerdelingType.ExacteHartOpHart;
             groep.Verdeling.HartOpHartAfstanden = [20];
-            groep.Buigstralen = [55]; // fixed
+            //groep.Buigstralen = [55]; // fixed
             //groep.Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig };
+
+            // test
+            if (r.AantalMain2 == 2)
+            {
+                groep.Verdeling.HartOpHartAfstanden = [groep.Diameter];
+                // dit zou moeten triggeren dat de diam_eq wijzigt omdat we nu een bundel hebben
+
+            }
+
+
+            // voordat we de groep teruggeven, de verankering in het resultaat zetten (builder → toets)
+            VerankeringslengteInput vi1 = new VerankeringslengteInput()
+            {
+                AfstandTotFbt = 100,
+                Benuttingsgraad = 1.0,
+                Beton = new(30),
+                Diameter = groep.Diameter,
+                DiameterT = groep.Diameter,
+                DekkingC = i.Dekking,
+
+            };
+
+            r.SetVerankering(groep, VerankeringslengteCalculator.Bereken(vi1));
+
+            VerankeringslengteInput vi2 = new()
+            {
+                AfstandTotFbt = 100,
+                Benuttingsgraad = 1.0,
+                Beton = new((int)i.Fck),
+                
+            };
+
+            r.SetVerankering(groep, VerankeringslengteCalculator.Bereken(vi2));
+
 
             return groep;
         }

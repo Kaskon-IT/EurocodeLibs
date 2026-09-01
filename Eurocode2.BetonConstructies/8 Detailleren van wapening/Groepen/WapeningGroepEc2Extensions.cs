@@ -9,10 +9,21 @@ namespace Eurocode.BetonConstructies
     public static class WapeningGroepEc2Extensions
     {
         /// <summary> Equivalente diameter Øn = Ø·√n ≤ 55 mm bij bundels (§8.9.1). </summary>
-        public static double EquivalenteDiameter(this WapeningGroep groep) =>
-            groep.AantalStavenPerPositie > 1
-                ? Math.Min(groep.Diameter * Math.Sqrt(groep.AantalStavenPerPositie), 55)
-                : groep.Diameter;
+        public static double EquivalenteDiameter(this WapeningGroep groep)
+        {
+            var n = 1;
+            if (groep.Tussenruimte() == 0)
+                n = 2;
+
+            return Math.Min(groep.Diameter * Math.Sqrt(n), 55);
+        }
+            
+
+
+        public static double BuigdoornDiameter(this WapeningGroep groep) =>
+            groep.Buigstralen?.Length > 0
+                ? groep.Buigstralen.Max() * 2 - groep.Diameter
+                : 0;
 
         /// <summary>
         /// Minimale vrije tussenruimte tussen staven volgens §8.2:
@@ -24,7 +35,7 @@ namespace Eurocode.BetonConstructies
         /// <summary> Vrije tussenruimte tussen de staafposities [mm]. </summary>
         public static double Tussenruimte(this WapeningGroep groep) =>
             groep.WerkelijkeHartOpHart > 0
-                ? groep.WerkelijkeHartOpHart - groep.EquivalenteDiameter()
+                ? groep.WerkelijkeHartOpHart - groep.Diameter
                 : double.PositiveInfinity;
 
         public static bool TussenruimteVoldoet(this WapeningGroep groep, double dg) =>

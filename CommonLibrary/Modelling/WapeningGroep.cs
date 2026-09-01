@@ -11,8 +11,11 @@ namespace CommonLibrary.Modelling
     /// </summary>
     public class WapeningGroep : BaseWapening
     {
-        /// <summary> Bundelgrootte n per positie (1 = geen bundel). </summary>
-        public int AantalStavenPerPositie { get; set; } = 1;
+        /// <summary>
+        /// Te gebruiken voor bijvoorbeeld 'hs' voor haarspelden of 'bgl' voor beugels.
+        /// </summary>
+        public string Prefix { get; set; } = "";
+        
 
         /// <summary> Weergavekleur (hex, bijv. "#ff8800"); null = standaardmateriaal. </summary>
         public string? Kleur { get; set; }
@@ -20,6 +23,7 @@ namespace CommonLibrary.Modelling
         /// <summary>
         /// Door de gebruiker opgegeven buigstralen [mm] (lengte 1 = voor alle knikken).
         /// Null of leeg = automatisch bepaald door de builder.
+        /// Dit is de binnenste buigstraal r_i ofwel Øm/2.
         /// </summary>
         public double[]? Buigstralen { get; set; }
 
@@ -64,15 +68,41 @@ namespace CommonLibrary.Modelling
         };
 
         /// <summary> Totaal aantal staven (posities × bundelgrootte). </summary>
-        public int TotaalAantalStaven => AantalPosities * AantalStavenPerPositie;
+        public int TotaalAantalStaven => AantalPosities;
 
         /// <summary> Totale wapeningsdoorsnede [mm²]. </summary>
         public double TotaalAs => TotaalAantalStaven * As;
 
-        /// <summary> Werkelijke h.o.h.-maat bij gelijkmatige verdeling [mm] (0 bij 1 positie). </summary>
-        public double WerkelijkeHartOpHart => AantalPosities > 1
-            ? VerdeelLengte / (AantalPosities - 1)
-            : 0;
+        /// <summary> 
+        /// Werkelijke h.o.h.-maat bij gelijkmatige verdeling [mm] 
+        /// (0 bij 1 positie). 
+        /// Kleinste hoh-maat bij exacte opgave
+        /// </summary>
+        public double WerkelijkeHartOpHart
+        {
+            get
+            {
+                switch (Verdeling.Type)
+                {
+                    case VerdelingType.ExacteHartOpHart:
+
+                        if (Verdeling.HartOpHartAfstanden.Count == 0) return 0;
+                        return Verdeling.HartOpHartAfstanden.Min(x=>x);
+                    case VerdelingType.BeoogdeHartOpHart:
+                        return Verdeling.BeoogdeHartOpHart;
+                    case VerdelingType.Gelijkmatig:
+                        if (AantalPosities > 1)
+                        {
+                            return VerdeelLengte / (AantalPosities - 1);
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    default: return 0;
+                }
+            }
+        }
 
         /// <summary>
         /// Genereert per staafpositie de (geïnterpoleerde en getransleerde) staaf.
@@ -138,10 +168,7 @@ namespace CommonLibrary.Modelling
             base.Valideer();
             Verdeling.Valideer();
 
-            if (AantalStavenPerPositie < 1)
-            {
-                throw new InvalidOperationException("AantalStavenPerPositie moet ≥ 1 zijn.");
-            }
+            
 
             if (ShapePosities is { Length: > 0 })
             {

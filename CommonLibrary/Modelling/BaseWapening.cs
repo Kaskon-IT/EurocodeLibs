@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace CommonLibrary.Modelling
 {
     /// <summary>
@@ -5,10 +7,11 @@ namespace CommonLibrary.Modelling
     /// en een wapeningsgroep (<see cref="WapeningGroep"/>): één diameter en
     /// één of twee staafvormen.
     /// </summary>
-    public abstract class BaseWapening
+    public abstract class BaseWapening : ModelObject
     {
         /// <summary> Staafdiameter Ø [mm]; 1 diameter per staaf/groep. </summary>
         public double Diameter { get; set; }
+        public double DiameterExterior => Diameter * 1.13; // DIN488 rib is 0.065×Ø
 
         /// <summary>
         /// De staafvorm(en): polyline (hartlijn) + buigstralen.
@@ -24,16 +27,22 @@ namespace CommonLibrary.Modelling
 
         /// <summary> Doorsnede van één staaf As = π/4·Ø² [mm²]. </summary>
         public double As => Math.PI / 4 * Diameter * Diameter;
+        public double BuigstraalMin => Diameter <= 16 ? 2.0 * Diameter : 3.5 * Diameter; // 8.1(N)
 
         /// <summary> Uitgeslagen lengte van de (start)vorm [mm]. </summary>
         public double UitgeslagenLengte => Shape.UitgeslagenLengte(Diameter);
+
+       
+
 
         /// <summary> Basisvalidatie: diameter en shapes. Afgeleiden breiden dit uit. </summary>
         public virtual void Valideer()
         {
             if (Diameter <= 0)
             {
-                throw new InvalidOperationException("Diameter moet groter dan 0 zijn.");
+                // todo: dit is een fout in de invoer
+                // misschien beter een warning?
+                //throw new WarningException("Diameter moet groter dan 0 zijn???");
             }
 
             if (Shapes.Length < 1)

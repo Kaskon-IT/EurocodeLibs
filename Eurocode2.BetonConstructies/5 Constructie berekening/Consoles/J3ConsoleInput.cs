@@ -167,7 +167,9 @@
         private WapeningGroep _wapBglsHor = new()
         {
             Diameter = 8,
+            Buigstralen = [20],
             Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 2 },
+            Prefix = "bg",
         };
         /// <summary> Horizontale beugels (gesloten beugel, horizontaal verdeeld). </summary>
         public WapeningGroep WapBglsHor
@@ -179,8 +181,11 @@
         private WapeningGroep _wapBglsVer = new()
         {
             Diameter = 8,
+            Buigstralen = [20],
+
             Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 2 },
             Kleur = "#de5114",
+            Prefix = "bg",
         };
         /// <summary> Verticale beugels (gesloten beugel, verticaal verdeeld). </summary>
         public WapeningGroep WapBglsVer
@@ -192,6 +197,8 @@
         private WapeningGroep _wapVerticaleHaarspelden = new()
         {
             Diameter = 12,
+            Buigstralen = [30],
+
             Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 4  },
             Kleur = "#14de4a",
         };
@@ -205,8 +212,10 @@
         private WapeningGroep _wapHorizontaleHaarspelden = new()
         {
             Diameter = 10,
+            Buigstralen = [25],
             Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 2 },
             Kleur = "#d7de14",
+            Prefix = "hs",
         };
         /// <summary> Tweede laag hoofdwapening als horizontale haarspelden (Aantal = 0 = niet gebruikt). </summary>
         public WapeningGroep WapHorizontaleHaarspelden

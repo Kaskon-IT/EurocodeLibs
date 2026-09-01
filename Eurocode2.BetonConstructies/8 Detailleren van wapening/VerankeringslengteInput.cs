@@ -45,6 +45,41 @@ namespace Eurocode.BetonConstructies
             set => SetProperty(ref _diameter, value);
         }
 
+        private double _diameterT = 16;
+        /// <summary>
+        /// staafdiameter van de gelaste dwarsstaaf (indien van toepassing)
+        /// </summary>
+        public double DiameterT
+        {
+            get => _diameterT;
+            set => SetProperty(ref _diameterT, value);
+        }
+
+        private double _sigmaCM = 0;
+
+
+
+        private double _dekkingC = 30;
+        /// <summary>
+        /// dekking op het vlak, zie figuur 8.3
+        /// </summary>
+        public double DekkingC
+        {
+            get => _dekkingC;
+            set => SetProperty(ref _dekkingC, value);
+        }
+
+        private double _dekkingC1 = 30;
+        /// <summary>
+        /// Dekking op de zijkant, zie figuur 8.3
+        /// </summary>
+        public double DekkingC1
+        {
+            get => _dekkingC1;
+            set => SetProperty(ref _dekkingC1, value);
+        }
+
+
         private double _fyk = 500;
         /// <summary> <i>f</i><sub>yk</sub> – karakteristieke vloeigrens betonstaal [N/mm²]. </summary>
         public double Fyk
@@ -101,13 +136,14 @@ namespace Eurocode.BetonConstructies
             set => SetProperty(ref _goedeAanhechting, value);
         }
 
-        private double _cd = 35;
+        private double _cd = 20;
         /// <summary> <i>c</i><sub>d</sub> – dekkingsmaat volgens figuur 8.3 (min. van <i>a</i>/2, <i>c</i><sub>1</sub> en <i>c</i>) [mm]. </summary>
         public double Cd
         {
             get => _cd;
             set => SetProperty(ref _cd, value);
         }
+        
 
 
         private double _alpha2 = 1.0;
@@ -149,10 +185,22 @@ namespace Eurocode.BetonConstructies
         /// <i>F</i><sub>bt</sub> – trekkracht in de staaf aan het begin van de buiging [N].
         /// 0 = de controle op betondrukbezwijken bij de buiging (8.1) overslaan.
         /// </summary>
+        [Obsolete("gebruik afstand tot ombuiging")]
         public double Fbt
         {
             get => _fbt;
             set => SetProperty(ref _fbt, value);
+        }
+
+        private double _afstandTotFbt = 0;
+        
+        /// <summary>
+        /// Ontwikkelde afstand tot aan de ombuiging
+        /// </summary>
+        public double AfstandTotFbt
+        {
+            get => _afstandTotFbt;
+            set => SetProperty(ref _afstandTotFbt, value);
         }
 
         private double _ab = 0;
@@ -173,5 +221,16 @@ namespace Eurocode.BetonConstructies
             get => _toegepasteVerankeringslengte;
             set => SetProperty(ref _toegepasteVerankeringslengte, value);
         }
+
+        private double _toegepasteBuigdoornDiameter = 0;
+        /// <summary>
+        /// Optioneel: toegepaste buigdoorn- of buigrol-diameter [mm] voor een unity check.
+        /// </summary>
+        public double ToegepasteBuigdoornDiameter
+        {
+            get => _toegepasteBuigdoornDiameter;
+            set => SetProperty(ref _toegepasteBuigdoornDiameter, value);
+        }
+
     }
 }

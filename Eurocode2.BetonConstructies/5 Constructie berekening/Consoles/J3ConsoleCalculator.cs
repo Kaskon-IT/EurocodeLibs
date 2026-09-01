@@ -58,6 +58,7 @@ namespace Eurocode.BetonConstructies
 
             z = Math.Min(z, zBer);
 
+
             if (i.RekenMethode == J3ConsoleInput.RekenMethodeOptie.GedrongenLiggerTheorie)
             {
                 // 6.1 (10): z volgens gedrongen-liggertheorie, z = min(0.4a + 0.4h ; 1.6a)
@@ -202,7 +203,8 @@ namespace Eurocode.BetonConstructies
             var result = new J3ConsoleResult
             {
                 // Input overnemen
-                
+                RekenMethode = i.RekenMethode,
+
                 // geometrie console
                 Hc = i.Hc, 
                 Bc = i.Bc,
@@ -298,8 +300,14 @@ namespace Eurocode.BetonConstructies
 
             // Wapeninggroepen geometrisch afmaken (shapes + verdeellijn) nu alle
             // benodigde resultaten (D, AantalBeugels, UseAnchorageBar) bekend zijn.
-            J3ConsoleWapeningBuilder.VulGroepen(i, result);
-            J3ConsoleStaafgroepToetsen.Toets(i, result);   // <-- nieuw
+            var builder = new J3ConsoleWapeningBuilder(i, result);
+            var model = builder.Build();
+
+            J3ConsoleWapeningBuilder.VulGroepen(i, result); // <-- vul wapening
+            J3ConsoleStaafgroepToetsen.Toets(i, result);   // <-- toets
+            J3ConsoleWapeningBuilder.VulGroepen(i, result); // <-- itteratie 1: nu zijn details bekend
+            //J3ConsoleStaafgroepToetsen.Toets(i, result);   // <-- toets nogmaals 
+
 
             result.StrutAndTieNodes.Add(new StrutAndTie.StrutAndTieNode
             {
@@ -337,6 +345,8 @@ namespace Eurocode.BetonConstructies
 
             // Uitgebreid rekenvoorbeeld (markdown + LaTeX) voor de detail-popup / rapport.
             result.RekenvoorbeeldMarkdown = J3ConsoleRekenvoorbeeld.Genereer(i, result);
+
+            //var builder = new J3ConsoleWapeningBuilder(i, result);
 
             return result;
         }

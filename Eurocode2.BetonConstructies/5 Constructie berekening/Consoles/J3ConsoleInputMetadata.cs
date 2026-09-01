@@ -231,7 +231,7 @@ namespace Eurocode.BetonConstructies.Consoles
                         PropertyName = nameof(J3ConsoleInput.FactorBgt),
                         Label = "<i>f</i><sub>BGT</sub>",
                         Description = "Factor BGT/UGT voor de bruikbaarheidsgrenstoestand (scheurwijdte).",
-                        Unit = "",
+                        Unit = "-",
                         Order = 25,
                         Min = _ => 0.1,
                         Max = _ => 1.0,

@@ -18,7 +18,7 @@ namespace Eurocode.BetonConstructies
             double eta2 = i.Diameter <= 32.0 ? 1.0 : (132.0 - i.Diameter) / 100.0;
             double fbd = 2.25 * eta1 * eta2 * fctd; // (8.2)
             double fcd = BepaalFcdBuiging(i.Beton);
-            double fbt = i.Fbt;
+            double fbt = WapeningHelper.GetDsnOpp(1,i.Diameter) * i.Benuttingsgraad * i.Fyd; // zonder afname (startpunt verankering)
             double ab = i.Ab;
 
             // 8.4.3 (2) Basisverankeringslengte
@@ -42,10 +42,20 @@ namespace Eurocode.BetonConstructies
             // 8.4.4 (1) rekenwaarde verankeringslengte (8.4)
             double lbd = Math.Max(alpha1 * productAlpha235 * alpha4 * lbRqd, lbMin);
 
+            // Fbt (staafkracht ter plaatse van de ombuiging) uitrekenen
+            fbt *= Math.Max(0, 1 - (i.AfstandTotFbt / lbd));
+
+
             // 8.3 buigstralen
             double buigrolDiameter = BepaalMinimaleBuigrolDiameter(i.Diameter);         // Tabel 8.1N
-            double buigrolDiameterBeton = BepaalBuigrolDiameterBeton(i);                // (8.1)
+            double buigrolDiameterBeton = BepaalBuigrolDiameterBeton(i, fbt);                // (8.1)
             double buigstraal = buigrolDiameter / 2.0;                                  // r = Øm/2
+            double cd = i.Cd;
+
+            // aangelaste staaf
+            double x = 2 * (i.DekkingC / i.DiameterT) + 1;
+            double y = 0.015 + 0.14 * Math.Exp(-0.18 * x);
+            //double sigmaTD = (fctd + i.Sig 
 
             var result = new VerankeringResult
             {
@@ -60,8 +70,9 @@ namespace Eurocode.BetonConstructies
                 Fbd = fbd,
                 Fcd = fcd,
                 Fbt = fbt,
+                AfstandTotFbt = i.AfstandTotFbt,
                 Ab = ab,
-
+                Cd = cd,
 
                 BasisVerankeringslengte = lbRqd,
 
@@ -77,9 +88,16 @@ namespace Eurocode.BetonConstructies
 
                 MinimaleBuigdoornDiamStaal = buigrolDiameter,
                 MinimaleBuigdoornDiameterBeton = buigrolDiameterBeton,
-                MinimaleBuigstraal = buigstraal,
 
                 ToegepasteVerankeringslengte = i.ToegepasteVerankeringslengte,
+                ToegepasteBuigdoornDiameter = i.ToegepasteBuigdoornDiameter,
+
+                // aangelast
+                X = x,
+                Y = y,
+
+
+
             };
 
             VulRegels(i, result);
@@ -137,13 +155,13 @@ namespace Eurocode.BetonConstructies
         /// Minimale buigroldiameter om betondrukbezwijken bij de buiging te voorkomen (8.1).
         /// Retourneert 0 wanneer geen trekkracht/afstand is opgegeven.
         /// </summary>
-        private static double BepaalBuigrolDiameterBeton(VerankeringslengteInput i)
+        private static double BepaalBuigrolDiameterBeton(VerankeringslengteInput i, double fbt)
         {
-            if (i.Fbt <= 0 || i.Ab <= 0)
+            if (fbt <= 0 || i.Ab <= 0)
                 return 0;
 
             double fcd = BepaalFcdBuiging(i.Beton);
-            return i.Fbt * (1.0 / i.Ab + 1.0 / (2.0 * i.Diameter)) / fcd; // (8.1)
+            return fbt * (1.0 / i.Ab + 1.0 / (2.0 * i.Diameter)) / fcd; // (8.1)
         }
 
         /// <summary>
@@ -347,13 +365,13 @@ namespace Eurocode.BetonConstructies
                 Artikel = "(8.4)",
             });
 
-            if (r.IsUnityCheckUitgevoerd)
+            if (r.IsUnityCheckVerankeringslengteUitgevoerd)
             {
                 r.ResultRows.Add(new()
                 {
                     Toelichting = "Controle beschikbare verankeringslengte",
                     SymboolTex = @"l_{bd}/l_{bd,prov}",
-                    Waarde = $"{r.Verankeringslengte:0} ≤ {r.ToegepasteVerankeringslengte:0} (U.C. = {r.UnityCheck:0.00})",
+                    Waarde = $"{r.Verankeringslengte:0} ≤ {r.ToegepasteVerankeringslengte:0} (U.C. = {r.UnityCheckVerankeringslengte:0.00})",
                     Eenheid = "mm",
                     IsOk = r.IsVoldoende,
                     FormuleTex = @"l_{bd} \leq l_{bd,prov}",

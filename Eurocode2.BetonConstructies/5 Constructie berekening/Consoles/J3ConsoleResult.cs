@@ -7,9 +7,24 @@
 
     public class J3ConsoleResult : IRowResult
     {
+        // Het model
+        public Model Model { get; internal set; } = new();
+
+
+
+
+
         // Toevoegen aan J3ConsoleResult:
         public List<J3ConsoleStaafgroepToets> StaafgroepToetsen { get; } = [];
         public J3ConsoleTrekbandToets? TrekbandToets { get; set; }
+
+        /// <summary>
+        /// Door de builder berekende verankering per wapeninggroep (start-zijde).
+        /// Wordt gevuld in <see cref="J3ConsoleWapeningBuilder.VulGroepen"/> en
+        /// daarna overgenomen in <see cref="J3ConsoleStaafgroepToetsen.Toets"/>.
+        /// </summary>
+        public Dictionary<WapeningGroep, List<VerankeringResult>> VerankeringenPerGroep { get; } = [];
+        public J3ConsoleInput.RekenMethodeOptie RekenMethode { get; set; } = J3ConsoleInput.RekenMethodeOptie.StrutAndTieModel;
 
         public List<ResultRow> ResultRows { get; } = [];
 
@@ -137,6 +152,7 @@
         public double Fwd { get; set; }
 
         public double AsMain { get; set; }
+        
 
         /// <summary> As,min – minimumwapening volgens EC2 7.3.2 vgl. (7.1) [mm²] (gedrongen-liggertheorie). </summary>
         public double AsMin { get; set; }
@@ -192,7 +208,53 @@
         public double DiameterMain2 { get; set; }
         public int AantalMain2 { get; set; }
         public double AsMainProv => AantalMain * WapeningHelper.GetDsnOpp(1, DiameterMain)
-                                    + AantalMain2 * WapeningHelper.GetDsnOpp(1, DiameterMain2);
+                                    + AantalMain2 * WapeningHelper.GetDsnOpp(2, DiameterMain2);
+        
+        
+        public Formula AsMainProvFormula
+        {
+            get
+            {
+                var sgPlat = this.WapHorizontaleHaarspelden;
+                var sgNorm = this.WapVerticaleHaarspelden;
+
+                //var aantallen = new List<int>() { AantalMain, AantalMain2 };
+                //var diameters = new List<double>() { DiameterMain, DiameterMain2 };
+                var strings = new List<string>();
+
+                //for (int i = 0; i< 2; i++)
+                //{
+                //    if (aantallen[i] > 0)
+                //    {
+                //        strings.Add($"{aantallen[i]}Ø{diameters[i]}");
+                //    }
+                //}
+
+                if (sgPlat is not null &&
+                    sgPlat.AantalPosities > 0 &&
+                    sgPlat.Diameter > 0)
+                {
+                    strings.Add($"{sgPlat.AantalPosities}{sgPlat.Prefix}Ø{sgPlat.Diameter}");
+                }
+
+                if (sgNorm is not null &&
+                    sgNorm.AantalPosities > 0 &&
+                    sgNorm.Diameter > 0)
+                {
+                    strings.Add($"{sgNorm.AantalPosities}{sgNorm.Prefix}Ø{sgNorm.Diameter}");
+                }
+
+
+                return new()
+                {
+                    StaticValue = @$"A_{{s,main,prov}} = {string.Join(" + ", strings)}",
+                    DynamicValue = @$"= {AsMainProv:0} \text{{ mm}}^2"
+                    
+                };
+
+            }
+        }
+        
         public bool AsMainProvOk => AsMainProv >= AsMain;
         public double AswProv => AantalBeugels * WapeningHelper.GetDsnOpp(2, DiameterBgl);
         public bool AswProvOk => AswProv >= Asw;
@@ -290,8 +352,7 @@
         {
             get
             {
-                var applied = new WapeningContext($"{AantalMain}r{DiameterMain}", Dekking);
-                return AsMain / applied.As * Fyd;
+                return AsMain / AsMainProv * Fyd;
             }
         }
 
@@ -452,11 +513,34 @@
         }
 
 
-        public Formula AsMainFormula => new()
+        public Formula AsMainFormula
         {
-            StaticValue = @"A_{s,main,req} = \frac{F_{t}}{f_{yd}}",
-            DynamicValue = @$"= \frac{{{(Ft * 1000):0}}}{{{Fyd:0}}} = {AsMain:0} \text{{ mm²}}"
-        };
+            get
+            {
+                switch (RekenMethode)
+                {
+                    case J3ConsoleInput.RekenMethodeOptie.StrutAndTieModel:
+                        return new()
+                        {
+                            StaticValue = @"A_{s,main,req} = \frac{F_{t}}{f_{yd}}",
+                            DynamicValue = @$"= \frac{{{(Ft * 1000):0}}}{{{Fyd:0}}} = {AsMain:0} \text{{ mm}}^2"
+                        };
+                    case J3ConsoleInput.RekenMethodeOptie.GedrongenLiggerTheorie:
+                        return new()
+                        {
+                            StaticValue = @"A_{s,main,req} = \frac{M_{Ed}}{f_{yd} \cdot z}",
+                            DynamicValue = @$"= \frac{{{this.MEd:0}}}{{{this.Fyd:0}}} \cdot {this.Z} = {AsMain:0} \text{{ mm}}^2"
+                        };
+                    default:
+                        return new()
+                        {
+                            StaticValue = @"A_{s,main,req} = ....",
+                            DynamicValue = @$"= {AsMain:0} \text{{ mm}}^2"
+                        };
+                } 
+            }
+        } 
+        
 
         public Formula AsLnkFormula
         {
@@ -467,13 +551,13 @@
                     return new()
                     {
                         StaticValue = @"\Sigma A_{s,lnk} \geq k1 \cdot A_{s,main}",
-                        DynamicValue = $@"\geq 0.25 \cdot {AsMain:0} \geq {(0.25*AsMain):0} \text{{ mm²}}",
+                        DynamicValue = $@"\geq 0.25 \cdot {AsMain:0} \geq {(0.25*AsMain):0} \text{{ mm}}^2",
                     };
                 }
                 else return new()
                 {
                     StaticValue = @"\Sigma A_{s,lnk} \geq k2 \cdot \frac{F_{Ed}}{f_{yd}}",
-                    DynamicValue = $@"\geq 0.50 \cdot \frac{{{FEd:0}}}{{{Fyd:0}}} \geq {(0.5*FEd/Fyd):0} \text{{ mm²}}",
+                    DynamicValue = $@"\geq 0.50 \cdot \frac{{{FEd:0}}}{{{Fyd:0}}} \geq {(0.5*FEd/Fyd):0} \text{{ mm}}^2",
                 };
             }
         }
@@ -689,6 +773,30 @@
                 return fouten;
             }
         }
+
+        /// <summary>
+        /// Helper om de verankering in te stellen
+        /// </summary>
+        /// <param name="groep"></param>
+        /// <param name="verankering"></param>
+        public void SetVerankering(
+    WapeningGroep groep,
+    VerankeringResult verankering)
+        {
+            if (!VerankeringenPerGroep.TryGetValue(groep, out var verankeringen))
+            {
+                verankeringen = [];
+                VerankeringenPerGroep[groep] = verankeringen;
+            }
+
+            var index = verankeringen.FindIndex(x => x.Id == verankering.Id);
+
+            if (index >= 0)
+                verankeringen[index] = verankering;
+            else
+                verankeringen.Add(verankering);
+        }
+
 
 
 
