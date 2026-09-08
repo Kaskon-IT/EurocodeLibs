@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CommonLibrary.Models
 {
+    [Obsolete("Use Formula instead.")]
     public class TexFormula : INotifyPropertyChanged
     {
         public string Titel { get; set; } = "";

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Eurocode.BetonConstructies</RootNamespace>
@@ -8,7 +8,7 @@
 	<!-- NuGet-package instellingen -->
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageId>Kaskon.Eurocode2.BetonConstructies</PackageId>
-	<Version>6.0.0</Version>
+	<Version>6.0.2</Version>
 	<Authors>Bart van der Linden</Authors>
 	<Company>Kaskon</Company>
 	<Description>Eurocode 2 Betonconstructies</Description>
@@ -19,7 +19,7 @@
 
 	<!-- Lokale map voor .nupkg -->
 	<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
-	<Copyright>Copyright © 2025 Kaskon</Copyright>
+	<Copyright>Copyright © 2026 Kaskon</Copyright>
 	<PackageTags>Kaskon;Blazor;FluentUI;Eurocode;EC2;Betonconstructies;Beton</PackageTags>
 	<IncludeSymbols>true</IncludeSymbols>
 	<SymbolPackageFormat>snupkg</SymbolPackageFormat>

@@ -50,8 +50,6 @@ namespace Eurocode.StaalConstructies
 
         public override EurocodeResultaat Check(InternalForces f, IProfiel p, IMateriaal m)
         {
-            double vRd = 0;
-
             // Controleer of het een staalsectie is
             //var steel = m as StaalContext ?? throw new NotSupportedException("Materiaal is geen staal");
             if (m is not StaalContext steel)
@@ -70,11 +68,15 @@ namespace Eurocode.StaalConstructies
             //var section = p as IStaalProfiel ?? throw new NotSupportedException("Profiel is geen staalprofiel");
 
 
-            if (section is ProfielIH profielIH)
+            double avz = section switch
             {
-                vRd = ShearResistance.VRd(profielIH.Avz, steel.Fy, steel.GammaM0);
-                Formule = "(6.17)";
-            }
+                CircularHollowSection circular => circular.Avz,
+                RectangularHollowSection hollow => hollow.Avz,
+                ProfielIH profielIH => profielIH.Avz,
+                _ => throw new NotSupportedException(
+                    $"Dwarskracht om de z-as is niet geïmplementeerd voor profieltype {section.GetType().Name}")
+            };
+            double vRd = ShearResistance.VRd(avz, steel.Fy, steel.GammaM0);
 
 
             return new EurocodeResultaat()
@@ -160,6 +162,178 @@ namespace Eurocode.StaalConstructies
         }
 
         
+    }
+
+    public static class TorsionResistance
+    {
+        public static double TauEd(double T, double It, double t)
+        {
+            return Math.Abs(T) * 1e6 * t / It; // kNm naar Nmm
+        }
+
+        public static double TauEdClosedSection(double T, double enclosedMedianArea, double t)
+        {
+            return Math.Abs(T) * 1e6 / (2 * enclosedMedianArea * t); // kNm naar Nmm
+        }
+
+        public static double TRd(double It, double t, double fy, double gammaM)
+        {
+            return It / t * fy / (Math.Sqrt(3) * gammaM) * 1e-6; // Nmm naar kNm
+        }
+
+        public static double TRdClosedSection(double enclosedMedianArea, double t, double fy, double gammaM)
+        {
+            return 2 * enclosedMedianArea * t * fy / (Math.Sqrt(3) * gammaM) * 1e-6; // Nmm naar kNm
+        }
+
+        public static double VPlTRdIH(double vPlRd, double tauEd, double fy, double gammaM)
+        {
+            double reduction = 1 - tauEd / (1.25 * fy / (Math.Sqrt(3) * gammaM));
+            return Math.Sqrt(Math.Max(0, reduction)) * vPlRd;
+        }
+
+        public static double VPlTRdChannel(double vPlRd, double tauEd, double fy, double gammaM)
+        {
+            double reduction = 1 - tauEd / (fy / (Math.Sqrt(3) * gammaM));
+            return Math.Sqrt(Math.Max(0, reduction)) * vPlRd;
+        }
+
+        public static double VPlTRdHollowSection(double vPlRd, double tauEd, double fy, double gammaM)
+        {
+            double stressRatio = tauEd / (fy / (Math.Sqrt(3) * gammaM));
+            return Math.Sqrt(Math.Max(0, 1 - Math.Pow(stressRatio, 2))) * vPlRd;
+        }
+    }
+
+    public class TorsionCheck : BaseEurocodeToets
+    {
+        public override string Positie { get; set; } = "";
+        public override string Titel => "Torsie";
+        public override string Norm => "EC3";
+        public override string Artikel { get; set; } = "6.2.7";
+        public override string Formule { get; set; } = "(6.23)";
+
+        public override bool IsRelevant(InternalForces f)
+            => Math.Abs(f.T) > 1e-6;
+
+        public override EurocodeResultaat Check(InternalForces f, IProfiel p, IMateriaal m)
+        {
+            var steel = m as StaalContext
+                ?? throw new InvalidOperationException("Materiaal is geen staal");
+            double tRd = p switch
+            {
+                CircularHollowSection circular => TorsionResistance.TRdClosedSection(
+                    Math.PI * Math.Pow(circular.Diameter - circular.T, 2) / 4,
+                    circular.T,
+                    steel.Fy,
+                    steel.GammaM0),
+                RectangularHollowSection hollow => TorsionResistance.TRdClosedSection(
+                    (hollow.H - hollow.T) * (hollow.B - hollow.T),
+                    hollow.T,
+                    steel.Fy,
+                    steel.GammaM0),
+                ProfielIH section => TorsionResistance.TRd(
+                    section.It,
+                    Math.Max(section.Tf, section.Tw),
+                    steel.Fy,
+                    steel.GammaM0),
+                _ => throw new NotSupportedException(
+                    $"Torsie is niet geïmplementeerd voor profieltype {p.GetType().Name}")
+            };
+
+            return new EurocodeResultaat
+            {
+                Positie = Positie,
+                Titel = Titel,
+                Norm = Norm,
+                Artikel = Artikel,
+                Formule = Formule,
+                Fy = steel.Fy,
+                Waarde = Math.Abs(f.T),
+                Forces = f,
+                Unit = "kNm",
+                Toelaatbaar = tRd,
+                Toelichting = "Saint-Venant-torsie; eventuele oorlogstorsie is niet beschouwd",
+            };
+        }
+    }
+
+    public class CombinedTorsionAndShearVzCheck : BaseEurocodeToets
+    {
+        public override string Positie { get; set; } = "";
+        public override string Titel => "Torsie en dwarskracht";
+        public override string Norm => "EC3";
+        public override string Artikel { get; set; } = "6.2.7";
+        public override string Formule { get; set; } = "(6.26)";
+
+        public override bool IsRelevant(InternalForces f)
+            => Math.Abs(f.T) > 1e-6 && Math.Abs(f.Vz) > 1e-6;
+
+        public override EurocodeResultaat Check(InternalForces f, IProfiel p, IMateriaal m)
+        {
+            var steel = m as StaalContext
+                ?? throw new InvalidOperationException("Materiaal is geen staal");
+            double tauEd;
+            double vPlTRd;
+
+            switch (p)
+            {
+                case CircularHollowSection circular:
+                    Formule = "(6.28)";
+                    tauEd = TorsionResistance.TauEdClosedSection(
+                        f.T,
+                        Math.PI * Math.Pow(circular.Diameter - circular.T, 2) / 4,
+                        circular.T);
+                    vPlTRd = TorsionResistance.VPlTRdHollowSection(
+                        ShearResistance.VRd(circular.Avz, steel.Fy, steel.GammaM0),
+                        tauEd,
+                        steel.Fy,
+                        steel.GammaM0);
+                    break;
+                case RectangularHollowSection hollow:
+                    Formule = "(6.28)";
+                    tauEd = TorsionResistance.TauEdClosedSection(
+                        f.T,
+                        (hollow.H - hollow.T) * (hollow.B - hollow.T),
+                        hollow.T);
+                    vPlTRd = TorsionResistance.VPlTRdHollowSection(
+                        ShearResistance.VRd(hollow.Avz, steel.Fy, steel.GammaM0),
+                        tauEd,
+                        steel.Fy,
+                        steel.GammaM0);
+                    break;
+                case ProfielIH section:
+                    Formule = "(6.26)";
+                    tauEd = TorsionResistance.TauEd(
+                        f.T,
+                        section.It,
+                        Math.Max(section.Tf, section.Tw));
+                    vPlTRd = TorsionResistance.VPlTRdIH(
+                        ShearResistance.VRd(section.Avz, steel.Fy, steel.GammaM0),
+                        tauEd,
+                        steel.Fy,
+                        steel.GammaM0);
+                    break;
+                default:
+                    throw new NotSupportedException(
+                        $"De combinatie van torsie en dwarskracht is niet geïmplementeerd voor profieltype {p.GetType().Name}");
+            }
+
+            return new EurocodeResultaat
+            {
+                Positie = Positie,
+                Titel = Titel,
+                Norm = Norm,
+                Artikel = Artikel,
+                Formule = Formule,
+                Fy = steel.Fy,
+                Waarde = Math.Abs(f.Vz),
+                Forces = f,
+                Unit = "kN",
+                Toelaatbaar = vPlTRd,
+                Toelichting = $"Gereduceerde dwarskrachtweerstand bij τt,Ed={tauEd:F2} N/mm²",
+            };
+        }
     }
 
 

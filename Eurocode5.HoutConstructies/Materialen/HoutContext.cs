@@ -50,7 +50,8 @@ namespace Eurocode.HoutConstructies
         public override string Naam => UserFriendlyName;
         public override double SoortelijkGewicht { get; set; } = 350;
         public override double E { get; set; } = 11000;
-        
+        public override double G { get; set; } = 6900;
+
 
         public FabricageType Fabricage { get; set; } = FabricageType.Gezaagd;
         public KlimaatKlasse KlimaatKlasse { get; set; } = KlimaatKlasse.Klasse2;
@@ -125,6 +126,7 @@ namespace Eurocode.HoutConstructies
                     Ft0k = 11;
                     Fc0k = 18;
                     E = 9000;
+                    G = 6000;
                     SoortelijkGewicht = 320;
                     PartieleFactor = 1.3;
                     break;
@@ -135,6 +137,7 @@ namespace Eurocode.HoutConstructies
                     Ft0k = 14;
                     Fc0k = 21;
                     E = 11000;
+                    G = 6900;
                     SoortelijkGewicht = 350;
                     PartieleFactor = 1.3;
                     break;
@@ -145,6 +148,7 @@ namespace Eurocode.HoutConstructies
                     Ft0k = 16;
                     Fc0k = 22;
                     E = 11500;
+                    G = 7200;
                     SoortelijkGewicht = 370;
                     PartieleFactor = 1.3;
                     break;
@@ -155,6 +159,7 @@ namespace Eurocode.HoutConstructies
                     Ft0k = 18;
                     Fc0k = 23;
                     E = 12000;
+                    G = 7500;
                     SoortelijkGewicht = 380;
                     PartieleFactor = 1.3;
                     break;
@@ -165,6 +170,7 @@ namespace Eurocode.HoutConstructies
                     Ft0k = 24;
                     Fc0k = 26;
                     E = 14000;
+                    G = 8500;
                     SoortelijkGewicht = 400;
                     PartieleFactor = 1.3;
                     break;
@@ -175,6 +181,7 @@ namespace Eurocode.HoutConstructies
                     Ft0k = 30;
                     Fc0k = 29;
                     E = 16000;
+                    G = 9500;
                     SoortelijkGewicht = 430;
                     PartieleFactor = 1.3;
                     break;
@@ -191,6 +198,7 @@ namespace Eurocode.HoutConstructies
                     Fvk = 3.5;
                     
                     E = 9500;
+                    G = 6500;
                     SoortelijkGewicht = 475;
                     PartieleFactor = 1.3;
                     break;
@@ -202,6 +210,7 @@ namespace Eurocode.HoutConstructies
                     Fvk = 4.0;
 
                     E = 10000;
+                    G = 6800;
                     SoortelijkGewicht = 485;
                     PartieleFactor = 1.3;
                     break;
@@ -212,6 +221,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 26;
                     Fvk = 4.0;
                     E = 10500;
+                    G = 7000;
                     SoortelijkGewicht = 510;
                     PartieleFactor = 1.3;
                     break;
@@ -222,6 +232,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 27;
                     Fvk = 4.0;
                     E = 11000;
+                    G = 7200;
                     SoortelijkGewicht = 530;
                     PartieleFactor = 1.3;
                     break;
@@ -235,6 +246,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 30;
                     Fvk = 5.0;
                     E = 13000;
+                    G = 8000;
                     SoortelijkGewicht = 550;
                     PartieleFactor = 1.3;
                     break;
@@ -247,6 +259,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 33;
                     Fvk = 6.0;
                     E = 14000;
+                    G = 9000;
                     SoortelijkGewicht = 620;
                     PartieleFactor = 1.3;
                     break;
@@ -260,6 +273,7 @@ namespace Eurocode.HoutConstructies
                     Fvk = 6.2;
 
                     E = 17000;
+                    G = 10000;
                     SoortelijkGewicht = 700;
                     PartieleFactor = 1.3;
                     break;
@@ -273,6 +287,7 @@ namespace Eurocode.HoutConstructies
                     Fvk = 7.0;
 
                     E = 20000;
+                    G = 11000;
                     SoortelijkGewicht = 800;
                     PartieleFactor = 1.3;
                     break;
@@ -285,6 +300,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 40;
                     Fvk = 7.0;
                     E = 24000;
+                    G = 12000;
                     SoortelijkGewicht = 900;
                     PartieleFactor = 1.3;
                     break;
@@ -301,6 +317,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 21;
                     Fvk = 3.5;
                     E = 8400;
+                    G = 6000;
                     SoortelijkGewicht = 340;
                     PartieleFactor = 1.25;
                     break;
@@ -312,6 +329,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 24;
                     Fvk = 3.5;
                     E = 11500;
+                    G = 6900;
                     SoortelijkGewicht = 385;
                     PartieleFactor = 1.25;
                     break;
@@ -322,6 +340,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 28;
                     Fvk = 3.5;
                     E = 12600;
+                    G = 7500;
                     SoortelijkGewicht = 425;
                     PartieleFactor = 1.25;
                     break;
@@ -332,6 +351,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 32;
                     Fvk = 4.0;
                     E = 14200;
+                    G = 8000;
                     SoortelijkGewicht = 440;
                     PartieleFactor = 1.25;
                     break;
@@ -342,6 +362,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 34;
                     Fvk = 4.0;
                     E = 14700;
+                    G = 8500;
                     SoortelijkGewicht = 450;
                     PartieleFactor = 1.25;
                     break;
@@ -356,6 +377,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 21;
                     Fvk = 3.5;
                     E = 10400;
+                    G = 6500;
                     SoortelijkGewicht = 355;
                     PartieleFactor = 1.25;
                     break;
@@ -366,6 +388,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 24;
                     Fvk = 3.5;
                     E = 11000;
+                    G = 6900;
                     SoortelijkGewicht = 365;
                     PartieleFactor = 1.25;
                     break;
@@ -376,6 +399,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 28;
                     Fvk = 3.5;
                     E = 12500;
+                    G = 7500;
                     SoortelijkGewicht = 390;
                     PartieleFactor = 1.25;
                     break;
@@ -386,6 +410,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 32;
                     Fvk = 4.0;
                     E = 13500;
+                    G = 8000;
                     SoortelijkGewicht = 400;
                     PartieleFactor = 1.25;
                     break;
@@ -396,6 +421,7 @@ namespace Eurocode.HoutConstructies
                     Fc0k = 34;
                     Fvk = 4.0;
                     E = 14700;
+                    G = 8500;
                     SoortelijkGewicht = 430;
                     PartieleFactor = 1.25;
                     break;
@@ -404,6 +430,7 @@ namespace Eurocode.HoutConstructies
                     // fallback
                     Fmk = 24;
                     E = 11000;
+                    G = 6900;
                     SoortelijkGewicht = 350;
                     PartieleFactor = 1.3;
                     break;

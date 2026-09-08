@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Eurocode.StaalConstructies</RootNamespace>
@@ -9,7 +9,7 @@
 	  <!-- NuGet-package instellingen -->
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageId>Kaskon.Eurocode3.StaalConstructies</PackageId>
-	  <Version>6.0.0</Version>
+	  <Version>6.0.5</Version>
 	  <Authors>Bart van der Linden</Authors>
 	  <Company>Kaskon</Company>
 	  <Description>Eurocode 3 Staalconstructies</Description>
@@ -18,7 +18,7 @@
 	  <PackageIcon>kaskon.png</PackageIcon>
 	  <!-- Lokale map voor .nupkg -->
 	  <PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
-	  <Copyright>Copyright © 2025 Kaskon</Copyright>
+	  <Copyright>Copyright © 2026 Kaskon</Copyright>
 	  <PackageTags>Kaskon;Blazor;FluentUI;Eurocode;EC3;Staalconstructies;Staal</PackageTags>
 	  <IncludeSymbols>true</IncludeSymbols>
 	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>

@@ -15,7 +15,7 @@ namespace CommonLibrary.Models
     {
         public abstract string Naam { get; }
 
-        private TInput _input;
+        private TInput _input = default!;
         public TInput Input
         {
             get => _input;

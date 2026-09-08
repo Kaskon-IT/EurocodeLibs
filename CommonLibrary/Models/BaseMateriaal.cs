@@ -17,9 +17,9 @@ namespace CommonLibrary.Models
         public virtual string UserFriendlyName { get; } = string.Empty;
 
 
-        
+
         public virtual double SoortelijkGewicht { get; set; }
-        public abstract string Eurocode { get;  }
+        public abstract string Eurocode { get; }
 
         public override bool BerekenEnValideer()
         {
@@ -37,14 +37,16 @@ namespace CommonLibrary.Models
         /// </summary>
         public virtual double PartieleFactor { get; set; } = 1.5; // Standaardwaard om delen door nul te voorkomen
 
-        public double GammaM => PartieleFactor; 
-        public virtual double GammaM0 { get; set; } = 1.0; 
-        public virtual double GammaM1 { get; set; } = 1.0; 
-        public virtual double GammaM2 { get;  set; } = 1.25;
+        public double GammaM => PartieleFactor;
+        public virtual double GammaM0 { get; set; } = 1.0;
+        public virtual double GammaM1 { get; set; } = 1.0;
+        public virtual double GammaM2 { get; set; } = 1.25;
 
 
         public virtual double E { get; set; }
+        public virtual double G { get; set; }
     }
+
 
     public enum MateriaalType { 
         Dummy, 

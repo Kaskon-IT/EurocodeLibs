@@ -22,7 +22,7 @@ namespace Eurocode.BetonConstructies
         public override string Naam => UserFriendlyName;
         public override string Eurocode => "EC2 - Betonconstructies";
         public override double E => Ecm;
-
+        public override double G => E / (2 * (1 + PoissonFactor));
 
         public BetonContext(int fck)
         {

@@ -7,8 +7,11 @@ namespace CommonLibrary.Modelling
     /// en een wapeningsgroep (<see cref="WapeningGroep"/>): één diameter en
     /// één of twee staafvormen.
     /// </summary>
-    public abstract class BaseWapening : ModelObject
+    public abstract class BaseWapeningGroep : ModelObject, IPartOwnedModelObject
     {
+        /// <summary>The physical part reinforced by this bar or reinforcement group.</summary>
+        public Guid? PartId { get; set; }
+
         /// <summary> Staafdiameter Ø [mm]; 1 diameter per staaf/groep. </summary>
         public double Diameter { get; set; }
         public double DiameterExterior => Diameter * 1.13; // DIN488 rib is 0.065×Ø

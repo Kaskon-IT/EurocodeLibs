@@ -70,8 +70,8 @@ namespace CommonLibrary
     public class Artikel
     {
         public EurocodeNormEnum Norm { get; set; }
-        public string Nummer { get; set; }
-        public string Omschrijving { get; set; }
+        public string Nummer { get; set; } = "";
+        public string Omschrijving { get; set; } = "";
 
 
 

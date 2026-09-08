@@ -14,7 +14,8 @@ namespace CommonLibrary.Interfaces
         string Naam { get; }
         string Eurocode { get; }
         double SoortelijkGewicht { get; }
-        double E { get; }
+        double E { get; } // Elasticiteitsmodulus
+        double G { get; } // Shear modulus
 
         // Partiele materiaalfactoren
         double GammaM { get; }

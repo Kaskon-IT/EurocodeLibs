@@ -71,13 +71,15 @@ namespace CommonLibrary.Models
         /// <summary>
         /// Doorsnede oppervlak mm²
         /// </summary>
-        public virtual double A { get; set; }
-        public virtual double Iy { get; set; }
-        public virtual double Iz { get; set; }
-        
+        public virtual double A { get; set; } // Doorsnede oppervlak mm²
+        public virtual double Iy { get; set; } // Traagheidsmoment mm⁴
+        public virtual double Iz { get; set; } // Traagheidsmoment mm⁴
+        public virtual double It { get; set; } // Torsie-inertiemoment mm⁴
 
 
-        
+
+
+
 
         /// <summary>
         /// Traagheidsstraal in sterke richting.

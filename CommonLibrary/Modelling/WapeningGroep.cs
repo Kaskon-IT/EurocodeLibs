@@ -9,7 +9,7 @@ namespace CommonLibrary.Modelling
     /// worden verdeeld volgens <see cref="Verdeling"/>.
     /// Geometrie zonder offsets (v1).
     /// </summary>
-    public class WapeningGroep : BaseWapening
+    public class WapeningGroep : BaseWapeningGroep
     {
         /// <summary>
         /// Te gebruiken voor bijvoorbeeld 'hs' voor haarspelden of 'bgl' voor beugels.

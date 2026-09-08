@@ -16,6 +16,7 @@ public sealed class DummyMateriaal : IMateriaal
 
     public double SoortelijkGewicht => 1.0; // 1 kg/m³
     public double E => 1;
+    public double G => 1;
 
     public double GammaM => 1.5;
 

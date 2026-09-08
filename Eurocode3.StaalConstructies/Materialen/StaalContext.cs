@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 
 namespace Eurocode.StaalConstructies
 {
-
-
-
     public class StaalContext : BaseMateriaal
     {
         public override MateriaalType Type => MateriaalType.Staal;
@@ -61,7 +58,7 @@ namespace Eurocode.StaalConstructies
         /// <summary>
         /// Glijdingsmodulus
         /// </summary>
-        public double G => E / (2 * (1+ _poisson));
+        public override double G => E / (2 * (1+ _poisson));
 
         /// <summary>
         /// De lineaire-thermische-uitzettingscoefficient

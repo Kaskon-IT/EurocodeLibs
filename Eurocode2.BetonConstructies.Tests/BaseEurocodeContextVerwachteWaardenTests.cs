@@ -63,7 +63,7 @@ namespace Eurocode2.BetonConstructies.Tests
             }
         }
 
-        private static Assembly[] GetEurocodeAssemblies()
+        private static System.Reflection.Assembly[] GetEurocodeAssemblies()
         {
             // Alle geladen assemblies waarvan de naam "Eurocode" bevat
             var loaded = AppDomain.CurrentDomain.GetAssemblies()

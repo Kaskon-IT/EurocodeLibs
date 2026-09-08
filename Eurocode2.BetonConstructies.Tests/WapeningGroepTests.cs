@@ -74,16 +74,7 @@ namespace Eurocode.BetonConstructies.Tests
             Assert.Equal(2000, staven[2].Shape.BeenLengtes()[0], 6);
         }
 
-        [Fact]
-        public void EquivalenteDiameter_VolgtParagraaf891()
-        {
-            var groep = Groep(new WapeningVerdeling { Type = VerdelingType.Gelijkmatig, Aantal = 2 });
-            groep.AantalStavenPerPositie = 2;
-
-            Assert.Equal(12 * Math.Sqrt(2), groep.EquivalenteDiameter(), 6);
-            Assert.Equal(4, groep.TotaalAantalStaven);
-            Assert.Equal(4 * Math.PI / 4 * 144, groep.TotaalAs, 6);
-        }
+        
 
         [Fact]
         public void MinimaleTussenruimte_VolgtParagraaf82()

@@ -5,11 +5,12 @@
         string Id { get; set; }
         string Naam { get; set; }
 
-        double Iy { get; }
-        double Iz { get; }
+        double Iy { get; } // Traagheidsmoment mm⁴
+        double Iz { get; } // Traagheidsmoment mm⁴
+        double It { get; } // Torsie-inertiemoment mm⁴
 
         //double KgPerM { get; }
-        double A { get; }
+        double A { get; } // Doorsnede oppervlak mm²
 
         string SvgPath { get; set; }
 
