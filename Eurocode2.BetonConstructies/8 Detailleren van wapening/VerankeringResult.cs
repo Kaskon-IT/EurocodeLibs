@@ -3,6 +3,8 @@ namespace Eurocode.BetonConstructies
     using CommonLibrary.Extensions;
     using CommonLibrary.Models;
     using ExportFactory.Shared;
+    using Microsoft.AspNetCore.Routing;
+    using System.Reflection.Metadata.Ecma335;
 
     /// <summary>
     /// EC2 §8      Detaillering van wapening
@@ -83,6 +85,141 @@ namespace Eurocode.BetonConstructies
 
 
         public double AfstandTotFbt { get; set; }
+
+        public string MinimaleRechteLengteTekst
+        {
+            get
+            {
+                switch (StaafVorm)
+                {
+                    case VerankeringStaafVorm.Recht: return $"{Verankeringslengte:0}";
+                    case VerankeringStaafVorm.Gebogen: 
+                        var minimaleRechteLengte = MinimaleRechteLengteTotOmbuiging(Ab, ToegepasteBuigdoornDiameter, Diameter, RekenwaardeStaafspanning, Fbd, Fcd);
+                        return $"{minimaleRechteLengte:0}";
+                    default: return "";
+                }
+            }
+        }
+
+        public string KleinsteMogelijkeGeometrieTekst
+        {
+            get
+            {
+                var geometrie = KleinstMogelijkeInbouwAfstand(Ab, Diameter, RekenwaardeStaafspanning, Fbd, Fcd, MinimaleBuigdoornDiamStaal);
+                return $"De kleinst mogelijke inbouwafstand is {geometrie.InbouwAfstand:0} mm, " +
+                    $"met een recht deel van {geometrie.RechteLengte:0} mm " +
+                    $"en $Ø_m = {geometrie.BuigdoornDiameter:0} mm$ " +
+                    $"en $r_{{out}}={geometrie.BuitenStraal:0} mm$";
+            }
+
+        }
+
+        public string GeometrieTekst
+        {
+            get
+            {
+                //var geo1 = KleinstMogelijkeInbouwAfstand(Ab, Diameter, RekenwaardeStaafspanning, Fbd, Fcd, MinimaleBuigdoornDiamStaal);
+                var a1Min = MinimaleRechteLengteTotOmbuiging(Ab, ToegepasteBuigdoornDiameter, Diameter, RekenwaardeStaafspanning, Fbd,Fcd);
+                var a1 = AfstandTotFbt;
+                var a2 = ToegepasteBuigdoornDiameter / 2.0 + Diameter;
+                var a = a1 + a2;
+                return $"De aanwezig rechte lengte is {a1:0} mm,  beenlengte is {a:0} mm";
+
+
+            }
+        }
+
+
+            
+
+
+
+        private double MinimaleLengteTotOmbuigingBAK
+        {
+            get
+            {
+                var phi = Diameter;                          // mm
+                var phiDoorn = ToegepasteBuigdoornDiameter; // mm
+                var spanning = RekenwaardeStaafspanning;     // N/mm²
+                var fcd = Fcd;                               // N/mm²
+                var dsnOpp = WapeningHelper.GetDsnOpp(1, phi); // mm²
+                var ab = Ab;                                 // mm
+                var phiDoornMinStaal = MinimaleBuigdoornDiamStaal; // mm
+                var lbd = Verankeringslengte;                // mm
+
+                // Staafkracht aan het begin van de verankering
+                //
+                // F_bt = sigma_sd * A_s
+                var fbt = spanning * dsnOpp; // N
+
+                if (fbt <= 0.0)
+                    return 0.0;
+
+                // ---------------------------------------------------------
+                // Controle minimale buigdoorn vanuit het staal
+                // EC2 tabel 8.1N
+                // ---------------------------------------------------------
+
+                if (phiDoorn < phiDoornMinStaal)
+                {
+                    // De toegepaste doorn voldoet sowieso niet.
+                    // Meer rechte verankeringslengte lost dit niet op.
+                    return double.PositiveInfinity;
+                }
+
+                // ---------------------------------------------------------
+                // EC2 vgl. (8.1)
+                //
+                // phi_m,min =
+                //     (F_bt / f_cd) *
+                //     (1/a_b + 1/(2*phi))
+                //
+                // Herschrijven naar de maximaal toelaatbare staafkracht:
+                //
+                // F_bt,max =
+                //     phi_m * f_cd /
+                //     (1/a_b + 1/(2*phi))
+                // ---------------------------------------------------------
+
+                if (ab <= 0.0)
+                    return double.PositiveInfinity;
+
+                var fbtMax =
+                    phiDoorn * fcd /
+                    (
+                        1.0 / ab +
+                        1.0 / (2.0 * phi)
+                    ); // N
+
+                // De volledige staafkracht mag al bij de bocht aanwezig zijn.
+                // Er is vanuit vgl. (8.1) geen extra rechte lengte nodig.
+                if (fbt <= fbtMax)
+                    return 0.0;
+
+                // ---------------------------------------------------------
+                // Staafkracht neemt lineair af over de verankeringslengte.
+                //
+                // Bij een ontwikkelde lengte x vanaf het begin:
+                //
+                // F_bt(x) = F_bt * (1 - x/l_bd)
+                //
+                // We zoeken x waarvoor:
+                //
+                // F_bt(x) = F_bt,max
+                //
+                // F_bt,max = F_bt * (1 - x/l_bd)
+                //
+                // x = l_bd * (1 - F_bt,max/F_bt)
+                // ---------------------------------------------------------
+
+                var x = lbd * (1.0 - fbtMax / fbt);
+
+                return Math.Max(0.0, x);
+            }
+        }
+
+
+
         public double Fbt { get; set; }
         public double FactorResterendeLengte => Math.Max(0, 1 - (AfstandTotFbt / Verankeringslengte));
         public Formula FactorResterendeLengteFormula => new()
@@ -105,6 +242,7 @@ namespace Eurocode.BetonConstructies
         public Formula CdFormula => new() { StaticValue = @$"c_d = {Cd:0} mm" };
 
         public double Fcd { get; set; }
+        public double Fyd { get; set; }
 
         /// <summary> TeX-formule voor <i>f</i><sub>bd</sub> (8.2). </summary>
         public Formula FbdFormula => new("(8.2)",
@@ -201,8 +339,27 @@ namespace Eurocode.BetonConstructies
             ToegepasteBuigdoornDiameter > 0 ? MinimaleBuigdoornDiameter / ToegepasteBuigdoornDiameter : double.PositiveInfinity;
         public bool BuigdoornOk => IsUnityCheckBuigdoornUitgevoerd && UnityCheckBuigdoorn <= 1.001;
 
-        private double ToegepasteBuigstraalInner => ToegepasteBuigdoornDiameter / 2.0;
+        private double ToegepasteBuigstraalInner => ToegepasteBuigdoornDiameter / 2.0; 
         private double ToepgepasteBuigstraalHart => (ToegepasteBuigdoornDiameter + Diameter) / 2.0;
+
+        private bool StaalspanningOk => RekenwaardeStaafspanning <= Fyd;
+
+        public bool IsOk
+        {
+            get
+            {
+                if (!StaalspanningOk)
+                    return false;
+                if (IsUnityCheckVerankeringslengteUitgevoerd && !IsVoldoende)
+                    return false;
+                if (IsUnityCheckBuigdoornUitgevoerd && !BuigdoornOk)
+                    return false;
+                return true;
+            }
+        }
+
+
+
 
 
         public Formula ToegepasteBuigdoornFormula{
@@ -213,6 +370,360 @@ namespace Eurocode.BetonConstructies
             }
         }
 
+
+        // -------
+        // Helpers
+        // -------
+
+        /// <summary>
+        /// Berekent de resterende staafkracht F_bt ter plaatse van het begin
+        /// van de ombuiging, na verankering over het rechte staafdeel.
+        /// </summary>
+       
+
+        /// <summary>
+        /// Bepaalt de minimaal benodigde afstand a_b bij een gegeven
+        /// rechte lengte vóór de ombuiging en een gegeven buigdoorndiameter.
+        /// </summary>
+        public static double MinimaleAfstandAb(
+            double rechteLengte,
+            double buigdoornDiameter,
+            double diameter,
+            double staafSpanning,
+            double fbd,
+            double fcd)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(rechteLengte);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(buigdoornDiameter);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(diameter);
+            ArgumentOutOfRangeException.ThrowIfNegative(staafSpanning);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(fbd);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(fcd);
+
+            var fbt = BerekenFbt(
+                rechteLengte,
+                diameter,
+                staafSpanning,
+                fbd);
+
+            // De volledige staafkracht is reeds in het rechte
+            // verankeringsdeel overgedragen.
+            if (fbt <= 0.0)
+                return 0.0;
+
+            // EC2 (8.1):
+            //
+            // $$ \phi_m =
+            // \frac{F_{bt}}{f_{cd}}
+            // \left(
+            // \frac{1}{a_b}
+            // +
+            // \frac{1}{2\phi}
+            // \right) $$
+            //
+            // Oplossen naar a_b:
+            //
+            // $$ a_b =
+            // \frac{1}{
+            // \frac{\phi_m f_{cd}}{F_{bt}}
+            // -
+            // \frac{1}{2\phi}
+            // } $$
+
+            var inverseAb =
+                buigdoornDiameter * fcd / fbt
+                - 1.0 / (2.0 * diameter);
+
+            if (inverseAb <= 0.0)
+                return double.PositiveInfinity;
+
+            return 1.0 / inverseAb;
+        }
+
+
+
+        
+
+
+        /// <summary>
+        /// Bepaalt de minimaal benodigde rechte lengte vóór de ombuiging
+        /// bij een gegeven a_b en buigdoorndiameter.
+        /// </summary>
+        public static double MinimaleRechteLengteTotOmbuiging(
+            double ab,
+            double buigdoornDiameter,
+            double diameter,
+            double staafSpanning,
+            double fbd,
+            double fcd)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(ab);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(buigdoornDiameter);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(diameter);
+            ArgumentOutOfRangeException.ThrowIfNegative(staafSpanning);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(fbd);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(fcd);
+
+            // Staafoppervlakte:
+            //
+            // $$ A_s = \frac{\pi\phi^2}{4} $$
+            var asStaaf =
+                Math.PI * diameter * diameter / 4.0;
+
+            // Initiële staafkracht:
+            //
+            // $$ F_{sd} = \sigma_{sd} A_s $$
+            var fsd =
+                staafSpanning * asStaaf;
+
+            if (fsd <= 0.0)
+                return 0.0;
+
+            // Uit EC2 (8.1) volgt de maximaal toelaatbare
+            // staafkracht aan het begin van de ombuiging:
+            //
+            // $$ F_{bt,max} =
+            // \frac{
+            // \phi_m f_{cd}
+            // }{
+            // \frac{1}{a_b} +
+            // \frac{1}{2\phi}
+            // } $$
+
+            var fbtMax =
+                buigdoornDiameter * fcd /
+                (
+                    1.0 / ab +
+                    1.0 / (2.0 * diameter)
+                );
+
+            // De rechte verankering moet het verschil opnemen:
+            //
+            // $$ \Delta F =
+            // \max(0,F_{sd}-F_{bt,max}) $$
+            var deltaF =
+                Math.Max(
+                    0.0,
+                    fsd - fbtMax);
+
+            // $$ \Delta F =
+            // \pi\phi\,l_{recht}\,f_{bd} $$
+            //
+            // zodat:
+            //
+            // $$ l_{recht,min} =
+            // \frac{\Delta F}
+            // {\pi\phi f_{bd}} $$
+
+            return deltaF /
+                   (Math.PI * diameter * fbd);
+        }
+
+
+        private static double BerekenFsd(
+    double diameter,
+    double staafSpanning)
+        {
+            // $$ F_{sd} =
+            // \sigma_{sd}\frac{\pi\phi^2}{4} $$
+            return staafSpanning *
+                   Math.PI *
+                   diameter *
+                   diameter / 4.0;
+        }
+
+        private static double BerekenFbt(
+            double rechteLengte,
+            double diameter,
+            double staafSpanning,
+            double fbd)
+        {
+            var fsd =
+                BerekenFsd(diameter, staafSpanning);
+
+            // $$ F_{bt} =
+            // \max(
+            // 0,\,
+            // F_{sd} -
+            // \pi\phi l_{recht}f_{bd}
+            // ) $$
+            return Math.Max(
+                0.0,
+                fsd -
+                Math.PI *
+                diameter *
+                rechteLengte *
+                fbd);
+        }
+
+        private static double BerekenFbtMax(
+            double ab,
+            double buigdoornDiameter,
+            double diameter,
+            double fcd)
+        {
+            // $$ F_{bt,max} =
+            // \frac{\phi_m f_{cd}}
+            // {\frac{1}{a_b}+\frac{1}{2\phi}} $$
+
+            return buigdoornDiameter * fcd /
+                   (
+                       1.0 / ab +
+                       1.0 / (2.0 * diameter)
+                   );
+        }
+
+        
+
+
+        public sealed record InbouwAfstandResult(
+            double InbouwAfstand,
+            double RechteLengte,
+            double BuigdoornDiameter,
+            double BuitenStraal);
+
+        /// <summary>
+        /// Todo: geef juiste geometrie door. + aanvullen met advies met passende buigdoorn of advies voor gebruik kleinere diameter of verlaag de staalspanning.
+        /// </summary>
+        // Ik denk een extension method maken. Voor 
+
+        
+
+        /// <summary>
+        /// Bepaalt de kleinst mogelijke fysieke inbouwafstand van een
+        /// omgebogen staaf.
+        ///
+        /// De afstand wordt gemeten vanaf het begin van het rechte deel
+        /// tot de buitenzijde van de 90° ombuiging.
+        ///
+        /// $$
+        /// l_{inbouw}
+        /// =
+        /// l_{recht}
+        /// +
+        /// r_{out}
+        /// $$
+        ///
+        /// met:
+        ///
+        /// $$
+        /// r_{out}
+        /// =
+        /// \frac{\phi_m}{2} + \phi
+        /// $$
+        /// </summary>
+        public static InbouwAfstandResult KleinstMogelijkeInbouwAfstand(
+            double ab,
+            double diameter,
+            double staafSpanning,
+            double fbd,
+            double fcd,
+            double minimaleBuigdoornDiameterStaal)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(ab);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(diameter);
+            ArgumentOutOfRangeException.ThrowIfNegative(staafSpanning);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(fbd);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(fcd);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(
+                minimaleBuigdoornDiameterStaal);
+
+            double BerekenInbouwAfstand(
+                double buigdoornDiameter,
+                out double rechteLengte,
+                out double buitenStraal)
+            {
+                rechteLengte =
+                    MinimaleRechteLengteTotOmbuiging(
+                        ab,
+                        buigdoornDiameter,
+                        diameter,
+                        staafSpanning,
+                        fbd,
+                        fcd);
+
+                // Buitenstraal van de gebogen staaf:
+                //
+                // $$ r_{out} =
+                // \frac{\phi_m}{2} + \phi $$
+                buitenStraal =
+                    buigdoornDiameter / 2.0 +
+                    diameter;
+
+                // Fysieke inbouwafstand:
+                //
+                // $$ l_{inbouw} =
+                // l_{recht} + r_{out} $$
+                return rechteLengte + buitenStraal;
+            }
+
+            var phiMMin =
+                minimaleBuigdoornDiameterStaal;
+
+            // Buigdoorn waarbij geen recht verankeringsdeel
+            // vóór de ombuiging meer nodig is.
+            //
+            // $$ F_{sd} =
+            // \sigma_{sd}\frac{\pi\phi^2}{4} $$
+            var fsd =
+                staafSpanning *
+                Math.PI *
+                diameter *
+                diameter / 4.0;
+
+            // Uit EC2 (8.1), met F_bt = F_sd:
+            //
+            // $$ \phi_{m,0} =
+            // \frac{F_{sd}}{f_{cd}}
+            // \left(
+            // \frac{1}{a_b}
+            // +
+            // \frac{1}{2\phi}
+            // \right) $$
+            var phiMGeenRechtDeel =
+                fsd / fcd *
+                (
+                    1.0 / ab +
+                    1.0 / (2.0 * diameter)
+                );
+
+            // Het minimum ligt binnen deze stuk-lineaire functie
+            // bij één van deze twee overgangspunten.
+            var phiM1 =
+                phiMMin;
+
+            var phiM2 =
+                Math.Max(
+                    phiMMin,
+                    phiMGeenRechtDeel);
+
+            var afstand1 =
+                BerekenInbouwAfstand(
+                    phiM1,
+                    out var rechteLengte1,
+                    out var rOut1);
+
+            var afstand2 =
+                BerekenInbouwAfstand(
+                    phiM2,
+                    out var rechteLengte2,
+                    out var rOut2);
+
+            if (afstand1 <= afstand2)
+            {
+                return new InbouwAfstandResult(
+                    InbouwAfstand: afstand1,
+                    RechteLengte: rechteLengte1,
+                    BuigdoornDiameter: phiM1,
+                    BuitenStraal: rOut1);
+            }
+
+            return new InbouwAfstandResult(
+                InbouwAfstand: afstand2,
+                RechteLengte: rechteLengte2,
+                BuigdoornDiameter: phiM2,
+                BuitenStraal: rOut2);
+        }
 
     }
 }

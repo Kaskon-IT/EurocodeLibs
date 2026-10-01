@@ -47,7 +47,7 @@ namespace Eurocode.BetonConstructies
         private void BouwWapening(Model model)
         {
             // ...
-            VulWapening(model, _input, _result);
+            //VulWapening(model, _input, _result);
 
 
         }
@@ -55,13 +55,13 @@ namespace Eurocode.BetonConstructies
 
         public static void VulWapening(Model model, J3ConsoleInput i, J3ConsoleResult r)
         {
-            Console.WriteLine("[VulWapening] 🔥" + model.Objects.Count);
-            model.Add(BouwVerticaleHaarspelden(i, r));
-            Console.WriteLine("[VulWapening] 🍂" + model.Objects.Count);
-            foreach (var rbg in model.GetObjects<WapeningGroep>())
-            {
-                Console.WriteLine($"rbg:{rbg.DisplayText}");
-            }
+            //Console.WriteLine("[VulWapening] 🔥" + model.Objects.Count);
+            //model.Add(BouwVerticaleHaarspelden(i, r));
+            //Console.WriteLine("[VulWapening] 🍂" + model.Objects.Count);
+            //foreach (var rbg in model.GetObjects<WapeningGroep>())
+            //{
+            //    Console.WriteLine($"rbg:{rbg.DisplayText}");
+            //}
 
         }
 
@@ -117,7 +117,7 @@ namespace Eurocode.BetonConstructies
         public static WapeningGroep BouwVerticaleHaarspelden(J3ConsoleInput i, J3ConsoleResult r)
         {
             var groep = i.WapVerticaleHaarspelden;
-            groep.DisplayName = "testDisplayName";
+            groep.DisplayName = $"{groep.TotaalAantalStaven}{groep.Prefix}Ø{groep.Diameter}";
             
             //var hspPlat = i.WapHorizontaleHaarspelden;
             var toonTaper = i.AfschuiningOnderzijde && !r.VerticaleBeugelsNodig;
@@ -139,6 +139,11 @@ namespace Eurocode.BetonConstructies
             var Bw = i.KolomDikte;
             var dBgl = i.WapBglsVer.Diameter;
             var phi = groep.Diameter;
+
+            
+            var di = i.HoofdstaafBuigdoornDiameterFactor > 0 ? i.HoofdstaafBuigdoornDiameterFactor * phi : r.BuigdoorMain;
+            var ri = di / 2;
+
             var bendR = i.HoofdstaafBuigdoornDiameterFactor > 0
                 ? (i.HoofdstaafBuigdoornDiameterFactor * phi + phi) / 2.0
                 : (r.BuigdoorMain + phi) / 2.0;
@@ -157,8 +162,9 @@ namespace Eurocode.BetonConstructies
 
             var afstandTotFbt = a;
 
-            
-            
+            var afstandTotFbtConsole = xTip - bendR -  xAnchorRight;
+
+
             //var ctxPhi = r.WapKolomMain.GrootsteDiameter;
 
             var inputVerankering = new VerankeringslengteInput()
@@ -169,14 +175,17 @@ namespace Eurocode.BetonConstructies
                 StaafType = VerankeringStaafType.Trekstaaf,
                 StaafVorm = VerankeringStaafVorm.Gebogen,
                 Diameter = groep.Diameter,
-                GoedeAanhechting = false,
+                GoedeAanhechting = true,
                 Beton = new BetonContext(r.Fck),
-                ToegepasteBuigdoornDiameter = groep.BuigdoornDiameter()
+                ToegepasteBuigdoornDiameter = groep.BuigdoornDiameter(),
+                
             };
 
-            var resultVerankering = VerankeringslengteCalculator.Bereken(inputVerankering);
-            resultVerankering.Id = "verankering1";
-            resultVerankering.Naam = "Verankering trekband (sg1)";
+            var res1 = VerankeringslengteCalculator.Bereken(inputVerankering);
+            res1.Id = "verankering1";
+            res1.Naam = "in kolom";
+
+            r.SetVerankering(groep, res1);
 
             // wat is de benodigde lbd?
             if (groep.Buigstralen != null)
@@ -184,46 +193,17 @@ namespace Eurocode.BetonConstructies
                 bendR = groep.Buigstralen.FirstOrDefault();
             }
             
-            var lbd = resultVerankering.Verankeringslengte;
+            var lbd = res1.Verankeringslengte;
 
 
             var upReq = lbd - a - b + bendR;
             var up = Math.Max(5.0 * phi + bendR, upReq);
 
-            bool ombuigen = upReq > 0;
-            if (!ombuigen)
-            {
-                inputVerankering.StaafVorm = VerankeringStaafVorm.Recht;
-                resultVerankering = VerankeringslengteCalculator.Bereken(inputVerankering);
-
-                lbd = resultVerankering.Verankeringslengte;
-                left = xAnchorLeft - lbd;
-            }
-
-            // geef de verankering terug aan het resultaat (builder → toets)
-            var verankeringKolomzijde = WapeningHelper.GetVerankeringResult(
-                ab,
-                fbt,
-                groep.Diameter,
-                (int)i.Fck,
-                benutting
-                );
-
-            verankeringKolomzijde.Id = $"verankering-{groep.Prefix}-kolom";
-            verankeringKolomzijde.Naam = "Verankering kolomzijde";
-
-            r.SetVerankering(groep, resultVerankering);
-            
-
-
-            
-            //r.VerankeringenPerGroep[groep] = resultVerankering;
+           
 
             var c1 = new Punt3D(left, yTop + up, 0);   // vrij uiteinde onderaan de opgaande tak
             var c2 = new Punt3D(left, yTop, 0);        // bovenhoek links (90°)
             var c3 = new Punt3D(xTip, yTop, 0);        // bovenhoek rechts (90°)
-
-
 
 
             List<Punt3D> punten;
@@ -260,15 +240,17 @@ namespace Eurocode.BetonConstructies
             groep.VerdeelEind = new Punt3D(0, 0, -halfDepth);
             groep.Verdeling.OffsetStart = offStartEnd;
             groep.Verdeling.OffsetEind = offStartEnd;
+            groep.Buigstralen = [ri]; // 29-9-2026
+
 
 
             // verankering console zijde
             inputVerankering.StaafVorm = VerankeringStaafVorm.Gebogen;
-            inputVerankering.AfstandTotFbt = 100;
-            inputVerankering.Alpha5 = 0.7;
+            inputVerankering.AfstandTotFbt = afstandTotFbtConsole;
+            //inputVerankering.Alpha5 = 0.7;
 
             var vResConsole = VerankeringslengteCalculator.Bereken(inputVerankering);
-            vResConsole.Naam = "Verankering console zijde";
+            vResConsole.Naam = "in console";
             vResConsole.Id = Guid.NewGuid().ToString();
             r.SetVerankering(groep, vResConsole);
 
@@ -289,18 +271,21 @@ namespace Eurocode.BetonConstructies
         public static WapeningGroep BouwHorizontaleHaarspelden(J3ConsoleInput i, J3ConsoleResult r)
         {
             var groep = i.WapHorizontaleHaarspelden;
+            groep.DisplayName = $"{groep.TotaalAantalStaven}{groep.Prefix}Ø{groep.Diameter}";
             var lbd = r.VerankeringMain.Verankeringslengte;
 
-            
 
-            var xLinksBenodigd = -r.X1 / 2.0 - lbd;
-            Console.WriteLine($"hor. haarspeld xL,req = {xLinksBenodigd:0}");
 
+            //var xLinksBenodigd = -r.X1 / 2.0 - lbd;
+            //Console.WriteLine($"hor. haarspeld xL,req = {xLinksBenodigd:0}");
+            var di = i.Main2BuigdoornDiameterFactor > 0 ? i.Main2BuigdoornDiameterFactor * groep.Diameter : 7 * groep.Diameter;
+            var ri = di / 2;
 
             var c = i.Dekking;
             var dBglHor = i.WapBglsHor.Diameter;
             var dBglVer = i.WapBglsVer.Diameter;
             var phi = groep.Diameter;
+
 
             var L = i.Lc;
             var Bw = i.KolomDikte;
@@ -310,9 +295,9 @@ namespace Eurocode.BetonConstructies
             var zAchter = -B / 2.0 + c + dBglHor + dBglVer + phi/2.0;
 
             var xLinksUiterste = -Bw + c + dBglHor + groep.Diameter / 2.0;
-            var xLinks = Math.Max(xLinksUiterste, xLinksBenodigd);
+            var xLinks = xLinksUiterste;
 
-            bool ombuigingLinks = xLinksBenodigd < xLinksUiterste;
+            bool ombuigingLinks = true;
 
             var xTip = L - c - groep.Diameter / 2.0;
 
@@ -344,6 +329,7 @@ namespace Eurocode.BetonConstructies
             }
 
 
+
             groep.Shapes = [new StaafShape { Punten = punten, Buigstralen = Buigstralen(groep, phi * 2.5) }];
 
             // Eén positie: verdeellijn is richting-only.
@@ -351,6 +337,7 @@ namespace Eurocode.BetonConstructies
             groep.VerdeelEind = new Punt3D(0, 100, 0);
             groep.Verdeling.Type = VerdelingType.ExacteHartOpHart;
             groep.Verdeling.HartOpHartAfstanden = [20];
+            groep.Buigstralen = [ri];
             //groep.Buigstralen = [55]; // fixed
             //groep.Verdeling = new WapeningVerdeling { Type = VerdelingType.Gelijkmatig };
 
@@ -377,15 +364,15 @@ namespace Eurocode.BetonConstructies
 
             r.SetVerankering(groep, VerankeringslengteCalculator.Bereken(vi1));
 
-            VerankeringslengteInput vi2 = new()
-            {
-                AfstandTotFbt = 100,
-                Benuttingsgraad = 1.0,
-                Beton = new((int)i.Fck),
-                
-            };
 
-            r.SetVerankering(groep, VerankeringslengteCalculator.Bereken(vi2));
+            // pas aan voor rechts
+            vi1.AfstandTotFbt = 80;
+            vi1.Benuttingsgraad = 0.8;
+            vi1.Ab = 40;
+
+                       
+
+            r.SetVerankering(groep, VerankeringslengteCalculator.Bereken(vi1));
 
 
             return groep;

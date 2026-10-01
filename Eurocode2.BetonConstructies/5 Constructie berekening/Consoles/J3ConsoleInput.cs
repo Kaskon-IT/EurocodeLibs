@@ -317,6 +317,13 @@
             set => SetProperty(ref _hoofdstaafBuigdoornDiameterFactor, value);
         }
 
+        private double _main2BuigdoornDiameterFactor = 10;
+        public double Main2BuigdoornDiameterFactor
+        {
+            get => _main2BuigdoornDiameterFactor;
+            set => SetProperty(ref _main2BuigdoornDiameterFactor, value);
+        }
+
         /// <summary>
         /// Gebruikerskeuze: verankeringsstaaf (rechte staaf + haarspeld) toepassen.
         /// Voorheen berekend (BuigdoorMain &lt; minimale buigdoorndiameter); nu invoer.

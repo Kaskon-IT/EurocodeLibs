@@ -468,19 +468,78 @@ $$
 Schematisering met CCC-knoop (1) in de kolom aan de onderzijde van de console en een CCT-knoop (2) 
 boven in de console ter hoogte van de trekband.
 
-| Invoer | Waarde | |
-|---|---|---:|
-| *F*~Ed~  | {N(i.FEd, "0 kN")} | Verticale belasting |
-| *H*~Ed~  | {N(i.HEd, "0 kN")} | Horizontale belasting |
-| *a*~c~   | {N(i.Ac, "0 mm")} | Afstand belasting tot betonrand |
-| *B*~c~   | {N(i.Bc, "0 mm")} | Breedte console |
-| *H*~c~   | {N(i.Hc, "0 mm")} | Hoogte console |
-| *c*      | {N(i.Dekking, "0 mm")} | Dekking |
-| *Ø*~main~| {N(i.HoofdstaafDiameter, "0 mm")} | Diameter trekbandwapening |
-| *f*~ck~  | {N(i.Fck, "0 N/mm²")} | Druksterkte beton |
-| *f*~yk~  | {N(i.Fyk, "0 N/mm²")} | Trekstrekte betonstaal |
+### Invoer
+| Symbool        | Waarde                    | Toelichting |
+|---------------|-------------------------- |---:|
+| $F_{{Ed}}$    | {N(i.FEd, "0 kN")} | Verticale belasting |
+| $H_{{Ed}}$    | {N(i.HEd, "0 kN")} | Horizontale belasting |
+| $a_{{c}}$     | {N(i.Ac, "0 mm")}  | Afstand belasting tot betonrand |
+| $a_1$         | {N(r.LoadPlateLength, "0 mm")} | Afmeting oplegmateriaal |
+| $b_1$         | {N(r.LoadPlateWidth, "0 mm")} | Afmeting oplegmateriaal |
+| $b_{{c}}$     | {N(i.Bc, "0 mm")} | Breedte console |
+| $h_{{c}}$     | {N(i.Hc, "0 mm")} | Hoogte console |
+| $c$           | {N(i.Dekking, "0 mm")} | Dekking |
+| $d'$          | {N(r.D1, "0 mm")} | Randafstand trekband |
+| $Ø_{{main}}$  | {N(i.HoofdstaafDiameter, "0 mm")} | Diameter trekbandwapening |
+| $Ø_{{main,hs}}$ | {N(i.HoofdstaafDiameter2, "0 mm")} | Diameter trekbandwapening (platte haarspelden) |
+| $Ø_{{bgl}}$ | {N(i.BeugelDiameter, "0 mm")} | Diameter beugels |
+| $f_{{ck}}$   | {N(i.Fck, "0 N/mm²")} | Druksterkte beton |
+| $f_{{yk}}$   | {N(i.Fyk, "0 N/mm²")} | Trekstrekte betonstaal |
 
-")
+### Berekende waarden
+| Symbool                   | Waarde                            | Toelichting |
+|---------------------------|-----------------------------------|------------:|
+|$a$                        | {N(r.A, "0 mm")} | Horizontale arm |
+|$z$                        | {N(r.Z, "0 mm")} | Hefboomsarm |
+|$d$                        | {N(r.D, "0 mm")} | Nuttige hoogte |
+|$tan\theta$                | {N(r.TanTheta, "0.00")} | Tangens van de hoek betondrukdiagonaal |
+|$\theta$                   | {N(r.ThetaDeg, "0")}° | Hoek betondrukdiagonaal |
+|$F_t$                      | {N(r.Ft, "0")} kN | Trekbandkracht |
+|$F_c$                      | {N(r.Fc, "0")} kN | Drukstaafkracht |
+|$F_{{wd}}$                 | {N(r.Fwd, "0")} kN | Dwarskracht drukstaaf |
+|$A_{{s,req}}$              | {N(r.AsMain, "0")} mm² | Benodigd trekband|
+|$A_{{s,prov}}$             | {N(r.AsMainProv, "0")} mm² | Toegepast trekband|
+|$\sigma_s$                 | {N((r.AsMain/r.AsMainProv)*r.Fyd)} N/mm² | Staalspanning trekband | 
+|$\Sigma A_{{lnk,req}}$     | {N(r.Asw, "0")} mm² | Benodigd beugels |
+|$a_{{v}}$                  | {N(r.Av, "0")} mm | Afstand oplegmateriaal tot betonrand |
+|$l_{{bd}}$                 | {N(r.VerankeringenPerGroep.First().Value.First().Verankeringslengte, "0")} mm | Verankeringslengte trekband
+
+
+### Verankering 
+{r.VerankeringenPerGroep.ToMarkdownLbd()}
+### Verankering (vervolg)
+{r.VerankeringenPerGroep.ToMarkdown()}
+
+### Tabel verankering
+{r.VerankeringenPerGroep.ToMarkdownTable()}
+
+
+
+### Kleinste geometrie trekband
+{r.VerankeringenPerGroep.First().Value.First().KleinsteMogelijkeGeometrieTekst}
+{r.VerankeringenPerGroep.First().Value.First().ToMarkdownText()}
+
+
+"
+
+
+
+)
+
+
+
+                .Stap("stap-parameters", "Parameters", s => s
+                    .Regel($"Nuttige hoogte: d = {N(r.D, "0")} mm")
+                    .Regel($"Horizontale arm: a = {N(r.A, "0")} mm")
+                    .Regel($"Hefboomsarm: z = {N(r.Z, "0")} mm")
+                    .Regel($"Afmeting knoopvlak: x₁ = {N(r.X1, "0")} mm, y₁ = {N(r.Y1, "0")} mm")
+                    .Regel($"Spanning in knoopvlak 1: σₙ = {N(sigmaNode1VerticalPlane, "0.00")} N/mm²")
+                    .Regel($"Spanning in knoopvlak 2: σₙ = {N(sigmaCCT, "0.00")} N/mm²")
+                    .Regel($"Trekbandkracht: F~t~ = {N(r.Ft, "0")} kN")
+                    .Regel($"Drukstaafkracht: F~c~ = {N(r.Fc, "0")} kN onder hoek θ = {N(r.ThetaDeg)}°")
+                    .Regel($"Breedte loodrecht op de drukstaaf: w₁ = {N(w, "0.00")} mm (≤ b~c~ = {N(i.Bc, "0")} mm)")
+                    .Regel($"Minimale beugelwapening t.b.v. dwarskracht: A~sw,min~ = {aswMinTex} = {N(aswMin, "0.00")} mm²")
+                )
 
                 .Stap("nutHo", "Nuttige hoogte", $@"
 $$
@@ -659,6 +718,10 @@ $$
 
 Verankeringslengte :
 $$
+\boxed{{l_{{bd}}={r.VerankeringMain.Verankeringslengte:0} \: mm}}
+$$
+
+$$
 {r.VerankeringMain.VerankeringslengteFormula.FullValue}
 $$
 
@@ -680,10 +743,17 @@ $$
 $$
 
 $$
+{r.VerankeringContext.MinimaleBuigdoornDiameterBetonFormula.FullValue}
+$$
+
+
+$$
 F_{{bt(0)}} = f_y \cdot A_{{s}} 
 = {N(r.MainFy)} \cdot {N(WapeningHelper.GetDsnOpp(1, r.DiameterMain))}
 = {N(r.MainFbt(0), "0")} \text{{ N}} 
 $$ 
+
+
 
 
 Toegepast is buigdoorndiameter van {r.BuigdoorMain:0} mm. <br/> 

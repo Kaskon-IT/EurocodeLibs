@@ -10,6 +10,15 @@ using K = CommonLibrary.EurocodeKeys;
 namespace Eurocode.BetonConstructies
 {
 
+    //public class TorsionResult : BaseEurocodeContext
+    //{
+    //    public override string Heading { get; set; } = "Torsiewapening";
+    //    public double TEd { get; set; } = 0;
+    //    public required ParametrischProfielContext Profile { get; set; }
+    //    public 
+        
+    //}
+
 
 
     public class BendingResults : BaseEurocodeContext
@@ -361,6 +370,11 @@ namespace Eurocode.BetonConstructies
                 return (D - Math.Pow(D * D - 4.0 * Beton.GetBeta() * Math.Abs(Moment) * 1000000.0 / (Beton.GetAlpha() * Breedte * Beton.Fcd), 0.5)) / (2.0 * Beton.GetBeta());
             }
         }
+        public Formula XuFormula => new()
+        {
+            StaticValue = @"x_{u} = \frac{d - \sqrt{d^2 - 4 \cdot \beta \cdot M_{Ed} \cdot 10^6 / (\alpha \cdot b \cdot f_{cd})}}{2 \cdot \beta}",
+            DynamicValue = $"= ({D:0.#} - sqrt({D:0.#}^2 - 4 * {Beta:0.###} * {Math.Abs(Moment):0.#} * 10^6 / ({Alpha:0.###} * {Breedte:0.#} * {Beton.Fcd:0.#})))/(2 * {Beta:0.###}) = {Xu:0.#} mm"
+        };
 
         [TableColumn(
             Visible = false,
@@ -440,7 +454,65 @@ namespace Eurocode.BetonConstructies
                 }
             }
         }
-        public Formula ZFormula => new() { StaticValue = @"z = d - β \cdot x_{u}" };
+        public Formula ZFormula
+        {
+            get
+            {
+                
+                if (IsGedrongenLigger)
+                {
+                    switch (Gedrongen)
+                    {
+                        case Schematisering.GedrongenEnum.Uitkraging:
+                            var dynVal = Z > (0.4 * LengteMaatBijGedrongenLiggerInMM + 0.4 * Hoogte) ?
+                                @$"= 1.6 \cdot {LengteMaatBijGedrongenLiggerInMM:0.#}={Z:0.#} mm" :
+                                @$"= 0.4 \cdot {LengteMaatBijGedrongenLiggerInMM:0.#} + 0.4 \cdot {Hoogte} = {Z:0.#} mm";
+                            return new Formula()
+                            {
+                                StaticValue = $"z = 0.4a + 0.4h \\leq 1.6a (uitkraging)",
+                                DynamicValue = dynVal
+                            };
+                        case Schematisering.GedrongenEnum.StatischBepaald:
+                            var dynValStatischBepaald = Z > (0.2 * LengteMaatBijGedrongenLiggerInMM + 0.4 * Hoogte) ?
+                                $@"= 0.6 \cdot l = {Z:0.#} mm" :
+                                $@"= 0.2 \cdot {LengteMaatBijGedrongenLiggerInMM} + 0.4 \cdot {Hoogte} = {Z:0.#} mm";
+                            return new Formula()
+                            {
+                                StaticValue = @"z = 0.2l + 0.4h \leq 0.6l",
+                                DynamicValue = dynValStatischBepaald
+                            };
+                        case Schematisering.GedrongenEnum.StatischOnbepaald:
+                            var dynValStatischOnbepaald = Z > (0.3 * LengteMaatBijGedrongenLiggerInMM + 0.3 * Hoogte) ?
+                                $@"= 0.8 \cdot {LengteMaatBijGedrongenLiggerInMM:0.#} = {Z:0.#} mm" :
+                                $@"= 0.3 \cdot {LengteMaatBijGedrongenLiggerInMM:0.#} + 0.3 \cdot {Hoogte:0} = {Z:0.#} mm";
+                            
+                            return new Formula()
+                            {
+                                StaticValue = "z = 0.3l_0 + 0.3h \\leq 0.8l_0",
+                                DynamicValue = dynValStatischOnbepaald
+                            };
+                        default:
+
+                            return new Formula();
+
+                    }
+                }
+                else
+                {
+                    return new Formula()
+                    {
+                        StaticValue = @"z = d - β \cdot x_{u}",
+                        DynamicValue = $"= {D:0.#} - {Beta:0.###} * {Xu:0.#} = {Z:0.#} mm"
+                    };
+                }
+
+                
+            }
+            
+        } 
+        
+            
+           
 
         private bool _isGedrongenLigger;
 
@@ -532,6 +604,12 @@ namespace Eurocode.BetonConstructies
                 return asBenodigdZuivereBuiging;
             }
         }
+        public Formula AsRequiredFormula => new()
+        {
+            StaticValue = @"A_{s,req} = max(A_{s,min}; A_{s,ber})",
+            DynamicValue = $"= max({AsMin:0}; {AsBerekend:0}) = {AsRequired:0}"
+        };
+
 
         [TableColumn(
             Symbol = "*A<sub>s,prov</sub>*",
@@ -715,7 +793,7 @@ namespace Eurocode.BetonConstructies
                 return Beton.GetAlpha() * Breedte * Xu * Beton.Fcd / Beton.BetonStaal.Fyd;
             }
         }
-        public Formula AsBerekendFormula => new() { StaticValue = @"A_{s,ber} = α \cdot x_{u} \cdot f_{cd} / f_{yd}" };
+        public Formula AsBerekendFormula => new() { StaticValue = @"A_{s,ber} = α \cdot b \cdot x_{u} \cdot f_{cd} / f_{yd}" };
 
 
         public double Iy

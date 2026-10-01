@@ -54,6 +54,7 @@ namespace CommonLibrary.Models
         public double Fy { get; init; }
         public double StaalSpanning => Benutting * Fy;
 
+        [TableColumn(Label = "UC", StringFormat = "0.##" )]
         public double Benutting => Waarde / Toelaatbaar;
         public bool Voldoet => Benutting <= 1.01;
 

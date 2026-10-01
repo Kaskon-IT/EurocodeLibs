@@ -18,7 +18,8 @@ namespace Eurocode.BetonConstructies
             double eta2 = i.Diameter <= 32.0 ? 1.0 : (132.0 - i.Diameter) / 100.0;
             double fbd = 2.25 * eta1 * eta2 * fctd; // (8.2)
             double fcd = BepaalFcdBuiging(i.Beton);
-            double fbt = WapeningHelper.GetDsnOpp(1,i.Diameter) * i.Benuttingsgraad * i.Fyd; // zonder afname (startpunt verankering)
+            double fyd = i.Fyd;
+            double fbt0 = WapeningHelper.GetDsnOpp(1,i.Diameter) * i.Benuttingsgraad * i.Fyd; // zonder afname (startpunt verankering)
             double ab = i.Ab;
 
             // 8.4.3 (2) Basisverankeringslengte
@@ -43,7 +44,7 @@ namespace Eurocode.BetonConstructies
             double lbd = Math.Max(alpha1 * productAlpha235 * alpha4 * lbRqd, lbMin);
 
             // Fbt (staafkracht ter plaatse van de ombuiging) uitrekenen
-            fbt *= Math.Max(0, 1 - (i.AfstandTotFbt / lbd));
+            double fbt = fbt0 * Math.Max(0, 1 - (i.AfstandTotFbt / lbd));
 
 
             // 8.3 buigstralen
@@ -70,6 +71,7 @@ namespace Eurocode.BetonConstructies
                 Fbd = fbd,
                 Fcd = fcd,
                 Fbt = fbt,
+                Fyd = fyd,
                 AfstandTotFbt = i.AfstandTotFbt,
                 Ab = ab,
                 Cd = cd,

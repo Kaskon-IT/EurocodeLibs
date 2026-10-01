@@ -42,6 +42,7 @@
         /// Afstand van belasting tot rand kolom/wand
         /// </summary>
         public double Ac { get; set; }
+        public double Av { get; set; }
 
         /// <summary>
         /// Afstand van horizontale belasting tot hart trekband

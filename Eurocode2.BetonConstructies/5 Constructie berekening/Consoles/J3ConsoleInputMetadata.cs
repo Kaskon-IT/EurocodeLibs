@@ -177,7 +177,7 @@ namespace Eurocode.BetonConstructies.Consoles
                     new NumericPropertyMetadata<J3ConsoleInput>
                     {
                         PropertyName = nameof(J3ConsoleInput.HoofdstaafBuigdoornDiameterFactor),
-                        Label = "buigd.",
+                        Label = "Øm",
                         Description = "Factor voor buigdoorndiameter",
                         Unit = "×Ø",
                         Order = 101,
@@ -217,7 +217,7 @@ namespace Eurocode.BetonConstructies.Consoles
                     {
                         PropertyName = nameof(J3ConsoleInput.HoofdstaafAantal2),
                         Label = "<i>n</i><sub>hoofd,2</sub>",
-                        Description = "Aantal hoofdstaven in de tweede laag.",
+                        Description = "Aantal platte haarspelden.",
                         Unit = "st",
                         Order = 103,
                         Min = _ => 0,
@@ -225,6 +225,21 @@ namespace Eurocode.BetonConstructies.Consoles
                         Step = _ => 1,
                         Decimals = 0
                     },
+                [nameof(J3ConsoleInput.Main2BuigdoornDiameterFactor)] =
+                    new NumericPropertyMetadata<J3ConsoleInput>
+                    {
+                        PropertyName = nameof(J3ConsoleInput.Main2BuigdoornDiameterFactor),
+                        Label = "Øm",
+                        Description = "Factor buigdoorndiameter [nxØ] voor platte haarspelden",
+                        Unit = "×Ø",
+                        Order = 104,
+                        Min = model => model.HoofdstaafDiameter > 16 ? 7 : 4,
+                        Max = _ => 1000,
+                        Step = _ => 1,
+                        Decimals = 0
+                    },
+
+
                 [nameof(J3ConsoleInput.FactorBgt)] =
                     new NumericPropertyMetadata<J3ConsoleInput>
                     {

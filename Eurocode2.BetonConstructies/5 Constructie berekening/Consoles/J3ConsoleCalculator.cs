@@ -79,6 +79,7 @@ namespace Eurocode.BetonConstructies
 
             double d1 = i.Hc - d;
             double ah = i.DikteOplegmateriaal + d1;
+            double av = i.Ac - i.LoadPlateWidth / 2.0;
             double ft = i.HEd + i.FEd * a / z;
             double f1x = i.FEd * a / z; // 
             double f1y = i.FEd;
@@ -222,6 +223,7 @@ namespace Eurocode.BetonConstructies
                 DikteOplegmateriaal = i.DikteOplegmateriaal,
                 
                 Ac = i.Ac,
+                Av = av,
                 Ah = ah,
 
                 Dekking = i.Dekking,

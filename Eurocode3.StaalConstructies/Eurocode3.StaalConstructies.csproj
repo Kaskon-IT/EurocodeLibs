@@ -9,7 +9,7 @@
 	  <!-- NuGet-package instellingen -->
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageId>Kaskon.Eurocode3.StaalConstructies</PackageId>
-	  <Version>6.0.5</Version>
+	  <Version>6.1.2</Version>
 	  <Authors>Bart van der Linden</Authors>
 	  <Company>Kaskon</Company>
 	  <Description>Eurocode 3 Staalconstructies</Description>

@@ -92,6 +92,9 @@ namespace Eurocode.BetonConstructies
 
         public double Fyd { get; set; }
 
+
+        public double CotTheta { get; set; } = 1.0; // cot(45°) = 1.0
+
         /// <summary>
         /// Benodigde langswapening t.b.v. wringing volgens vgl. (6.28) met θ = 45°:
         /// ΣA<sub>sl</sub> = T<sub>Ed</sub>·u<sub>k</sub>·cotθ / (2·A<sub>k</sub>·f<sub>yd</sub>) [mm²],
@@ -100,7 +103,7 @@ namespace Eurocode.BetonConstructies
         public double Asl { get; set; }
         public Formula AslFormula => new("(6.28)",
             @"\Sigma A_{sl} = \frac{T_{Ed} \cdot u_k \cdot \cot\theta}{2 \cdot A_k \cdot f_{ywd}}",
-            $@"= \frac{{{(TEd * 1.0e6).ToTeX()} \cdot {Uk:0} \cdot 1.0}}{{2 \cdot {Ak:0} \cdot {Fywd:0}}} = {Asl:0} \text{{ mm}}^2");
+            $@"= \frac{{{(TEd * 1.0e6).ToTeX()} \cdot {Uk:0} \cdot {CotTheta:0}}}{{2 \cdot {Ak:0} \cdot {Fywd:0}}} = {Asl:0} \text{{ mm}}^2");
     }
 
     /// <summary>
@@ -156,7 +159,7 @@ namespace Eurocode.BetonConstructies
 
     public static class J3ConsoleTorsieCalculator
     {
-        public static J3ConsoleTorsieResult Bereken(J3ConsoleInput i, BetonContext beton, double fcd, double nu, double h)
+        public static J3ConsoleTorsieResult Bereken(J3ConsoleInput i, BetonContext beton, double fcd, double nu, double h, double cotTheta = 2.5)
         {
             var r = new J3ConsoleTorsieResult
             {
@@ -170,7 +173,9 @@ namespace Eurocode.BetonConstructies
                 DiameterLangs = i.HoofdstaafDiameter,
                 Fcd = fcd,
                 Nu = nu,
+                CotTheta = cotTheta,
             };
+
 
             r.TEfBerekend = (i.Bc * i.Hc) / (2.0 * (i.Bc + i.Hc));
             r.TEfMin = 2.0 * i.Dekking + 2.0 * i.BeugelDiameter + i.HoofdstaafDiameter;
@@ -185,10 +190,10 @@ namespace Eurocode.BetonConstructies
             r.Fywd = i.Fyk * 0.80; // neem 80% van fyk
             r.AswTPerLengte = r.TEd * 1.0e6 / (2.0 * r.Ak * r.Fywd);
 
-            // Langswapening wringing (6.28) met theta = 45 graden, verdeeld over uk
+            // Langswapening wringing (6.28) verdeeld over uk
             r.Uk = 2.0 * ((i.Bc - r.TEf) + (i.Hc - r.TEf));
             r.Fyd = i.Fyk / 1.15;
-            r.Asl = r.TEd * 1.0e6 * r.Uk / (2.0 * r.Ak * r.Fywd);
+            r.Asl = r.TEd * 1.0e6 * r.Uk / (2.0 * r.Ak * r.Fywd) * r.CotTheta; // vanuit (6.28)
 
             return r;
         }

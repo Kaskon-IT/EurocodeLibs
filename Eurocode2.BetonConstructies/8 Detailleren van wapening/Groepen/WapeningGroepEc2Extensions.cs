@@ -22,7 +22,7 @@ namespace Eurocode.BetonConstructies
 
         public static double BuigdoornDiameter(this WapeningGroep groep) =>
             groep.Buigstralen?.Length > 0
-                ? groep.Buigstralen.Max() * 2 - groep.Diameter
+                ? groep.Buigstralen.Max() * 2 
                 : 0;
 
         /// <summary>
