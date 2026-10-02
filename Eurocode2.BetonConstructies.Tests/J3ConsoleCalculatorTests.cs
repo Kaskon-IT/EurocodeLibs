@@ -79,6 +79,28 @@ namespace Eurocode2.BetonConstructies.Tests
         }
 
         [Fact]
+        public void Stm_KnoopY1_VolgtUitKnoopspanning()
+        {
+            // Zonder begrenzing: y1 = F1x/(b·σ1Rd,max) = 2(d - z), want z + y1/2 = d
+            var r = J3ConsoleCalculator.Bereken(Invoer(Stm));
+            Assert.Equal(2 * (r.D - r.Z), r.Y1, 6);
+            Assert.True(r.Node1Ok);
+        }
+
+        [Fact]
+        public void Stm_KnoopY1_BlijftRealistischBijBegrensdeZ()
+        {
+            var r = J3ConsoleCalculator.Bereken(Invoer(Stm, i => { i.Ac = 80; i.FEd = 100; i.HEd = 10; }));
+
+            Assert.True(r.ZBegrensd);
+            // F1x = FEd/2,5 = 40 kN ; y1 = 40000/(250·10.56) = 15.2 mm (en níet 2(d - z) ≈ 396 mm)
+            Assert.Equal(r.F1x * 1000.0 / (r.Bc * r.Sigma1RdMax), r.Y1, 6);
+            Assert.Equal(15.15, r.Y1, 1);
+            Assert.True(r.Y1 < 2 * (r.D - r.Z));
+            Assert.True(r.Node1Ok);
+        }
+
+        [Fact]
         public void BeugelType_KorteConsole_Horizontaal()
         {
             var r = J3ConsoleCalculator.Bereken(Invoer(Stm));

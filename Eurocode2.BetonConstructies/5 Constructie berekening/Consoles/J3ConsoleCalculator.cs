@@ -70,8 +70,10 @@ namespace Eurocode.BetonConstructies
             double f1c = Math.Sqrt(f1x * f1x + f1y * f1y);
 
 
-            // Logica: gebruik
-            double y1 = 2 * (d - z);
+            // Hoogte verticaal knoopvlak knoop 1: F1x bij σ1Rd,max. Zonder begrenzing van z is dit
+            // gelijk aan 2(d - z) (zBer volgt uit z + y1/2 = d); bij een op tanθ = 2,5 begrensde z
+            // zou 2(d - z) een veel te hoge knoop geven. (GDL overschrijft y1 hieronder.)
+            double y1 = f1x * 1000.0 / (i.Bc * sigma1RdMax);
 
             // Main reinforcement
             double asMain = ft * 1000.0 / fyd;
@@ -532,6 +534,9 @@ namespace Eurocode.BetonConstructies
 
             // ---- Knopen
             Kop("Knopen", "6.5.4");
+            Rij("Knoop 1 horizontaal", @"x_1", r.X1.ToString("0.0"), "mm");
+            Rij("Knoop 1 verticaal", @"y_1", r.Y1.ToString("0.0"), "mm",
+                gdl ? @"y_1 = x_1 F_{1x}/F_{Ed}" : @"y_1 = \frac{F_{1x}}{b_c\,\sigma_{1Rd,max}}");
             Rij("Knoop 1 (CCC)", @"\sigma_{Ed,1}", $"{r.SigmaNode1Ed:0.00} ≤ {r.Sigma1RdMax:0.00}", "N/mm²", @"\sigma_{Ed,1} \leq \sigma_{1Rd,max}", r.Node1Ok);
             Rij("Knoop 2 onder oplegplaat (CCT)", @"\sigma_{Ed,2}", $"{r.SigmaNode2Ed:0.00} ≤ {r.Sigma2RdMax:0.00}", "N/mm²", @"\sigma_{Ed,2} = \frac{F_{Ed}}{a_b b_b}", r.Node2Ok);
 

@@ -283,7 +283,11 @@ namespace Eurocode.BetonConstructies
 
             // 10. Knopen
             b.Stap("knopen", "Controle knopen", s => s
-                .Formule($@"\sigma_{{Ed,1}} = {N(r.SigmaNode1Ed, "0.00")} \leq \sigma_{{1Rd,max}} = {N(r.Sigma1RdMax, "0.00")} \text{{ N/mm²}}")
+                .Regel("Afmetingen van knoop 1 (CCC):")
+                .Formule(gdl
+                    ? $@"x_1 = {N(r.X1)} \text{{ mm}} \qquad y_1 = x_1 \frac{{F_{{1x}}}}{{F_{{Ed}}}} = {N(r.X1)} \cdot \frac{{{N(r.F1x)}}}{{{N(r.FEd, "0")}}} = {N(r.Y1)} \text{{ mm}}"
+                    : $@"x_1 = {N(r.X1)} \text{{ mm}} \qquad y_1 = \frac{{F_{{1x}}}}{{b_c\,\sigma_{{1Rd,max}}}} = \frac{{{N(r.F1x * 1000, "0")}}}{{{N(r.Bc, "0")} \cdot {N(r.Sigma1RdMax, "0.00")}}} = {N(r.Y1)} \text{{ mm}}")
+                .Formule($@"\sigma_{{Ed,1}} = \max\left(\frac{{F_{{Ed}}}}{{b_c\,x_1}};\ \frac{{F_{{1x}}}}{{b_c\,y_1}}\right) = {N(r.SigmaNode1Ed, "0.00")} \leq \sigma_{{1Rd,max}} = {N(r.Sigma1RdMax, "0.00")} \text{{ N/mm²}}")
                 .Toets(r.Node1Ok, "Knoop 1 (CCC) voldoet.", "Knoop 1 (CCC) voldoet niet.")
                 .Formule($@"\sigma_{{Ed,2}} = \frac{{F_{{Ed}}}}{{a_b\,b_b}} = \frac{{{N(r.FEd * 1000, "0")}}}{{{N(r.LoadPlateLength, "0")} \cdot {N(r.LoadPlateWidth, "0")}}} = {N(r.SigmaNode2Ed, "0.00")} \leq \sigma_{{2Rd,max}} = {N(r.Sigma2RdMax, "0.00")} \text{{ N/mm²}}")
                 .Toets(r.Node2Ok, "Knoop 2 onder de oplegplaat (CCT) voldoet.", "Knoop 2 onder de oplegplaat (CCT) voldoet niet."));
