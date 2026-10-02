@@ -139,9 +139,13 @@ namespace Eurocode.BetonConstructies
                 if (r.ZBegrensd)
                     s.Regel("$\\tan\\theta > 2.5$: de hefboomsarm wordt teruggezet zodat $\\tan\\theta = 2.5$:")
                      .Formule($@"z = 2.5 \cdot a = 2.5 \cdot {N(r.A, "0")} = {N(r.Z)} \text{{ mm}}");
-                s.Toets(r.IsThetaOk,
-                    $"$\\tan\\theta = {N(r.TanTheta, "0.00")}$ voldoet.",
-                    $"$\\tan\\theta = {N(r.TanTheta, "0.00")} < 1.0$: drukdiagonaal te vlak. Vergroot de consolehoogte of verklein $a_c$.");
+                if (r.TanTheta >= 1.0)
+                    s.Toets(true, $"$\\tan\\theta = {N(r.TanTheta, "0.00")}$ voldoet.", "");
+                else if (gdl)
+                    s.Regel($"$\\tan\\theta = {N(r.TanTheta, "0.00")} < 1.0$: vlakke drukdiagonaal. Bij de gedrongen-liggertheorie toegestaan; de wapening wordt ook op zuivere buiging getoetst.");
+                else
+                    s.Toets(false, "",
+                        $"$\\tan\\theta = {N(r.TanTheta, "0.00")} < 1.0$: **bijlage J.3 (strut-and-tie) is niet van toepassing.** Reken de console als gedrongen ligger (6.1 (10)).");
                 s.Formule($@"\theta = \arctan\left(\frac{{z}}{{a}}\right) = {N(r.ThetaDeg)}^\circ")
                  .Formule($@"z_0 = z \cdot \frac{{a_c + \Delta a}}{{a}} = {N(r.Z0)} \text{{ mm}}")
                  .Toets(r.IsZ0Ok, "$a_c < z_0$.", "$a_c \\geq z_0$.");
@@ -155,8 +159,30 @@ namespace Eurocode.BetonConstructies
                 else
                     s.Regel("Momentenevenwicht om knoop 1:")
                      .Formule($@"F_t = F_{{Ed}} \frac{{a}}{{z}} + H_{{Ed}} = {N(r.FEd, "0")} \cdot \frac{{{N(r.A)}}}{{{N(r.Z)}}} + {N(r.HEd, "0")} = {N(r.Ft)} \text{{ kN}}");
-                s.Formule(r.AsMainFormula.FullValue)
-                 .Formule(r.AsMainProvFormula.FullValue)
+                s.Formule(r.AsMainFormula.FullValue);
+
+                if (gdl)
+                {
+                    s.Regel("Bij gedrongen constructies kan buiging volgens 6.1 (1)P een lagere weerstand geven (6.1 (10) opmerking). " +
+                            "Toets daarom ook zuivere buiging t.p.v. de kolomrand; de grootste wapening is maatgevend:")
+                     .Formule($@"M_{{Ed,s}} = F_{{Ed}} \cdot a_c + H_{{Ed}} \cdot d' = {N(r.FEd * 1000, "0")} \cdot {N(r.Ac, "0")} + {N(r.HEd * 1000, "0")} \cdot {N(r.D1, "0")} = {N(r.MEdBuiging / 1e6, "0.0")} \text{{ kNm}}");
+
+                    if (double.IsNaN(r.XuBuiging))
+                        s.Toets(false, "", "Geen oplossing voor $x_u$: de betondrukzone is ontoereikend.");
+                    else
+                        s.Formule($@"x_u = \frac{{d - \sqrt{{d^2 - 4\beta M_{{Ed,s}}/(\alpha\, b_c f_{{cd}})}}}}{{2\beta}} = \frac{{{N(r.D, "0")} - \sqrt{{{N(r.D, "0")}^2 - 4 \cdot {N(r.BetaBuiging, "0.###")} \cdot {N(r.MEdBuiging, "0")}/({N(r.AlphaBuiging, "0.###")} \cdot {N(r.Bc, "0")} \cdot {N(r.Fcd, "0.0")})}}}}{{2 \cdot {N(r.BetaBuiging, "0.###")}}} = {N(r.XuBuiging)} \text{{ mm}}")
+                         .Toets(r.XuBuigingOk,
+                            $"$x_u = {N(r.XuBuiging, "0")} \\leq x_{{u,max}} = {N(r.XuMaxBuiging, "0")}$ mm.",
+                            $"$x_u = {N(r.XuBuiging, "0")} > x_{{u,max}} = {N(r.XuMaxBuiging, "0")}$ mm: onvoldoende vervormingscapaciteit.")
+                         .Formule($@"z = d - \beta x_u = {N(r.D, "0")} - {N(r.BetaBuiging, "0.###")} \cdot {N(r.XuBuiging)} = {N(r.ZBuiging)} \text{{ mm}}")
+                         .Formule($@"A_{{s,buiging}} = \frac{{\alpha\, b_c\, x_u\, f_{{cd}}}}{{f_{{yd}}}} + \frac{{H_{{Ed}}}}{{f_{{yd}}}} = {N(r.AsBuiging, "0")} \text{{ mm}}^2")
+                         .Formule($@"A_{{s,main,req}} = \max({N(r.AsGedrongen, "0")};\ {N(r.AsBuiging, "0")}) = {N(r.AsMain, "0")} \text{{ mm}}^2")
+                         .Regel(r.BuigingMaatgevend
+                            ? "⚠️ Zuivere buiging is maatgevend en aangehouden."
+                            : "✔️ De gedrongen-liggertheorie is maatgevend.");
+                }
+
+                s.Formule(r.AsMainProvFormula.FullValue)
                  .Formule($@"\sigma_s = \frac{{A_{{s,main}}}}{{A_{{s,main,prov}}}} f_{{yd}} = {N(r.MainFy, "0")} \text{{ N/mm²}}")
                  .Toets(r.MainFy <= r.Fyd, "Hoofdwapening voldoet.", "Overschrijding trekspanning in de hoofdwapening.");
             });

@@ -79,6 +79,74 @@ namespace Eurocode2.BetonConstructies.Tests
         }
 
         [Fact]
+        public void Stm_TanThetaKleinerDan1_J3NietVanToepassing()
+        {
+            // a_c = 600 bij h = 500: vlakke drukdiagonaal
+            var r = J3ConsoleCalculator.Bereken(Invoer(Stm, i => { i.Ac = 600; i.Lc = 750; i.AfschuiningOnderzijde = false; }));
+
+            Assert.True(r.TanTheta < 1.0);
+            Assert.True(r.J3NietVanToepassing);
+            Assert.False(r.IsThetaOk);
+            Assert.Contains(r.Validaties, v => v.Contains("J.3 niet van toepassing"));
+            Assert.Contains("niet van toepassing", r.RekenvoorbeeldMarkdown);
+        }
+
+        [Fact]
+        public void Gdl_TanThetaKleinerDan1_IsToegestaan()
+        {
+            var r = J3ConsoleCalculator.Bereken(Invoer(Gdl, i => { i.Ac = 600; i.Lc = 750; i.AfschuiningOnderzijde = false; }));
+
+            Assert.True(r.TanTheta < 1.0);
+            Assert.False(r.J3NietVanToepassing);
+            Assert.True(r.IsThetaOk);
+        }
+
+        [Fact]
+        public void Gdl_ZuivereBuiging_VolgensHuismethode()
+        {
+            var r = J3ConsoleCalculator.Bereken(Invoer(Gdl));
+
+            // M_Ed,s = F·a_c + H·d' = 245000·150 + 49000·44
+            double ms = 245_000.0 * 150 + 49_000.0 * 44;
+            double xu = (r.D - Math.Sqrt(r.D * r.D - 4 * r.BetaBuiging * ms / (r.AlphaBuiging * 250 * r.Fcd))) / (2 * r.BetaBuiging);
+            double asBuiging = r.AlphaBuiging * 250 * xu * r.Fcd / r.Fyd + 49_000.0 / r.Fyd;
+
+            Assert.Equal(ms, r.MEdBuiging, 6);
+            Assert.Equal(xu, r.XuBuiging, 6);
+            Assert.Equal(asBuiging, r.AsBuiging, 6);
+            // Standaardconsole: de gedrongen-liggertheorie is maatgevend
+            Assert.False(r.BuigingMaatgevend);
+            Assert.Equal(r.AsGedrongen, r.AsMain, 6);
+            Assert.True(r.AsGedrongen > r.AsBuiging);
+        }
+
+        [Fact]
+        public void Gdl_ZuivereBuiging_MaatgevendWordtAangehouden()
+        {
+            // Lange console, kleine oplegplaat (a ≈ a_c) en hoge last: grote drukzone, kleine z bij buiging
+            var r = J3ConsoleCalculator.Bereken(Invoer(Gdl, i =>
+            {
+                i.Ac = 400; i.Lc = 500; i.LoadPlateLength = 50; i.AfschuiningOnderzijde = false;
+                i.FEd = 1000; i.HEd = 0;
+            }));
+
+            Assert.True(r.BuigingMaatgevend);
+            Assert.True(r.AsBuiging > r.AsGedrongen);
+            Assert.Equal(r.AsBuiging, r.AsMain, 6);
+            Assert.Equal(r.AsMain * r.Fyd / 1000.0, r.Ft, 6);
+            Assert.Contains(r.Meldingen, m => m.Contains("Zuivere buiging maatgevend"));
+        }
+
+        [Fact]
+        public void Stm_GeenZuivereBuigingToets()
+        {
+            var r = J3ConsoleCalculator.Bereken(Invoer(Stm));
+
+            Assert.Equal(0.0, r.AsBuiging);
+            Assert.False(r.BuigingMaatgevend);
+        }
+
+        [Fact]
         public void Stm_KnoopY1_VolgtUitKnoopspanning()
         {
             // Zonder begrenzing: y1 = F1x/(b·σ1Rd,max) = 2(d - z), want z + y1/2 = d

@@ -79,6 +79,8 @@ namespace Eurocode.BetonConstructies
             double asMain = ft * 1000.0 / fyd;
 
             double mEd = 0;
+            double mEdBuiging = 0, xuBuiging = 0, xuMaxBuiging = 0, zBuiging = 0, asBuiging = 0, alphaBuiging = 0, betaBuiging = 0;
+            bool buigingMaatgevend = false;
             double asMin = 0;
             double asOplegging = 0;
             bool flexibelOplegmateriaal = i.FlexibelOplegmateriaal;
@@ -118,7 +120,45 @@ namespace Eurocode.BetonConstructies
                 mEd = a * i.FEd * 1000 + (z + i.Hc - d) * i.HEd * 1000;
                 asMain = mEd / (fyd * z);
                 ft = asMain * fyd / 1000.0; // bijbehorende trekbandkracht [kN]
+
+                // 6.1 (10) opmerking: bij gedrongen constructies kan buiging volgens 6.1 (1)P-(9) een lagere
+                // weerstand geven; die is dan bepalend. Toets daarom ook zuivere buiging t.p.v. de kolomrand
+                // (zelfde methode als BendingResults) en houd de grootste wapening aan.
+                var betonBuiging = new BetonContext((int)i.Fck);
+                alphaBuiging = betonBuiging.GetAlpha();
+                betaBuiging = betonBuiging.GetBeta();
+                mEdBuiging = i.FEd * 1000 * i.Ac + i.HEd * 1000 * d1; // om de trekband [Nmm]
+                double discriminant = d * d - 4.0 * betaBuiging * mEdBuiging / (alphaBuiging * i.Bc * fcd);
+                if (discriminant < 0)
+                {
+                    xuBuiging = double.NaN;
+                    meldingen.Add("Zuivere buiging: de betondrukzone is ontoereikend (geen oplossing voor x_u). Vergroot de console.");
+                }
+                else
+                {
+                    xuBuiging = (d - Math.Sqrt(discriminant)) / (2.0 * betaBuiging);
+                    zBuiging = d - betaBuiging * xuBuiging;
+                    asBuiging = alphaBuiging * i.Bc * xuBuiging * fcd / fyd + i.HEd * 1000 / fyd;
+
+                    // Ductiliteit: x_u ≤ x_u,max (NB), zoals in BendingResults
+                    xuMaxBuiging = BuigingContext.GetMaximaleHoogteDrukzoneZonderVoorspanning(betonBuiging, d, i.Bc * i.Hc);
+                    if (xuBuiging > xuMaxBuiging)
+                        meldingen.Add($"Zuivere buiging: x_u = {xuBuiging:0} mm > x_u,max = {xuMaxBuiging:0} mm (onvoldoende vervormingscapaciteit). Vergroot de console.");
+
+                    if (asBuiging > asMain)
+                    {
+                        buigingMaatgevend = true;
+                        meldingen.Add($"Zuivere buiging maatgevend: A_s = {asBuiging:0} mm² > {asMain:0} mm² volgens de gedrongen-liggertheorie (6.1 (10) opm.).");
+                        asMain = asBuiging;
+                        ft = asMain * fyd / 1000.0;
+                    }
+                }
             }
+
+            // J.3 is alleen toepasbaar voor 1,0 ≤ tanθ; bij een vlakkere drukdiagonaal als ligger rekenen.
+            bool j3NietVanToepassing = !gdl && tanTheta < 1.0;
+            if (j3NietVanToepassing)
+                meldingen.Add($"tanθ = {tanTheta:0.00} < 1,0: bijlage J.3 (strut-and-tie) is niet van toepassing. Reken de console als gedrongen ligger (6.1 (10)).");
 
             // ---- BGT, dwarskracht en wringing: voor beide rekenmethoden
             {
@@ -235,6 +275,15 @@ namespace Eurocode.BetonConstructies
                 VerticaleBeugelsVoorDwarskracht = verticaleBeugelsVoorDwarskracht,
                 AswVerticaalDwarskracht = aswVerticaalDwarskracht,
                 Meldingen = meldingen,
+                J3NietVanToepassing = j3NietVanToepassing,
+                MEdBuiging = mEdBuiging,
+                XuBuiging = xuBuiging,
+                XuMaxBuiging = xuMaxBuiging,
+                ZBuiging = zBuiging,
+                AsBuiging = asBuiging,
+                AlphaBuiging = alphaBuiging,
+                BetaBuiging = betaBuiging,
+                BuigingMaatgevend = buigingMaatgevend,
 
                 // geometrie console
                 Hc = i.Hc, 
@@ -470,7 +519,10 @@ namespace Eurocode.BetonConstructies
 
             // ---- Drukdiagonaal
             Kop("Drukdiagonaal", "J.3");
-            Rij("Helling drukdiagonaal", @"\tan\theta", r.TanTheta.ToString("0.00"), "", @"\tan\theta = z/a;\ 1.0 \leq \tan\theta \leq 2.5", r.IsThetaOk);
+            Rij("Helling drukdiagonaal", @"\tan\theta", r.TanTheta.ToString("0.00"), "",
+                gdl ? @"\tan\theta = z/a \leq 2.5" : @"\tan\theta = z/a;\ 1.0 \leq \tan\theta \leq 2.5", r.IsThetaOk);
+            if (r.J3NietVanToepassing)
+                Rij("Bijlage J.3 niet van toepassing: reken als gedrongen ligger", "", "tanθ < 1,0", isOk: false);
             Rij("Hoek drukdiagonaal", @"\theta", r.ThetaDeg.ToString("0.#"), "°", @"\theta = \arctan(z/a)");
             Rij("Controle z₀", @"z_0", r.Z0.ToString("0.#"), "mm", @"a_c < z_0", r.IsZ0Ok);
 
@@ -479,7 +531,11 @@ namespace Eurocode.BetonConstructies
             if (gdl)
             {
                 Rij("Moment kolomrand", @"M_{Ed}", (r.MEd / 1e6).ToString("0.0"), "kNm", @"M_{Ed} = a F_{Ed} + (z + d') H_{Ed}");
-                Rij("Benodigde hoofdwapening", @"A_{s,main}", r.AsMain.ToString("0"), "mm²", @"A_{s,main} = \frac{M_{Ed}}{f_{yd} z}");
+                Rij("Wapening gedrongen ligger", @"A_{s,GDL}", r.AsGedrongen.ToString("0"), "mm²", @"A_{s,GDL} = \frac{M_{Ed}}{f_{yd} z}");
+                Rij("Wapening zuivere buiging", @"A_{s,buiging}", double.IsNaN(r.XuBuiging) ? "drukzone ontoereikend" : r.AsBuiging.ToString("0"), "mm²",
+                    @"\frac{\alpha b x_u f_{cd}}{f_{yd}} + \frac{H_{Ed}}{f_{yd}}", double.IsNaN(r.XuBuiging) ? false : null, "6.1 (10) opm.");
+                Rij(r.BuigingMaatgevend ? "Benodigde hoofdwapening (buiging maatgevend)" : "Benodigde hoofdwapening",
+                    @"A_{s,main}", r.AsMain.ToString("0"), "mm²", @"\max(A_{s,GDL};\ A_{s,buiging})");
             }
             else
             {

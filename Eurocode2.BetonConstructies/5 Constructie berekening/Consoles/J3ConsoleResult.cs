@@ -53,6 +53,27 @@
         /// <summary> Verticale beugels t.b.v. dwarskracht naast de J.3-beugels [mm²]; 0 als niet nodig. </summary>
         public double AswVerticaalDwarskracht { get; set; }
 
+        /// <summary> STM met tanθ &lt; 1,0: bijlage J.3 is niet van toepassing. </summary>
+        public bool J3NietVanToepassing { get; set; }
+
+        // ---- Zuivere buiging t.p.v. de kolomrand (alleen gedrongen-liggertheorie, 6.1 (10) opmerking)
+
+        /// <summary> Moment om de trekband t.p.v. de kolomrand: F<sub>Ed</sub>·a<sub>c</sub> + H<sub>Ed</sub>·d' [Nmm]. </summary>
+        public double MEdBuiging { get; set; }
+        public double XuBuiging { get; set; }
+        public double XuMaxBuiging { get; set; }
+        public bool XuBuigingOk => !double.IsNaN(XuBuiging) && XuBuiging <= XuMaxBuiging;
+        public double ZBuiging { get; set; }
+        /// <summary> A<sub>s</sub> bij zuivere buiging: α·b·x<sub>u</sub>·f<sub>cd</sub>/f<sub>yd</sub> + H<sub>Ed</sub>/f<sub>yd</sub> [mm²]. </summary>
+        public double AsBuiging { get; set; }
+        public double AlphaBuiging { get; set; }
+        public double BetaBuiging { get; set; }
+        /// <summary> Zuivere buiging geeft meer wapening dan de gedrongen-liggertheorie en is aangehouden. </summary>
+        public bool BuigingMaatgevend { get; set; }
+
+        /// <summary> A<sub>s</sub> volgens de gedrongen-liggertheorie: M<sub>Ed</sub>/(f<sub>yd</sub>·z) [mm²]. </summary>
+        public double AsGedrongen => Z > 0 && Fyd > 0 ? MEd / (Fyd * Z) : 0;
+
         /// <summary> Meldingen uit de berekening (begrenzing z, maatgevende dwarskracht, ...). </summary>
         public List<string> Meldingen { get; set; } = [];
 
@@ -560,7 +581,7 @@
                         return new()
                         {
                             StaticValue = @"A_{s,main,req} = \frac{M_{Ed}}{f_{yd} \cdot z}",
-                            DynamicValue = @$"= \frac{{{this.MEd:0}}}{{{this.Fyd:0} \cdot {this.Z:0}}} = {AsMain:0} \text{{ mm}}^2"
+                            DynamicValue = @$"= \frac{{{this.MEd:0}}}{{{this.Fyd:0} \cdot {this.Z:0}}} = {AsGedrongen:0} \text{{ mm}}^2"
                         };
                     default:
                         return new()
@@ -607,7 +628,12 @@
 
         public double TanTheta { get; set; }
         public double ThetaDeg { get; set; }
-        public bool IsThetaOk => TanTheta >= 1.0 && TanTheta <= 2.5;
+        /// <summary>
+        /// tanθ ≤ 2,5 (z wordt daarop begrensd); de ondergrens 1,0 geldt voor J.3 (STM).
+        /// Bij de gedrongen-liggertheorie is een vlakkere drukdiagonaal toegestaan.
+        /// </summary>
+        public bool IsThetaOk => TanTheta <= 2.5 + 1e-9
+            && (TanTheta >= 1.0 || RekenMethode == J3ConsoleInput.RekenMethodeOptie.GedrongenLiggerTheorie);
         public bool IsZ0Ok => Z0 > Ac;
 
         public J3ConsoleLinkType LinkType { get; set; }
@@ -778,9 +804,9 @@
                 //}
 
 
-                // tan(theta) moet tussen 1 en 2,5 liggen (te grote z wordt al begrensd tot 2,5).
-                if (TanTheta < 1.0 || TanTheta > 2.5 + 1e-9)
-                    fouten.Add($"tan(theta) = {N(TanTheta)} valt buiten [1 ; 2,5]: drukdiagonaal te vlak, vergroot de consolehoogte of verklein ac.");
+                // STM: J.3 alleen bij 1 ≤ tanθ (te grote z wordt al begrensd tot 2,5).
+                if (J3NietVanToepassing)
+                    fouten.Add($"tan(theta) = {N(TanTheta)} < 1: bijlage J.3 niet van toepassing, reken als gedrongen ligger.");
 
                 if (Dwarskracht is { VRdMaxOk: false } v && ControleDwarskracht)
                     fouten.Add($"Drukdiagonaal dwarskracht niet akkoord: VEd = {N(v.VEd)} kN > VRd,max = {N(v.VRdMax)} kN.");
