@@ -25,6 +25,36 @@
         /// </summary>
         public Dictionary<WapeningGroep, List<VerankeringResult>> VerankeringenPerGroep { get; } = [];
         public J3ConsoleInput.RekenMethodeOptie RekenMethode { get; set; } = J3ConsoleInput.RekenMethodeOptie.StrutAndTieModel;
+        public J3ConsoleInput.RapportageOptie Rapportage { get; set; } = J3ConsoleInput.RapportageOptie.Uitgebreid;
+
+        /// <summary> Dwarskrachtcontrole uitgevoerd (keuze gebruiker, of verplicht bij GDL / verticale beugels). </summary>
+        public bool ControleDwarskracht { get; set; }
+
+        /// <summary> d' is opgegeven (true) of berekend als c + Ø<sub>bgl</sub> + Ø<sub>main</sub>/2 (false). </summary>
+        public bool DOpgegeven { get; set; }
+
+        /// <summary> z vóór de begrenzing op tanθ ≤ 2,5. </summary>
+        public double ZOnbegrensd { get; set; }
+        public bool ZBegrensd { get; set; }
+        public bool ZBerZonderOplossing { get; set; }
+
+        /// <summary> Minimum As,lnk volgens J.3: k1·As,main (horizontaal) of k2·FEd/fyd (verticaal) [mm²]. </summary>
+        public double AsLnkMin { get; set; }
+
+        /// <summary> Benodigde beugelwapening volgens J.3: max(Fwd/fyd ; As,lnk,min) [mm²]. </summary>
+        public double AswJ3 { get; set; }
+
+        /// <summary> De dwarskracht (6.19) bepaalt de verticale beugels in plaats van J.3. </summary>
+        public bool DwarskrachtMaatgevend { get; set; }
+
+        /// <summary> J.3 vraagt horizontale/geen beugels, maar de dwarskracht vraagt verticale beugels. </summary>
+        public bool VerticaleBeugelsVoorDwarskracht { get; set; }
+
+        /// <summary> Verticale beugels t.b.v. dwarskracht naast de J.3-beugels [mm²]; 0 als niet nodig. </summary>
+        public double AswVerticaalDwarskracht { get; set; }
+
+        /// <summary> Meldingen uit de berekening (begrenzing z, maatgevende dwarskracht, ...). </summary>
+        public List<string> Meldingen { get; set; } = [];
 
         public List<ResultRow> ResultRows { get; } = [];
 
@@ -163,24 +193,24 @@
 
         /// <summary>
         /// Volledige 7.3.2-berekening (incl. HcrFormula, ActFormula, AsMinFormula);
-        /// null bij de strut-and-tie methode.
+        /// Voor beide rekenmethoden.
         /// </summary>
         public Scheurbeheersing.ScheurwijdteMinimumWapening? MinimumWapening { get; set; }
 
         /// <summary>
-        /// Scheurwijdtetoetsing 7.3.4 (BGT); null bij de strut-and-tie methode.
+        /// Scheurwijdtetoetsing 7.3.4 (BGT).
         /// </summary>
         public J3ConsoleScheurwijdteResult? Scheurwijdte { get; set; }
 
         /// <summary>
-        /// Dwarskrachtweerstand zonder wapening 6.2.2 (VRd,c); null bij de strut-and-tie methode.
+        /// Dwarskrachtweerstand zonder wapening 6.2.2 (VRd,c).
         /// </summary>
         public J3ConsoleDwarskrachtResult? Dwarskracht { get; set; }
 
-        /// <summary> Torsietoets 6.3.2 (TRd,c); null bij de strut-and-tie methode. </summary>
+        /// <summary> Torsietoets 6.3.2 (TRd,c). </summary>
         public J3ConsoleTorsieResult? Torsie { get; set; }
 
-        /// <summary> Combinatietoets dwarskracht + torsie vgl. (6.31); null bij de strut-and-tie methode. </summary>
+        /// <summary> Combinatietoets dwarskracht + torsie vgl. (6.31). </summary>
         public J3ConsoleTorsieDwarskrachtCombinatie? TorsieDwarskrachtCombinatie { get; set; }
 
         /// <summary> MEd – buigend moment t.p.v. de kolomrand [kNm] (gedrongen-liggertheorie). </summary>
@@ -195,8 +225,8 @@
         public bool Node1Ok => SigmaNode1Ed <= Sigma1RdMax + 1e-5;
         public bool Node2Ok => SigmaNode2Ed <= Sigma2RdMax + 1e-5;
 
-        public bool HorizontaleBeugelsNodig => Ac <= 0.5 * Hc;
-        public bool VerticaleBeugelsNodig => Ac > 0.5 * Hc;
+        public bool HorizontaleBeugelsNodig => LinkType == J3ConsoleLinkType.HorizontaalOfSchuin;
+        public bool VerticaleBeugelsNodig => LinkType == J3ConsoleLinkType.Verticaal || VerticaleBeugelsVoorDwarskracht;
 
 
         public double HoogteTpvAc { get; set; }
@@ -530,7 +560,7 @@
                         return new()
                         {
                             StaticValue = @"A_{s,main,req} = \frac{M_{Ed}}{f_{yd} \cdot z}",
-                            DynamicValue = @$"= \frac{{{this.MEd:0}}}{{{this.Fyd:0}}} \cdot {this.Z} = {AsMain:0} \text{{ mm}}^2"
+                            DynamicValue = @$"= \frac{{{this.MEd:0}}}{{{this.Fyd:0} \cdot {this.Z:0}}} = {AsMain:0} \text{{ mm}}^2"
                         };
                     default:
                         return new()
@@ -547,18 +577,23 @@
         {
             get
             {
-                if (HorizontaleBeugelsNodig)
+                return LinkType switch
                 {
-                    return new()
+                    J3ConsoleLinkType.HorizontaalOfSchuin => new()
                     {
-                        StaticValue = @"\Sigma A_{s,lnk} \geq k1 \cdot A_{s,main}",
-                        DynamicValue = $@"\geq 0.25 \cdot {AsMain:0} \geq {(0.25*AsMain):0} \text{{ mm}}^2",
-                    };
-                }
-                else return new()
-                {
-                    StaticValue = @"\Sigma A_{s,lnk} \geq k2 \cdot \frac{F_{Ed}}{f_{yd}}",
-                    DynamicValue = $@"\geq 0.50 \cdot \frac{{{FEd:0}}}{{{Fyd:0}}} \geq {(0.5*FEd/Fyd):0} \text{{ mm}}^2",
+                        StaticValue = @"\Sigma A_{s,lnk} \geq k_1 \cdot A_{s,main}",
+                        DynamicValue = $@"\geq 0.25 \cdot {AsMain:0} \geq {AsLnkMin:0} \text{{ mm}}^2",
+                    },
+                    J3ConsoleLinkType.Verticaal => new()
+                    {
+                        StaticValue = @"\Sigma A_{s,lnk} \geq k_2 \cdot \frac{F_{Ed}}{f_{yd}}",
+                        DynamicValue = $@"\geq 0.50 \cdot \frac{{{FEd * 1000:0}}}{{{Fyd:0}}} \geq {AsLnkMin:0} \text{{ mm}}^2",
+                    },
+                    _ => new()
+                    {
+                        StaticValue = @"\Sigma A_{s,lnk} \geq 0",
+                        DynamicValue = @"\text{(geen beugels vereist volgens J.3)}",
+                    }
                 };
             }
         }
@@ -666,6 +701,14 @@
         /// </summary>
         public string RekenvoorbeeldMarkdown { get; set; } = string.Empty;
 
+        /// <summary> Compacte rapportage (markdown-tabel van <see cref="ResultRows"/>). </summary>
+        public string RapportCompactMarkdown { get; set; } = string.Empty;
+
+        /// <summary> De rapportage volgens de keuze <see cref="Rapportage"/> (compact of uitgebreid). </summary>
+        public string RapportMarkdown => Rapportage == J3ConsoleInput.RapportageOptie.Compact
+            ? RapportCompactMarkdown
+            : RekenvoorbeeldMarkdown;
+
         /// <summary>
         /// Eenvoudig strut-and-tie schema (knopen, drukdiagonalen, trekband en
         /// krachten) als schaalbare SVG. Gegenereerd door
@@ -735,9 +778,15 @@
                 //}
 
 
-                // tan(theta) moet tussen 1 en 2,5 liggen.
-                if (TanTheta < 1.0 || TanTheta > 2.5)
-                    fouten.Add($"tan(theta) = {N(TanTheta)} valt buiten [1 ; 2,5].");
+                // tan(theta) moet tussen 1 en 2,5 liggen (te grote z wordt al begrensd tot 2,5).
+                if (TanTheta < 1.0 || TanTheta > 2.5 + 1e-9)
+                    fouten.Add($"tan(theta) = {N(TanTheta)} valt buiten [1 ; 2,5]: drukdiagonaal te vlak, vergroot de consolehoogte of verklein ac.");
+
+                if (Dwarskracht is { VRdMaxOk: false } v && ControleDwarskracht)
+                    fouten.Add($"Drukdiagonaal dwarskracht niet akkoord: VEd = {N(v.VEd)} kN > VRd,max = {N(v.VRdMax)} kN.");
+
+                if (!AswProvOk)
+                    fouten.Add($"Beugelwapening onvoldoende: {AswProv:0} mm² < {Asw:0} mm².");
 
                 // Z0 mag niet kleiner zijn dan ac.
                 if (Z0 < Ac)
