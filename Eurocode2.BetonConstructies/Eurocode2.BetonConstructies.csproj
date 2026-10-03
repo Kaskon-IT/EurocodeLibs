@@ -39,8 +39,9 @@
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
-	<ProjectReference Include="..\..\Profielen\BetonProfielen\BetonProfielen.csproj" />
-    <ProjectReference Include="..\..\Profielen\ParametrischeProfielen\ParametrischeProfielen.csproj" />
+	<!-- Profielen als package: zo bouwt EurocodeLibs ook zonder de Profielen-repo ernaast (GitHub). -->
+    <PackageReference Include="Kaskon.BetonProfielen" Version="6.0.1" />
+    <PackageReference Include="Kaskon.ParametrischeProfielen" Version="6.0.1" />
     <ProjectReference Include="..\Eurocode0.Grondslagen\Eurocode0.Grondslagen.csproj" />
     <ProjectReference Include="..\Eurocode1.Belastingen\Eurocode1.Belastingen.csproj" />
   </ItemGroup>

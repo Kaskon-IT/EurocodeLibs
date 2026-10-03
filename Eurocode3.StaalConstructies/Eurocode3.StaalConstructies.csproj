@@ -23,7 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Profielen\StaalProfielen\StaalProfielen.csproj" />
+    <!-- Profielen als package: zo bouwt EurocodeLibs ook zonder de Profielen-repo ernaast (GitHub). -->
+    <PackageReference Include="Kaskon.Profielen.Staal" Version="6.1.1" />
     <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
 	  <None Include="Icons/kaskon.png" Pack="true" PackagePath="/" />
 	  <None Include="Docs/license.md" Pack="true" PackagePath="/" />
