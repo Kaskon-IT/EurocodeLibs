@@ -7,7 +7,9 @@ namespace Eurocode.BetonConstructies
         public static J3ConsoleResult Bereken(J3ConsoleInput i)
         {
             bool gdl = i.RekenMethode == J3ConsoleInput.RekenMethodeOptie.GedrongenLiggerTheorie;
-            var meldingen = new List<string>();
+            var meldingen = new List<J3ConsoleMelding>();
+            void Meld(string key, string tekst, string tex) => meldingen.Add(new J3ConsoleMelding(key, tekst, tex));
+            static string F(double v, string format = "0") => v.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
 
             double fcd = i.AlphaCc * i.Fck / i.GammaC;
             double fyd = i.Fyk / i.GammaS;
@@ -47,7 +49,9 @@ namespace Eurocode.BetonConstructies
             }
 
             if (zBerZonderOplossing)
-                meldingen.Add("Geen reële oplossing voor z uit het evenwicht van knoop 1; z = d aangehouden. Controleer knoop 1.");
+                Meld("z-geen-oplossing",
+                    "Geen reële oplossing voor z uit het evenwicht van knoop 1; z = d aangehouden. Controleer knoop 1.",
+                    "Geen reële oplossing voor $z$ uit het evenwicht van knoop 1; $z = d$ aangehouden. Controleer knoop 1.");
 
             // ---- 3. tanθ = z/a, J.3: 1,0 ≤ tanθ ≤ 2,5. Is z te groot, dan z terugzetten tot tanθ = 2,5.
             double zOnbegrensd = z;
@@ -55,7 +59,9 @@ namespace Eurocode.BetonConstructies
             if (zBegrensd)
             {
                 z = 2.5 * a;
-                meldingen.Add($"tanθ = {zOnbegrensd / a:0.00} > 2,5: z begrensd van {zOnbegrensd:0} mm tot 2,5·a = {z:0} mm.");
+                Meld("z-begrensd",
+                    $"tanθ = {zOnbegrensd / a:0.00} > 2,5: z begrensd van {zOnbegrensd:0} mm tot 2,5·a = {z:0} mm.",
+                    $"$\\tan\\theta = {F(zOnbegrensd / a, "0.00")} > 2.5$: $z$ begrensd van {F(zOnbegrensd)} mm tot $2.5 \\cdot a = {F(z)}$ mm.");
             }
 
             double z0 = z * (i.Ac + deltaA) / a;
@@ -132,7 +138,9 @@ namespace Eurocode.BetonConstructies
                 if (discriminant < 0)
                 {
                     xuBuiging = double.NaN;
-                    meldingen.Add("Zuivere buiging: de betondrukzone is ontoereikend (geen oplossing voor x_u). Vergroot de console.");
+                    Meld("buiging-drukzone",
+                        "Zuivere buiging: de betondrukzone is ontoereikend (geen oplossing voor x_u). Vergroot de console.",
+                        "Zuivere buiging: de betondrukzone is ontoereikend (geen oplossing voor $x_u$). Vergroot de console.");
                 }
                 else
                 {
@@ -143,12 +151,16 @@ namespace Eurocode.BetonConstructies
                     // Ductiliteit: x_u ≤ x_u,max (NB), zoals in BendingResults
                     xuMaxBuiging = BuigingContext.GetMaximaleHoogteDrukzoneZonderVoorspanning(betonBuiging, d, i.Bc * i.Hc);
                     if (xuBuiging > xuMaxBuiging)
-                        meldingen.Add($"Zuivere buiging: x_u = {xuBuiging:0} mm > x_u,max = {xuMaxBuiging:0} mm (onvoldoende vervormingscapaciteit). Vergroot de console.");
+                        Meld("buiging-xu",
+                            $"Zuivere buiging: x_u = {xuBuiging:0} mm > x_u,max = {xuMaxBuiging:0} mm (onvoldoende vervormingscapaciteit). Vergroot de console.",
+                            $"Zuivere buiging: $x_u = {F(xuBuiging)} \\text{{ mm}} > x_{{u,max}} = {F(xuMaxBuiging)} \\text{{ mm}}$ (onvoldoende vervormingscapaciteit). Vergroot de console.");
 
                     if (asBuiging > asMain)
                     {
                         buigingMaatgevend = true;
-                        meldingen.Add($"Zuivere buiging maatgevend: A_s = {asBuiging:0} mm² > {asMain:0} mm² volgens de gedrongen-liggertheorie (6.1 (10) opm.).");
+                        Meld("buiging",
+                            $"Zuivere buiging maatgevend: A_s = {asBuiging:0} mm² > {asMain:0} mm² volgens de gedrongen-liggertheorie (6.1 (10) opm.).",
+                            $"Zuivere buiging maatgevend: $A_{{s,buiging}} = {F(asBuiging)} \\text{{ mm}}^2 > A_{{s,GDL}} = {F(asMain)} \\text{{ mm}}^2$ (6.1 (10) opmerking).");
                         asMain = asBuiging;
                         ft = asMain * fyd / 1000.0;
                     }
@@ -158,7 +170,9 @@ namespace Eurocode.BetonConstructies
             // J.3 is alleen toepasbaar voor 1,0 ≤ tanθ; bij een vlakkere drukdiagonaal als ligger rekenen.
             bool j3NietVanToepassing = !gdl && tanTheta < 1.0;
             if (j3NietVanToepassing)
-                meldingen.Add($"tanθ = {tanTheta:0.00} < 1,0: bijlage J.3 (strut-and-tie) is niet van toepassing. Reken de console als gedrongen ligger (6.1 (10)).");
+                Meld("j3",
+                    $"tanθ = {tanTheta:0.00} < 1,0: bijlage J.3 (strut-and-tie) is niet van toepassing. Reken de console als gedrongen ligger (6.1 (10)).",
+                    $"$\\tan\\theta = {F(tanTheta, "0.00")} < 1.0$: bijlage J.3 (strut-and-tie) is niet van toepassing. Reken de console als gedrongen ligger (6.1 (10)).");
 
             // ---- BGT, dwarskracht en wringing: voor beide rekenmethoden
             {
@@ -236,12 +250,20 @@ namespace Eurocode.BetonConstructies
                     dwarskrachtMaatgevend = dwarskracht.AswV > aswJ3;
                     asw = Math.Max(aswJ3, dwarskracht.AswV);
                     if (dwarskrachtMaatgevend)
-                        meldingen.Add($"Dwarskracht maatgevend voor de verticale beugels: A_sw = {dwarskracht.AswV:0} mm² > ΣA_s,lnk (J.3) = {aswJ3:0} mm².");
+                        Meld("dwarskracht",
+                            $"V_Ed,red = {dwarskracht.VEdRed:0} kN > V_Rd,c = {dwarskracht.VRdc:0} kN; dwarskracht maatgevend voor de verticale beugels: A_sw = {dwarskracht.AswV:0} mm² > ΣA_s,lnk (J.3) = {aswJ3:0} mm².",
+                            $"$V_{{Ed,red}} = {F(dwarskracht.VEdRed)} \\text{{ kN}} > V_{{Rd,c}} = {F(dwarskracht.VRdc)} \\text{{ kN}}$; dwarskracht maatgevend voor de verticale beugels: $A_{{sw}} = {F(dwarskracht.AswV)} \\text{{ mm}}^2 > \\Sigma A_{{s,lnk,J.3}} = {F(aswJ3)} \\text{{ mm}}^2$.");
+                    else
+                        Meld("dwarskracht",
+                            $"V_Ed,red = {dwarskracht.VEdRed:0} kN > V_Rd,c = {dwarskracht.VRdc:0} kN: A_sw = {dwarskracht.AswV:0} mm² ≤ ΣA_s,lnk (J.3) = {aswJ3:0} mm²; de verticale beugels volgens J.3 volstaan.",
+                            $"$V_{{Ed,red}} = {F(dwarskracht.VEdRed)} \\text{{ kN}} > V_{{Rd,c}} = {F(dwarskracht.VRdc)} \\text{{ kN}}$: $A_{{sw}} = {F(dwarskracht.AswV)} \\text{{ mm}}^2 \\leq \\Sigma A_{{s,lnk,J.3}} = {F(aswJ3)} \\text{{ mm}}^2$; de verticale beugels volgens J.3 volstaan.");
                 }
                 else
                 {
                     aswVerticaalDwarskracht = dwarskracht.AswV;
-                    meldingen.Add($"V_Ed,red = {dwarskracht.VEdRed:0} kN > V_Rd,c = {dwarskracht.VRdc:0} kN: verticale beugels A_sw ≥ {dwarskracht.AswV:0} mm² in het middelste ¾ deel van a_v.");
+                    Meld("dwarskracht",
+                        $"V_Ed,red = {dwarskracht.VEdRed:0} kN > V_Rd,c = {dwarskracht.VRdc:0} kN: verticale beugels A_sw ≥ {dwarskracht.AswV:0} mm² in het middelste ¾ deel van a_v.",
+                        $"$V_{{Ed,red}} = {F(dwarskracht.VEdRed)} \\text{{ kN}} > V_{{Rd,c}} = {F(dwarskracht.VRdc)} \\text{{ kN}}$: verticale beugels $A_{{sw}} \\geq {F(dwarskracht.AswV)} \\text{{ mm}}^2$ in het middelste ¾ deel van $a_v$.");
                 }
             }
 
@@ -463,9 +485,11 @@ namespace Eurocode.BetonConstructies
             void Kop(string titel, string? artikel = null) =>
                 r.ResultRows.Add(new() { Toelichting = titel, Artikel = artikel });
 
+            // verwijzing: sleutel van een melding; de compacte rapportage zet er het opmerkingnummer achter
             void Rij(string toelichting, string symboolTex, string waarde, string eenheid = "",
-                string? formuleTex = null, bool? isOk = null, string? artikel = null) =>
-                r.ResultRows.Add(new()
+                string? formuleTex = null, bool? isOk = null, string? artikel = null, string? verwijzing = null)
+            {
+                var rij = new CommonLibrary.Models.ResultRow
                 {
                     Toelichting = toelichting,
                     SymboolTex = symboolTex,
@@ -474,7 +498,11 @@ namespace Eurocode.BetonConstructies
                     FormuleTex = formuleTex,
                     IsOk = isOk,
                     Artikel = artikel
-                });
+                };
+                r.ResultRows.Add(rij);
+                if (verwijzing is not null && r.OpmerkingNummer(verwijzing) is not null)
+                    r.RijVerwijzingen[rij] = verwijzing;
+            }
 
             // ---- Invoer
             Kop("Invoer", "J.3");
@@ -515,14 +543,14 @@ namespace Eurocode.BetonConstructies
             }
 
             if (r.ZBegrensd)
-                Rij("Hefboomsarm begrensd op tanθ = 2,5", @"z", r.Z.ToString("0.0"), "mm", @"z = 2.5 \cdot a");
+                Rij("Hefboomsarm begrensd op tanθ = 2,5", @"z", r.Z.ToString("0.0"), "mm", @"z = 2.5 \cdot a", verwijzing: "z-begrensd");
 
             // ---- Drukdiagonaal
             Kop("Drukdiagonaal", "J.3");
             Rij("Helling drukdiagonaal", @"\tan\theta", r.TanTheta.ToString("0.00"), "",
                 gdl ? @"\tan\theta = z/a \leq 2.5" : @"\tan\theta = z/a;\ 1.0 \leq \tan\theta \leq 2.5", r.IsThetaOk);
             if (r.J3NietVanToepassing)
-                Rij("Bijlage J.3 niet van toepassing: reken als gedrongen ligger", "", "tanθ < 1,0", isOk: false);
+                Rij("Bijlage J.3 niet van toepassing: reken als gedrongen ligger", "", "tanθ < 1,0", isOk: false, verwijzing: "j3");
             Rij("Hoek drukdiagonaal", @"\theta", r.ThetaDeg.ToString("0.#"), "°", @"\theta = \arctan(z/a)");
             Rij("Controle z₀", @"z_0", r.Z0.ToString("0.#"), "mm", @"a_c < z_0", r.IsZ0Ok);
 
@@ -535,7 +563,7 @@ namespace Eurocode.BetonConstructies
                 Rij("Wapening zuivere buiging", @"A_{s,buiging}", double.IsNaN(r.XuBuiging) ? "drukzone ontoereikend" : r.AsBuiging.ToString("0"), "mm²",
                     @"\frac{\alpha b x_u f_{cd}}{f_{yd}} + \frac{H_{Ed}}{f_{yd}}", double.IsNaN(r.XuBuiging) ? false : null, "6.1 (10) opm.");
                 Rij(r.BuigingMaatgevend ? "Benodigde hoofdwapening (buiging maatgevend)" : "Benodigde hoofdwapening",
-                    @"A_{s,main}", r.AsMain.ToString("0"), "mm²", @"\max(A_{s,GDL};\ A_{s,buiging})");
+                    @"A_{s,main}", r.AsMain.ToString("0"), "mm²", @"\max(A_{s,GDL};\ A_{s,buiging})", verwijzing: "buiging");
             }
             else
             {
@@ -570,6 +598,9 @@ namespace Eurocode.BetonConstructies
                 Rij("Reductie last bij oplegging", @"\beta", v.Beta.ToString("0.00"), "", @"\beta = a_v/2d", artikel: "6.2.2 (6)");
                 Rij("Gereduceerde dwarskracht", @"V_{Ed,red}", v.VEdRed.ToString("0"), "kN", @"V_{Ed,red} = \beta V_{Ed}");
                 Rij("Weerstand zonder wapening", @"V_{Rd,c}", v.VRdc.ToString("0"), "kN", @"V_{Ed,red} \leq V_{Rd,c}", v.IsVoldoende, "(6.2a)");
+                if (v.WapeningNodig)
+                    Rij("Wapening noodzakelijk", @"UC", (v.VEdRed / v.VRdc).ToString("0.00"), "",
+                        $@"UC = \frac{{V_{{Ed,red}}}}{{V_{{Rd,c}}}} = \frac{{{v.VEdRed:0}}}{{{v.VRdc:0}}}", verwijzing: "dwarskracht");
                 Rij("Drukdiagonaal", @"V_{Rd,max}", v.VRdMax.ToString("0"), "kN", @"V_{Ed} \leq V_{Rd,max}", v.VRdMaxOk, "(6.9)");
                 if (v.WapeningNodig)
                 {
@@ -581,12 +612,12 @@ namespace Eurocode.BetonConstructies
             // ---- Toegepaste beugels
             Kop("Beugelwapening");
             if (r.DwarskrachtMaatgevend)
-                Rij("Maatgevend: dwarskracht", @"\Sigma A_{s,lnk}", r.Asw.ToString("0"), "mm²", @"\max(\Sigma A_{s,lnk,J.3};\ A_{sw})");
+                Rij("Maatgevend: dwarskracht", @"\Sigma A_{s,lnk}", r.Asw.ToString("0"), "mm²", @"\max(\Sigma A_{s,lnk,J.3};\ A_{sw})", verwijzing: "dwarskracht");
             else
                 Rij("Benodigde beugelwapening", @"\Sigma A_{s,lnk}", r.Asw.ToString("0"), "mm²");
             Rij("Toegepaste beugels", @"\Sigma A_{s,lnk,prov}", $"{r.AswProv:0} ({r.AantalBeugels}bgØ{i.BeugelDiameter}, 2-snedig)", "mm²", isOk: r.AswProvOk);
             if (r.VerticaleBeugelsVoorDwarskracht)
-                Rij("Extra verticale beugels (dwarskracht)", @"A_{sw}", r.AswVerticaalDwarskracht.ToString("0"), "mm²", @"\text{middelste } 3/4 \text{ van } a_v");
+                Rij("Extra verticale beugels (dwarskracht)", @"A_{sw}", r.AswVerticaalDwarskracht.ToString("0"), "mm²", @"\text{middelste } 3/4 \text{ van } a_v", verwijzing: "dwarskracht");
 
             // ---- Knopen
             Kop("Knopen", "6.5.4");

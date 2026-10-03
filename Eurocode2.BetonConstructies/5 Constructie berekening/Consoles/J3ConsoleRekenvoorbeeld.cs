@@ -65,7 +65,11 @@ namespace Eurocode.BetonConstructies
                 if (!string.IsNullOrEmpty(rij.Artikel))
                     formule = string.IsNullOrEmpty(formule) ? rij.Artikel! : $"{formule} {rij.Artikel}";
 
-                sb.AppendLine($"| {Cel(rij.Toelichting)} | {Tex(rij.SymboolTex)} | {Cel(rij.Waarde)} | {Cel(rij.Eenheid)} | {Cel(formule)} | {ok} |");
+                string verwijzing = r.RijVerwijzingen.TryGetValue(rij, out var key) && r.OpmerkingNummer(key) is int nr
+                    ? $" <sup>({nr})</sup>"
+                    : "";
+
+                sb.AppendLine($"| {Cel(rij.Toelichting)}{verwijzing} | {Tex(rij.SymboolTex)} | {Cel(rij.Waarde)} | {Cel(rij.Eenheid)} | {Cel(formule)} | {ok} |");
             }
 
             AppendMeldingen(sb, r);
@@ -436,17 +440,24 @@ namespace Eurocode.BetonConstructies
 ";
         }
 
+        /// <summary>
+        /// Genummerde opmerkingen onder de rapportage: eerst de meldingen uit de berekening (in LaTeX,
+        /// nummers gelijk aan <see cref="J3ConsoleResult.OpmerkingNummer"/>), daarna de validaties.
+        /// </summary>
         private static void AppendMeldingen(StringBuilder sb, J3ConsoleResult r)
         {
-            var meldingen = r.Meldingen.Concat(r.Validaties).Distinct().ToList();
-            if (meldingen.Count == 0)
+            var opmerkingen = r.Meldingen.Select(m => m.Tex)
+                .Concat(r.Validaties)
+                .Distinct()
+                .ToList();
+            if (opmerkingen.Count == 0)
                 return;
 
             sb.AppendLine();
-            sb.AppendLine("## Meldingen");
+            sb.AppendLine("## Opmerkingen");
             sb.AppendLine();
-            foreach (var m in meldingen)
-                sb.AppendLine($"- {m}");
+            for (int n = 0; n < opmerkingen.Count; n++)
+                sb.AppendLine($"{n + 1}. {opmerkingen[n]}");
         }
 
         private static bool IsGdl(J3ConsoleResult r) =>

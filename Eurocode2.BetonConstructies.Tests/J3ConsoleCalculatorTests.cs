@@ -1,4 +1,4 @@
-using Eurocode.BetonConstructies;
+﻿using Eurocode.BetonConstructies;
 
 namespace Eurocode2.BetonConstructies.Tests
 {
@@ -75,7 +75,7 @@ namespace Eurocode2.BetonConstructies.Tests
             Assert.True(r.ZOnbegrensd > 2.5 * r.A);
             Assert.Equal(2.5 * r.A, r.Z, 6);
             Assert.Equal(2.5, r.TanTheta, 6);
-            Assert.Contains(r.Meldingen, m => m.Contains("z begrensd"));
+            Assert.Contains(r.Meldingen, m => m.Tekst.Contains("z begrensd"));
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Eurocode2.BetonConstructies.Tests
             Assert.True(r.TanTheta < 1.0);
             Assert.True(r.J3NietVanToepassing);
             Assert.False(r.IsThetaOk);
-            Assert.Contains(r.Validaties, v => v.Contains("J.3 niet van toepassing"));
+            Assert.Contains(r.Meldingen, m => m.Key == "j3" && m.Tex.Contains(@"\tan\theta"));
             Assert.Contains("niet van toepassing", r.RekenvoorbeeldMarkdown);
         }
 
@@ -134,7 +134,7 @@ namespace Eurocode2.BetonConstructies.Tests
             Assert.True(r.AsBuiging > r.AsGedrongen);
             Assert.Equal(r.AsBuiging, r.AsMain, 6);
             Assert.Equal(r.AsMain * r.Fyd / 1000.0, r.Ft, 6);
-            Assert.Contains(r.Meldingen, m => m.Contains("Zuivere buiging maatgevend"));
+            Assert.Contains(r.Meldingen, m => m.Tekst.Contains("Zuivere buiging maatgevend"));
         }
 
         [Fact]
@@ -294,6 +294,30 @@ namespace Eurocode2.BetonConstructies.Tests
             Assert.Contains(verwacht, r.RapportMarkdown);
             Assert.Contains(@"\tan\theta", r.RapportMarkdown);
             Assert.Contains("Controle dwarskracht", r.RapportMarkdown);
+        }
+
+        [Fact]
+        public void Rapportage_Compact_WapeningNoodzakelijkMetUcEnVerwijzing()
+        {
+            // Standaardconsole STM: V_Ed,red > V_Rd,c → extra verticale beugels (melding "dwarskracht")
+            var r = J3ConsoleCalculator.Bereken(Invoer(Stm, i => i.Rapportage = J3ConsoleInput.RapportageOptie.Compact));
+            var v = r.Dwarskracht!;
+            Assert.True(v.WapeningNodig);
+
+            var rijen = r.ResultRows;
+            int vrdc = rijen.FindIndex(x => x.Toelichting == "Weerstand zonder wapening");
+            var uc = rijen[vrdc + 1];
+            Assert.Equal("Wapening noodzakelijk", uc.Toelichting);
+            Assert.Equal((v.VEdRed / v.VRdc).ToString("0.00"), uc.Waarde);
+
+            int nr = r.OpmerkingNummer("dwarskracht")!.Value;
+            Assert.Equal("dwarskracht", r.RijVerwijzingen[uc]);
+            Assert.Contains($"| Wapening noodzakelijk <sup>({nr})</sup> |", r.RapportMarkdown);
+
+            // Opmerkingen genummerd en in LaTeX
+            Assert.Contains("## Opmerkingen", r.RapportMarkdown);
+            Assert.Contains($"{nr}. $V_{{Ed,red}} = ", r.RapportMarkdown);
+            Assert.Contains(@"A_{sw} \geq", r.RapportMarkdown);
         }
 
         [Fact]

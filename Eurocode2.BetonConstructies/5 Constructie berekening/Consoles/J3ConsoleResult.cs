@@ -5,6 +5,17 @@
     using Eurocode2.BetonConstructies;
     using ExportFactory.Shared;
 
+    /// <summary>
+    /// Melding uit de J3-consoleberekening.
+    /// </summary>
+    /// <param name="Key">Sleutel waarmee resultaatregels naar de melding verwijzen.</param>
+    /// <param name="Tekst">Platte tekst, voor weergave zonder LaTeX.</param>
+    /// <param name="Tex">Markdown met inline LaTeX ($...$), voor de rapportage.</param>
+    public sealed record J3ConsoleMelding(string Key, string Tekst, string Tex)
+    {
+        public override string ToString() => Tekst;
+    }
+
     public class J3ConsoleResult : IRowResult
     {
         // Het model
@@ -75,7 +86,20 @@
         public double AsGedrongen => Z > 0 && Fyd > 0 ? MEd / (Fyd * Z) : 0;
 
         /// <summary> Meldingen uit de berekening (begrenzing z, maatgevende dwarskracht, ...). </summary>
-        public List<string> Meldingen { get; set; } = [];
+        public List<J3ConsoleMelding> Meldingen { get; set; } = [];
+
+        /// <summary>
+        /// Resultaatregels die naar een melding verwijzen (regel → <see cref="J3ConsoleMelding.Key"/>);
+        /// de compacte rapportage zet er het nummer van de opmerking achter.
+        /// </summary>
+        public Dictionary<ResultRow, string> RijVerwijzingen { get; } = [];
+
+        /// <summary> Nummer van de opmerking onder de rapportage (1, 2, ...), of null. </summary>
+        public int? OpmerkingNummer(string key)
+        {
+            int index = Meldingen.FindIndex(m => m.Key == key);
+            return index < 0 ? null : index + 1;
+        }
 
         public List<ResultRow> ResultRows { get; } = [];
 
@@ -804,9 +828,7 @@
                 //}
 
 
-                // STM: J.3 alleen bij 1 ≤ tanθ (te grote z wordt al begrensd tot 2,5).
-                if (J3NietVanToepassing)
-                    fouten.Add($"tan(theta) = {N(TanTheta)} < 1: bijlage J.3 niet van toepassing, reken als gedrongen ligger.");
+                // STM met tanθ < 1 (J.3 niet van toepassing) staat in Meldingen (key "j3").
 
                 if (Dwarskracht is { VRdMaxOk: false } v && ControleDwarskracht)
                     fouten.Add($"Drukdiagonaal dwarskracht niet akkoord: VEd = {N(v.VEd)} kN > VRd,max = {N(v.VRdMax)} kN.");
