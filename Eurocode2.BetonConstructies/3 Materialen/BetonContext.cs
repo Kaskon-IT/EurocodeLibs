@@ -60,6 +60,7 @@ namespace Eurocode.BetonConstructies
             CementKlasse = vorige.CementKlasse;
             Alpha = vorige.Alpha;
             Beta = vorige.Beta;
+            SpanningRekDiagram = vorige.SpanningRekDiagram;
             BetonStaal = new BetonStaalContext(vorige.BetonStaal);
             PartieleFactor = vorige.PartieleFactor;
 
@@ -75,12 +76,8 @@ namespace Eurocode.BetonConstructies
 
 
         /// <summary>
-        /// Wordt er een parabolisch spannings-rek-diagram toegepast?
-        /// Bij <see langword="false"/> wordt een bi-lineair spannings-rek-diagram toegepast.
+        /// 3.1.7 Spanning-rekrelatie voor doorsnedeberekeningen; standaard parabool-rechthoek.
         /// </summary>
-        //public bool IsParabolischSpanningsRekDiagram { get; set; } = !true;
-
-
         [TableColumn(
             Label = "spanning-rekrelatie",
             Order = 1,
@@ -782,7 +779,6 @@ namespace Eurocode.BetonConstructies
         {
             Betonsterkteklasse = betonSterkteKlasse;
             BetonStaal = new BetonStaalContext(betonStaalKwaliteit);
-            SpanningRekDiagram = SpanningRekDiagramType.BiLineair;
         }
 
         public BetonContext(BetonsterkteklasseEnum betonSterkteKlasse, BetonStaalContext betonStaal)

@@ -826,20 +826,17 @@ namespace Eurocode.BetonConstructies
             Alignment = MigraDoc.DocumentObjectModel.ParagraphAlignment.Left)]
         public override string MeldingNummers => base.MeldingNummers;
 
-        //[TableColumn(Label = "moment opneembaar", Symbol = "<i>M</i><sub>Rd</sub>", Unit = "kNm" )]
+        /// <summary>
+        /// Opneembaar moment van de toegepaste trekwapening uit krachtenevenwicht (zonder drukwapening),
+        /// met het teken van <see cref="Moment"/>.
+        /// </summary>
         public double MRd
         {
             get
             {
-                if (Wapening != null)
-                {
-                    // nakijken of dit altijd klopt, zo niet dan aanpassen
-                    if (MinimaleWapeningToegepast)
-                        return Moment * AsApplied / (AsRequired / 1.25);
-                    else
-                        return Moment * AsApplied / AsRequired;
-                }
-                else return 0;
+                if (Wapening == null) return 0;
+                var mRd = RechthoekBuigingCalculator.BerekenMRd(Beton, Breedte, D, AsApplied).MRd;
+                return Moment < 0 ? -mRd : mRd;
             }
         }
 
