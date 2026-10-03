@@ -201,11 +201,20 @@ public class ConcreteBeamSectionCheckServiceTests
         result.Checks.Single(check => BasisNaam(check.Name) == "Dwarskracht Vz")
             .DetailContext.Should().BeOfType<DwarskrachtWapContext>();
         result.Checks.Single(check => check.Name == "Torsie Tx")
-            .DetailContext.Should().BeOfType<J3ConsoleTorsieResult>();
+            .DetailContext.Should().BeOfType<RechthoekWringingResult>();
         result.Checks.Single(check => check.Name == "Dwarskracht en torsie")
-            .DetailContext.Should().BeOfType<J3ConsoleTorsieDwarskrachtCombinatie>();
+            .DetailContext.Should().BeOfType<RechthoekWringingResult>();
         result.Checks.Single(check => check.Name == "Moment en torsie")
             .DetailContext.Should().BeOfType<ConcreteMomentTorsionDetail>();
+
+        // wringing met dezelfde θ als dwarskracht; beugels per snede: Ø8-200 → 50,27·1000/200 = 251,3 mm²/m
+        var shear = (DwarskrachtWapContext)result.Checks.Single(check => BasisNaam(check.Name) == "Dwarskracht Vz").DetailContext!;
+        var torsion = (RechthoekWringingResult)result.Checks.Single(check => check.Name == "Torsie Tx").DetailContext!;
+        torsion.CotTheta.Should().BeApproximately(shear.CotTheta, 1e-3); // θ = 21,8° → cot θ = 2,5002, begrensd op 2,5
+        result.Checks.Single(check => check.Name == "Dwarskracht en torsie").Resistance
+            .Should().BeApproximately(Math.PI * 64 / 4 * 1000 / 200, 1e-6);
+        // ρ_l uit de toegepaste trekwapening (5Ø16), niet 0
+        shear.AsLangs.Should().BeApproximately(5 * Math.PI * 64, 1e-6);
     }
 
     private static string BasisNaam(string naam)
