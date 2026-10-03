@@ -1,4 +1,4 @@
-﻿using CommonLibrary;
+using CommonLibrary;
 using CommonLibrary.Models;
 using CommonLibrary.Mechanica;
 using CommonLibrary.Modelling;
@@ -37,7 +37,10 @@ public sealed class ConcreteMomentTorsionDetail
     public required BendingResults Bending { get; init; }
 
     [TableColumn(Label = "Torsieberekening")]
-    public required J3ConsoleTorsieResult Torsion { get; init; }
+    public required RechthoekWringingResult Torsion { get; init; }
+
+    /// <summary>Zijde van de toegepaste langswapening: "onder" of "boven".</summary>
+    public required string ReinforcementFace { get; init; }
 
     [TableColumn(Label = "Benodigde buigwapening", Symbol = "A~s,M,req~", Unit = "mm²")]
     public required double RequiredBendingReinforcement { get; init; }
@@ -69,7 +72,7 @@ public sealed class ConcreteMomentTorsionDetail
     public double T => Torsion.TEd;
 
     [TableColumn(Label = "$A_{s,T,req}$", Unit = "mm²", Description = "Benodigde torsiewapening")]
-    public double AsTorsionRequired => Torsion.AslBovenOnder;
+    public double AsTorsionRequired => RequiredTorsionReinforcement;
 
 
     public string Vlak => Bending.PosWapBovenOnder;
@@ -81,7 +84,7 @@ public sealed class ConcreteMomentTorsionDetail
 
 public static class ConcreteBeamSectionCheckService
 {
-    private const double ReinforcementSteelPartialFactor = 1.15;
+    private const int StirrupLegs = 2;
 
     public static bool TryCreateRectangularProfile(BaseProfiel profile, out BetonProfiel concreteProfile)
     {
@@ -274,7 +277,6 @@ public static class ConcreteBeamSectionCheckService
     {
         var usesBottomReinforcement = section.My < 0;
         var longitudinalReinforcement = usesBottomReinforcement ? bottomReinforcement : topReinforcement;
-        var oppositeReinforcement = usesBottomReinforcement ? topReinforcement : bottomReinforcement;
         var reinforcementFace = usesBottomReinforcement ? "onder" : "boven";
         var cover = usesBottomReinforcement ? coverBottom : coverTop;
         var appliedReinforcement = GetLongitudinalArea(longitudinalReinforcement);
@@ -316,73 +318,55 @@ public static class ConcreteBeamSectionCheckService
         bending.BerekenEnValideer();
 
         var effectiveDepth = profile.H - cover - stirrups.Diameter - longitudinalReinforcement.Diameter / 2;
+        var suppliedStirrups = GetStirrupAreaPerMetre(stirrups);
 
         // NutHoogte is d; DwarskrachtWapContext rekent zelf z = 0,9·d en gebruikt d voor VRd,c, k en ρ1.
-        var shearNew = new DwarskrachtWapContext()
+        var shear = new DwarskrachtWapContext()
         {
             BerekeningType = BerekeningTypeEnum.ControleerWapening,
             Beton = material,
             Profiel = profile,
             Snedekrachten = new SectionForces { Vz = section.Vz },
-            AswToegepast = GetStirrupAreaPerMetre(stirrups),
+            AswToegepast = suppliedStirrups,
             NutHoogte = effectiveDepth,
+            AsLangs = appliedReinforcement,
         };
-        shearNew.BerekenEnValideer();
+        shear.BerekenEnValideer();
 
-        var leverArm = 0.9 * effectiveDepth;
-        var nu = 0.6 * (1 - material.Fck / 250);
-        var shearInput = CreateCalculatorInput(
-            profile,
-            material,
-            longitudinalReinforcement,
-            oppositeReinforcement,
-            stirrups,
-            coverSide,
-            Math.Abs(section.Vz),
-            0);
-        var shear = J3ConsoleDwarskrachtCalculator.Bereken(
-            shearInput,
-            effectiveDepth,
-            profile.H,
-            appliedReinforcement,
-            leverArm,
-            material.Fcd,
-            nu);
+        // Wringing 6.3.2 met dezelfde θ als de dwarskracht
+        var shearReinforcementRequired = Math.Abs(shear.Ved) > shear.DwarskrachtWeerstandBeton ? shear.AswBerekend : 0;
+        var torsion = RechthoekWringingCalculator.Bereken(new RechthoekWringingInput
+        {
+            Beton = material,
+            Breedte = profile.B,
+            Hoogte = profile.H,
+            DekkingBoven = coverTop,
+            DekkingOnder = coverBottom,
+            DekkingZijkant = coverSide,
+            BeugelDiameter = stirrups.Diameter,
+            DiameterBoven = topReinforcement.Diameter,
+            DiameterOnder = bottomReinforcement.Diameter,
+            DiameterZijkant = Math.Max(topReinforcement.Diameter, bottomReinforcement.Diameter),
+            NuttigeHoogte = effectiveDepth,
+            TEd = section.Tx,
+            VEd = section.Vz,
+            VRdc = shear.DwarskrachtWeerstandBeton,
+            CotTheta = Math.Clamp(shear.CotTheta, 1, 2.5),
+            AswVPerMeter = shearReinforcementRequired,
+            AswMinPerMeter = shear.AswMin,
+            BeugelSneden = StirrupLegs,
+        });
 
-        var torsionEccentricity = Math.Max(profile.B / 2, 1);
-        var torsionForce = Math.Abs(section.Tx) * 1_000 / torsionEccentricity;
-        var torsionInput = CreateCalculatorInput(
-            profile,
-            material,
-            longitudinalReinforcement,
-            oppositeReinforcement,
-            stirrups,
-            coverSide,
-            torsionForce,
-            torsionEccentricity);
-        
-        
-        var torsion = J3ConsoleTorsieCalculator.Bereken(
-            torsionInput,
-            material,
-            material.Fcd,
-            nu,
-            profile.H, cotTheta: 2.5);
-        
-
-        var combined = J3ConsoleTorsieCalculator.Combineer(torsion, shear);
-
-        var suppliedStirrups = GetStirrupAreaPerMetre(stirrups);
-        var requiredShearStirrups = shear.VEd <= shear.VRdc ? 0 : shear.AswV;
-        var requiredTorsionStirrups = torsion.AswTPerLengte * 1_000;
-        var requiredCombinedStirrups = requiredShearStirrups + requiredTorsionStirrups;
-        var requiredCombinedLongitudinal = bending.AsRequired + torsion.AslBovenOnder;
+        var suppliedStirrupsPerLeg = suppliedStirrups / StirrupLegs;
+        var torsionLongitudinal = usesBottomReinforcement ? torsion.AslOnderBenodigd : torsion.AslBovenBenodigd;
+        var requiredCombinedLongitudinal = bending.AsRequired + torsionLongitudinal;
         var momentTorsionDetail = new ConcreteMomentTorsionDetail
         {
             Bending = bending,
             Torsion = torsion,
+            ReinforcementFace = reinforcementFace,
             RequiredBendingReinforcement = bending.AsRequired,
-            RequiredTorsionReinforcement = torsion.AslBovenOnder,
+            RequiredTorsionReinforcement = torsionLongitudinal,
             RequiredTotalReinforcement = requiredCombinedLongitudinal,
             SuppliedReinforcement = appliedReinforcement
         };
@@ -403,47 +387,38 @@ public static class ConcreteBeamSectionCheckService
                     "mm²",
                     $"Toets met {reinforcementFace}wapening.",
                     bending),
-                //CreateCheck(
-                //    "Dwarskracht Vz",
-                //    "6.2",
-                //    "Aₛw,V,req / Aₛw,prov",
-                //    section.Position,
-                //    requiredShearStirrups,
-                //    suppliedStirrups,
-                //    "mm²/m",
-                //    $"VEd = {Math.Abs(section.Vz):0.##} kN; VRd,c = {shear.VRdc:0.##} kN.",
-                //    shear),
                 CreateCheck(
-                    $"Dwarskracht Vz ({shearNew.Ved:0.#} kN)",
+                    $"Dwarskracht Vz ({shear.Ved:0.#} kN)",
                     "6.2",
                     "...",
                     section.Position,
-                    demand: shearNew.AswBenPerMeter,
-                    resistance:shearNew.AswToegepast,
+                    demand: shear.AswBenPerMeter,
+                    resistance: shear.AswToegepast,
                     "mm²/m",
-                    $"VRd = {shearNew.DwarskrachtWeerstand:0.##} kN",
-                    shearNew),
-
+                    $"VRd = {shear.DwarskrachtWeerstand:0.##} kN",
+                    shear),
                 CreateCheck(
                     "Torsie Tx",
-                    "6.3",
-                    "Aₛw,T,req / Aₛw,prov",
+                    "6.3.2 (4)",
+                    "T_Ed/T_Rd,max + V_Ed/V_Rd,max",
                     section.Position,
-                    requiredTorsionStirrups,
-                    suppliedStirrups,
-                    "mm²/m",
-                    $"TEd = {Math.Abs(section.Tx):0.##} kNm; TRd,c = {torsion.TRdc:0.##} kNm.",
+                    torsion.UnityCheck629,
+                    1,
+                    "-",
+                    $"TEd = {torsion.TEd:0.##} kNm; TRd,max = {torsion.TRdMax:0.##} kNm; VRd,max = {torsion.VRdMax:0.#} kN.",
                     torsion),
                 CreateCheck(
                     "Dwarskracht en torsie",
-                    "6.3.2",
-                    "VEd/VRd,c + TEd/TRd,c",
+                    "6.3.2 (2)",
+                    "A_sw,V/n + A_sw,T per snede",
                     section.Position,
-                    combined.UnityCheck,
-                    1,
-                    "-",
-                    $"Benodigde totale beugelwapening: {requiredCombinedStirrups:0.##} mm²/m; aanwezig: {suppliedStirrups:0.##} mm²/m.",
-                    combined),
+                    torsion.AswPerSnedePerMeter,
+                    suppliedStirrupsPerLeg,
+                    "mm²/m",
+                    torsion.IsAlleenMinimaleWapening
+                        ? $"(6.31) = {torsion.UnityCheck631:0.00} ≤ 1: geen wringwapening nodig; beugels per snede {torsion.AswPerSnedePerMeter:0} mm²/m."
+                        : $"(6.31) = {torsion.UnityCheck631:0.00} > 1: wringing vraagt {torsion.AswTPerMeter:0} mm²/m per wand; s ≤ {torsion.BeugelAfstandMax:0} mm (9.2.3).",
+                    torsion),
                 CreateCheck(
                     "Moment en torsie",
                     "6.1 en 6.3.2",
@@ -452,41 +427,11 @@ public static class ConcreteBeamSectionCheckService
                     requiredCombinedLongitudinal,
                     appliedReinforcement,
                     "mm²",
-                    $"Torsie vraagt {torsion.AslBovenOnder:0.##} mm² extra {reinforcementFace}wapening.",
+                    $"Torsie vraagt {torsionLongitudinal:0.##} mm² extra {reinforcementFace}wapening en {torsion.AslZijkantBenodigd:0.##} mm² per zijkant.",
                     momentTorsionDetail)
             ]
         };
     }
-
-    private static J3ConsoleInput CreateCalculatorInput(
-        BetonProfiel profile,
-        BetonContext material,
-        WapeningGroep primaryReinforcement,
-        WapeningGroep secondaryReinforcement,
-        WapeningGroep stirrups,
-        double cover,
-        double force,
-        double eccentricity) => new()
-    {
-        Bc = profile.B,
-        Hc = profile.H,
-        Ac = profile.A,
-        FEd = force,
-        HEd = eccentricity,
-        ExcentriciteitBreedte = eccentricity,
-        Dekking = cover,
-        BeugelDiameter = stirrups.Diameter,
-        HoofdstaafDiameter = primaryReinforcement.Diameter,
-        HoofdstaafAantal = GetCount(primaryReinforcement),
-        HoofdstaafDiameter2 = secondaryReinforcement.Diameter,
-        HoofdstaafAantal2 = GetCount(secondaryReinforcement),
-        Fck = material.Fck,
-        AlphaCc = 1,
-        GammaC = material.PartieleFactor,
-        Fyk = material.BetonStaal.Fyk,
-        GammaS = ReinforcementSteelPartialFactor,
-        
-    };
 
     private static BeamSectionCheck CreateCheck(
         string name,
@@ -522,8 +467,7 @@ public static class ConcreteBeamSectionCheckService
             throw new ArgumentOutOfRangeException(nameof(stirrups), "De beugelafstand moet groter zijn dan nul.");
         }
 
-        const int legs = 2;
-        return legs * Math.PI * Math.Pow(stirrups.Diameter, 2) / 4 * 1_000 / spacing;
+        return StirrupLegs * Math.PI * Math.Pow(stirrups.Diameter, 2) / 4 * 1_000 / spacing;
     }
 
     private static double GetCount(WapeningGroep reinforcement) => reinforcement.Verdeling.Aantal;
