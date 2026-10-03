@@ -278,9 +278,10 @@ public static class ConcreteBeamSectionCheckService
         var reinforcementFace = usesBottomReinforcement ? "onder" : "boven";
         var cover = usesBottomReinforcement ? coverBottom : coverTop;
         var appliedReinforcement = GetLongitudinalArea(longitudinalReinforcement);
+        // ReferentieDekking is de dekking op de langsstaaf; WapeningContext telt zelf Ø/2 op
         var reinforcementContext = new WapeningContext(
             $"{GetCount(longitudinalReinforcement):0.####}r{longitudinalReinforcement.Diameter:0.####}",
-            cover + stirrups.Diameter + longitudinalReinforcement.Diameter / 2);
+            cover + stirrups.Diameter);
         
         var bending = new BendingResults(
             material,

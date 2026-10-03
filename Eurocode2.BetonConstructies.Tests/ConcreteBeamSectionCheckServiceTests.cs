@@ -109,6 +109,14 @@ public class ConcreteBeamSectionCheckServiceTests
             check.Norm == "EC2"
             && check.Resistance >= 0
             && !double.IsNaN(check.Utilization));
+
+        // buiging en dwarskracht rekenen met dezelfde d = h − c − Ø_bgl − Ø/2
+        foreach (var section in checks)
+        {
+            var buiging = (BendingResults)section.Checks.Single(check => BasisNaam(check.Name) == "Buiging My").DetailContext!;
+            var diameter = section.ReinforcementFace == "onder" ? 16 : 12;
+            buiging.D.Should().BeApproximately(500 - 30 - 8 - diameter / 2.0, 1e-9);
+        }
     }
 
     [Fact]

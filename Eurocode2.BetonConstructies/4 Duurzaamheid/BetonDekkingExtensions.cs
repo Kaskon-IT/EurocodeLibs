@@ -153,10 +153,12 @@ namespace Eurocode.BetonConstructies
 
         public static double GetDekkingBetonstaalMinimaal(this BetonDekkingContext dekking)
         {
+            // naar boven afronden: een gebundelde staaf Øn = Ø·√n (bv. 16,97) mag niet naar beneden
+            var cMinB = Math.Ceiling(dekking.WapeningDiameterGelijkwaardig - 1e-9);
             if (dekking.GrootsteKorrelDiameter <= 32)
-                return (int)dekking.WapeningDiameterGelijkwaardig;
+                return cMinB;
             else
-                return (int)dekking.WapeningDiameterGelijkwaardig + 5;
+                return cMinB + 5;
 
         }
 
