@@ -144,7 +144,7 @@
             List<double> values =
             [
                 sw.Breedte * 2.5 * (sw.Hoogte - sw.NuttigeHoogte),
-                sw.Breedte * (sw.Hoogte - sw.NuttigeHoogte) / 3,
+                sw.Breedte * (sw.Hoogte - sw.HoogteBetonDrukZoneBGT) / 3, // (h - x)/3, 7.3.2 (3)
                 sw.Breedte * sw.Hoogte / 2,
             ];
 

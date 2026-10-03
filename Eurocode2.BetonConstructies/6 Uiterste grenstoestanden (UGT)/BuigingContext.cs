@@ -62,7 +62,7 @@ namespace Eurocode.BetonConstructies
         {
             // een balk is een element waarvan de overspanning niet kleiner is dan driemaal de totale hoogte van de doorsnede.
             // In andere gevallen behoort deze te zijn beschouwd als een gedrongen ligger.
-            return overspanning >= 3 * totaleHoogteVanDeDoorsnede;
+            return overspanning < 3 * totaleHoogteVanDeDoorsnede;
         }
 
 

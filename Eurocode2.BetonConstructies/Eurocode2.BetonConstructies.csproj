@@ -7,7 +7,7 @@
 	
 	<!-- NuGet-package instellingen -->
 	<PackageId>Kaskon.Eurocode2.BetonConstructies</PackageId>
-	<Version>6.2.0</Version>
+	<Version>6.3.0</Version>
 	<Authors>Bart van der Linden</Authors>
 	<Company>Kaskon</Company>
 	<Description>Eurocode 2 Betonconstructies</Description>
@@ -67,4 +67,7 @@
 	
 	
 	
+  <ItemGroup>
+    <InternalsVisibleTo Include="Eurocode2.BetonConstructies.Tests" />
+  </ItemGroup>
 </Project>
