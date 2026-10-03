@@ -7,7 +7,6 @@
     <RootNamespace>Eurocode.StaalConstructies</RootNamespace>
 
 	  <!-- NuGet-package instellingen -->
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageId>Kaskon.Eurocode3.StaalConstructies</PackageId>
 	  <Version>6.2.0</Version>
 	  <Authors>Bart van der Linden</Authors>
@@ -16,8 +15,6 @@
 	  <PackageLicenseFile>license.md</PackageLicenseFile>
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
 	  <PackageIcon>kaskon.png</PackageIcon>
-	  <!-- Lokale map voor .nupkg -->
-	  <PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
 	  <Copyright>Copyright © 2026 Kaskon</Copyright>
 	  <PackageTags>Kaskon;Blazor;FluentUI;Eurocode;EC3;Staalconstructies;Staal</PackageTags>
 	  <IncludeSymbols>true</IncludeSymbols>

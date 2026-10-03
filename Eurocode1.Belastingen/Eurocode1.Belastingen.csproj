@@ -6,7 +6,6 @@
     <RootNamespace>Eurocode.Belastingen</RootNamespace>
 
 	<!-- NuGet-package instellingen -->
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageId>Kaskon.Eurocode1.Belastingen</PackageId>
 	<Version>6.0.1</Version>
 	<Authors>Bart van der Linden</Authors>
@@ -16,8 +15,6 @@
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
 	  <PackageIcon>kaskon.png</PackageIcon>
 
-	<!-- Lokale map voor .nupkg -->
-	<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
 	<Copyright>Copyright © 2026 Kaskon</Copyright>
 	<PackageTags>Kaskon;Blazor;FluentUI;Eurocode;Belastingen;EC1</PackageTags>
 	<IncludeSymbols>true</IncludeSymbols>
