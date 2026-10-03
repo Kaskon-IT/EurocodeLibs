@@ -7,7 +7,7 @@
 	
 	<!-- NuGet-package instellingen -->
 	<PackageId>Kaskon.Eurocode2.BetonConstructies</PackageId>
-	<Version>6.1.3</Version>
+	<Version>6.2.0</Version>
 	<Authors>Bart van der Linden</Authors>
 	<Company>Kaskon</Company>
 	<Description>Eurocode 2 Betonconstructies</Description>
