@@ -191,7 +191,7 @@ namespace Eurocode.BetonConstructies.Consoles
                     {
                         PropertyName = nameof(J3ConsoleInput.D1Opgave),
                         Label = "<i>d</i><sub>1</sub>",
-                        Description = "Optionele opgave van d1 (afstand hart trekband tot bovenrand); 0 = automatisch.",
+                        Description = "Optionele opgave van d' (afstand hart trekband tot bovenrand); 0 = berekenen als c + Ø_bgl + Ø_main/2.",
                         Unit = "mm",
                         Order = 85,
                         Min = _ => 0,
@@ -305,19 +305,6 @@ namespace Eurocode.BetonConstructies.Consoles
                         Max = _ => 600,
                         Step = _ => 100,
                         Decimals = 0
-                    },
-                [nameof(J3ConsoleInput.FactorZ)] =
-                    new NumericPropertyMetadata<J3ConsoleInput>
-                    {
-                        PropertyName = nameof(J3ConsoleInput.FactorZ),
-                        Label = "<i>z/d</i>",
-                        Description = "Factor voor z (bovengrens)",
-                        Unit = "-",
-                        Order = 115,
-                        Min = _ => 0.4,
-                        Max = _ => 1.0,
-                        Step = _ => 0.1,
-                        Decimals = 2
                     },
                 [nameof(J3ConsoleInput.KolomDikte)] =
                     new NumericPropertyMetadata<J3ConsoleInput> {

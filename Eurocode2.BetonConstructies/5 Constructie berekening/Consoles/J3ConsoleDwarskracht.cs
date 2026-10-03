@@ -21,6 +21,11 @@ namespace Eurocode.BetonConstructies
 
         /// <summary> a<sub>v</sub> – afstand van de last tot de rand van de oplegging [mm]. </summary>
         public double Av { get; set; }
+        public J3ConsoleInput.AvOptie AvDefinitie { get; set; }
+        public double LoadPlateLength { get; set; }
+        public Formula AvFormula => AvDefinitie == J3ConsoleInput.AvOptie.TotRandOplegplaat
+            ? new("(6.2.2 (6))", @"a_v = a_c - \frac{a_b}{2}", $@"= {(Av + LoadPlateLength / 2.0).ToTeX()} - \frac{{{LoadPlateLength.ToTeX()}}}{{2}} = {Av:0} \text{{ mm}}")
+            : new("(6.2.2 (6))", @"a_v = a_c", $@"= {Av:0} \text{{ mm}}");
 
         /// <summary>
         /// β = a<sub>v</sub>/2d volgens 6.2.2 (6): reductie van de belastingsbijdrage bij
@@ -92,6 +97,15 @@ namespace Eurocode.BetonConstructies
         public bool IsVoldoende => VEdRed <= VRdc;
 
         public double Fywd { get; set; }
+        public double Fyk { get; set; }
+        public double GammaS { get; set; } = 1.15;
+        public J3ConsoleInput.FywdOptie FywdDefinitie { get; set; }
+        public Formula FywdFormula => FywdDefinitie == J3ConsoleInput.FywdOptie.Fyd
+            ? new("", @"f_{ywd} = f_{yd} = \frac{f_{yk}}{\gamma_s}", $@"= \frac{{{Fyk:0}}}{{{GammaS:0.00}}} = {Fywd:0} \text{{ N/mm}}^2")
+            : new("", @"f_{ywd} = 0.8 \cdot f_{yk}", $@"= 0.8 \cdot {Fyk:0} = {Fywd:0} \text{{ N/mm}}^2");
+
+        /// <summary> Dwarskrachtwapening nodig: V<sub>Ed,red</sub> &gt; V<sub>Rd,c</sub>. </summary>
+        public bool WapeningNodig => !IsVoldoende;
 
         /// <summary>
         /// A<sub>sw</sub> – beugelwapening t.b.v. dwarskracht volgens vgl. (6.19):
@@ -116,7 +130,14 @@ namespace Eurocode.BetonConstructies
                 NEd = -i.HEd, // trek negatief
                 Ac = i.Bc * h,
                 VEd = i.FEd,
-                Av = i.Ac,
+                AvDefinitie = i.AvDefinitie,
+                LoadPlateLength = i.LoadPlateLength,
+                Av = i.AvDefinitie == J3ConsoleInput.AvOptie.TotRandOplegplaat
+                    ? Math.Max(i.Ac - i.LoadPlateLength / 2.0, 0.0)
+                    : i.Ac,
+                Fyk = i.Fyk,
+                GammaS = i.GammaS,
+                FywdDefinitie = i.FywdDefinitie,
                 Zw = zw,
                 Fcd = fcd,
                 Nu1 = nu,
@@ -141,7 +162,9 @@ namespace Eurocode.BetonConstructies
             r.VRdMax = 1.0 * i.Bc * zw * nu * fcd / 2.0 / 1000.0; // [kN]
 
             // (6.19): Asw * fywd >= beta * VEd (aan te brengen in middelste 0.75 av)
-            r.Fywd = i.Fyk * 0.80; // neem 80% van fyk
+            r.Fywd = i.FywdDefinitie == J3ConsoleInput.FywdOptie.Fyd
+                ? i.Fyk / i.GammaS
+                : 0.8 * i.Fyk;
             r.AswV = r.VEdRed * 1000.0 / r.Fywd;
 
             return r;

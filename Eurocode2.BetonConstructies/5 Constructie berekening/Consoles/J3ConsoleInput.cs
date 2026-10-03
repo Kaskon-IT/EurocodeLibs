@@ -19,6 +19,67 @@
             set => SetProperty(ref _rekenMethode, value);
         }
 
+        /// <summary>
+        /// Dwarskracht toetsen (6.2.2) en de beugels daarop controleren. Bij de gedrongen-liggertheorie
+        /// is dit altijd aan; bij J.3 ook zodra verticale beugels nodig zijn (zie <see cref="DwarskrachtControleVerplicht"/>).
+        /// </summary>
+        private bool _controleDwarskracht = true;
+        public bool ControleDwarskracht
+        {
+            get => _controleDwarskracht;
+            set => SetProperty(ref _controleDwarskracht, value);
+        }
+
+        /// <summary> Bij de gedrongen-liggertheorie is de dwarskrachtcontrole verplicht. </summary>
+        public bool DwarskrachtControleVerplicht => RekenMethode == RekenMethodeOptie.GedrongenLiggerTheorie;
+
+        public enum RapportageOptie
+        {
+            [Description("Compact (tabel)")]
+            Compact,
+            [Description("Uitgebreid (uitgeschreven formules)")]
+            Uitgebreid
+        }
+
+        private RapportageOptie _rapportage = RapportageOptie.Uitgebreid;
+        public RapportageOptie Rapportage
+        {
+            get => _rapportage;
+            set => SetProperty(ref _rapportage, value);
+        }
+
+        public enum AvOptie
+        {
+            [Description("a_v = a_c")]
+            Ac,
+            [Description("a_v = a_c - a_b/2 (tot rand oplegplaat)")]
+            TotRandOplegplaat
+        }
+
+        /// <summary> Definitie van a<sub>v</sub> voor de dwarskrachtreductie β = a<sub>v</sub>/2d (6.2.2 (6)). </summary>
+        private AvOptie _avDefinitie = AvOptie.Ac;
+        public AvOptie AvDefinitie
+        {
+            get => _avDefinitie;
+            set => SetProperty(ref _avDefinitie, value);
+        }
+
+        public enum FywdOptie
+        {
+            [Description("f_ywd = 0,8·f_yk")]
+            TachtigProcentFyk,
+            [Description("f_ywd = f_yd")]
+            Fyd
+        }
+
+        /// <summary> Rekenwaarde van de beugelspanning f<sub>ywd</sub> voor de dwarskrachtwapening (6.19). </summary>
+        private FywdOptie _fywdDefinitie = FywdOptie.TachtigProcentFyk;
+        public FywdOptie FywdDefinitie
+        {
+            get => _fywdDefinitie;
+            set => SetProperty(ref _fywdDefinitie, value);
+        }
+
         private double _lc = 300;
         public double Lc
         {
@@ -32,6 +93,7 @@
         
 
         private double _factorZ = 1.0;
+        [Obsolete("Niet meer gebruikt: z volgt uit de rekenmethode en wordt begrensd op tanθ ≤ 2,5.")]
         public double FactorZ
         {
             get => _factorZ;
@@ -372,6 +434,7 @@
         }
 
         private double _vRdc;
+        [Obsolete("Niet meer gebruikt: VRd,c wordt berekend (zie J3ConsoleResult.Dwarskracht).")]
         public double VRdc
         {
             get => _vRdc;

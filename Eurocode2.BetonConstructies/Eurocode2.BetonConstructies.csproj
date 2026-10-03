@@ -6,9 +6,8 @@
     <RootNamespace>Eurocode.BetonConstructies</RootNamespace>
 	
 	<!-- NuGet-package instellingen -->
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageId>Kaskon.Eurocode2.BetonConstructies</PackageId>
-	<Version>6.0.31</Version>
+	<Version>6.1.3</Version>
 	<Authors>Bart van der Linden</Authors>
 	<Company>Kaskon</Company>
 	<Description>Eurocode 2 Betonconstructies</Description>
@@ -17,8 +16,6 @@
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
 	  <PackageIcon>kaskon.png</PackageIcon>
 
-	<!-- Lokale map voor .nupkg -->
-	<PackageOutputPath>T:\04 Standaarden\NuGetPackages</PackageOutputPath>
 	<Copyright>Copyright © 2026 Kaskon</Copyright>
 	<PackageTags>Kaskon;Blazor;FluentUI;Eurocode;EC2;Betonconstructies;Beton</PackageTags>
 	<IncludeSymbols>true</IncludeSymbols>
