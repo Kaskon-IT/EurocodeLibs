@@ -290,7 +290,7 @@ namespace Eurocode.BetonConstructies
         public static double SetSchuifspanningWeerstandZonderDwarskrachtWapening(this DwarskrachtWapContext context)
         {
             return DwarskrachtHelpers.GetSchuifSpanningWeerstandZonderDwarskrachtWapening(
-                context.SchuifspanningMin, context.Crdc, context.FactorK, context.RhoLangs, context.Beton.Fcd, context.FactorK1DwarskrachtWeerstandBeton, context.SigmaCp);
+                context.SchuifspanningMin, context.Crdc, context.FactorK, context.RhoLangs, context.Beton.Fck, context.FactorK1DwarskrachtWeerstandBeton, context.SigmaCp);
         }
 
         public static double SetCrdc(this DwarskrachtWapContext context)
@@ -418,10 +418,11 @@ namespace Eurocode.BetonConstructies
             return 0.035 * Math.Pow(k, (1.5)) * Math.Sqrt(fck);
         }
 
-        public static double GetSchuifSpanningWeerstandZonderDwarskrachtWapening(double vmin, double cRdc, double k, double rho1, double fcd, double k1 = 0.15, double sigmacp = 0)
+        public static double GetSchuifSpanningWeerstandZonderDwarskrachtWapening(double vmin, double cRdc, double k, double rho1, double fck, double k1 = 0.15, double sigmacp = 0)
         {
             // N.B. dit is het gedeeldte tussen [ ] in Vergelijking (6.2.a) met een minimum van vmin + k1 * sigmacp
-            return Math.Max(cRdc * k * Math.Pow((100 * rho1 * fcd), (1.0 / 3.0)) + k1 * sigmacp, vmin + k1 * sigmacp);
+            // (6.2.a): karakteristieke druksterkte fck (niet fcd; de veiligheid zit in C_Rd,c = 0,18/Î³c)
+            return Math.Max(cRdc * k * Math.Pow((100 * rho1 * fck), (1.0 / 3.0)) + k1 * sigmacp, vmin + k1 * sigmacp);
         }
 
         public static double GetCrdC(double gammaC)
